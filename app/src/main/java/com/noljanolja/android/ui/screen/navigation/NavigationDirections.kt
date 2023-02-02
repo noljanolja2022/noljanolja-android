@@ -5,13 +5,13 @@ import androidx.navigation.NavOptions
 import androidx.navigation.navOptions
 
 object NavigationDirections {
-    object Root :  NavigationCommand {
+    object Root : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options: NavOptions? = null
         override val destination: String = "root"
     }
 
-    object Home :NavigationCommand {
+    object Home : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options: NavOptions = navOptions {
             popUpTo(Root.destination) {
@@ -21,6 +21,7 @@ object NavigationDirections {
         }
         override val destination: String = "home"
     }
+
     object HomeItem1 : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options = null
@@ -45,5 +46,18 @@ object NavigationDirections {
         override val destination: String = "Home4"
     }
 
-}
+    object Back : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options: NavOptions? = null
+        override val destination: String = "back"
+    }
 
+    // Back
+    data class FinishWithResults(
+        val data: Map<String, Any>
+    ) : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options: NavOptions? = null
+        override val destination: String = "back"
+    }
+}

@@ -7,9 +7,7 @@ sealed interface NavigationCommand {
     val arguments: List<NamedNavArgument>
     val options: NavOptions?
     val destination: String
-
     fun createDestination(): String = destination
-
     data class FinishWithResults(
         val data: Map<String, Any>,
     ) : NavigationCommand {

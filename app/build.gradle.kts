@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     kotlin("android")
+    kotlin("kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -52,11 +54,18 @@ dependencies {
     implementation(platform("androidx.compose:compose-bom:2023.01.00"))
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
     debugImplementation("androidx.compose.ui:ui-tooling")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material")
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0-alpha01")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.0")
     implementation("androidx.navigation:navigation-compose:2.5.3")
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-android-compiler:2.44")
+}
 
+kapt {
+    correctErrorTypes = true
 }

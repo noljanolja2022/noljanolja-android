@@ -1,27 +1,26 @@
 package com.noljanolja.android.ui.screen.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.FabPosition
+import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.SavedStateHandle
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -31,7 +30,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    viewModel: HomeViewModel = hiltViewModel()
+) {
     val navController = rememberNavController()
     Scaffold(
         floatingActionButton = {
@@ -43,7 +44,7 @@ fun HomeScreen() {
         },
         isFloatingActionButtonDocked = true,
         floatingActionButtonPosition = FabPosition.Center,
-        bottomBar = { HomeBottomBar(navController) },
+        bottomBar = { HomeBottomBar(navController) }
     ) { contentPadding ->
         NavHost(
             navController = navController,
@@ -52,30 +53,33 @@ fun HomeScreen() {
         ) {
             composable(HomeNavigationItem.HomeItem1.route) {
                 Text(
-                    "Home1", modifier = Modifier
+                    "Home1",
+                    modifier = Modifier
                         .fillMaxSize()
                         .padding(100.dp)
                 )
             }
             composable(HomeNavigationItem.HomeItem2.route) {
                 Text(
-                    "Home2", modifier = Modifier
+                    "Home2",
+                    modifier = Modifier
                         .fillMaxSize()
                         .padding(100.dp)
                 )
-
             }
             composable(HomeNavigationItem.HomeItem3.route) {
                 Text(
-                    "Home3", modifier = Modifier
+                    "Home3",
+                    modifier = Modifier
                         .fillMaxSize()
                         .padding(100.dp)
+                        .clickable { viewModel.goToTestScreen() }
                 )
-
             }
             composable(HomeNavigationItem.HomeItem4.route) {
                 Text(
-                    "Home4", modifier = Modifier
+                    "Home4",
+                    modifier = Modifier
                         .fillMaxSize()
                         .padding(100.dp)
                 )
@@ -90,7 +94,7 @@ fun HomeBottomBar(navController: NavHostController) {
         HomeNavigationItem.HomeItem1,
         HomeNavigationItem.HomeItem2,
         HomeNavigationItem.HomeItem3,
-        HomeNavigationItem.HomeItem4,
+        HomeNavigationItem.HomeItem4
     )
     BottomAppBar(
         actions = {
@@ -108,14 +112,16 @@ fun HomeBottomBar(navController: NavHostController) {
                     iconColor = MaterialTheme.colorScheme.primary
                 }
 
-                NavigationBarItem(icon = { Icon(icon, label, tint = iconColor) },
+                NavigationBarItem(
+                    icon = { Icon(icon, label, tint = iconColor) },
                     label = { Text(label, maxLines = 1) },
                     selected = isSelected,
                     onClick = {
                         onNavigationItemClick(navController, item)
-                    })
+                    }
+                )
             }
-        },
+        }
     )
 }
 
