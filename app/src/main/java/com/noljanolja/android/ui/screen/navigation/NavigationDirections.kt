@@ -11,6 +11,17 @@ object NavigationDirections {
         override val destination: String = "root"
     }
 
+    object Login : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options: NavOptions = navOptions {
+            popUpTo(Root.destination) {
+                inclusive = true
+            }
+            launchSingleTop = true
+        }
+        override val destination: String = "login"
+    }
+
     object Home : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options: NavOptions = navOptions {

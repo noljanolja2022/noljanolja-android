@@ -4,6 +4,7 @@ plugins {
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -16,6 +17,7 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "com.noljanolja.android.InstrumentationTestRunner"
+        multiDexEnabled = true
     }
     buildFeatures {
         compose = true
@@ -24,6 +26,9 @@ android {
         isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+    kotlinOptions{
+        jvmTarget = "11"
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.0"
@@ -71,6 +76,14 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-crashlytics-ktx")
+    implementation("com.google.android.gms:play-services-auth:20.4.1")
+    implementation("com.google.firebase:firebase-functions-ktx")
+    // Splash
+    implementation("androidx.core:core-splashscreen:1.0.0")
+
+    // Kakao
+    implementation("com.kakao.sdk:v2-user:2.12.1")
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
 }
 
 kapt {

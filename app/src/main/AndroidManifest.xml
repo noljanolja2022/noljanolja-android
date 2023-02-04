@@ -13,14 +13,34 @@
         android:theme="@style/Theme.Noljanolja"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.Noljanolja">
+            android:name=".ui.screen.splash.SplashActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Noljanolja" />
+        <activity
+            android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- Redirect URI: "kakao${YOUR_NATIVE_APP_KEY}://oauth" -->
+                <data
+                    android:exported="true"
+                    android:host="oauth"
+                    android:scheme="kakaoad4c67b3f151f5f38835e54f39d1aaaa" />
             </intent-filter>
         </activity>
     </application>
