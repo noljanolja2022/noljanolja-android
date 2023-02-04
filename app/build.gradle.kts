@@ -63,9 +63,14 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.0")
     implementation("androidx.navigation:navigation-compose:2.5.3")
+    // Hilt
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-android-compiler:2.44")
+    // Firebase
     implementation(platform("com.google.firebase:firebase-bom:31.2.0"))
+    implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-crashlytics-ktx")
 }
 
 kapt {
