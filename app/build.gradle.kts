@@ -3,13 +3,14 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
+    id("com.google.gms.google-services")
 }
 
 android {
     namespace = "com.noljanolja.android"
     compileSdk = 33
     defaultConfig {
-        applicationId = "com.noljanolja.android"
+        applicationId = "com.noljanolja.app.android"
         minSdk = 21
         targetSdk = 33
         versionCode = 1
@@ -64,6 +65,7 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.5.3")
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-android-compiler:2.44")
+    implementation(platform("com.google.firebase:firebase-bom:31.2.0"))
 }
 
 kapt {
