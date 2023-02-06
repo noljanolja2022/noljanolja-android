@@ -22,7 +22,7 @@ class SplashViewModel : ViewModel() {
 
     private fun fetchUser() {
         viewModelScope.launch {
-           _openMainEvent.emit(auth.currentUser)
+            _openMainEvent.emit(auth.currentUser)
         }
     }
 }

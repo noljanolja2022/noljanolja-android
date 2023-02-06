@@ -12,7 +12,6 @@ import com.noljanolja.android.ui.screen.base.launch
 import com.noljanolja.android.ui.screen.navigation.NavigationDirections
 import com.noljanolja.android.ui.screen.navigation.NavigationManager
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
