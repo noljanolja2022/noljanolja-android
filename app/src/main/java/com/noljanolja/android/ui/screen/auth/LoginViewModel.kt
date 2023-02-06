@@ -1,13 +1,13 @@
 package com.noljanolja.android.ui.screen.auth
 
-import androidx.lifecycle.ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.noljanolja.android.data.repositories.AuthRepository
+import com.noljanolja.android.domain.repositories.AuthRepository
+import com.noljanolja.android.ui.screen.base.BaseViewModel
 import com.noljanolja.android.ui.screen.base.launch
 import com.noljanolja.android.ui.screen.navigation.NavigationDirections
 import com.noljanolja.android.ui.screen.navigation.NavigationManager
@@ -19,12 +19,17 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val navigationManager: NavigationManager,
     private val authRepository: AuthRepository
-) : ViewModel() {
+) : BaseViewModel() {
     fun handleEvent(event: LoginEvent) {
         when (event) {
-            LoginEvent.GoToMain -> {
+            is LoginEvent.GoToMain -> {
                 launch {
                     navigationManager.navigate(NavigationDirections.Home)
+                }
+            }
+            is LoginEvent.ShowError -> {
+                event.error?.let {
+                    showError(event.error)
                 }
             }
         }
@@ -35,6 +40,8 @@ class LoginViewModel @Inject constructor(
             val result = authRepository.loginWithKakao()
             if (result.isSuccess) {
                 handleEvent(LoginEvent.GoToMain)
+            } else {
+                handleEvent(LoginEvent.ShowError(result.exceptionOrNull()))
             }
         }
     }
@@ -50,7 +57,7 @@ class LoginViewModel @Inject constructor(
                 handleEvent(LoginEvent.GoToMain)
             }
         } catch (e: ApiException) {
-            // TODO
+            showError(e)
         }
     }
 }

@@ -2,8 +2,8 @@ package com.noljanolja.android.di
 
 import android.content.Context
 import com.noljanolja.android.R
-import com.noljanolja.android.data.repositories.AuthRepository
-import com.noljanolja.android.domain.repositories.AuthRepositoryImpl
+import com.noljanolja.android.data.repositories.AuthRepositoryImpl
+import com.noljanolja.android.domain.repositories.AuthRepository
 import com.noljanolja.android.ui.screen.navigation.NavigationManager
 import dagger.Module
 import dagger.Provides
@@ -18,7 +18,6 @@ class AppModule {
     @Provides
     @Singleton
     fun provideNavigationManager() = NavigationManager()
-
 
     @Provides
     @Singleton

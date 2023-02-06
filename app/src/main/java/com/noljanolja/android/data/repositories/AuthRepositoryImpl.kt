@@ -1,4 +1,4 @@
-package com.noljanolja.android.domain.repositories
+package com.noljanolja.android.data.repositories
 
 import android.content.Context
 import android.content.Intent
@@ -9,8 +9,8 @@ import com.google.firebase.functions.FirebaseFunctions
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.user.UserApiClient
-import com.noljanolja.android.data.model.User
-import com.noljanolja.android.data.repositories.AuthRepository
+import com.noljanolja.android.domain.model.User
+import com.noljanolja.android.domain.repositories.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.tasks.await
@@ -18,7 +18,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 class AuthRepositoryImpl private constructor(
-    val context: Context,
+    private val context: Context,
     private val googleWebClientId: String,
 ) : AuthRepository {
 

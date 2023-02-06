@@ -1,7 +1,7 @@
-package com.noljanolja.android.data.repositories
+package com.noljanolja.android.domain.repositories
 
 import android.content.Intent
-import com.noljanolja.android.data.model.User
+import com.noljanolja.android.domain.model.User
 import kotlinx.coroutines.flow.StateFlow
 
 interface AuthRepository {
