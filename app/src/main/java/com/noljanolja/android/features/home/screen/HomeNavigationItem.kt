@@ -1,9 +1,9 @@
-package com.noljanolja.android.ui.screen.home
+package com.noljanolja.android.features.home.screen
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.noljanolja.android.R
-import com.noljanolja.android.ui.screen.navigation.NavigationDirections
+import com.noljanolja.android.common.navigation.NavigationDirections
 
 sealed class HomeNavigationItem(
     val route: String,

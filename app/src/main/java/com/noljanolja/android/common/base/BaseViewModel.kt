@@ -1,4 +1,4 @@
-package com.noljanolja.android.ui.screen.base
+package com.noljanolja.android.common.base
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

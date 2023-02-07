@@ -1,4 +1,4 @@
-package com.noljanolja.android.ui.screen.auth
+package com.noljanolja.android.features.auth.screen
 
 sealed interface LoginEvent {
     object GoToMain : LoginEvent

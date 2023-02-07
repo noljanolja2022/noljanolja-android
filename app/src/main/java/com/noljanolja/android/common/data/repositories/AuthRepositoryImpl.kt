@@ -1,4 +1,4 @@
-package com.noljanolja.android.data.repositories
+package com.noljanolja.android.common.data.repositories
 
 import android.content.Context
 import android.content.Intent
@@ -10,11 +10,10 @@ import com.google.firebase.functions.FirebaseFunctions
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.user.UserApiClient
-import com.noljanolja.android.domain.model.User
-import com.noljanolja.android.domain.repositories.AuthRepository
+import com.noljanolja.android.common.domain.model.User
+import com.noljanolja.android.common.domain.repositories.AuthRepository
 import com.noljanolja.android.util.toDomainUser
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -23,11 +22,11 @@ class AuthRepositoryImpl private constructor(
     private val context: Context,
     private val googleWebClientId: String
 ) : AuthRepository {
+    private val _firebaseAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
 
     private val functions: FirebaseFunctions by lazy { FirebaseFunctions.getInstance(REGION) }
 
-    private val _userFlow = MutableStateFlow<User?>(null)
-    override fun getCurrentUser() = _userFlow.asStateFlow()
+    override fun getCurrentUser() = flow { emit(_firebaseAuth.currentUser.toDomainUser()) }
 
     override suspend fun loginWithKakao(): Result<User> {
         val kakaoResult = getTokenKakao()

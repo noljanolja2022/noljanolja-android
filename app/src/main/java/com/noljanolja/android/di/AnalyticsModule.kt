@@ -1,8 +1,8 @@
 package com.noljanolja.android.di
 
 import android.content.Context
-import com.noljanolja.android.data.repositories.AnalyticsRepoImpl
-import com.noljanolja.android.domain.repositories.AnalyticsRepository
+import com.noljanolja.android.common.data.repositories.AnalyticsRepoImpl
+import com.noljanolja.android.common.domain.repositories.AnalyticsRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

@@ -1,4 +1,4 @@
-package com.noljanolja.android.ui.screen.navigation
+package com.noljanolja.android.common.navigation
 
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavOptions

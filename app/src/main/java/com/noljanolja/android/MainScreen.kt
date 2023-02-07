@@ -6,16 +6,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.firebase.auth.FirebaseUser
-import com.noljanolja.android.ui.screen.auth.LoginScreen
-import com.noljanolja.android.ui.screen.home.HomeScreen
-import com.noljanolja.android.ui.screen.navigation.NavigationDirections
-import com.noljanolja.android.ui.screen.navigation.NavigationManager
+import com.noljanolja.android.features.auth.screen.LoginScreen
+import com.noljanolja.android.features.home.screen.HomeScreen
+import com.noljanolja.android.common.navigation.NavigationDirections
+import com.noljanolja.android.common.navigation.NavigationManager
+import com.noljanolja.android.common.domain.model.User
 
 @Composable
 fun MainScreen(
     navigationManager: NavigationManager,
-    user: FirebaseUser?
+    user: User?
 ) {
     val navController = rememberNavController()
     LaunchedEffect(navigationManager.commands) {

@@ -1,4 +1,4 @@
-package com.noljanolja.android.ui.screen.home
+package com.noljanolja.android.features.home.screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize

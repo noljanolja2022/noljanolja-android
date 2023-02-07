@@ -2,9 +2,9 @@ package com.noljanolja.android.di
 
 import android.content.Context
 import com.noljanolja.android.R
-import com.noljanolja.android.data.repositories.AuthRepositoryImpl
-import com.noljanolja.android.domain.repositories.AuthRepository
-import com.noljanolja.android.ui.screen.navigation.NavigationManager
+import com.noljanolja.android.common.data.repositories.AuthRepositoryImpl
+import com.noljanolja.android.common.domain.repositories.AuthRepository
+import com.noljanolja.android.common.navigation.NavigationManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

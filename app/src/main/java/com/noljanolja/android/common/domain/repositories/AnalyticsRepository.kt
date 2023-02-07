@@ -1,4 +1,4 @@
-package com.noljanolja.android.domain.repositories
+package com.noljanolja.android.common.domain.repositories
 
 interface AnalyticsRepository {
     fun sendEvent(

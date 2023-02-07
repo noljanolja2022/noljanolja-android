@@ -1,4 +1,4 @@
-package com.noljanolja.android.ui.screen.navigation
+package com.noljanolja.android.common.navigation
 
 import kotlinx.coroutines.flow.MutableSharedFlow
 

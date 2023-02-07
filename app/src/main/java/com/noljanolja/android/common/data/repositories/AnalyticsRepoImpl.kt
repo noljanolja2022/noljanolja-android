@@ -1,11 +1,11 @@
-package com.noljanolja.android.data.repositories
+package com.noljanolja.android.common.data.repositories
 
 import android.content.Context
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.noljanolja.android.BuildConfig
-import com.noljanolja.android.domain.repositories.AnalyticsRepository
-import com.noljanolja.android.domain.repositories.DestinationSdkType
+import com.noljanolja.android.common.domain.repositories.AnalyticsRepository
+import com.noljanolja.android.common.domain.repositories.DestinationSdkType
 
 class AnalyticsRepoImpl(private val context: Context) : AnalyticsRepository {
     private val firebaseAnalytics: FirebaseAnalytics by lazy { FirebaseAnalytics.getInstance(context) }

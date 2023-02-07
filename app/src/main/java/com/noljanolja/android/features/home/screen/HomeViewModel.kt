@@ -1,9 +1,9 @@
-package com.noljanolja.android.ui.screen.home
+package com.noljanolja.android.features.home.screen
 
 import androidx.lifecycle.ViewModel
-import com.noljanolja.android.ui.screen.base.launch
-import com.noljanolja.android.ui.screen.navigation.NavigationDirections
-import com.noljanolja.android.ui.screen.navigation.NavigationManager
+import com.noljanolja.android.common.base.launch
+import com.noljanolja.android.common.navigation.NavigationDirections
+import com.noljanolja.android.common.navigation.NavigationManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

@@ -9,12 +9,18 @@ import android.util.Base64
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseUser
-import com.noljanolja.android.ui.screen.navigation.NavigationManager
+import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.ui.theme.NoljanoljaTheme
 import dagger.hilt.android.AndroidEntryPoint
 import java.security.MessageDigest
@@ -24,11 +30,26 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var navigationManager: NavigationManager
+    private val viewModel: MainActivityViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         // TODO : remove after
         Log.e("HASHHHH", printKeyHash(this).orEmpty())
-        val user = intent.getParcelableExtra<FirebaseUser>(EXTRA_DATA)
+
+        var uiState: MainActivityUiState by mutableStateOf(MainActivityUiState.Loading)
+        // Update the uiState
+        lifecycleScope.launchWhenStarted {
+            viewModel.uiState.collect {
+                uiState = it
+            }
+        }
+        splashScreen.setKeepOnScreenCondition {
+            when (uiState) {
+                MainActivityUiState.Loading -> true
+                is MainActivityUiState.Success -> false
+            }
+        }
         setContent {
             NoljanoljaTheme {
                 // A surface container using the 'background' color from the theme
@@ -36,7 +57,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen(navigationManager, user)
+                    MainScreen(navigationManager, (uiState as? MainActivityUiState.Success)?.user)
                 }
             }
         }
