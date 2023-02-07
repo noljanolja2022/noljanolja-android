@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.noljanolja.android.common.domain.model.User
 import com.noljanolja.android.common.domain.repositories.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -17,6 +18,7 @@ class MainActivityViewModel @Inject constructor(
 ) : ViewModel() {
 
     val uiState: StateFlow<MainActivityUiState> = authRepository.getCurrentUser().map {
+        delay(1500)
         MainActivityUiState.Success(it)
     }.stateIn(
         scope = viewModelScope,

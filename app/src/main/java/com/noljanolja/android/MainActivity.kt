@@ -1,7 +1,6 @@
 package com.noljanolja.android
 
 import android.app.Activity
-import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -19,7 +18,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
-import com.google.firebase.auth.FirebaseUser
 import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.ui.theme.NoljanoljaTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -60,16 +58,6 @@ class MainActivity : ComponentActivity() {
                     MainScreen(navigationManager, (uiState as? MainActivityUiState.Success)?.user)
                 }
             }
-        }
-    }
-
-    companion object {
-        const val EXTRA_DATA = "EXTRA_DATA"
-        fun newIntent(activity: Activity, user: FirebaseUser?): Intent = Intent(
-            activity,
-            MainActivity::class.java
-        ).also {
-            it.putExtra(EXTRA_DATA, user)
         }
     }
 }
