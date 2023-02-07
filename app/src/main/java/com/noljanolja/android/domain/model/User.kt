@@ -1,3 +1,3 @@
 package com.noljanolja.android.domain.model
 
-data class User(val token: String)
+data class User(val id: String)

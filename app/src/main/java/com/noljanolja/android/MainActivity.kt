@@ -20,13 +20,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.security.MessageDigest
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var navigationManager: NavigationManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // TODO : remove after
         Log.e("HASHHHH", printKeyHash(this).orEmpty())
         val user = intent.getParcelableExtra<FirebaseUser>(EXTRA_DATA)
         setContent {
@@ -57,10 +57,10 @@ fun printKeyHash(context: Activity): String? {
     val packageInfo: PackageInfo
     var key: String? = null
     try {
-        //getting application package name, as defined in manifest
+        // getting application package name, as defined in manifest
         val packageName = context.applicationContext.packageName
 
-        //Retriving package info
+        // Retriving package info
         packageInfo = context.packageManager.getPackageInfo(
             packageName,
             PackageManager.GET_SIGNATURES
@@ -77,4 +77,3 @@ fun printKeyHash(context: Activity): String? {
     }
     return key
 }
-
