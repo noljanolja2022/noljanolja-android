@@ -2,8 +2,8 @@ package com.noljanolja.android
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.noljanolja.android.common.domain.model.User
-import com.noljanolja.android.common.domain.repositories.AuthRepository
+import com.noljanolja.android.common.auth.domain.model.User
+import com.noljanolja.android.common.auth.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted

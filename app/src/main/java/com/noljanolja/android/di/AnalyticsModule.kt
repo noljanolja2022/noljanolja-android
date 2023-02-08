@@ -1,19 +1,47 @@
 package com.noljanolja.android.di
 
-import android.content.Context
-import com.noljanolja.android.common.data.repositories.AnalyticsRepoImpl
-import com.noljanolja.android.common.domain.repositories.AnalyticsRepository
-import dagger.Binds
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
+import com.noljanolja.android.services.analytics.Analytics
+import com.noljanolja.android.services.analytics.AppAnalytics
+import com.noljanolja.android.services.analytics.firebase.FirebaseLogger
+import com.noljanolja.android.services.analytics.firebase.FirebaseTracker
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-@Module
 @InstallIn(SingletonComponent::class)
-class AnalyticsModule {
+@Module
+object AnalyticsModule {
+
+    @Singleton
     @Provides
-    fun bindAnalyticsRepository(@ApplicationContext context: Context): AnalyticsRepository =
-        AnalyticsRepoImpl(context)
+    fun firebaseTracker(): FirebaseTracker = FirebaseTracker(
+        Firebase.analytics
+    ).apply {
+        // TODO: Should fetch from remote config or use BuildConfig
+        isEnable = true
+    }
+
+    @Singleton
+    @Provides
+    fun firebaseLogger(): FirebaseLogger = FirebaseLogger(
+        Firebase.crashlytics
+    ).apply {
+        // TODO: Should fetch from remote config or use BuildConfig
+        isEnable = true
+    }
+
+    @Singleton
+    @Provides
+    fun bindAnalytics(
+        firebaseTracker: FirebaseTracker,
+        firebaseLogger: FirebaseLogger
+    ): Analytics = AppAnalytics(
+        trackers = mutableListOf(firebaseTracker),
+        loggers = mutableListOf(firebaseLogger)
+    )
 }

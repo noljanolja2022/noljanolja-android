@@ -2,8 +2,8 @@ package com.noljanolja.android.di
 
 import android.content.Context
 import com.noljanolja.android.R
-import com.noljanolja.android.common.data.repositories.AuthRepositoryImpl
-import com.noljanolja.android.common.domain.repositories.AuthRepository
+import com.noljanolja.android.common.auth.data.repository.AuthRepositoryImpl
+import com.noljanolja.android.common.auth.domain.repository.AuthRepository
 import com.noljanolja.android.common.navigation.NavigationManager
 import dagger.Module
 import dagger.Provides

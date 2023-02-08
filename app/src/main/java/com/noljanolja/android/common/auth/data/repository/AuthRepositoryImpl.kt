@@ -1,4 +1,4 @@
-package com.noljanolja.android.common.data.repositories
+package com.noljanolja.android.common.auth.data.repository
 
 import android.content.Context
 import android.content.Intent
@@ -10,8 +10,8 @@ import com.google.firebase.functions.FirebaseFunctions
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.user.UserApiClient
-import com.noljanolja.android.common.domain.model.User
-import com.noljanolja.android.common.domain.repositories.AuthRepository
+import com.noljanolja.android.common.auth.domain.model.User
+import com.noljanolja.android.common.auth.domain.repository.AuthRepository
 import com.noljanolja.android.util.toDomainUser
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await

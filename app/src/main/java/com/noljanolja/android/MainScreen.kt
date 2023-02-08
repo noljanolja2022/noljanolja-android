@@ -10,7 +10,7 @@ import com.noljanolja.android.features.auth.screen.LoginScreen
 import com.noljanolja.android.features.home.screen.HomeScreen
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
-import com.noljanolja.android.common.domain.model.User
+import com.noljanolja.android.common.auth.domain.model.User
 
 @Composable
 fun MainScreen(
