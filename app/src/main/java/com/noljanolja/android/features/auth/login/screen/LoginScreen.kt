@@ -6,17 +6,21 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.noljanolja.android.common.composable.FullSizeLoading
 import com.noljanolja.android.features.auth.common.component.EmailAndPassword
 import com.noljanolja.android.util.showToast
 
@@ -35,7 +39,12 @@ fun LoginScreen(
     }
     val email by viewModel.emailFlow.collectAsState()
     val password by viewModel.passwordFlow.collectAsState()
+    val uiState by viewModel.uiStateFlow.collectAsState()
+    if (uiState is LoginUIState.Loading) {
+        FullSizeLoading()
+    }
     LoginContent(
+        modifier = Modifier.fillMaxSize(),
         email = email,
         password = password,
         onEmailChange = { viewModel.changeEmail(it) },
@@ -67,7 +76,11 @@ private fun LoginContent(
     onSignup: () -> Unit,
     onLoginWithEmailAndPassword: () -> Unit
 ) {
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         EmailAndPassword(
             email = email,
             password = password,
