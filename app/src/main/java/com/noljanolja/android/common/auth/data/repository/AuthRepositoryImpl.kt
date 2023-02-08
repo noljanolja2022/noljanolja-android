@@ -47,10 +47,29 @@ class AuthRepositoryImpl private constructor(
     override fun getGoogleSignInIntent(): Intent = GoogleSignIn.getClient(
         context,
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(googleWebClientId)
-            .requestEmail()
-            .build()
+            .requestIdToken(googleWebClientId).requestEmail().build()
     ).signInIntent
+
+    override suspend fun createUserWithEmailAndPassword(
+        email: String,
+        password: String
+    ): Result<User> {
+        return try {
+            val authResult = _firebaseAuth.createUserWithEmailAndPassword(email, password).await()
+            Result.success(authResult.user.toDomainUser()!!)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun signInWithEmailAndPassword(email: String, password: String): Result<User> {
+        return try {
+            val authResult = _firebaseAuth.signInWithEmailAndPassword(email, password).await()
+            Result.success(authResult.user.toDomainUser()!!)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
     private suspend fun getTokenKakao(): Result<String> = suspendCoroutine { continuation ->
         val callback = { token: OAuthToken?, error: Throwable? ->
@@ -68,20 +87,22 @@ class AuthRepositoryImpl private constructor(
     private suspend fun signInWithCustomToken(
         function: FirebaseFunction,
         data: HashMap<String, Any>
-    ): Result<User> =
-        try {
-            val newToken = functions
-                .getHttpsCallable(function.funcName)
-                .call(data)
-                .continueWith { task ->
-                    val result = task.result?.data.toString()
-                    result
-                }.await()
-            val authResult = FirebaseAuth.getInstance().signInWithCustomToken(newToken).await()
-            Result.success(authResult.user.toDomainUser()!!)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    ): Result<User> = try {
+        val newToken =
+            functions.getHttpsCallable(function.funcName).call(data).continueWith { task ->
+                val result = task.result?.data.toString()
+                result
+            }.await()
+        val authResult = FirebaseAuth.getInstance().signInWithCustomToken(newToken).await()
+        Result.success(authResult.user.toDomainUser()!!)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
+    override fun logOut(): Result<Boolean> {
+        _firebaseAuth.signOut()
+        return Result.success(_firebaseAuth.currentUser == null)
+    }
 
     companion object {
         const val REGION = "asia-northeast3"
@@ -101,6 +122,5 @@ class AuthRepositoryImpl private constructor(
 }
 
 enum class FirebaseFunction(val funcName: String) {
-    Kakao("api/auth/kakao"),
-    Naver("api/auth/naver"),
+    Kakao("api/auth/kakao"), Naver("api/auth/naver"),
 }

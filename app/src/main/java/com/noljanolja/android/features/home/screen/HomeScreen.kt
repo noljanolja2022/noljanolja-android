@@ -68,7 +68,7 @@ fun HomeScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(100.dp)
-                        .clickable { viewModel.goToTestScreen() }
+                        .clickable { viewModel.logOut() }
                 )
             }
             composable(HomeNavigationItem.HomeItem4.route) {

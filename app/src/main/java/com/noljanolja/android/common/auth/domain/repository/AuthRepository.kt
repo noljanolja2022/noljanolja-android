@@ -11,4 +11,9 @@ interface AuthRepository {
 
     fun getGoogleSignInIntent(): Intent
 
+    suspend fun createUserWithEmailAndPassword(email: String, password: String): Result<User>
+
+    suspend fun signInWithEmailAndPassword(email: String, password: String): Result<User>
+
+    fun logOut(): Result<Boolean>
 }

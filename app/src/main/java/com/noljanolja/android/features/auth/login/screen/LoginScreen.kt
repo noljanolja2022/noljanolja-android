@@ -1,20 +1,23 @@
-package com.noljanolja.android.features.auth.screen
+package com.noljanolja.android.features.auth.login.screen
 
 import android.content.Intent
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.noljanolja.android.features.auth.common.component.EmailAndPassword
 import com.noljanolja.android.util.showToast
 
 @Composable
@@ -30,22 +33,56 @@ fun LoginScreen(
     val launcher = rememberFirebaseAuthLauncher {
         viewModel.handleLoginGoogleResult(GoogleSignIn.getSignedInAccountFromIntent(it))
     }
+    val email by viewModel.emailFlow.collectAsState()
+    val password by viewModel.passwordFlow.collectAsState()
     LoginContent(
+        email = email,
+        password = password,
+        onEmailChange = { viewModel.changeEmail(it) },
+        onPasswordChange = { viewModel.changePassword(it) },
         onLoginGoogle = {
             launcher.launch(viewModel.getGoogleIntent())
         },
         onLoginKakao = {
             viewModel.loginWithKakao()
+        },
+        onSignup = {
+            viewModel.goToSignup()
+        },
+        onLoginWithEmailAndPassword = {
+            viewModel.signInWithEmailAndPassword()
         }
     )
 }
 
 @Composable
-fun LoginContent(
+private fun LoginContent(
+    email: String,
+    password: String,
+    modifier: Modifier = Modifier,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
     onLoginGoogle: () -> Unit,
-    onLoginKakao: () -> Unit
+    onLoginKakao: () -> Unit,
+    onSignup: () -> Unit,
+    onLoginWithEmailAndPassword: () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = modifier) {
+        EmailAndPassword(
+            email = email,
+            password = password,
+            onEmailChange = onEmailChange,
+            onPasswordChange = onPasswordChange
+        )
+        Button(onClick = { onLoginWithEmailAndPassword() }) {
+            Text(text = "Login")
+        }
+        Text(
+            text = "Don't have account? Signup",
+            modifier = Modifier.clickable {
+                onSignup()
+            }
+        )
         Button(onClick = onLoginGoogle) {
             Text("Login Google")
         }

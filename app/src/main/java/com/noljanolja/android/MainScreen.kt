@@ -1,16 +1,17 @@
 package com.noljanolja.android
 
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.noljanolja.android.features.auth.screen.LoginScreen
-import com.noljanolja.android.features.home.screen.HomeScreen
+import com.noljanolja.android.common.auth.domain.model.User
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
-import com.noljanolja.android.common.auth.domain.model.User
+import com.noljanolja.android.features.auth.login.screen.LoginScreen
+import com.noljanolja.android.features.auth.signup.screen.SignupScreen
+import com.noljanolja.android.features.home.screen.HomeScreen
 
 @Composable
 fun MainScreen(
@@ -47,14 +48,22 @@ fun MainScreen(
         startDestination = user?.let { NavigationDirections.Home.destination }
             ?: NavigationDirections.Login.destination
     ) {
-        composable(NavigationDirections.Home.destination) { backStack ->
-            HomeScreen()
-        }
-        composable(NavigationDirections.Login.destination) { backStack ->
-            LoginScreen()
-        }
-        composable(NavigationDirections.HomeItem4.destination) {
-            Text("NewScreen")
-        }
+        addHomeGraph()
+        addAuthGraph()
+    }
+}
+
+fun NavGraphBuilder.addHomeGraph() {
+    composable(NavigationDirections.Home.destination) { backStack ->
+        HomeScreen()
+    }
+}
+
+fun NavGraphBuilder.addAuthGraph() {
+    composable(NavigationDirections.Login.destination) { backStack ->
+        LoginScreen()
+    }
+    composable(NavigationDirections.Signup.destination) {
+        SignupScreen()
     }
 }
