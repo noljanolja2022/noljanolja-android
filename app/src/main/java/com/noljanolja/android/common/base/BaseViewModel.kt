@@ -10,7 +10,7 @@ open class BaseViewModel : ViewModel() {
     private val _errorFlow = MutableSharedFlow<Throwable>()
     val errorFlow = _errorFlow.asSharedFlow()
 
-    fun showError(e: Throwable) {
+    fun sendError(e: Throwable) {
         launch {
             _errorFlow.emit(e)
         }

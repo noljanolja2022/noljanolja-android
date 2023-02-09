@@ -5,11 +5,13 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,11 +19,23 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.noljanolja.android.R
 import com.noljanolja.android.common.composable.FullSizeLoading
+import com.noljanolja.android.common.composable.TwoButtonInRow
 import com.noljanolja.android.features.auth.common.component.EmailAndPassword
+import com.noljanolja.android.features.auth.login.screen.component.LoginButton
+import com.noljanolja.android.util.getErrorMessage
 import com.noljanolja.android.util.showToast
 
 @Composable
@@ -40,28 +54,53 @@ fun LoginScreen(
     val email by viewModel.emailFlow.collectAsState()
     val password by viewModel.passwordFlow.collectAsState()
     val uiState by viewModel.uiStateFlow.collectAsState()
+    val error by viewModel.errorLoginEmailPassword.collectAsState()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colorResource(id = R.color.primaryColor)),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Spacer(modifier = Modifier.weight(1F))
+        Image(
+            painter = painterResource(id = R.drawable.logo),
+            contentDescription = null,
+            modifier = Modifier
+                .width(166.dp)
+                .height(66.dp)
+        )
+        Spacer(modifier = Modifier.weight(1F))
+        LoginContent(
+            email = email,
+            password = password,
+            loginEmailError = error?.let { context.getErrorMessage(it) },
+            onEmailChange = { viewModel.changeEmail(it) },
+            onPasswordChange = { viewModel.changePassword(it) },
+            onLoginGoogle = {
+                launcher.launch(viewModel.getGoogleIntent())
+            },
+            onLoginKakao = {
+                viewModel.loginWithKakao()
+            },
+            onSignup = {
+                viewModel.goToSignup()
+            },
+            onLoginWithEmailAndPassword = {
+                viewModel.signInWithEmailAndPassword()
+            }
+        )
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1F)
+                .background(Color.White)
+        )
+    }
+
     if (uiState is LoginUIState.Loading) {
         FullSizeLoading()
     }
-    LoginContent(
-        modifier = Modifier.fillMaxSize(),
-        email = email,
-        password = password,
-        onEmailChange = { viewModel.changeEmail(it) },
-        onPasswordChange = { viewModel.changePassword(it) },
-        onLoginGoogle = {
-            launcher.launch(viewModel.getGoogleIntent())
-        },
-        onLoginKakao = {
-            viewModel.loginWithKakao()
-        },
-        onSignup = {
-            viewModel.goToSignup()
-        },
-        onLoginWithEmailAndPassword = {
-            viewModel.signInWithEmailAndPassword()
-        }
-    )
 }
 
 @Composable
@@ -69,6 +108,7 @@ private fun LoginContent(
     email: String,
     password: String,
     modifier: Modifier = Modifier,
+    loginEmailError: String? = null,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onLoginGoogle: () -> Unit,
@@ -76,31 +116,72 @@ private fun LoginContent(
     onSignup: () -> Unit,
     onLoginWithEmailAndPassword: () -> Unit
 ) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    Card(
+        shape = RoundedCornerShape(
+            topStart = 20.dp,
+            topEnd = 20.dp
+        )
     ) {
-        EmailAndPassword(
-            email = email,
-            password = password,
-            onEmailChange = onEmailChange,
-            onPasswordChange = onPasswordChange
-        )
-        Button(onClick = { onLoginWithEmailAndPassword() }) {
-            Text(text = "Login")
-        }
-        Text(
-            text = "Don't have account? Signup",
-            modifier = Modifier.clickable {
-                onSignup()
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .background(Color.White)
+                .padding(horizontal = 20.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(18.dp))
+            TwoButtonInRow(
+                firstText = stringResource(id = R.string.login),
+                secondText = stringResource(id = R.string.signup),
+                indexFocused = 0,
+                firstClick = { },
+                secondClick = {})
+            Spacer(modifier = Modifier.height(24.dp))
+            EmailAndPassword(
+                email = email,
+                password = password,
+                onEmailChange = onEmailChange,
+                onPasswordChange = onPasswordChange
+            )
+            loginEmailError?.let {
+                Text(
+                    it,
+                    modifier = Modifier
+                        .padding(start = 24.dp, top = 12.dp)
+                        .align(Alignment.Start),
+                    style = TextStyle(
+                        color = colorResource(id = R.color.error_text_color),
+                        fontSize = 14.sp
+                    )
+                )
             }
-        )
-        Button(onClick = onLoginGoogle) {
-            Text("Login Google")
-        }
-        Button(onClick = onLoginKakao) {
-            Text("Login Kakao")
+            Text(
+                text = stringResource(id = R.string.forgot_password),
+                style = TextStyle(
+                    fontSize = 14.sp,
+                    color = colorResource(id = R.color.secondary_text_color)
+                ),
+                modifier = Modifier
+                    .padding(top = 28.dp)
+                    .align(Alignment.End)
+                    .clickable {
+                        onSignup()
+                    }
+            )
+            LoginButton(
+                modifier = Modifier.padding(top = 28.dp),
+                isEnable = email.isNotBlank() && password.isNotBlank()
+            ) {
+                onLoginWithEmailAndPassword()
+            }
+
+            Button(onClick = onLoginGoogle) {
+                Text("Login Google")
+            }
+            Button(onClick = onLoginKakao) {
+                Text("Login Kakao")
+            }
         }
     }
 }
@@ -112,4 +193,10 @@ private fun rememberFirebaseAuthLauncher(
     return rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         handleGoogleSignInResult(result.data)
     }
+}
+
+@Preview
+@Composable
+fun LoginScreenPreview() {
+    LoginScreen()
 }

@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE resources [<!ENTITY kakao_api_key "feccad35483064ee33942819974a1d11">]>
 <resources>
-    <string name="app_name">Noljanolja</string>
-    <string name="home_item_1">Home 1</string>
-    <string name="web_client_id">954965503519-4indv4tab6cr141999er2dd8nj43mtcr.apps.googleusercontent.com</string>
-    <string name="kakao_api_key">&kakao_api_key;</string>
-    <string name="kakao_scheme">kakao&kakao_api_key;</string>
+    <string name="app_name" translatable="false">Noljanolja</string>
+    <string name="home_item_1" translatable="false">Home 1</string>
+    <string name="web_client_id" translatable="false">954965503519-4indv4tab6cr141999er2dd8nj43mtcr.apps.googleusercontent.com</string>
+    <string name="kakao_api_key" translatable="false">&kakao_api_key;</string>
+    <string name="kakao_scheme" translatable="false">kakao&kakao_api_key;</string>
+    <string name="failure_login_email_password_error">아이디 혹은 비밀번호가 일치하지 않습니다</string>
+    <string name="login">Log in</string>
+    <string name="signup">Join the membership</string>
+    <string name="forgot_password">Forgot your password?</string>
+    <string name="email_hint_text">Please enter your ID</string>
+    <string name="password_hint_text">Please enter your password</string>
+    <!--    Failure-->
 </resources>

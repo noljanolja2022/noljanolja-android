@@ -8,6 +8,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.noljanolja.android.common.auth.domain.repository.AuthRepository
 import com.noljanolja.android.common.base.launch
+import com.noljanolja.android.common.error.LoginEmailPasswordFailed
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.features.auth.common.BaseAuthViewModel
@@ -25,6 +26,11 @@ class LoginViewModel @Inject constructor(
 
     private val _uiStateFlow = MutableStateFlow<LoginUIState>(LoginUIState.None)
     val uiStateFlow = _uiStateFlow.asStateFlow()
+
+    private val _errorLoginEmailPassword = MutableStateFlow<Throwable?>(null)
+    val errorLoginEmailPassword = _errorLoginEmailPassword.asStateFlow()
+
+    private
     fun handleEvent(event: LoginEvent) {
         when (event) {
             is LoginEvent.GoToMain -> {
@@ -39,7 +45,7 @@ class LoginViewModel @Inject constructor(
             }
             is LoginEvent.ShowError -> {
                 event.error?.let {
-                    showError(event.error)
+                    sendError(event.error)
                 }
             }
         }
@@ -66,11 +72,10 @@ class LoginViewModel @Inject constructor(
             try {
                 val account = task.getResult(ApiException::class.java)
                 val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-
                 Firebase.auth.signInWithCredential(credential).await()
                 handleEvent(LoginEvent.GoToMain)
             } catch (e: ApiException) {
-                showError(e)
+                sendError(e)
             } finally {
                 _uiStateFlow.emit(LoginUIState.None)
             }
@@ -84,14 +89,29 @@ class LoginViewModel @Inject constructor(
                 requireValidEmail()
                 val result =
                     authRepository.signInWithEmailAndPassword(emailFlow.value, passwordFlow.value)
-                if (result.isSuccess) {
-                    navigationManager.navigate(NavigationDirections.Home)
+                result.exceptionOrNull()?.let {
+                    throw it
                 }
+                navigationManager.navigate(NavigationDirections.Home)
             } catch (e: Exception) {
-                // TODO
+                _errorLoginEmailPassword.emit(LoginEmailPasswordFailed)
             } finally {
                 _uiStateFlow.emit(LoginUIState.None)
             }
+        }
+    }
+
+    override fun changeEmail(text: String) {
+        super.changeEmail(text)
+        launch {
+            _errorLoginEmailPassword.emit(null)
+        }
+    }
+
+    override fun changePassword(text: String) {
+        super.changePassword(text)
+        launch {
+            _errorLoginEmailPassword.emit(null)
         }
     }
 

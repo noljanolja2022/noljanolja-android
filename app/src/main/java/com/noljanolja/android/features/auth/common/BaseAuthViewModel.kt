@@ -13,13 +13,13 @@ open class BaseAuthViewModel : BaseViewModel() {
     private val _passwordFlow = MutableStateFlow("")
     val passwordFlow = _passwordFlow.asStateFlow()
 
-    fun changeEmail(text: String) {
+   open fun changeEmail(text: String) {
         launch {
             _emailFlow.emit(text)
         }
     }
 
-    fun changePassword(text: String) {
+    open fun changePassword(text: String) {
         launch {
             _passwordFlow.emit(text)
         }

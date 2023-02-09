@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="failure_login_email_password_error">아이디 혹은 비밀번호가 일치하지 않습니다</string>
+</resources>
