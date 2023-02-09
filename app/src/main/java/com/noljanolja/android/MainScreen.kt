@@ -6,17 +6,16 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.noljanolja.android.common.auth.domain.model.User
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.features.auth.login.screen.LoginScreen
 import com.noljanolja.android.features.auth.signup.screen.SignupScreen
 import com.noljanolja.android.features.home.screen.HomeScreen
+import com.noljanolja.android.features.splash.screen.SplashScreen
 
 @Composable
 fun MainScreen(
     navigationManager: NavigationManager,
-    user: User?
 ) {
     val navController = rememberNavController()
     LaunchedEffect(navigationManager.commands) {
@@ -45,11 +44,17 @@ fun MainScreen(
     NavHost(
         navController = navController,
         route = NavigationDirections.Root.destination,
-        startDestination = user?.let { NavigationDirections.Home.destination }
-            ?: NavigationDirections.Login.destination
+        startDestination = NavigationDirections.Splash.destination
     ) {
+        addSplashGraph()
         addHomeGraph()
         addAuthGraph()
+    }
+}
+
+fun NavGraphBuilder.addSplashGraph() {
+    composable(NavigationDirections.Splash.destination) {
+        SplashScreen()
     }
 }
 
