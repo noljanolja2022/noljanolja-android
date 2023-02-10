@@ -5,13 +5,16 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -132,6 +136,9 @@ private fun LoginContent(
         ) {
             Spacer(modifier = Modifier.height(18.dp))
             TwoButtonInRow(
+                modifier = Modifier.fillMaxWidth(),
+                fModifier = Modifier.weight(1F),
+                sModifier = Modifier.weight(2F),
                 firstText = stringResource(id = R.string.login),
                 secondText = stringResource(id = R.string.signup),
                 indexFocused = 0,
@@ -175,12 +182,42 @@ private fun LoginContent(
             ) {
                 onLoginWithEmailAndPassword()
             }
-
-            Button(onClick = onLoginGoogle) {
-                Text("Login Google")
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Divider(
+                    color = colorResource(id = R.color.border_color),
+                    thickness = 1.dp,
+                    modifier = Modifier.weight(1F)
+                )
+                Text(
+                    stringResource(id = R.string.auth_login_with_SNS),
+                    modifier = Modifier.padding(24.dp),
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                        color = colorResource(id = R.color.secondary_text_color)
+                    )
+                )
+                Divider(
+                    color = colorResource(id = R.color.border_color),
+                    thickness = 1.dp,
+                    modifier = Modifier.weight(1F)
+                )
             }
-            Button(onClick = onLoginKakao) {
-                Text("Login Kakao")
+
+            Row {
+                LoginSNSButton(
+                    painter = painterResource(id = R.drawable.kakao),
+                    onClick = onLoginKakao
+                )
+                Spacer(modifier = Modifier.width(24.dp))
+                LoginSNSButton(
+                    painter = painterResource(id = R.drawable.naver),
+                    onClick = {}
+                )
+                Spacer(modifier = Modifier.width(24.dp))
+                LoginSNSButton(
+                    painter = painterResource(id = R.drawable.google),
+                    onClick = onLoginGoogle
+                )
             }
         }
     }
@@ -192,6 +229,26 @@ private fun rememberFirebaseAuthLauncher(
 ): ManagedActivityResultLauncher<Intent, ActivityResult> {
     return rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         handleGoogleSignInResult(result.data)
+    }
+}
+
+@Composable
+private fun LoginSNSButton(
+    painter: Painter,
+    onClick: () -> Unit,
+) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = Modifier.size(42.dp),
+        shape = CircleShape,
+        contentPadding = PaddingValues(0.dp),
+        border = BorderStroke(0.dp, Color.Transparent),
+    ) {
+        Image(
+            painter = painter,
+            modifier = Modifier.size(42.dp),
+            contentDescription = null
+        )
     }
 }
 

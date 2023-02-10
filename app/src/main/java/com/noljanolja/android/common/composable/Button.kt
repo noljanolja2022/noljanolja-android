@@ -21,23 +21,41 @@ fun TwoButtonInRow(
     firstText: String,
     secondText: String,
     indexFocused: Int,
+    modifier: Modifier = Modifier,
+    fModifier: Modifier = Modifier,
+    sModifier: Modifier = Modifier,
     firstClick: () -> Unit,
     secondClick: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .height(42.dp)
             .clip(
                 shape = RoundedCornerShape(8.dp)
             )
     ) {
-        ButtonInRow(text = firstText, onClick = firstClick, isFocused = indexFocused == 0)
-        ButtonInRow(text = secondText, onClick = secondClick, isFocused = indexFocused == 1)
+        ButtonInRow(
+            modifier = fModifier,
+            text = firstText,
+            onClick = firstClick,
+            isFocused = indexFocused == 0
+        )
+        ButtonInRow(
+            modifier = sModifier,
+            text = secondText,
+            onClick = secondClick,
+            isFocused = indexFocused == 1
+        )
     }
 }
 
 @Composable
-private fun ButtonInRow(text: String, isFocused: Boolean, onClick: () -> Unit) {
+private fun ButtonInRow(
+    text: String,
+    isFocused: Boolean,
+    modifier: Modifier,
+    onClick: () -> Unit
+) {
     Button(
         onClick = onClick,
         shape = RectangleShape,
@@ -50,7 +68,7 @@ private fun ButtonInRow(text: String, isFocused: Boolean, onClick: () -> Unit) {
                 }
             )
         ),
-        modifier = Modifier
+        modifier = modifier
             .height(42.dp)
             .width(110.dp)
     ) {
