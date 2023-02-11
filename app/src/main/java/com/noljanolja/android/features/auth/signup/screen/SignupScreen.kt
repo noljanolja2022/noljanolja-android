@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.handleError
-import com.noljanolja.android.common.composable.FullSizeLoading
 import com.noljanolja.android.common.composable.RoundedButton
 import com.noljanolja.android.features.auth.common.component.EmailAndPassword
 import com.noljanolja.android.features.auth.common.component.RoundedTextField
@@ -28,15 +27,13 @@ fun SignupScreen(
     val password by signupViewModel.passwordFlow.collectAsState()
     val confirmPassword by signupViewModel.confirmPasswordFlow.collectAsState()
 
-    FullSizeLoading(uiState == SignupUIState.Loading) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            SignupContent(
-                email,
-                password,
-                confirmPassword,
-            ) {
-                signupViewModel.handleEvent(it)
-            }
+    Column(modifier = Modifier.fillMaxSize()) {
+        SignupContent(
+            email,
+            password,
+            confirmPassword,
+        ) {
+            signupViewModel.handleEvent(it)
         }
     }
 }

@@ -143,7 +143,7 @@ class LoginViewModel @Inject constructor(
     }
 }
 
-sealed interface LoginUIState {
-    object Loading : LoginUIState
-    object None : LoginUIState
+enum class LoginUIState {
+    Loading,
+    None
 }

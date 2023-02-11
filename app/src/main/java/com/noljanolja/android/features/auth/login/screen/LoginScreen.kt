@@ -31,7 +31,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.handleError
-import com.noljanolja.android.common.composable.FullSizeLoading
 import com.noljanolja.android.features.auth.common.component.EmailAndPassword
 import com.noljanolja.android.features.auth.login.screen.component.LoginButton
 import com.noljanolja.android.util.getErrorMessage
@@ -41,30 +40,27 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     viewModel.handleError()
-
-    val uiState by viewModel.uiStateFlow.collectAsState()
     val email by viewModel.emailFlow.collectAsState()
     val password by viewModel.passwordFlow.collectAsState()
     val error by viewModel.errorLoginEmailPassword.collectAsState()
     val launcher = rememberFirebaseAuthLauncher {
         viewModel.handleLoginGoogleResult(GoogleSignIn.getSignedInAccountFromIntent(it))
     }
-    FullSizeLoading(
-        showLoading = uiState is LoginUIState.Loading
-    ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            LoginContent(
-                email = email,
-                password = password,
-                error = error,
-                handleEvent = {
-                    viewModel.handleEvent(it)
-                }, onLoginGoogle = {
-                    launcher.launch(viewModel.getGoogleIntent())
 
-                }
-            )
-        }
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        LoginContent(
+            email = email,
+            password = password,
+            error = error,
+            handleEvent = {
+                viewModel.handleEvent(it)
+            }, onLoginGoogle = {
+                launcher.launch(viewModel.getGoogleIntent())
+            }
+        )
     }
 }
 
