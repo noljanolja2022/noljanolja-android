@@ -43,6 +43,16 @@ object NavigationDirections {
         override val destination: String = "signup"
     }
 
+    object Forgot : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options: NavOptions = navOptions {
+            launchSingleTop = true
+        }
+        override val destination: String = "forget"
+    }
+    
+    // Home 
+
     object Home : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options: NavOptions = navOptions {

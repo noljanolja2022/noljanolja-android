@@ -79,19 +79,11 @@ fun LoginScreen(
             email = email,
             password = password,
             loginEmailError = error?.let { context.getErrorMessage(it) },
-            onEmailChange = { viewModel.changeEmail(it) },
-            onPasswordChange = { viewModel.changePassword(it) },
             onLoginGoogle = {
                 launcher.launch(viewModel.getGoogleIntent())
             },
-            onLoginKakao = {
-                viewModel.loginWithKakao()
-            },
-            onSignup = {
-                viewModel.goToSignup()
-            },
-            onLoginWithEmailAndPassword = {
-                viewModel.signInWithEmailAndPassword()
+            handleEvent = {
+                viewModel.handleEvent(it)
             }
         )
         Spacer(
@@ -113,12 +105,8 @@ private fun LoginContent(
     password: String,
     modifier: Modifier = Modifier,
     loginEmailError: String? = null,
-    onEmailChange: (String) -> Unit,
-    onPasswordChange: (String) -> Unit,
     onLoginGoogle: () -> Unit,
-    onLoginKakao: () -> Unit,
-    onSignup: () -> Unit,
-    onLoginWithEmailAndPassword: () -> Unit
+    handleEvent: (LoginEvent) -> Unit,
 ) {
     Card(
         shape = RoundedCornerShape(
@@ -148,8 +136,12 @@ private fun LoginContent(
             EmailAndPassword(
                 email = email,
                 password = password,
-                onEmailChange = onEmailChange,
-                onPasswordChange = onPasswordChange
+                onEmailChange = {
+                    handleEvent(LoginEvent.ChangeEmail(it))
+                },
+                onPasswordChange = {
+                    handleEvent(LoginEvent.ChangePassword(it))
+                }
             )
             loginEmailError?.let {
                 Text(
@@ -173,14 +165,14 @@ private fun LoginContent(
                     .padding(top = 28.dp)
                     .align(Alignment.End)
                     .clickable {
-                        onSignup()
+                        handleEvent(LoginEvent.GoForgotEmailAndPassword)
                     }
             )
             LoginButton(
                 modifier = Modifier.padding(top = 28.dp),
                 isEnable = email.isNotBlank() && password.isNotBlank()
             ) {
-                onLoginWithEmailAndPassword()
+                handleEvent(LoginEvent.LoginEmail)
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Divider(
@@ -206,12 +198,16 @@ private fun LoginContent(
             Row {
                 LoginSNSButton(
                     painter = painterResource(id = R.drawable.kakao),
-                    onClick = onLoginKakao
+                    onClick = {
+                        handleEvent(LoginEvent.LoginKakao)
+                    }
                 )
                 Spacer(modifier = Modifier.width(24.dp))
                 LoginSNSButton(
                     painter = painterResource(id = R.drawable.naver),
-                    onClick = {}
+                    onClick = {
+                        handleEvent(LoginEvent.LoginNaver)
+                    }
                 )
                 Spacer(modifier = Modifier.width(24.dp))
                 LoginSNSButton(

@@ -1,16 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?><!DOCTYPE resources [<!ENTITY kakao_api_key "feccad35483064ee33942819974a1d11">]>
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE resources [<!ENTITY kakao_api_key "15d1b0d5dde51ea18a397effc5f25e3c">]>
 <resources>
     <string name="app_name" translatable="false">Noljanolja</string>
     <string name="home_item_1" translatable="false">Home 1</string>
     <string name="web_client_id" translatable="false">954965503519-4indv4tab6cr141999er2dd8nj43mtcr.apps.googleusercontent.com</string>
     <string name="kakao_api_key" translatable="false">&kakao_api_key;</string>
     <string name="kakao_scheme" translatable="false">kakao&kakao_api_key;</string>
-    <string name="failure_login_email_password_error">아이디 혹은 비밀번호가 일치하지 않습니다</string>
+    <string name="common_next">Next</string>
     <string name="login">Log in</string>
     <string name="signup">Join the membership</string>
     <string name="forgot_password">Forgot your password?</string>
-    <string name="email_hint_text">Please enter your ID</string>
+    <string name="email_hint_text">Please enter your email</string>
     <string name="password_hint_text">Please enter your password</string>
     <string name="auth_login_with_SNS">Login with SNS</string>
+    <string name="auth_find_email">Find Email</string>
+    <string name="auth_find_password">Find password</string>
+    <string name="auth_email_verification">Email verification</string>
+    <string name="auth_email_verification_complete">Identity verification complete!</string>
+    <string name="auth_reset_email_sended">Temporary password to your email\nhas been sent</string>
+    <string name="auth_login_new_password">Please log in with your temporary password\nand change your password.</string>
+    <string name="auth_resend_password">Resend temporary password</string>
+    <string name="auth_forgot_title">Find Email/Password</string>
     <!--    Failure-->
+    <string name="failure_login_email_password_error">아이디 혹은 비밀번호가 일치하지 않습니다</string>
+
 </resources>

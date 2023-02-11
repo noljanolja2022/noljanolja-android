@@ -32,13 +32,13 @@ fun EmailAndPassword(
     onPasswordChange: (String) -> Unit
 ) {
     Column(modifier = modifier) {
-        TextFieldWithoutUnderline(
+        RoundedTextField(
             value = email,
             hint = stringResource(id = R.string.email_hint_text),
             onValueChange = onEmailChange,
         )
         Spacer(modifier = Modifier.height(12.dp))
-        TextFieldWithoutUnderline(
+        RoundedTextField(
             value = password,
             hint = stringResource(id = R.string.password_hint_text),
             isPassword = true,
@@ -48,7 +48,7 @@ fun EmailAndPassword(
 }
 
 @Composable
-private fun TextFieldWithoutUnderline(
+fun RoundedTextField(
     value: String,
     hint: String? = null,
     isPassword: Boolean = false,

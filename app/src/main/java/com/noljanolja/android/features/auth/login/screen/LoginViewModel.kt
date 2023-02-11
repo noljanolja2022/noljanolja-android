@@ -30,7 +30,6 @@ class LoginViewModel @Inject constructor(
     private val _errorLoginEmailPassword = MutableStateFlow<Throwable?>(null)
     val errorLoginEmailPassword = _errorLoginEmailPassword.asStateFlow()
 
-    private
     fun handleEvent(event: LoginEvent) {
         when (event) {
             is LoginEvent.GoToMain -> {
@@ -38,7 +37,7 @@ class LoginViewModel @Inject constructor(
                     navigationManager.navigate(NavigationDirections.Home)
                 }
             }
-            is LoginEvent.GoToSignup -> {
+            is LoginEvent.GoJoinMember -> {
                 launch {
                     navigationManager.navigate(NavigationDirections.Signup)
                 }
@@ -48,10 +47,28 @@ class LoginViewModel @Inject constructor(
                     sendError(event.error)
                 }
             }
+            is LoginEvent.ChangeEmail -> {
+                changeEmail(event.email)
+            }
+            is LoginEvent.ChangePassword -> {
+                changePassword(event.password)
+            }
+            LoginEvent.GoForgotEmailAndPassword -> {
+                onForgotIdOrPassword()
+            }
+            LoginEvent.LoginEmail -> {
+                signInWithEmailAndPassword()
+            }
+            LoginEvent.LoginKakao -> {
+                loginWithKakao()
+            }
+            LoginEvent.LoginNaver -> {
+
+            }
         }
     }
 
-    fun loginWithKakao() {
+    private fun loginWithKakao() {
         launch {
             _uiStateFlow.emit(LoginUIState.Loading)
             val result = authRepository.loginWithKakao()
@@ -82,7 +99,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun signInWithEmailAndPassword() {
+    private fun signInWithEmailAndPassword() {
         launch {
             _uiStateFlow.emit(LoginUIState.None)
             try {
@@ -101,6 +118,12 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    private fun onForgotIdOrPassword() {
+        launch {
+            navigationManager.navigate(NavigationDirections.Forgot)
+        }
+    }
+
     override fun changeEmail(text: String) {
         super.changeEmail(text)
         launch {
@@ -116,7 +139,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun goToSignup() {
-        handleEvent(LoginEvent.GoToSignup)
+        handleEvent(LoginEvent.GoJoinMember)
     }
 }
 

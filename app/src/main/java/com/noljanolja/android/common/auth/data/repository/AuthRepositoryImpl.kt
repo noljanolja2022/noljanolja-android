@@ -93,10 +93,15 @@ class AuthRepositoryImpl private constructor(
                 val result = task.result?.data.toString()
                 result
             }.await()
-        val authResult = FirebaseAuth.getInstance().signInWithCustomToken(newToken).await()
+        val authResult = _firebaseAuth.signInWithCustomToken(newToken).await()
         Result.success(authResult.user.toDomainUser()!!)
     } catch (e: Exception) {
         Result.failure(e)
+    }
+
+    override suspend fun sendPasswordResetEmail(email: String): Result<Boolean> {
+        _firebaseAuth.sendPasswordResetEmail(email).await()
+        return Result.success(true)
     }
 
     override fun logOut(): Result<Boolean> {

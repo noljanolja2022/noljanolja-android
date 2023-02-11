@@ -2,7 +2,6 @@ package com.noljanolja.android.common.composable
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -70,11 +69,11 @@ private fun ButtonInRow(
         ),
         modifier = modifier
             .height(42.dp)
-            .width(110.dp)
     ) {
         Text(
             text = text,
-            color = colorResource(id = if (isFocused) R.color.white else R.color.disable_text)
+            color = colorResource(id = if (isFocused) R.color.white else R.color.disable_text),
+            maxLines = 1
         )
     }
 }
