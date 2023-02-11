@@ -11,6 +11,7 @@
     <string name="forgot_password">Forgot your password?</string>
     <string name="email_hint_text">Please enter your email</string>
     <string name="password_hint_text">Please enter your password</string>
+    <string name="confirm_password_hint_text">Please enter your confirm password</string>
     <string name="auth_login_with_SNS">Login with SNS</string>
     <string name="auth_find_email">Find Email</string>
     <string name="auth_find_password">Find password</string>

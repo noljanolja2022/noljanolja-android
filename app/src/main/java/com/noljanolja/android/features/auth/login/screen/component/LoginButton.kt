@@ -15,6 +15,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.noljanolja.android.R
+import com.noljanolja.android.common.composable.RoundedButton
 
 @Composable
 fun LoginButton(
@@ -34,27 +35,4 @@ fun LoginButton(
         ),
         onClick = onClick
     )
-}
-
-@Composable
-fun RoundedButton(
-    modifier: Modifier = Modifier,
-    text: String,
-    isEnable: Boolean = true,
-    colors: ButtonColors = ButtonDefaults.buttonColors(),
-    onClick: () -> Unit,
-) {
-    val shape = RoundedCornerShape(8.dp)
-    Button(
-        onClick = onClick,
-        enabled = isEnable,
-        colors = colors,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .shadow(2.dp, shape = shape),
-        shape = shape
-    ) {
-        Text(text)
-    }
 }

@@ -101,7 +101,7 @@ class LoginViewModel @Inject constructor(
 
     private fun signInWithEmailAndPassword() {
         launch {
-            _uiStateFlow.emit(LoginUIState.None)
+            _uiStateFlow.emit(LoginUIState.Loading)
             try {
                 requireValidEmail()
                 val result =

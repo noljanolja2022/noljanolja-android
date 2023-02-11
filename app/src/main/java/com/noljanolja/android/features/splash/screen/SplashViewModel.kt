@@ -20,7 +20,7 @@ class SplashViewModel @Inject constructor(
                 // TODO: Keep to see splash screen
                 delay(1000)
                 navigationManager.navigate(
-                    user?.let { NavigationDirections.Home } ?: NavigationDirections.Login
+                    user?.let { NavigationDirections.Home } ?: NavigationDirections.LoginOrSignup
                 )
             }
         }

@@ -24,7 +24,7 @@ object NavigationDirections {
 
     // AUTH
 
-    object Login : NavigationCommand {
+    object LoginOrSignup : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options: NavOptions = navOptions {
             popUpTo(Root.destination) {
@@ -32,7 +32,7 @@ object NavigationDirections {
             }
             launchSingleTop = true
         }
-        override val destination: String = "login"
+        override val destination: String = "loginOrSignup"
     }
 
     object Signup : NavigationCommand {

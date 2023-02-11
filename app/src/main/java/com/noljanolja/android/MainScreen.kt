@@ -9,8 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.features.auth.forget.screen.ForgotScreen
-import com.noljanolja.android.features.auth.login.screen.LoginScreen
-import com.noljanolja.android.features.auth.signup.screen.SignupScreen
+import com.noljanolja.android.features.auth.login_or_signup.screen.LoginOrSignupScreen
 import com.noljanolja.android.features.home.screen.HomeScreen
 import com.noljanolja.android.features.splash.screen.SplashScreen
 
@@ -66,11 +65,8 @@ fun NavGraphBuilder.addHomeGraph() {
 }
 
 fun NavGraphBuilder.addAuthGraph() {
-    composable(NavigationDirections.Login.destination) { backStack ->
-        LoginScreen()
-    }
-    composable(NavigationDirections.Signup.destination) {
-        SignupScreen()
+    composable(NavigationDirections.LoginOrSignup.destination) { backStack ->
+        LoginOrSignupScreen()
     }
     composable(NavigationDirections.Forgot.destination) {
         ForgotScreen()

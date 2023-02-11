@@ -1,14 +1,17 @@
 package com.noljanolja.android.common.composable
 
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -78,6 +81,28 @@ private fun ButtonInRow(
     }
 }
 
+@Composable
+fun RoundedButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    isEnable: Boolean = true,
+    colors: ButtonColors = ButtonDefaults.buttonColors(),
+    onClick: () -> Unit,
+) {
+    val shape = RoundedCornerShape(8.dp)
+    Button(
+        onClick = onClick,
+        enabled = isEnable,
+        colors = colors,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(50.dp)
+            .shadow(2.dp, shape = shape),
+        shape = shape
+    ) {
+        Text(text)
+    }
+}
 // Preview
 @Preview
 @Composable

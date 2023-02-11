@@ -25,10 +25,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.noljanolja.android.R
 import com.noljanolja.android.common.composable.FullSizeLoading
+import com.noljanolja.android.common.composable.RoundedButton
 import com.noljanolja.android.common.composable.TwoButtonInRow
 import com.noljanolja.android.features.auth.common.component.FullSizeWithLogo
 import com.noljanolja.android.features.auth.common.component.RoundedTextField
-import com.noljanolja.android.features.auth.login.screen.component.RoundedButton
 import com.noljanolja.android.util.getErrorMessage
 import com.noljanolja.android.util.showToast
 import kotlinx.coroutines.launch

@@ -18,7 +18,7 @@ class HomeViewModel @Inject constructor(
         launch {
             val result = authRepository.logOut()
             if (result.isSuccess) {
-                navigationManager.navigate(NavigationDirections.Login)
+                navigationManager.navigate(NavigationDirections.LoginOrSignup)
             }
         }
     }

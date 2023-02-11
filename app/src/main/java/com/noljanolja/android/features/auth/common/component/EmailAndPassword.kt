@@ -41,7 +41,7 @@ fun EmailAndPassword(
         RoundedTextField(
             value = password,
             hint = stringResource(id = R.string.password_hint_text),
-            isPassword = true,
+            hideText = true,
             onValueChange = onPasswordChange,
         )
     }
@@ -51,7 +51,7 @@ fun EmailAndPassword(
 fun RoundedTextField(
     value: String,
     hint: String? = null,
-    isPassword: Boolean = false,
+    hideText: Boolean = false,
     onValueChange: (String) -> Unit,
 ) {
     val shape = RoundedCornerShape(8.dp)
@@ -66,7 +66,7 @@ fun RoundedTextField(
             )
         },
         keyboardOptions = KeyboardOptions(
-            keyboardType = if (isPassword) KeyboardType.Email else KeyboardType.Password
+            keyboardType = if (hideText) KeyboardType.Email else KeyboardType.Password
         ),
         shape = shape,
         modifier = Modifier
@@ -85,6 +85,6 @@ fun RoundedTextField(
             fontSize = 16.sp,
             color = colorResource(id = R.color.primary_text_color)
         ),
-        visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None
+        visualTransformation = if (hideText) PasswordVisualTransformation() else VisualTransformation.None
     )
 }

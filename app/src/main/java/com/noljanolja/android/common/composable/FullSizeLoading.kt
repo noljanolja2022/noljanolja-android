@@ -10,13 +10,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun FullSizeLoading() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.3F)),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator()
+fun FullSizeLoading(
+    showLoading: Boolean = true,
+    content: @Composable (() -> Unit)? = null,
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        content?.invoke()
+
+        if (showLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.3F)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
     }
 }
