@@ -62,8 +62,8 @@ class LoginViewModel @Inject constructor(
             LoginEvent.LoginKakao -> {
                 loginWithKakao()
             }
-            LoginEvent.LoginNaver -> {
-
+            is LoginEvent.LoginNaver -> {
+                loginWithNaver(event.token)
             }
         }
     }
@@ -80,6 +80,20 @@ class LoginViewModel @Inject constructor(
             _uiStateFlow.emit(LoginUIState.None)
         }
     }
+
+    private fun loginWithNaver(token: String) {
+        launch {
+            _uiStateFlow.emit(LoginUIState.Loading)
+            val result = authRepository.loginWithNaver(token)
+            if (result.isSuccess) {
+                handleEvent(LoginEvent.GoToMain)
+            } else {
+                handleEvent(LoginEvent.ShowError(result.exceptionOrNull()))
+            }
+            _uiStateFlow.emit(LoginUIState.None)
+        }
+    }
+
 
     fun getGoogleIntent() = authRepository.getGoogleSignInIntent()
 

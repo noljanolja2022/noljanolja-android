@@ -10,6 +10,8 @@ import com.google.firebase.functions.FirebaseFunctions
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.user.UserApiClient
+import com.navercorp.nid.NaverIdLoginSDK
+import com.navercorp.nid.oauth.OAuthLoginCallback
 import com.noljanolja.android.common.auth.domain.model.User
 import com.noljanolja.android.common.auth.domain.repository.AuthRepository
 import com.noljanolja.android.util.toDomainUser
@@ -17,6 +19,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+
 
 class AuthRepositoryImpl private constructor(
     private val context: Context,
@@ -43,6 +46,21 @@ class AuthRepositoryImpl private constructor(
             }
         } ?: Result.failure(kakaoResult.exceptionOrNull()!!)
     }
+
+    override suspend fun loginWithNaver(token: String): Result<User> {
+        val result = signInWithCustomToken(
+            FirebaseFunction.Naver,
+            hashMapOf(KEY_TOKEN to token)
+        )
+        if (result.isSuccess) {
+            return Result.success(result.getOrNull()!!)
+        } else {
+            Log.e(TAG_AUTH_ERROR, result.exceptionOrNull()?.message.orEmpty())
+            return Result.failure(result.exceptionOrNull()!!)
+        }
+
+    }
+
 
     override fun getGoogleSignInIntent(): Intent = GoogleSignIn.getClient(
         context,
@@ -84,6 +102,27 @@ class AuthRepositoryImpl private constructor(
         }
     }
 
+    private suspend fun getTokenNaver(): Result<String> = suspendCoroutine { continuation ->
+        val oauthLoginCallback = object : OAuthLoginCallback {
+            override fun onSuccess() {
+                NaverIdLoginSDK.getAccessToken()?.let {
+                    continuation.resume(Result.success(it))
+                } ?: continuation.resume(Result.failure(Throwable("Cannot get access token")))
+            }
+
+            override fun onFailure(httpStatus: Int, message: String) {
+                val errorDescription = NaverIdLoginSDK.getLastErrorDescription()
+                continuation.resume(Result.failure(Throwable(errorDescription)))
+            }
+
+            override fun onError(errorCode: Int, message: String) {
+                onFailure(errorCode, message)
+                continuation.resume(Result.failure(Throwable(message)))
+            }
+        }
+        NaverIdLoginSDK.authenticate(context, oauthLoginCallback)
+    }
+
     private suspend fun signInWithCustomToken(
         function: FirebaseFunction,
         data: HashMap<String, Any>
@@ -116,12 +155,21 @@ class AuthRepositoryImpl private constructor(
         fun getInstance(
             context: Context,
             kakaoApiKey: String,
+            naver_client_id: String,
+            naver_client_secret: String,
+            naver_client_name: String,
             googleWebClientId: String
         ) = AuthRepositoryImpl(
             context,
             googleWebClientId
         ).also {
             KakaoSdk.init(context, kakaoApiKey)
+            NaverIdLoginSDK.initialize(
+                context,
+                naver_client_id,
+                naver_client_secret,
+                naver_client_name
+            )
         }
     }
 }

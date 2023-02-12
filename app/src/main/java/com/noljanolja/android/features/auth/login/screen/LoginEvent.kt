@@ -14,6 +14,6 @@ sealed interface LoginEvent {
 
     object LoginKakao : LoginEvent
 
-    object LoginNaver : LoginEvent
+    data class LoginNaver(val token: String) : LoginEvent
     data class ShowError(val error: Throwable?) : LoginEvent
 }

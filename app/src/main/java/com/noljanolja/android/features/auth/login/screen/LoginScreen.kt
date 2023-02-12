@@ -29,22 +29,31 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.navercorp.nid.NaverIdLoginSDK
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.handleError
 import com.noljanolja.android.features.auth.common.component.EmailAndPassword
 import com.noljanolja.android.features.auth.login.screen.component.LoginButton
 import com.noljanolja.android.util.getErrorMessage
+import com.noljanolja.android.util.showToast
 
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     viewModel.handleError()
     val email by viewModel.emailFlow.collectAsState()
     val password by viewModel.passwordFlow.collectAsState()
     val error by viewModel.errorLoginEmailPassword.collectAsState()
-    val launcher = rememberFirebaseAuthLauncher {
+    val googleLauncher = rememberAuthLauncher {
         viewModel.handleLoginGoogleResult(GoogleSignIn.getSignedInAccountFromIntent(it))
+    }
+    val naverLauncher = rememberAuthLauncher {
+        val accessToken = NaverIdLoginSDK.getAccessToken()
+        accessToken?.let {
+            viewModel.handleEvent(LoginEvent.LoginNaver(it))
+        } ?: context.showToast(NaverIdLoginSDK.getLastErrorDescription())
     }
 
     Column(
@@ -58,7 +67,9 @@ fun LoginScreen(
             handleEvent = {
                 viewModel.handleEvent(it)
             }, onLoginGoogle = {
-                launcher.launch(viewModel.getGoogleIntent())
+                googleLauncher.launch(viewModel.getGoogleIntent())
+            }, onLoginNaver = {
+                NaverIdLoginSDK.authenticate(context, naverLauncher)
             }
         )
     }
@@ -70,6 +81,7 @@ private fun ColumnScope.LoginContent(
     password: String,
     handleEvent: (LoginEvent) -> Unit,
     onLoginGoogle: () -> Unit,
+    onLoginNaver: () -> Unit,
     error: Throwable?,
 ) {
     val context = LocalContext.current
@@ -128,9 +140,7 @@ private fun ColumnScope.LoginContent(
             handleEvent(LoginEvent.LoginKakao)
         })
         Spacer(modifier = Modifier.width(24.dp))
-        LoginSNSButton(painter = painterResource(id = R.drawable.naver), onClick = {
-            handleEvent(LoginEvent.LoginNaver)
-        })
+        LoginSNSButton(painter = painterResource(id = R.drawable.naver), onClick = onLoginNaver)
         Spacer(modifier = Modifier.width(24.dp))
         LoginSNSButton(
             painter = painterResource(id = R.drawable.google), onClick = onLoginGoogle
@@ -140,7 +150,7 @@ private fun ColumnScope.LoginContent(
 }
 
 @Composable
-private fun rememberFirebaseAuthLauncher(
+private fun rememberAuthLauncher(
     handleGoogleSignInResult: (Intent?) -> Unit
 ): ManagedActivityResultLauncher<Intent, ActivityResult> {
     return rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->

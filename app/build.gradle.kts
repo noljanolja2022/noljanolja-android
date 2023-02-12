@@ -84,6 +84,9 @@ dependencies {
     // Kakao
     implementation("com.kakao.sdk:v2-user:2.12.1")
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+
+    // Naver
+    implementation("com.navercorp.nid:oauth:5.4.0")
 }
 
 kapt {

@@ -26,6 +26,9 @@ class AppModule {
     ): AuthRepository = AuthRepositoryImpl.getInstance(
         context = appContext,
         kakaoApiKey = appContext.getString(R.string.kakao_api_key),
-        googleWebClientId = appContext.getString(R.string.web_client_id)
+        googleWebClientId = appContext.getString(R.string.web_client_id),
+        naver_client_id = "3zDg6vMsJmoFk2TGOjcq",
+        naver_client_secret = "8keRny2c_4",
+        naver_client_name = "놀자놀자"
     )
 }

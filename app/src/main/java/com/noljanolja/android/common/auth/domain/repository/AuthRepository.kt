@@ -17,5 +17,7 @@ interface AuthRepository {
 
     suspend fun sendPasswordResetEmail(email: String): Result<Boolean>
 
+    suspend fun loginWithNaver(token: String): Result<User>
+
     fun logOut(): Result<Boolean>
 }
