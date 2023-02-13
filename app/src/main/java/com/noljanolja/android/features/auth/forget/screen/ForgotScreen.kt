@@ -1,6 +1,5 @@
 package com.noljanolja.android.features.auth.forget.screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,7 +25,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.noljanolja.android.R
 import com.noljanolja.android.common.composable.FullSizeLoading
 import com.noljanolja.android.common.composable.RoundedButton
-import com.noljanolja.android.common.composable.TwoButtonInRow
 import com.noljanolja.android.features.auth.common.component.FullSizeWithLogo
 import com.noljanolja.android.features.auth.common.component.RoundedTextField
 import com.noljanolja.android.util.getErrorMessage
@@ -83,15 +81,6 @@ fun ForgotContent(
                 ForgotHeader {
                     handleEvent(ForgotEvent.Back)
                 }
-                Spacer(modifier = Modifier.height(20.dp))
-                TwoButtonInRow(
-                    firstText = stringResource(id = R.string.auth_find_email),
-                    secondText = stringResource(id = R.string.auth_find_password),
-                    indexFocused = 1,
-                    firstClick = { },
-                    secondClick = {
-                    },
-                )
                 when (uiState) {
                     is ForgotUIState.Normal -> {
                         ForgotForm(
@@ -104,14 +93,14 @@ fun ForgotContent(
                         )
                     }
                     is ForgotUIState.VerifyCompleted -> {
-                        VerificationComplete {
-                            handleEvent(ForgotEvent.NextVerification)
-                        }
-                    }
-                    is ForgotUIState.ResendPassword -> {
-                        ResendEmailComponent {
-                            handleEvent(ForgotEvent.ResendPassword)
-                        }
+                        ResendEmailComponent(
+                            onResendPassword = {
+                                handleEvent(ForgotEvent.ResendPassword)
+                            },
+                            onBack = {
+                                handleEvent(ForgotEvent.Back)
+                            }
+                        )
                     }
                 }
             }
@@ -150,38 +139,9 @@ private fun ColumnScope.ForgotForm(
 }
 
 @Composable
-fun ColumnScope.VerificationComplete(
-    onNext: () -> Unit
-) {
-    Spacer(modifier = Modifier.weight(1F))
-    Image(
-        painterResource(id = R.drawable.ic_check_circle),
-        contentDescription = null,
-        modifier = Modifier.size(62.dp)
-    )
-    Spacer(modifier = Modifier.height(14.dp))
-    Text(
-        stringResource(id = R.string.auth_email_verification_complete),
-        style = TextStyle(
-            fontWeight = FontWeight.W700,
-            fontSize = 16.sp,
-            color = colorResource(id = R.color.primary_text_color)
-        )
-    )
-    Spacer(modifier = Modifier.weight(1F))
-    RoundedButton(
-        text = stringResource(id = R.string.common_next),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = colorResource(id = R.color.primary_text_color),
-            contentColor = Color.White,
-        ),
-        onClick = onNext
-    )
-}
-
-@Composable
 fun ColumnScope.ResendEmailComponent(
-    onResendPassword: () -> Unit
+    onResendPassword: () -> Unit,
+    onBack: () -> Unit,
 ) {
     Spacer(
         modifier = Modifier
@@ -230,6 +190,14 @@ fun ColumnScope.ResendEmailComponent(
         onClick = onResendPassword
     )
     Spacer(modifier = Modifier.weight(1F))
+    RoundedButton(
+        text = stringResource(id = R.string.login),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = colorResource(id = R.color.primaryColor),
+            contentColor = Color.White,
+        ),
+        onClick = onBack
+    )
 }
 
 @Composable

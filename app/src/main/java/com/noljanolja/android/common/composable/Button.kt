@@ -1,5 +1,6 @@
 package com.noljanolja.android.common.composable
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -53,15 +54,10 @@ fun TwoButtonInRow(
 
 @Composable
 private fun ButtonInRow(
-    text: String,
-    isFocused: Boolean,
-    modifier: Modifier,
-    onClick: () -> Unit
+    text: String, isFocused: Boolean, modifier: Modifier, onClick: () -> Unit
 ) {
     Button(
-        onClick = onClick,
-        shape = RectangleShape,
-        colors = ButtonDefaults.buttonColors(
+        onClick = onClick, shape = RectangleShape, colors = ButtonDefaults.buttonColors(
             containerColor = colorResource(
                 id = if (isFocused) {
                     R.color.primary_text_color
@@ -69,9 +65,7 @@ private fun ButtonInRow(
                     R.color.background
                 }
             )
-        ),
-        modifier = modifier
-            .height(42.dp)
+        ), modifier = modifier.height(42.dp)
     ) {
         Text(
             text = text,
@@ -103,14 +97,39 @@ fun RoundedButton(
         Text(text)
     }
 }
+
+@Composable
+fun OutlineButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    isEnable: Boolean = true,
+    colors: ButtonColors = ButtonDefaults.outlinedButtonColors(
+        disabledContentColor = colorResource(id = R.color.disable_text),
+        containerColor = colorResource(id = R.color.white),
+    ),
+    onClick: () -> Unit,
+) {
+    val shape = RoundedCornerShape(8.dp)
+    Button(
+        onClick = onClick,
+        enabled = isEnable,
+        colors = colors,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(50.dp)
+            .shadow(2.dp, shape = shape),
+        shape = shape,
+        border = BorderStroke(1.dp, colorResource(id = R.color.primary_text_color))
+    ) {
+        Text(text)
+    }
+}
+
 // Preview
 @Preview
 @Composable
 private fun TwoButtonInRowPreview() {
-    TwoButtonInRow(firstText = "Login",
-        secondText = "Signup",
-        indexFocused = 1,
-        firstClick = { }) {
+    TwoButtonInRow(firstText = "Login", secondText = "Signup", indexFocused = 1, firstClick = { }) {
 
     }
 }

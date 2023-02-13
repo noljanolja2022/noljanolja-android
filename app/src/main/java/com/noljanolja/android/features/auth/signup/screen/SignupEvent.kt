@@ -8,5 +8,15 @@ sealed interface SignupEvent {
 
     data class ChangeConfirmPassword(val confirm: String) : SignupEvent
 
+    object Next : SignupEvent
+
+    object Back : SignupEvent
+
     object Signup : SignupEvent
+
+    object ToggleAllAgreement : SignupEvent
+
+    data class ToggleAgreement(val id: String) : SignupEvent
+
+    data class GoTermsOfService(val id: String) : SignupEvent
 }

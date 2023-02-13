@@ -43,7 +43,7 @@ fun LoginOrSignupContent(
     val signupViewModel: SignupViewModel = hiltViewModel()
     val loginUIState by loginViewModel.uiStateFlow.collectAsState()
     val signupUIState by signupViewModel.uiStateFlow.collectAsState()
-    FullSizeLoading(loginUIState == LoginUIState.Loading || signupUIState == SignupUIState.Loading) {
+    FullSizeLoading(loginUIState == LoginUIState.Loading || (signupUIState as? SignupUIState.SignupForm)?.isLoading == true) {
         FullSizeWithLogo {
             Card(
                 modifier = modifier.fillMaxSize(),

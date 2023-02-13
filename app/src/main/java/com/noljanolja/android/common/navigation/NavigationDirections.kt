@@ -50,7 +50,14 @@ object NavigationDirections {
         }
         override val destination: String = "forget"
     }
-    
+
+    object TermsOfService : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options: NavOptions = navOptions {
+            launchSingleTop = true
+        }
+        override val destination: String = "termsOfService"
+    }
     // Home 
 
     object Home : NavigationCommand {

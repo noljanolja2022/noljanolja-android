@@ -44,11 +44,6 @@ class ForgotViewModel @Inject constructor(
                     }
                 }
             }
-            is ForgotEvent.NextVerification -> {
-                launch {
-                    _uiStateFlow.emit(ForgotUIState.ResendPassword)
-                }
-            }
             is ForgotEvent.ResendPassword -> {
                 launch {
                     // TODO
@@ -61,5 +56,4 @@ class ForgotViewModel @Inject constructor(
 sealed interface ForgotUIState {
     data class Normal(val email: String, val isLoading: Boolean) : ForgotUIState
     object VerifyCompleted : ForgotUIState
-    object ResendPassword : ForgotUIState
 }
