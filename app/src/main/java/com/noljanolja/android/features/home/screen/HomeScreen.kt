@@ -1,19 +1,23 @@
 package com.noljanolja.android.features.home.screen
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.BottomAppBar
+import androidx.compose.material.BottomNavigation
 import androidx.compose.material.FabPosition
 import androidx.compose.material.Scaffold
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -23,6 +27,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.noljanolja.android.R
 
 @Composable
 fun HomeScreen(
@@ -31,15 +36,35 @@ fun HomeScreen(
     val navController = rememberNavController()
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                onNavigationItemClick(navController, HomeNavigationItem.HomeItem3)
-            }) {
-                Icon(Icons.Default.Add, contentDescription = null)
+            FloatingActionButton(
+                shape = CircleShape,
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = Color.White,
+                modifier = Modifier
+                    .size(68.dp),
+                onClick = {
+                    onNavigationItemClick(navController, HomeNavigationItem.HomeItem3)
+                }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_wallet),
+                    contentDescription = null,
+                    modifier = Modifier.size(36.dp),
+                )
             }
         },
         isFloatingActionButtonDocked = true,
         floatingActionButtonPosition = FabPosition.Center,
-        bottomBar = { HomeBottomBar(navController) }
+        bottomBar = {
+            BottomAppBar(
+                modifier = Modifier,
+                backgroundColor = Color.White,
+                cutoutShape = RoundedCornerShape(50),
+                //backgroundColor = Color.White,
+                elevation = 22.dp
+            ) {
+                HomeBottomBar(navController)
+            }
+        }
     ) { contentPadding ->
         NavHost(
             navController = navController,
@@ -88,36 +113,46 @@ fun HomeBottomBar(navController: NavHostController) {
     val items = listOf(
         HomeNavigationItem.HomeItem1,
         HomeNavigationItem.HomeItem2,
+        null,
         HomeNavigationItem.HomeItem3,
-        HomeNavigationItem.HomeItem4
+        HomeNavigationItem.HomeItem4,
     )
-    BottomAppBar(
-        actions = {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentDestination = navBackStackEntry?.destination
-            items.forEach { item ->
+    BottomNavigation(
+        elevation = 0.dp,
+        backgroundColor = Color.White
+    ) {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentDestination = navBackStackEntry?.destination
+        items.forEach { item ->
+            item?.let {
                 val isSelected =
                     currentDestination?.hierarchy?.any { it.route == item.route } == true
-                val label = stringResource(item.label)
-                // TODO update icon
-                var icon = Icons.Default.Delete
-                var iconColor = MaterialTheme.colorScheme.onSurfaceVariant
-                if (isSelected) {
-                    icon = Icons.Default.Home
-                    iconColor = MaterialTheme.colorScheme.primary
+                val iconId = item.icon
+                val iconColor = if (isSelected) {
+                    MaterialTheme.colorScheme.secondary
+                } else {
+                    colorResource(id = R.color.secondary_text_color)
                 }
-
                 NavigationBarItem(
-                    icon = { Icon(icon, label, tint = iconColor) },
-                    label = { Text(label, maxLines = 1) },
+                    icon = {
+                        Icon(
+                            painterResource(id = iconId),
+                            null,
+                            tint = iconColor,
+                            modifier = Modifier.size(30.dp)
+                        )
+                    },
                     selected = isSelected,
+                    colors = NavigationBarItemDefaults.colors(
+                        indicatorColor = Color.White
+                    ),
                     onClick = {
                         onNavigationItemClick(navController, item)
                     }
                 )
-            }
+            } ?: Spacer(modifier = Modifier.weight(1F))
         }
-    )
+    }
 }
 
 private fun onNavigationItemClick(

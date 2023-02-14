@@ -13,29 +13,29 @@ sealed class HomeNavigationItem(
 ) {
     object HomeItem1 : HomeNavigationItem(
         NavigationDirections.HomeItem1.destination,
-        R.drawable.ic_launcher_background,
-        R.drawable.ic_launcher_foreground,
+        R.drawable.ic_menu,
+        R.drawable.ic_menu,
         R.string.home_item_1,
     )
 
     object HomeItem2 : HomeNavigationItem(
         NavigationDirections.HomeItem2.destination,
-        R.drawable.ic_launcher_background,
-        R.drawable.ic_launcher_foreground,
+        R.drawable.ic_house,
+        R.drawable.ic_house,
         R.string.home_item_1,
     )
 
     object HomeItem3 : HomeNavigationItem(
         NavigationDirections.HomeItem3.destination,
-        R.drawable.ic_launcher_background,
-        R.drawable.ic_launcher_foreground,
+        R.drawable.ic_store,
+        R.drawable.ic_store,
         R.string.home_item_1,
     )
 
     object HomeItem4 : HomeNavigationItem(
         NavigationDirections.HomeItem4.destination,
-        R.drawable.ic_launcher_background,
-        R.drawable.ic_launcher_foreground,
+        R.drawable.ic_user,
+        R.drawable.ic_user,
         R.string.home_item_1,
     )
 }
