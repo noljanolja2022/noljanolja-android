@@ -29,7 +29,10 @@ class AuthRepositoryImpl private constructor(
 
     private val functions: FirebaseFunctions by lazy { FirebaseFunctions.getInstance(REGION) }
 
-    override fun getCurrentUser() = flow { emit(_firebaseAuth.currentUser.toDomainUser()) }
+    override fun getCurrentUser() = flow {
+        _firebaseAuth.currentUser?.reload()
+        emit(_firebaseAuth.currentUser.toDomainUser())
+    }
 
     override suspend fun loginWithKakao(): Result<User> {
         val kakaoResult = getTokenKakao()
@@ -140,6 +143,11 @@ class AuthRepositoryImpl private constructor(
 
     override suspend fun sendPasswordResetEmail(email: String): Result<Boolean> {
         _firebaseAuth.sendPasswordResetEmail(email).await()
+        return Result.success(true)
+    }
+
+    override suspend fun sendEmailVerification(): Result<Boolean> {
+        _firebaseAuth.currentUser?.sendEmailVerification()?.await()
         return Result.success(true)
     }
 

@@ -8,7 +8,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.noljanolja.android.common.auth.domain.repository.AuthRepository
 import com.noljanolja.android.common.base.launch
-import com.noljanolja.android.common.error.LoginEmailPasswordFailed
+import com.noljanolja.android.common.error.ValidEmailFailed
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.features.auth.common.BaseAuthViewModel
@@ -26,9 +26,6 @@ class LoginViewModel @Inject constructor(
 
     private val _uiStateFlow = MutableStateFlow<LoginUIState>(LoginUIState.None)
     val uiStateFlow = _uiStateFlow.asStateFlow()
-
-    private val _errorLoginEmailPassword = MutableStateFlow<Throwable?>(null)
-    val errorLoginEmailPassword = _errorLoginEmailPassword.asStateFlow()
 
     fun handleEvent(event: LoginEvent) {
         when (event) {
@@ -124,8 +121,10 @@ class LoginViewModel @Inject constructor(
                     throw it
                 }
                 navigationManager.navigate(NavigationDirections.Home)
+            } catch (e: ValidEmailFailed) {
+                sendEmailError(e)
             } catch (e: Exception) {
-                _errorLoginEmailPassword.emit(LoginEmailPasswordFailed)
+                sendError(e)
             } finally {
                 _uiStateFlow.emit(LoginUIState.None)
             }
@@ -138,19 +137,6 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    override fun changeEmail(text: String) {
-        super.changeEmail(text)
-        launch {
-            _errorLoginEmailPassword.emit(null)
-        }
-    }
-
-    override fun changePassword(text: String) {
-        super.changePassword(text)
-        launch {
-            _errorLoginEmailPassword.emit(null)
-        }
-    }
 
     fun goToSignup() {
         handleEvent(LoginEvent.GoJoinMember)

@@ -34,7 +34,6 @@ import com.noljanolja.android.R
 import com.noljanolja.android.common.base.handleError
 import com.noljanolja.android.features.auth.common.component.EmailAndPassword
 import com.noljanolja.android.features.auth.login.screen.component.LoginButton
-import com.noljanolja.android.util.getErrorMessage
 import com.noljanolja.android.util.showToast
 
 @Composable
@@ -45,7 +44,8 @@ fun LoginScreen(
     viewModel.handleError()
     val email by viewModel.emailFlow.collectAsState()
     val password by viewModel.passwordFlow.collectAsState()
-    val error by viewModel.errorLoginEmailPassword.collectAsState()
+    val emailError by viewModel.emailError.collectAsState()
+    val passwordError by viewModel.passwordError.collectAsState()
     val googleLauncher = rememberAuthLauncher {
         viewModel.handleLoginGoogleResult(GoogleSignIn.getSignedInAccountFromIntent(it))
     }
@@ -63,7 +63,8 @@ fun LoginScreen(
         LoginContent(
             email = email,
             password = password,
-            error = error,
+            emailError = emailError,
+            passwordError = passwordError,
             handleEvent = {
                 viewModel.handleEvent(it)
             }, onLoginGoogle = {
@@ -79,28 +80,24 @@ fun LoginScreen(
 private fun ColumnScope.LoginContent(
     email: String,
     password: String,
+    emailError: Throwable?,
+    passwordError: Throwable?,
     handleEvent: (LoginEvent) -> Unit,
     onLoginGoogle: () -> Unit,
     onLoginNaver: () -> Unit,
-    error: Throwable?,
 ) {
     val context = LocalContext.current
-    EmailAndPassword(email = email, password = password, onEmailChange = {
-        handleEvent(LoginEvent.ChangeEmail(it))
-    }, onPasswordChange = {
-        handleEvent(LoginEvent.ChangePassword(it))
-    })
-    error?.let {
-        Text(
-            context.getErrorMessage(it),
-            modifier = Modifier
-                .padding(start = 24.dp, top = 12.dp)
-                .align(Alignment.Start),
-            style = TextStyle(
-                color = colorResource(id = R.color.error_text_color), fontSize = 14.sp
-            )
-        )
-    }
+    EmailAndPassword(
+        email = email,
+        password = password,
+        emailError = emailError,
+        passwordError = passwordError,
+        onEmailChange = {
+            handleEvent(LoginEvent.ChangeEmail(it))
+        }, onPasswordChange = {
+            handleEvent(LoginEvent.ChangePassword(it))
+        }
+    )
     Text(text = stringResource(id = R.string.forgot_password), style = TextStyle(
         fontSize = 14.sp, color = colorResource(id = R.color.secondary_text_color)
     ), modifier = Modifier

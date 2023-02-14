@@ -41,6 +41,8 @@ fun SignupScreen(
     val uiState by signupViewModel.uiStateFlow.collectAsState()
     val email by signupViewModel.emailFlow.collectAsState()
     val password by signupViewModel.passwordFlow.collectAsState()
+    val emailError by signupViewModel.emailError.collectAsState()
+    val passwordError by signupViewModel.passwordError.collectAsState()
     val confirmPassword by signupViewModel.confirmPasswordFlow.collectAsState()
 
     Column(
@@ -61,6 +63,8 @@ fun SignupScreen(
                 SignupForm(
                     email,
                     password,
+                    emailError,
+                    passwordError,
                     confirmPassword,
                 ) {
                     signupViewModel.handleEvent(it)
@@ -145,6 +149,8 @@ private fun ColumnScope.SignupProgress(
 private fun ColumnScope.SignupForm(
     email: String,
     password: String,
+    emailError: Throwable?,
+    passwordError: Throwable?,
     confirmPassword: String,
     handleEvent: (SignupEvent) -> Unit,
 ) {
@@ -152,6 +158,8 @@ private fun ColumnScope.SignupForm(
     EmailAndPassword(
         email = email,
         password = password,
+        emailError = emailError,
+        passwordError = passwordError,
         onEmailChange = {
             handleEvent(SignupEvent.ChangeEmail(it))
         },

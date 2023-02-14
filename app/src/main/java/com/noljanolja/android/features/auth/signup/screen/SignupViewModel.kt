@@ -2,7 +2,7 @@ package com.noljanolja.android.features.auth.signup.screen
 
 import com.noljanolja.android.common.auth.domain.repository.AuthRepository
 import com.noljanolja.android.common.base.launch
-import com.noljanolja.android.common.base.tryLaunch
+import com.noljanolja.android.common.error.ValidEmailFailed
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.features.auth.common.BaseAuthViewModel
@@ -23,6 +23,15 @@ class SignupViewModel @Inject constructor(
 
     private val _confirmPasswordFlow = MutableStateFlow("")
     val confirmPasswordFlow = _confirmPasswordFlow.asStateFlow()
+
+    init {
+        launch {
+            val currentUser = authRepository.getCurrentUser().first() ?: return@launch
+            if (!currentUser.isVerify) {
+                _uiStateFlow.emit(SignupUIState.VerificationEmail)
+            }
+        }
+    }
 
     fun handleEvent(event: SignupEvent) {
         when (event) {
@@ -105,20 +114,27 @@ class SignupViewModel @Inject constructor(
     }
 
     private fun onSignup() {
-        tryLaunch(
-            finally = {
-                _uiStateFlow.emit(SignupUIState.VerificationEmail)
-            }
-        ) {
-            _uiStateFlow.emit(SignupUIState.SignupForm(isLoading = true))
-            requireValidEmail()
-            val result =
-                authRepository.createUserWithEmailAndPassword(
-                    emailFlow.value,
-                    passwordFlow.value
-                )
-            if (result.isFailure) {
-                throw result.exceptionOrNull()!!
+        launch {
+            try {
+                _uiStateFlow.emit(SignupUIState.SignupForm(isLoading = true))
+                requireValidEmail()
+                val result =
+                    authRepository.createUserWithEmailAndPassword(
+                        emailFlow.value,
+                        passwordFlow.value
+                    )
+                if (result.isFailure) {
+                    throw result.exceptionOrNull()!!
+                } else {
+                    authRepository.sendEmailVerification()
+                    _uiStateFlow.emit(SignupUIState.VerificationEmail)
+                }
+            } catch (e: ValidEmailFailed) {
+                _uiStateFlow.emit(SignupUIState.SignupForm())
+                sendEmailError(e)
+            } catch (e: Exception) {
+                _uiStateFlow.emit(SignupUIState.SignupForm())
+                sendError(e)
             }
         }
     }

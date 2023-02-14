@@ -3,7 +3,7 @@ package com.noljanolja.android.util
 import android.content.Context
 import android.widget.Toast
 import com.noljanolja.android.R
-import com.noljanolja.android.common.error.LoginEmailPasswordFailed
+import com.noljanolja.android.common.error.ValidEmailFailed
 
 fun Context.showToast(
     text: String?,
@@ -11,6 +11,6 @@ fun Context.showToast(
 ) = Toast.makeText(this, text, time).show()
 
 fun Context.getErrorMessage(error: Throwable) = when (error) {
-    is LoginEmailPasswordFailed -> getString(R.string.failure_login_email_password_error)
+    is ValidEmailFailed -> getString(R.string.invalid_email_format)
     else -> error.message.orEmpty()
 }

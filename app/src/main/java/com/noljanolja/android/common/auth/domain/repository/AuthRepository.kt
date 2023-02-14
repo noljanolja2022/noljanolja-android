@@ -19,5 +19,7 @@ interface AuthRepository {
 
     suspend fun loginWithNaver(token: String): Result<User>
 
+    suspend fun sendEmailVerification(): Result<Boolean>
+
     fun logOut(): Result<Boolean>
 }

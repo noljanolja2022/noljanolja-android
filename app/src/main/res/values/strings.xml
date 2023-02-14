@@ -22,6 +22,6 @@
     <string name="auth_resend_password">Resend temporary password</string>
     <string name="auth_forgot_title">Find Password</string>
     <!--    Failure-->
-    <string name="failure_login_email_password_error">아이디 혹은 비밀번호가 일치하지 않습니다</string>
+    <string name="invalid_email_format">Email is not valid</string>
 
 </resources>
