@@ -1,3 +1,5 @@
+import com.google.firebase.appdistribution.gradle.firebaseAppDistribution
+
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -5,6 +7,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+    id("com.google.firebase.appdistribution")
 }
 
 android {
@@ -14,8 +17,8 @@ android {
         applicationId = "com.noljanolja.app.android"
         minSdk = 21
         targetSdk = 33
-        versionCode = 2
-        versionName = "0.0.2"
+        versionCode = 3
+        versionName = "0.0.3"
         testInstrumentationRunner = "com.noljanolja.android.InstrumentationTestRunner"
         multiDexEnabled = true
     }
@@ -27,7 +30,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions{
+    kotlinOptions {
         jvmTarget = "11"
     }
     composeOptions {
@@ -40,8 +43,22 @@ android {
         }
     }
     buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
+        release {
+            isMinifyEnabled = true
+            firebaseAppDistribution {
+                artifactType = "APK"
+                serviceCredentialsFile = "key/key_distributor.json"
+                releaseNotes = "Version release test app distributor and full flow auth"
+                testers = "doduchieu.kstn@gmail.com"
+            }
+        }
+        debug {
+            firebaseAppDistribution {
+                artifactType = "APK"
+                serviceCredentialsFile = "key/key_distributor.json"
+                releaseNotes = ""
+                testers = "doduchieu.kstn@gmail.com"
+            }
         }
     }
     applicationVariants.all {
