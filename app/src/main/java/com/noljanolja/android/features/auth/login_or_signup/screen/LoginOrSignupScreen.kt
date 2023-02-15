@@ -2,7 +2,6 @@ package com.noljanolja.android.features.auth.login_or_signup.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
@@ -53,7 +52,7 @@ fun LoginOrSignupContent(
                     topEnd = 20.dp
                 )
             ) {
-                LazyColumn(
+                Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(Color.White)
@@ -61,7 +60,6 @@ fun LoginOrSignupContent(
                         .padding(top = 18.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     content = {
-                    item {
                         TwoButtonInRow(
                             modifier = Modifier.fillMaxWidth(),
                             fModifier = Modifier.weight(1F),
@@ -77,14 +75,12 @@ fun LoginOrSignupContent(
                             }
                         )
                         Spacer(modifier = Modifier.height(24.dp))
-                    }
-                    item {
+
                         when (uiState) {
                             LoginOrSignupUIState.Login -> LoginScreen(viewModel = loginViewModel)
                             LoginOrSignupUIState.Signup -> SignupScreen(signupViewModel = signupViewModel)
                         }
-                    }
-                })
+                    })
             }
         }
     }

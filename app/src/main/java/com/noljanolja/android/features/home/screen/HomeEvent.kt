@@ -6,5 +6,5 @@ sealed interface HomeEvent {
         val onChange: () -> Unit
     ) : HomeEvent
 
-    object GoToLogin : HomeEvent
+    object LoginOrVerifyEmail : HomeEvent
 }
