@@ -6,7 +6,7 @@ import com.noljanolja.android.services.analytics.Tracker
 import com.noljanolja.android.services.analytics.getDataAsBundle
 
 class FirebaseTracker internal constructor(
-    private val firebaseAnalytics: FirebaseAnalytics,
+    private val firebaseAnalytics: FirebaseAnalytics
 ) : Tracker {
 
     override var isEnable: Boolean = false

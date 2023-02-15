@@ -1,4 +1,4 @@
-package com.noljanolja.android.features.home.screen
+package com.noljanolja.android.features.home.root.screen
 
 sealed interface HomeEvent {
     data class ChangeNavigationItem(

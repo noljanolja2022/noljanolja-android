@@ -1,4 +1,4 @@
-package com.noljanolja.android.features.home.screen
+package com.noljanolja.android.features.home.root.screen
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,7 +42,7 @@ fun HomeScreen(
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded },
-        skipHalfExpanded = true,
+        skipHalfExpanded = true
     )
 
     LaunchedEffect(key1 = viewModel.showRequireLoginPopupEvent) {
@@ -72,7 +72,8 @@ fun HomeScreen(
             RequireLoginBottomSheet {
                 viewModel.handleEvent(HomeEvent.LoginOrVerifyEmail)
             }
-        }) {
+        }
+    ) {
         Scaffold(
             floatingActionButton = { HomeFloatingActionButton(navController = navController) },
             isFloatingActionButtonDocked = true,
@@ -82,7 +83,7 @@ fun HomeScreen(
                     modifier = Modifier,
                     backgroundColor = Color.White,
                     cutoutShape = RoundedCornerShape(50),
-                    //backgroundColor = Color.White,
+                    // backgroundColor = Color.White,
                     elevation = 22.dp
                 ) {
                     HomeBottomBar(navController, onItemClick = {
@@ -162,7 +163,7 @@ fun HomeBottomBar(
         HomeNavigationItem.HomeItem,
         HomeNavigationItem.WalletItem,
         HomeNavigationItem.ShopItem,
-        HomeNavigationItem.UserItem,
+        HomeNavigationItem.UserItem
     )
     BottomNavigation(
         elevation = 0.dp,
@@ -200,6 +201,3 @@ fun HomeBottomBar(
         }
     }
 }
-
-
-

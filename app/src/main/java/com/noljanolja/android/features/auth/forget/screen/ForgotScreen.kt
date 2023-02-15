@@ -59,7 +59,7 @@ fun ForgotContent(
     handleEvent: (ForgotEvent) -> Unit
 ) {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize()
     ) {
         Card(
             shape = RoundedCornerShape(
@@ -75,7 +75,7 @@ fun ForgotContent(
                         vertical = 24.dp,
                         horizontal = 20.dp
                     ),
-                horizontalAlignment = Alignment.CenterHorizontally,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 ForgotHeader {
                     handleEvent(ForgotEvent.Back)
@@ -86,7 +86,8 @@ fun ForgotContent(
                             uiState = uiState,
                             onChangeEmail = {
                                 handleEvent(ForgotEvent.ChangeEmail(it))
-                            }, onSubmit = {
+                            },
+                            onSubmit = {
                                 handleEvent(ForgotEvent.VerifyEmail)
                             }
                         )
@@ -140,7 +141,7 @@ private fun ColumnScope.ForgotForm(
 @Composable
 fun ColumnScope.ResendEmailComponent(
     onResendPassword: () -> Unit,
-    onBack: () -> Unit,
+    onBack: () -> Unit
 ) {
     Spacer(
         modifier = Modifier
@@ -184,7 +185,7 @@ fun ColumnScope.ResendEmailComponent(
         text = stringResource(id = R.string.auth_resend_password),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.tertiary,
-            contentColor = Color.White,
+            contentColor = Color.White
         ),
         onClick = onResendPassword
     )
@@ -193,7 +194,7 @@ fun ColumnScope.ResendEmailComponent(
         text = stringResource(id = R.string.login),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = Color.White,
+            contentColor = Color.White
         ),
         onClick = onBack
     )

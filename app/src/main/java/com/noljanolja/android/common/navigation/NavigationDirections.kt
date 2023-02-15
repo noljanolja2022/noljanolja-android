@@ -55,7 +55,7 @@ object NavigationDirections {
         }
         override val destination: String = "termsOfService"
     }
-    // Home 
+    // Home
 
     object Home : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()

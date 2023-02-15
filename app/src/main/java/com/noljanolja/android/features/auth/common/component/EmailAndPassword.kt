@@ -36,7 +36,7 @@ fun EmailAndPassword(
             value = email,
             error = emailError,
             hint = stringResource(id = R.string.email_hint_text),
-            onValueChange = onEmailChange,
+            onValueChange = onEmailChange
         )
         emailError?.let {
             Text(
@@ -45,7 +45,8 @@ fun EmailAndPassword(
                     .padding(start = 24.dp, top = 12.dp)
                     .align(Alignment.Start),
                 style = TextStyle(
-                    color = MaterialTheme.colorScheme.error, fontSize = 14.sp
+                    color = MaterialTheme.colorScheme.error,
+                    fontSize = 14.sp
                 )
             )
         }
@@ -55,7 +56,7 @@ fun EmailAndPassword(
             hint = stringResource(id = R.string.password_hint_text),
             error = passwordError,
             hideText = true,
-            onValueChange = onPasswordChange,
+            onValueChange = onPasswordChange
         )
         passwordError?.let {
             Text(
@@ -79,7 +80,7 @@ fun RoundedTextField(
     hint: String? = null,
     error: Throwable? = null,
     hideText: Boolean = false,
-    onValueChange: (String) -> Unit,
+    onValueChange: (String) -> Unit
 ) {
     val shape = RoundedCornerShape(8.dp)
     val borderColor =
@@ -90,7 +91,7 @@ fun RoundedTextField(
         colors = TextFieldDefaults.textFieldColors(
             focusedIndicatorColor = borderColor,
             containerColor = MaterialTheme.colorScheme.background,
-            unfocusedIndicatorColor = borderColor,
+            unfocusedIndicatorColor = borderColor
         ),
         keyboardOptions = KeyboardOptions(
             keyboardType = if (hideText) KeyboardType.Email else KeyboardType.Password
@@ -112,6 +113,6 @@ fun RoundedTextField(
             fontSize = 16.sp,
             color = MaterialTheme.colorScheme.secondary
         ),
-        visualTransformation = if (hideText) PasswordVisualTransformation() else VisualTransformation.None,
+        visualTransformation = if (hideText) PasswordVisualTransformation() else VisualTransformation.None
     )
 }

@@ -67,9 +67,11 @@ fun LoginScreen(
             passwordError = passwordError,
             handleEvent = {
                 viewModel.handleEvent(it)
-            }, onLoginGoogle = {
+            },
+            onLoginGoogle = {
                 googleLauncher.launch(viewModel.getGoogleIntent())
-            }, onLoginNaver = {
+            },
+            onLoginNaver = {
                 NaverIdLoginSDK.authenticate(context, naverLauncher)
             }
         )
@@ -84,7 +86,7 @@ private fun ColumnScope.LoginContent(
     passwordError: Throwable?,
     handleEvent: (LoginEvent) -> Unit,
     onLoginGoogle: () -> Unit,
-    onLoginNaver: () -> Unit,
+    onLoginNaver: () -> Unit
 ) {
     val context = LocalContext.current
     EmailAndPassword(
@@ -94,14 +96,16 @@ private fun ColumnScope.LoginContent(
         passwordError = passwordError,
         onEmailChange = {
             handleEvent(LoginEvent.ChangeEmail(it))
-        }, onPasswordChange = {
+        },
+        onPasswordChange = {
             handleEvent(LoginEvent.ChangePassword(it))
         }
     )
     Text(
         text = stringResource(id = R.string.forgot_password),
         style = TextStyle(
-            fontSize = 14.sp, color = MaterialTheme.colorScheme.outline
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.outline
         ),
         modifier = Modifier
             .padding(top = 28.dp)
@@ -126,7 +130,8 @@ private fun ColumnScope.LoginContent(
             stringResource(id = R.string.auth_login_with_SNS),
             modifier = Modifier.padding(24.dp),
             style = TextStyle(
-                fontSize = 12.sp, color = MaterialTheme.colorScheme.outline
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.outline
             )
         )
         Divider(
@@ -144,7 +149,8 @@ private fun ColumnScope.LoginContent(
         LoginSNSButton(painter = painterResource(id = R.drawable.naver), onClick = onLoginNaver)
         Spacer(modifier = Modifier.width(24.dp))
         LoginSNSButton(
-            painter = painterResource(id = R.drawable.google), onClick = onLoginGoogle
+            painter = painterResource(id = R.drawable.google),
+            onClick = onLoginGoogle
         )
     }
     Spacer(modifier = Modifier.weight(1F))
@@ -162,17 +168,19 @@ private fun rememberAuthLauncher(
 @Composable
 private fun LoginSNSButton(
     painter: Painter,
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     OutlinedButton(
         onClick = onClick,
         modifier = Modifier.size(42.dp),
         shape = CircleShape,
         contentPadding = PaddingValues(0.dp),
-        border = BorderStroke(0.dp, Color.Transparent),
+        border = BorderStroke(0.dp, Color.Transparent)
     ) {
         Image(
-            painter = painter, modifier = Modifier.size(42.dp), contentDescription = null
+            painter = painter,
+            modifier = Modifier.size(42.dp),
+            contentDescription = null
         )
     }
 }

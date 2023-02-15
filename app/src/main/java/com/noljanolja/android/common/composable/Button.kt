@@ -24,7 +24,7 @@ fun TwoButtonInRow(
     fModifier: Modifier = Modifier,
     sModifier: Modifier = Modifier,
     firstClick: () -> Unit,
-    secondClick: () -> Unit,
+    secondClick: () -> Unit
 ) {
     Row(
         modifier = modifier
@@ -50,16 +50,22 @@ fun TwoButtonInRow(
 
 @Composable
 private fun ButtonInRow(
-    text: String, isFocused: Boolean, modifier: Modifier, onClick: () -> Unit
+    text: String,
+    isFocused: Boolean,
+    modifier: Modifier,
+    onClick: () -> Unit
 ) {
     Button(
-        onClick = onClick, shape = RectangleShape, colors = ButtonDefaults.buttonColors(
+        onClick = onClick,
+        shape = RectangleShape,
+        colors = ButtonDefaults.buttonColors(
             containerColor = if (isFocused) {
                 MaterialTheme.colorScheme.secondary
             } else {
                 MaterialTheme.colorScheme.background
             }
-        ), modifier = modifier.height(42.dp)
+        ),
+        modifier = modifier.height(42.dp)
     ) {
         Text(
             text = text,
@@ -76,7 +82,7 @@ fun RoundedButton(
     isEnable: Boolean = true,
     colors: ButtonColors = ButtonDefaults.buttonColors(),
     shape: Shape? = null,
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     val buttonShape = shape ?: RoundedCornerShape(8.dp)
     Button(
@@ -103,7 +109,7 @@ fun OutlineButton(
         containerColor = MaterialTheme.colorScheme.onSecondary,
         contentColor = MaterialTheme.colorScheme.secondary
     ),
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     val shape = RoundedCornerShape(8.dp)
     Button(
@@ -126,6 +132,5 @@ fun OutlineButton(
 @Composable
 private fun TwoButtonInRowPreview() {
     TwoButtonInRow(firstText = "Login", secondText = "Signup", indexFocused = 1, firstClick = { }) {
-
     }
 }

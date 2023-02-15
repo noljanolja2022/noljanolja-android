@@ -19,6 +19,6 @@ class RequireLoginViewModel @Inject constructor(
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = false,
+        initialValue = false
     )
 }

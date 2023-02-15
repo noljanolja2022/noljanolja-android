@@ -6,6 +6,8 @@
     <string name="kakao_api_key" translatable="false">&kakao_api_key;</string>
     <string name="kakao_scheme" translatable="false">kakao&kakao_api_key;</string>
     <string name="common_next">Next</string>
+    <string name="common_previous">Previous</string>
+    <string name="common_verification">Verification</string>
     <string name="login">Log in</string>
     <string name="signup">Join the membership</string>
     <string name="forgot_password">Forgot your password?</string>
@@ -21,6 +23,19 @@
     <string name="auth_login_new_password">Please log in with your temporary password\nand change your password.</string>
     <string name="auth_resend_password">Resend temporary password</string>
     <string name="auth_forgot_title">Find Password</string>
+    <string name="auth_signup_step1">Step 1</string>
+    <string name="auth_signup_step2">Step 2</string>
+    <string name="auth_signup_step3">Step 3</string>
+    <string name="auth_verify_email_finish">Verify email to finish</string>
+    <string name="auth_signup_with_email">Signup with email and password</string>
+    <string name="auth_need_agreement_terms">You need to agree to the terms and conditions before signing up</string>
+    <string name="auth_identity_complete">Identity verification complete!</string>
+    <string name="require_login_title">Let\'s Play Start the service</string>
+    <string name="require_login_description">Log in to play\nUse a variety of services!</string>
+    <string name="require_login_button">Let\'s Play Log in</string>
+    <string name="require_verify_description">Verify email to play\nUse a variety of services</string>
+    <string name="require_verify_button">Verify Email</string>
+
     <!--    Failure-->
     <string name="invalid_email_format">Email is not valid</string>
 

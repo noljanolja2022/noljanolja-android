@@ -1,6 +1,5 @@
 package com.noljanolja.android.features.auth.signup.screen
 
-
 sealed interface SignupEvent {
     data class ChangeEmail(val email: String) : SignupEvent
 

@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 @Composable
 fun FullSizeLoading(
     showLoading: Boolean = true,
-    content: @Composable (() -> Unit)? = null,
+    content: @Composable (() -> Unit)? = null
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         content?.invoke()

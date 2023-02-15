@@ -6,6 +6,6 @@ import com.noljanolja.android.common.auth.domain.model.User
 fun FirebaseUser?.toDomainUser() = this?.let {
     User(
         id = it.uid,
-        isVerify = it.isEmailVerified,
+        isVerify = it.isEmailVerified
     )
 }

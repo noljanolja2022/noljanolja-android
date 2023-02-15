@@ -23,7 +23,7 @@ fun AgreementRow(
     tag: String,
     description: String,
     onToggle: () -> Unit,
-    onGoDetail: () -> Unit,
+    onGoDetail: () -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.Top,
@@ -84,7 +84,7 @@ fun FullAgreement(checked: Boolean, onClick: () -> Unit) {
             style = TextStyle(
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.secondary,
-                fontWeight = FontWeight.W700,
+                fontWeight = FontWeight.W700
             ),
             modifier = Modifier
                 .weight(1F)

@@ -6,7 +6,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.noljanolja.android.features.home.screen.HomeNavigationItem
+import com.noljanolja.android.features.home.root.screen.HomeNavigationItem
 
 fun HomeNavigationItem.click(navController: NavHostController) {
     navController.navigate(route) {
@@ -26,7 +26,7 @@ fun HomeNavigationItem.click(navController: NavHostController) {
 
 @Composable
 fun HomeNavigationItem.isNavItemSelect(
-    navController: NavHostController,
+    navController: NavHostController
 ): Boolean {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination

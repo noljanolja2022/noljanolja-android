@@ -12,10 +12,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.noljanolja.android.R
-import com.noljanolja.android.features.home.screen.HomeNavigationItem
+import com.noljanolja.android.features.home.root.screen.HomeNavigationItem
 import com.noljanolja.android.features.home.utils.click
 import com.noljanolja.android.features.home.utils.isNavItemSelect
-
 
 @Composable
 fun HomeFloatingActionButton(navController: NavHostController) {
@@ -29,11 +28,12 @@ fun HomeFloatingActionButton(navController: NavHostController) {
             .size(68.dp),
         onClick = {
             HomeNavigationItem.WalletItem.click(navController)
-        }) {
+        }
+    ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_wallet),
             contentDescription = null,
-            modifier = Modifier.size(36.dp),
+            modifier = Modifier.size(36.dp)
         )
     }
 }

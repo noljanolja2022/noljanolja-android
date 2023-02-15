@@ -38,10 +38,12 @@ fun TermsOfServiceScreen() {
                     .background(Color.White)
                     .padding(20.dp)
             ) {
-                Row(
-                ) {
-                    Image(painterResource(id = R.drawable.ic_back), contentDescription = null,
-                        modifier = Modifier.clickable { })
+                Row() {
+                    Image(
+                        painterResource(id = R.drawable.ic_back),
+                        contentDescription = null,
+                        modifier = Modifier.clickable { }
+                    )
                     Text(
                         "[Required]\nAgree to the Terms of Service",
                         textAlign = TextAlign.Center,
@@ -71,7 +73,7 @@ fun TermsOfServiceScreen() {
 
 const val TEST_TEXT =
     "In the hills of North Gando, however, I see winter as one of the girls. It seems like loneliness and longing and pride that has passed. One of the buried cars has a name like this and the name of Maria. I have an exotic night on top of my desk one by one. Loneliness and foreign land fell, my mother, and love in one. In one, I see the stars, and the grave inside is mine. That's why it's named so much now in North Gando. Now, the baby star, Francis star, seems to be on the desk. I threw away the name that came out, and the people who came down like a horse blooming. My loneliness, my mother, and my worries are all because of Hale.\n" +
-            "\n" +
-            "Look at the name of the horse in one of the deer, sleep, and one baby. Francis of the genus fell and is still on top. The name and above, also sleeps in the heart, I am a rabbit, hill Maria mother, there is. That's why I call it one of my own. There is a night in the baby's chest. Why is it easy, rabbit, and name, name, and two. For a hill desk, look engraved. It's because of the loneliness that mourns over Maria's autumn and now the starlight is shining. Wrote the stars to worm, there is no one who cries tomorrow. It is the reason for the loneliness and loneliness of the buried star neighbor.\n" +
-            "\n" +
-            "It's a beautiful thing that is engraved asurahi shui. Loneliness and Poetry and Hale People's dirt, roe deer, children's stars seem far away. heal the wounds\u2028Is there no one anywhere? it's beautiful outside Loneliness and Poetry and Hale People's dirt, roe deer, children's stars seem far away. heal the wounds\u2028Is there no one anywhere?\u2028Is there no one anywhere?"
+        "\n" +
+        "Look at the name of the horse in one of the deer, sleep, and one baby. Francis of the genus fell and is still on top. The name and above, also sleeps in the heart, I am a rabbit, hill Maria mother, there is. That's why I call it one of my own. There is a night in the baby's chest. Why is it easy, rabbit, and name, name, and two. For a hill desk, look engraved. It's because of the loneliness that mourns over Maria's autumn and now the starlight is shining. Wrote the stars to worm, there is no one who cries tomorrow. It is the reason for the loneliness and loneliness of the buried star neighbor.\n" +
+        "\n" +
+        "It's a beautiful thing that is engraved asurahi shui. Loneliness and Poetry and Hale People's dirt, roe deer, children's stars seem far away. heal the wounds\u2028Is there no one anywhere? it's beautiful outside Loneliness and Poetry and Hale People's dirt, roe deer, children's stars seem far away. heal the wounds\u2028Is there no one anywhere?\u2028Is there no one anywhere?"

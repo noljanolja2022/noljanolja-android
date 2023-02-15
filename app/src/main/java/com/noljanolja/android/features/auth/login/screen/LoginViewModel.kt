@@ -87,7 +87,6 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-
     fun getGoogleIntent() = authRepository.getGoogleSignInIntent()
 
     fun handleLoginGoogleResult(task: Task<GoogleSignInAccount>) {

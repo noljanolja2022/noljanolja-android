@@ -62,9 +62,11 @@ class SignupViewModel @Inject constructor(
                             navigationManager.navigate(NavigationDirections.LoginOrSignup)
                         }
                         is SignupUIState.SignupForm -> {
-                            _uiStateFlow.emit(SignupUIState.Agreement(
-                                AGREEMENTS.map { it.copy(checked = true) }
-                            ))
+                            _uiStateFlow.emit(
+                                SignupUIState.Agreement(
+                                    AGREEMENTS.map { it.copy(checked = true) }
+                                )
+                            )
                         }
                         SignupUIState.VerificationEmail -> {
                             _uiStateFlow.emit(SignupUIState.SignupForm())
@@ -175,7 +177,7 @@ sealed interface SignupUIState {
             val id: String,
             val checked: Boolean,
             val tag: String,
-            val description: String,
+            val description: String
         )
     }
 

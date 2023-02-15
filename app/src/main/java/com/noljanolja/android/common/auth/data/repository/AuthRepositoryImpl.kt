@@ -20,7 +20,6 @@ import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-
 class AuthRepositoryImpl private constructor(
     private val context: Context,
     private val googleWebClientId: String
@@ -61,9 +60,7 @@ class AuthRepositoryImpl private constructor(
             Log.e(TAG_AUTH_ERROR, result.exceptionOrNull()?.message.orEmpty())
             return Result.failure(result.exceptionOrNull()!!)
         }
-
     }
-
 
     override fun getGoogleSignInIntent(): Intent = GoogleSignIn.getClient(
         context,

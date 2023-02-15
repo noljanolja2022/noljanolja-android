@@ -29,7 +29,7 @@ import com.noljanolja.android.features.auth.signup.screen.component.FullAgreemen
 
 @Composable
 fun SignupScreen(
-    signupViewModel: SignupViewModel = hiltViewModel(),
+    signupViewModel: SignupViewModel = hiltViewModel()
 ) {
     BackHandler {
         signupViewModel.handleEvent(SignupEvent.Back)
@@ -62,7 +62,7 @@ fun SignupScreen(
                     password,
                     emailError,
                     passwordError,
-                    confirmPassword,
+                    confirmPassword
                 ) {
                     signupViewModel.handleEvent(it)
                 }
@@ -93,18 +93,18 @@ private fun ColumnScope.SignupProgress(
     val progress: Float
     when (uiState) {
         is SignupUIState.Agreement -> {
-            step = "Step 1"
-            stepDescription = "You need to agree to the terms and conditions before signing up"
+            step = stringResource(id = R.string.auth_signup_step1)
+            stepDescription = stringResource(id = R.string.auth_need_agreement_terms)
             progress = 0.33F
         }
         is SignupUIState.SignupForm -> {
-            step = "Step 2"
-            stepDescription = "Signup with email and password"
+            step = stringResource(id = R.string.auth_signup_step2)
+            stepDescription = stringResource(id = R.string.auth_signup_with_email)
             progress = 0.66F
         }
         SignupUIState.VerificationEmail -> {
-            step = "Step 3"
-            stepDescription = "Verify email to finish"
+            step = stringResource(id = R.string.auth_signup_step3)
+            stepDescription = stringResource(id = R.string.auth_verify_email_finish)
             progress = 1F
         }
     }
@@ -150,9 +150,8 @@ private fun ColumnScope.SignupForm(
     emailError: Throwable?,
     passwordError: Throwable?,
     confirmPassword: String,
-    handleEvent: (SignupEvent) -> Unit,
+    handleEvent: (SignupEvent) -> Unit
 ) {
-
     EmailAndPassword(
         email = email,
         password = password,
@@ -179,7 +178,7 @@ private fun ColumnScope.SignupForm(
 @Composable
 private fun ColumnScope.SignupAgreement(
     uiState: SignupUIState.Agreement,
-    handleEvent: (SignupEvent) -> Unit,
+    handleEvent: (SignupEvent) -> Unit
 ) {
     Box(modifier = Modifier.weight(100F)) {
         LazyColumn {
@@ -218,7 +217,7 @@ private fun ColumnScope.SignupVerification() {
     Image(painter = painterResource(id = R.drawable.ic_check_circle), contentDescription = null)
     Spacer(modifier = Modifier.height(14.dp))
     Text(
-        "Identity verification complete!",
+        stringResource(id = R.string.auth_identity_complete),
         style = TextStyle(
             fontWeight = FontWeight.W700,
             fontSize = 16.sp
@@ -239,43 +238,44 @@ private fun ColumnScope.SignupActions(
     Row {
         when (uiState) {
             is SignupUIState.Agreement -> {
-                SignupRoundedButton(text = "Next",
-                    enable = uiState.agreements.all { it.checked }) {
+                SignupRoundedButton(
+                    text = stringResource(id = R.string.common_next),
+                    enable = uiState.agreements.all { it.checked }
+                ) {
                     handleEvent(SignupEvent.Next)
                 }
             }
             is SignupUIState.SignupForm -> {
-                SignupOutlineButton(text = "Previous") {
+                SignupOutlineButton(text = stringResource(id = R.string.common_previous)) {
                     handleEvent(SignupEvent.Back)
                 }
                 Spacer(modifier = Modifier.width(12.dp))
                 SignupRoundedButton(
                     text = stringResource(id = R.string.common_next),
-                    enable = isEnableSignup(email, password, confirmPassword),
+                    enable = isEnableSignup(email, password, confirmPassword)
                 ) {
                     handleEvent(SignupEvent.Next)
                 }
             }
             SignupUIState.VerificationEmail -> {
-                SignupOutlineButton(text = "Previous") {
+                SignupOutlineButton(text = stringResource(id = R.string.common_previous)) {
                     handleEvent(SignupEvent.Back)
                 }
                 Spacer(modifier = Modifier.width(12.dp))
-                SignupRoundedButton(text = "Verification") {
+                SignupRoundedButton(text = stringResource(id = R.string.common_verification)) {
                     handleEvent(SignupEvent.Next)
                 }
             }
         }
     }
     Spacer(modifier = Modifier.height(24.dp))
-
 }
 
 @Composable
 fun RowScope.SignupRoundedButton(
     text: String,
     enable: Boolean = true,
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     Box(modifier = Modifier.weight(1F)) {
         RoundedButton(
@@ -296,7 +296,7 @@ fun RowScope.SignupRoundedButton(
 fun RowScope.SignupOutlineButton(
     text: String,
     enable: Boolean = true,
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     Box(modifier = Modifier.weight(1F)) {
         OutlineButton(
@@ -312,5 +312,3 @@ private fun isEnableSignup(
     password: String,
     confirmPassword: String
 ) = email.isNotBlank() && password.isNotBlank() && password == confirmPassword
-
-

@@ -40,6 +40,5 @@ fun FullSizeWithLogo(
 @Composable
 private fun FullSizeWithLogoPreview() {
     FullSizeWithLogo {
-
     }
 }

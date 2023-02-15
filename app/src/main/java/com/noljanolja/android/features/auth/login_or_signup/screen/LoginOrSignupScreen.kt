@@ -80,7 +80,8 @@ fun LoginOrSignupContent(
                             LoginOrSignupUIState.Login -> LoginScreen(viewModel = loginViewModel)
                             LoginOrSignupUIState.Signup -> SignupScreen(signupViewModel = signupViewModel)
                         }
-                    })
+                    }
+                )
             }
         }
     }

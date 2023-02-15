@@ -11,12 +11,12 @@ import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.features.auth.TermsOfServiceScreen
 import com.noljanolja.android.features.auth.forget.screen.ForgotScreen
 import com.noljanolja.android.features.auth.login_or_signup.screen.LoginOrSignupScreen
-import com.noljanolja.android.features.home.screen.HomeScreen
+import com.noljanolja.android.features.home.root.screen.HomeScreen
 import com.noljanolja.android.features.splash.screen.SplashScreen
 
 @Composable
 fun MainScreen(
-    navigationManager: NavigationManager,
+    navigationManager: NavigationManager
 ) {
     val navController = rememberNavController()
     LaunchedEffect(navigationManager.commands) {

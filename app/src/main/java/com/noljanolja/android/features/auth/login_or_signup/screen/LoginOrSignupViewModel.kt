@@ -14,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginOrSignupViewModel @Inject constructor(
     private val navigationManager: NavigationManager,
-    private val authRepository: AuthRepository,
+    private val authRepository: AuthRepository
 ) : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow(LoginOrSignupUIState.Login)
     val uiStateFlow = _uiStateFlow.asStateFlow()

@@ -1,4 +1,4 @@
-package com.noljanolja.android.features.home.screen
+package com.noljanolja.android.features.home.root.screen
 
 import com.noljanolja.android.common.auth.domain.repository.AuthRepository
 import com.noljanolja.android.common.base.BaseViewModel
@@ -61,7 +61,6 @@ class HomeViewModel @Inject constructor(
                 !user.isVerify -> sendError(Throwable("Verify fail"))
                 else -> _showRequireLoginPopupEvent.emit(false)
             }
-
         }
     }
 
