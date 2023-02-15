@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
@@ -74,9 +75,10 @@ fun RoundedButton(
     text: String,
     isEnable: Boolean = true,
     colors: ButtonColors = ButtonDefaults.buttonColors(),
+    shape: Shape? = null,
     onClick: () -> Unit,
 ) {
-    val shape = RoundedCornerShape(8.dp)
+    val buttonShape = shape ?: RoundedCornerShape(8.dp)
     Button(
         onClick = onClick,
         enabled = isEnable,
@@ -84,8 +86,8 @@ fun RoundedButton(
         modifier = modifier
             .fillMaxWidth()
             .height(50.dp)
-            .shadow(2.dp, shape = shape),
-        shape = shape
+            .shadow(2.dp, shape = buttonShape),
+        shape = buttonShape
     ) {
         Text(text)
     }

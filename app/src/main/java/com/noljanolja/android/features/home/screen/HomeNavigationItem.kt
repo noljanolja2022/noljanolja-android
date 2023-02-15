@@ -9,33 +9,40 @@ sealed class HomeNavigationItem(
     val route: String,
     @DrawableRes val icon: Int,
     @DrawableRes val selectedIcon: Int,
-    @StringRes val label: Int,
+    @StringRes val label: Int?,
 ) {
-    object HomeItem1 : HomeNavigationItem(
-        NavigationDirections.HomeItem1.destination,
+    object MenuItem : HomeNavigationItem(
+        NavigationDirections.MenuItem.destination,
         R.drawable.ic_menu,
         R.drawable.ic_menu,
-        R.string.home_item_1,
+        null,
     )
 
-    object HomeItem2 : HomeNavigationItem(
-        NavigationDirections.HomeItem2.destination,
+    object HomeItem : HomeNavigationItem(
+        NavigationDirections.HomeItem.destination,
         R.drawable.ic_house,
         R.drawable.ic_house,
-        R.string.home_item_1,
+        null,
     )
 
-    object HomeItem3 : HomeNavigationItem(
-        NavigationDirections.HomeItem3.destination,
-        R.drawable.ic_store,
-        R.drawable.ic_store,
-        R.string.home_item_1,
+    object WalletItem : HomeNavigationItem(
+        NavigationDirections.WalletItem.destination,
+        R.drawable.ic_wallet,
+        R.drawable.ic_wallet,
+        null,
     )
 
-    object HomeItem4 : HomeNavigationItem(
-        NavigationDirections.HomeItem4.destination,
+    object ShopItem : HomeNavigationItem(
+        NavigationDirections.StoreItem.destination,
+        R.drawable.ic_store,
+        R.drawable.ic_store,
+        null,
+    )
+
+    object UserItem : HomeNavigationItem(
+        NavigationDirections.UserItem.destination,
         R.drawable.ic_user,
         R.drawable.ic_user,
-        R.string.home_item_1,
+        null,
     )
 }

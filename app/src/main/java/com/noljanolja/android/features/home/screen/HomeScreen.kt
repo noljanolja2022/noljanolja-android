@@ -1,135 +1,178 @@
 package com.noljanolja.android.features.home.screen
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.BottomAppBar
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.FabPosition
-import androidx.compose.material.Scaffold
-import androidx.compose.material3.*
+import androidx.compose.material.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.noljanolja.android.R
+import com.noljanolja.android.common.composable.FullSizeWithBottomSheet
+import com.noljanolja.android.features.home.component.HomeFloatingActionButton
+import com.noljanolja.android.features.home.component.RequireLoginBottomSheet
+import com.noljanolja.android.features.home.utils.click
+import com.noljanolja.android.features.home.utils.isNavItemSelect
+import com.noljanolja.android.util.getErrorMessage
+import com.noljanolja.android.util.showToast
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val navController = rememberNavController()
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                shape = CircleShape,
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = Color.White,
-                modifier = Modifier
-                    .size(68.dp),
-                onClick = {
-                    onNavigationItemClick(navController, HomeNavigationItem.HomeItem3)
-                }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_wallet),
-                    contentDescription = null,
-                    modifier = Modifier.size(36.dp),
-                )
-            }
-        },
-        isFloatingActionButtonDocked = true,
-        floatingActionButtonPosition = FabPosition.Center,
-        bottomBar = {
-            BottomAppBar(
-                modifier = Modifier,
-                backgroundColor = Color.White,
-                cutoutShape = RoundedCornerShape(50),
-                //backgroundColor = Color.White,
-                elevation = 22.dp
-            ) {
-                HomeBottomBar(navController)
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val modalSheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded },
+        skipHalfExpanded = true,
+    )
+
+    LaunchedEffect(key1 = viewModel.showRequireLoginPopupEvent) {
+        launch {
+            viewModel.showRequireLoginPopupEvent.collect {
+                modalSheetState.animateTo(ModalBottomSheetValue.Expanded)
             }
         }
-    ) { contentPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = HomeNavigationItem.HomeItem2.route,
-            modifier = Modifier.padding(contentPadding)
-        ) {
-            composable(HomeNavigationItem.HomeItem1.route) {
-                Text(
-                    "Home1",
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(100.dp)
-                )
+    }
+
+    LaunchedEffect(key1 = viewModel.errorFlow) {
+        launch {
+            viewModel.errorFlow.collect {
+                context.showToast(context.getErrorMessage(it))
             }
-            composable(HomeNavigationItem.HomeItem2.route) {
-                Text(
-                    "Home2",
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(100.dp)
-                )
+        }
+    }
+
+    val navController = rememberNavController()
+    FullSizeWithBottomSheet(
+        modalSheetState = modalSheetState,
+        sheetContent = {
+            RequireLoginBottomSheet {
+                scope.launch {
+                    modalSheetState.hide()
+                }
+                viewModel.handleEvent(HomeEvent.GoToLogin)
             }
-            composable(HomeNavigationItem.HomeItem3.route) {
-                Text(
-                    "Home3",
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(100.dp)
-                        .clickable { viewModel.logOut() }
-                )
+        }) {
+        Scaffold(
+            floatingActionButton = { HomeFloatingActionButton(navController = navController) },
+            isFloatingActionButtonDocked = true,
+            floatingActionButtonPosition = FabPosition.Center,
+            bottomBar = {
+                BottomAppBar(
+                    modifier = Modifier,
+                    backgroundColor = Color.White,
+                    cutoutShape = RoundedCornerShape(50),
+                    //backgroundColor = Color.White,
+                    elevation = 22.dp
+                ) {
+                    HomeBottomBar(navController, onItemClick = {
+                        viewModel.handleEvent(
+                            HomeEvent.ChangeNavigationItem(
+                                item = it,
+                                onChange = {
+                                    it.click(navController)
+                                }
+                            )
+                        )
+                    })
+                }
             }
-            composable(HomeNavigationItem.HomeItem4.route) {
-                Text(
-                    "Home4",
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(100.dp)
-                )
+        ) { contentPadding ->
+            NavHost(
+                navController = navController,
+                startDestination = HomeNavigationItem.HomeItem.route,
+                modifier = Modifier.padding(contentPadding)
+            ) {
+                addNavigationGraph()
             }
         }
     }
 }
 
+private fun NavGraphBuilder.addNavigationGraph() {
+    composable(HomeNavigationItem.MenuItem.route) {
+        Text(
+            "MenuItem",
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(100.dp)
+        )
+    }
+    composable(HomeNavigationItem.HomeItem.route) {
+        Text(
+            "HomeItem",
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(100.dp)
+        )
+    }
+    composable(HomeNavigationItem.WalletItem.route) {
+        Text(
+            "WalletItem",
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(100.dp)
+        )
+    }
+    composable(HomeNavigationItem.ShopItem.route) {
+        Text(
+            "ShopItem",
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(100.dp)
+        )
+    }
+    composable(HomeNavigationItem.UserItem.route) {
+        Text(
+            "UserItem",
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(100.dp)
+        )
+    }
+}
+
 @Composable
-fun HomeBottomBar(navController: NavHostController) {
+fun HomeBottomBar(
+    navController: NavHostController,
+    onItemClick: (HomeNavigationItem) -> Unit
+) {
     val items = listOf(
-        HomeNavigationItem.HomeItem1,
-        HomeNavigationItem.HomeItem2,
-        null,
-        HomeNavigationItem.HomeItem3,
-        HomeNavigationItem.HomeItem4,
+        HomeNavigationItem.MenuItem,
+        HomeNavigationItem.HomeItem,
+        HomeNavigationItem.WalletItem,
+        HomeNavigationItem.ShopItem,
+        HomeNavigationItem.UserItem,
     )
     BottomNavigation(
         elevation = 0.dp,
         backgroundColor = Color.White
     ) {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentDestination = navBackStackEntry?.destination
         items.forEach { item ->
-            item?.let {
-                val isSelected =
-                    currentDestination?.hierarchy?.any { it.route == item.route } == true
+            if (item != HomeNavigationItem.WalletItem) {
+                val isSelected = item.isNavItemSelect(navController = navController)
                 val iconId = item.icon
                 val iconColor = if (isSelected) {
-                    MaterialTheme.colorScheme.secondary
+                    MaterialTheme.colorScheme.tertiary
                 } else {
                     MaterialTheme.colorScheme.outline
                 }
@@ -147,29 +190,15 @@ fun HomeBottomBar(navController: NavHostController) {
                         indicatorColor = Color.White
                     ),
                     onClick = {
-                        onNavigationItemClick(navController, item)
+                        onItemClick(item)
                     }
                 )
-            } ?: Spacer(modifier = Modifier.weight(1F))
+            } else {
+                Spacer(modifier = Modifier.weight(1F))
+            }
         }
     }
 }
 
-private fun onNavigationItemClick(
-    navController: NavHostController,
-    item: HomeNavigationItem
-) {
-    navController.navigate(item.route) {
-        // Pop up to the start destination of the graph to
-        // avoid building up a large stack of destinations
-        // on the back stack as users select items
-        popUpTo(navController.graph.findStartDestination().id) {
-            saveState = true
-        }
-        // Avoid multiple copies of the same destination when
-        // reselecting the same item
-        launchSingleTop = true
-        // Restore state when reselecting a previously selected item
-        restoreState = true
-    }
-}
+
+

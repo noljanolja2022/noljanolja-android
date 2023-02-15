@@ -53,26 +53,26 @@ fun MainScreen(
     }
 }
 
-fun NavGraphBuilder.addSplashGraph() {
+private fun NavGraphBuilder.addSplashGraph() {
     composable(NavigationDirections.Splash.destination) {
         SplashScreen()
     }
 }
 
-fun NavGraphBuilder.addHomeGraph() {
+private fun NavGraphBuilder.addHomeGraph() {
     composable(NavigationDirections.Home.destination) { backStack ->
         HomeScreen()
     }
 }
 
-fun NavGraphBuilder.addAuthGraph() {
+private fun NavGraphBuilder.addAuthGraph() {
     composable(NavigationDirections.LoginOrSignup.destination) { backStack ->
         LoginOrSignupScreen()
     }
     composable(NavigationDirections.Forgot.destination) {
         ForgotScreen()
     }
-    composable(NavigationDirections.TermsOfService.destination){
+    composable(NavigationDirections.TermsOfService.destination) {
         TermsOfServiceScreen()
     }
 }

@@ -29,9 +29,9 @@ class LoginViewModel @Inject constructor(
 
     fun handleEvent(event: LoginEvent) {
         when (event) {
-            is LoginEvent.GoToMain -> {
+            is LoginEvent.Back -> {
                 launch {
-                    navigationManager.navigate(NavigationDirections.Home)
+                    navigationManager.navigate(NavigationDirections.Back)
                 }
             }
             is LoginEvent.GoJoinMember -> {
@@ -70,7 +70,7 @@ class LoginViewModel @Inject constructor(
             _uiStateFlow.emit(LoginUIState.Loading)
             val result = authRepository.loginWithKakao()
             if (result.isSuccess) {
-                handleEvent(LoginEvent.GoToMain)
+                handleEvent(LoginEvent.Back)
             } else {
                 handleEvent(LoginEvent.ShowError(result.exceptionOrNull()))
             }
@@ -83,7 +83,7 @@ class LoginViewModel @Inject constructor(
             _uiStateFlow.emit(LoginUIState.Loading)
             val result = authRepository.loginWithNaver(token)
             if (result.isSuccess) {
-                handleEvent(LoginEvent.GoToMain)
+                handleEvent(LoginEvent.Back)
             } else {
                 handleEvent(LoginEvent.ShowError(result.exceptionOrNull()))
             }
@@ -101,7 +101,7 @@ class LoginViewModel @Inject constructor(
                 val account = task.getResult(ApiException::class.java)
                 val credential = GoogleAuthProvider.getCredential(account.idToken, null)
                 Firebase.auth.signInWithCredential(credential).await()
-                handleEvent(LoginEvent.GoToMain)
+                handleEvent(LoginEvent.Back)
             } catch (e: ApiException) {
                 sendError(e)
             } finally {

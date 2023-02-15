@@ -27,9 +27,6 @@ object NavigationDirections {
     object LoginOrSignup : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options: NavOptions = navOptions {
-            popUpTo(Root.destination) {
-                inclusive = true
-            }
             launchSingleTop = true
         }
         override val destination: String = "loginOrSignup"
@@ -71,28 +68,34 @@ object NavigationDirections {
         override val destination: String = "home"
     }
 
-    object HomeItem1 : NavigationCommand {
+    object MenuItem : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options = null
-        override val destination: String = "Home1"
+        override val destination: String = "home_menu_item"
     }
 
-    object HomeItem2 : NavigationCommand {
+    object HomeItem : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options = null
-        override val destination: String = "Home2"
+        override val destination: String = "home_item"
     }
 
-    object HomeItem3 : NavigationCommand {
+    object WalletItem : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options = null
-        override val destination: String = "Home3"
+        override val destination: String = "home_wallet_item"
     }
 
-    object HomeItem4 : NavigationCommand {
+    object StoreItem : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options = null
-        override val destination: String = "Home4"
+        override val destination: String = "home_store_item"
+    }
+
+    object UserItem : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "home_user_item"
     }
 
     object Back : NavigationCommand {

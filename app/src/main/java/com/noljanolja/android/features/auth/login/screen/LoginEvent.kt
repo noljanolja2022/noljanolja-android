@@ -1,7 +1,6 @@
 package com.noljanolja.android.features.auth.login.screen
 
 sealed interface LoginEvent {
-    object GoToMain : LoginEvent
     object GoJoinMember : LoginEvent
 
     data class ChangeEmail(val email: String) : LoginEvent
@@ -16,4 +15,6 @@ sealed interface LoginEvent {
 
     data class LoginNaver(val token: String) : LoginEvent
     data class ShowError(val error: Throwable?) : LoginEvent
+
+    object Back : LoginEvent
 }
