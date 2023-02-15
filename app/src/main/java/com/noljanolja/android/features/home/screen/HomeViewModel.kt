@@ -16,13 +16,13 @@ class HomeViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val navigationManager: NavigationManager
 ) : BaseViewModel() {
-    private val _showRequireLoginPopupEvent = MutableSharedFlow<Unit>()
+    private val _showRequireLoginPopupEvent = MutableSharedFlow<Boolean>()
     val showRequireLoginPopupEvent = _showRequireLoginPopupEvent.asSharedFlow()
 
     fun handleEvent(event: HomeEvent) {
         when (event) {
             is HomeEvent.ChangeNavigationItem -> changeNavigationItem(event.item, event.onChange)
-            HomeEvent.GoToLogin -> goToLogin()
+            HomeEvent.LoginOrVerifyEmail -> loginOrVerifyEmail()
         }
     }
 
@@ -42,17 +42,26 @@ class HomeViewModel @Inject constructor(
                 return@launch
             }
             val user = authRepository.getCurrentUser().first()
-            if(user?.isVerify==true){
+            if (user?.isVerify == true) {
                 onChange.invoke()
             } else {
-                _showRequireLoginPopupEvent.emit(Unit)
+                _showRequireLoginPopupEvent.emit(true)
             }
         }
     }
 
-    private fun goToLogin() {
+    private fun loginOrVerifyEmail() {
         launch {
-            navigationManager.navigate(NavigationDirections.LoginOrSignup)
+            val user = authRepository.getCurrentUser().first()
+            when {
+                user == null -> {
+                    _showRequireLoginPopupEvent.emit(false)
+                    navigationManager.navigate(NavigationDirections.LoginOrSignup)
+                }
+                !user.isVerify -> sendError(Throwable("Verify fail"))
+                else -> _showRequireLoginPopupEvent.emit(false)
+            }
+
         }
     }
 

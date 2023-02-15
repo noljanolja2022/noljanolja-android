@@ -24,7 +24,7 @@ class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : BaseAuthViewModel() {
 
-    private val _uiStateFlow = MutableStateFlow<LoginUIState>(LoginUIState.None)
+    private val _uiStateFlow = MutableStateFlow(LoginUIState.None)
     val uiStateFlow = _uiStateFlow.asStateFlow()
 
     fun handleEvent(event: LoginEvent) {
@@ -34,11 +34,7 @@ class LoginViewModel @Inject constructor(
                     navigationManager.navigate(NavigationDirections.Back)
                 }
             }
-            is LoginEvent.GoJoinMember -> {
-                launch {
-                    navigationManager.navigate(NavigationDirections.Signup)
-                }
-            }
+            is LoginEvent.GoJoinMember -> TODO("Not implement")
             is LoginEvent.ShowError -> {
                 event.error?.let {
                     sendError(event.error)
@@ -70,7 +66,7 @@ class LoginViewModel @Inject constructor(
             _uiStateFlow.emit(LoginUIState.Loading)
             val result = authRepository.loginWithKakao()
             if (result.isSuccess) {
-                handleEvent(LoginEvent.Back)
+                finishLogin()
             } else {
                 handleEvent(LoginEvent.ShowError(result.exceptionOrNull()))
             }
@@ -83,7 +79,7 @@ class LoginViewModel @Inject constructor(
             _uiStateFlow.emit(LoginUIState.Loading)
             val result = authRepository.loginWithNaver(token)
             if (result.isSuccess) {
-                handleEvent(LoginEvent.Back)
+                finishLogin()
             } else {
                 handleEvent(LoginEvent.ShowError(result.exceptionOrNull()))
             }
@@ -101,7 +97,7 @@ class LoginViewModel @Inject constructor(
                 val account = task.getResult(ApiException::class.java)
                 val credential = GoogleAuthProvider.getCredential(account.idToken, null)
                 Firebase.auth.signInWithCredential(credential).await()
-                handleEvent(LoginEvent.Back)
+                finishLogin()
             } catch (e: ApiException) {
                 sendError(e)
             } finally {
@@ -120,7 +116,7 @@ class LoginViewModel @Inject constructor(
                 result.exceptionOrNull()?.let {
                     throw it
                 }
-                navigationManager.navigate(NavigationDirections.Home)
+                finishLogin()
             } catch (e: ValidEmailFailed) {
                 sendEmailError(e)
             } catch (e: Exception) {
@@ -137,9 +133,10 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-
-    fun goToSignup() {
-        handleEvent(LoginEvent.GoJoinMember)
+    private fun finishLogin() {
+        launch {
+            navigationManager.navigate(NavigationDirections.Back)
+        }
     }
 }
 

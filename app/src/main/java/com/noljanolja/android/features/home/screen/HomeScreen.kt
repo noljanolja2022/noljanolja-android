@@ -25,7 +25,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.noljanolja.android.common.composable.FullSizeWithBottomSheet
 import com.noljanolja.android.features.home.component.HomeFloatingActionButton
-import com.noljanolja.android.features.home.component.RequireLoginBottomSheet
+import com.noljanolja.android.features.home.require_login.RequireLoginBottomSheet
 import com.noljanolja.android.features.home.utils.click
 import com.noljanolja.android.features.home.utils.isNavItemSelect
 import com.noljanolja.android.util.getErrorMessage
@@ -48,7 +48,11 @@ fun HomeScreen(
     LaunchedEffect(key1 = viewModel.showRequireLoginPopupEvent) {
         launch {
             viewModel.showRequireLoginPopupEvent.collect {
-                modalSheetState.animateTo(ModalBottomSheetValue.Expanded)
+                if (it) {
+                    modalSheetState.animateTo(ModalBottomSheetValue.Expanded)
+                } else {
+                    modalSheetState.animateTo(ModalBottomSheetValue.Hidden)
+                }
             }
         }
     }
@@ -66,10 +70,7 @@ fun HomeScreen(
         modalSheetState = modalSheetState,
         sheetContent = {
             RequireLoginBottomSheet {
-                scope.launch {
-                    modalSheetState.hide()
-                }
-                viewModel.handleEvent(HomeEvent.GoToLogin)
+                viewModel.handleEvent(HomeEvent.LoginOrVerifyEmail)
             }
         }) {
         Scaffold(

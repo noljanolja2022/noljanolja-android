@@ -98,14 +98,18 @@ private fun ColumnScope.LoginContent(
             handleEvent(LoginEvent.ChangePassword(it))
         }
     )
-    Text(text = stringResource(id = R.string.forgot_password), style = TextStyle(
-        fontSize = 14.sp, color = MaterialTheme.colorScheme.outline
-    ), modifier = Modifier
-        .padding(top = 28.dp)
-        .align(Alignment.End)
-        .clickable {
-            handleEvent(LoginEvent.GoForgotEmailAndPassword)
-        })
+    Text(
+        text = stringResource(id = R.string.forgot_password),
+        style = TextStyle(
+            fontSize = 14.sp, color = MaterialTheme.colorScheme.outline
+        ),
+        modifier = Modifier
+            .padding(top = 28.dp)
+            .align(Alignment.End)
+            .clickable {
+                handleEvent(LoginEvent.GoForgotEmailAndPassword)
+            }
+    )
     LoginButton(
         modifier = Modifier.padding(top = 28.dp),
         isEnable = email.isNotBlank() && password.isNotBlank()

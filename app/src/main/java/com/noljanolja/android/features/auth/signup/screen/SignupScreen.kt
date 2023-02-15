@@ -2,6 +2,7 @@ package com.noljanolja.android.features.auth.signup.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -180,26 +181,34 @@ private fun ColumnScope.SignupAgreement(
     uiState: SignupUIState.Agreement,
     handleEvent: (SignupEvent) -> Unit,
 ) {
-    FullAgreement(checked = uiState.agreements.all { it.checked }) {
-        handleEvent(SignupEvent.ToggleAllAgreement)
-    }
-    Divider(
-        color = MaterialTheme.colorScheme.onBackground,
-        modifier = Modifier.padding(vertical = 12.dp)
-    )
-    uiState.agreements.forEach {
-        AgreementRow(
-            checked = it.checked,
-            tag = it.tag,
-            description = it.description,
-            onToggle = {
-                handleEvent(SignupEvent.ToggleAgreement(it.id))
-            },
-            onGoDetail = {
-                handleEvent(SignupEvent.GoTermsOfService(it.id))
+    Box(modifier = Modifier.weight(100F)) {
+        LazyColumn {
+            item {
+                FullAgreement(checked = uiState.agreements.all { it.checked }) {
+                    handleEvent(SignupEvent.ToggleAllAgreement)
+                }
+                Divider(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(vertical = 12.dp)
+                )
             }
-        )
-        Spacer(modifier = Modifier.height(12.dp))
+            uiState.agreements.forEach {
+                item {
+                    AgreementRow(
+                        checked = it.checked,
+                        tag = it.tag,
+                        description = it.description,
+                        onToggle = {
+                            handleEvent(SignupEvent.ToggleAgreement(it.id))
+                        },
+                        onGoDetail = {
+                            handleEvent(SignupEvent.GoTermsOfService(it.id))
+                        }
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
+            }
+        }
     }
 }
 
