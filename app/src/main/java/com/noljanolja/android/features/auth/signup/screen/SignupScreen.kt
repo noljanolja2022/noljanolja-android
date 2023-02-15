@@ -2,17 +2,13 @@ package com.noljanolja.android.features.auth.signup.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -74,6 +70,7 @@ fun SignupScreen(
                 SignupVerification()
             }
         }
+        Spacer(modifier = Modifier.height(24.dp))
         SignupActions(
             uiState = uiState,
             email = email,
@@ -122,11 +119,11 @@ private fun ColumnScope.SignupProgress(
         text = stepDescription,
         style = TextStyle(
             fontSize = 10.sp,
-            color = colorResource(id = R.color.primary_text_color)
+            color = MaterialTheme.colorScheme.secondary
         ),
         modifier = Modifier.align(Alignment.Start)
     )
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(8.dp))
     Row(modifier = Modifier.fillMaxWidth()) {
         Spacer(modifier = Modifier.weight(progress / 0.33F))
         Image(painter = painterResource(id = R.drawable.ic_bicycle), contentDescription = null)
@@ -138,7 +135,7 @@ private fun ColumnScope.SignupProgress(
         modifier = Modifier
             .fillMaxWidth()
             .height(10.dp),
-        color = colorResource(id = R.color.primaryColor),
+        color = MaterialTheme.colorScheme.primary,
         progress = progress
     )
 
@@ -187,7 +184,7 @@ private fun ColumnScope.SignupAgreement(
         handleEvent(SignupEvent.ToggleAllAgreement)
     }
     Divider(
-        color = colorResource(id = R.color.border_color),
+        color = MaterialTheme.colorScheme.onBackground,
         modifier = Modifier.padding(vertical = 12.dp)
     )
     uiState.agreements.forEach {
@@ -276,10 +273,10 @@ fun RowScope.SignupRoundedButton(
             text = text,
             isEnable = enable,
             colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = R.color.primary_text_color),
-                disabledContainerColor = colorResource(id = R.color.background),
+                containerColor = MaterialTheme.colorScheme.secondary,
+                disabledContainerColor = MaterialTheme.colorScheme.background,
                 contentColor = Color.White,
-                disabledContentColor = colorResource(id = R.color.disable_text)
+                disabledContentColor = MaterialTheme.colorScheme.onBackground
             ),
             onClick = onClick
         )

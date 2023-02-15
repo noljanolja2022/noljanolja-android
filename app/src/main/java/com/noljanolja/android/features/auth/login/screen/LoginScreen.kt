@@ -11,6 +11,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -99,7 +99,7 @@ private fun ColumnScope.LoginContent(
         }
     )
     Text(text = stringResource(id = R.string.forgot_password), style = TextStyle(
-        fontSize = 14.sp, color = colorResource(id = R.color.secondary_text_color)
+        fontSize = 14.sp, color = MaterialTheme.colorScheme.outline
     ), modifier = Modifier
         .padding(top = 28.dp)
         .align(Alignment.End)
@@ -114,7 +114,7 @@ private fun ColumnScope.LoginContent(
     }
     Row(verticalAlignment = Alignment.CenterVertically) {
         Divider(
-            color = colorResource(id = R.color.border_color),
+            color = MaterialTheme.colorScheme.onBackground,
             thickness = 1.dp,
             modifier = Modifier.weight(1F)
         )
@@ -122,11 +122,11 @@ private fun ColumnScope.LoginContent(
             stringResource(id = R.string.auth_login_with_SNS),
             modifier = Modifier.padding(24.dp),
             style = TextStyle(
-                fontSize = 12.sp, color = colorResource(id = R.color.secondary_text_color)
+                fontSize = 12.sp, color = MaterialTheme.colorScheme.outline
             )
         )
         Divider(
-            color = colorResource(id = R.color.border_color),
+            color = MaterialTheme.colorScheme.onBackground,
             thickness = 1.dp,
             modifier = Modifier.weight(1F)
         )

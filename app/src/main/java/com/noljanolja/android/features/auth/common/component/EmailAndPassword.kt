@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
@@ -46,7 +45,7 @@ fun EmailAndPassword(
                     .padding(start = 24.dp, top = 12.dp)
                     .align(Alignment.Start),
                 style = TextStyle(
-                    color = colorResource(id = R.color.error_text_color), fontSize = 14.sp
+                    color = MaterialTheme.colorScheme.error, fontSize = 14.sp
                 )
             )
         }
@@ -65,7 +64,7 @@ fun EmailAndPassword(
                     .padding(start = 24.dp, top = 12.dp)
                     .align(Alignment.Start),
                 style = TextStyle(
-                    color = colorResource(id = R.color.error_text_color),
+                    color = MaterialTheme.colorScheme.error,
                     fontSize = 14.sp
                 )
             )
@@ -84,13 +83,13 @@ fun RoundedTextField(
 ) {
     val shape = RoundedCornerShape(8.dp)
     val borderColor =
-        error?.let { colorResource(id = R.color.error_text_color) } ?: Color.Transparent
+        error?.let { MaterialTheme.colorScheme.error } ?: Color.Transparent
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         colors = TextFieldDefaults.textFieldColors(
             focusedIndicatorColor = borderColor,
-            containerColor = colorResource(id = R.color.background),
+            containerColor = MaterialTheme.colorScheme.background,
             unfocusedIndicatorColor = borderColor,
         ),
         keyboardOptions = KeyboardOptions(
@@ -106,12 +105,12 @@ fun RoundedTextField(
             ),
         placeholder = hint?.let {
             {
-                Text(text = hint, color = colorResource(id = R.color.disable_text))
+                Text(text = hint, color = MaterialTheme.colorScheme.onBackground)
             }
         },
         textStyle = TextStyle(
             fontSize = 16.sp,
-            color = colorResource(id = R.color.primary_text_color)
+            color = MaterialTheme.colorScheme.secondary
         ),
         visualTransformation = if (hideText) PasswordVisualTransformation() else VisualTransformation.None,
     )

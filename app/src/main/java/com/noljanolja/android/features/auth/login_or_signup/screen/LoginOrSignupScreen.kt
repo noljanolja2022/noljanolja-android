@@ -2,6 +2,7 @@ package com.noljanolja.android.features.auth.login_or_signup.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
@@ -52,35 +53,38 @@ fun LoginOrSignupContent(
                     topEnd = 20.dp
                 )
             ) {
-                Column(
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(Color.White)
-                        .padding(horizontal = 20.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Spacer(modifier = Modifier.height(18.dp))
-                    TwoButtonInRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        fModifier = Modifier.weight(1F),
-                        sModifier = Modifier.weight(2F),
-                        firstText = stringResource(id = R.string.login),
-                        secondText = stringResource(id = R.string.signup),
-                        indexFocused = uiState.index,
-                        firstClick = {
-                            handleEvent(LoginOrSignupEvent.SwitchToLogin)
-                        },
-                        secondClick = {
-                            handleEvent(LoginOrSignupEvent.SwitchSignup)
-                        }
-                    )
-                    Spacer(modifier = Modifier.height(24.dp))
-                    when (uiState) {
-                        LoginOrSignupUIState.Login -> LoginScreen(viewModel = loginViewModel)
-                        LoginOrSignupUIState.Signup -> SignupScreen(signupViewModel = signupViewModel)
+                        .padding(horizontal = 20.dp)
+                        .padding(top = 18.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    content = {
+                    item {
+                        TwoButtonInRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            fModifier = Modifier.weight(1F),
+                            sModifier = Modifier.weight(2F),
+                            firstText = stringResource(id = R.string.login),
+                            secondText = stringResource(id = R.string.signup),
+                            indexFocused = uiState.index,
+                            firstClick = {
+                                handleEvent(LoginOrSignupEvent.SwitchToLogin)
+                            },
+                            secondClick = {
+                                handleEvent(LoginOrSignupEvent.SwitchSignup)
+                            }
+                        )
+                        Spacer(modifier = Modifier.height(24.dp))
                     }
-                }
+                    item {
+                        when (uiState) {
+                            LoginOrSignupUIState.Login -> LoginScreen(viewModel = loginViewModel)
+                            LoginOrSignupUIState.Signup -> SignupScreen(signupViewModel = signupViewModel)
+                        }
+                    }
+                })
             }
         }
     }

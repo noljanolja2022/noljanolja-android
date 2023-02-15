@@ -5,19 +5,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.noljanolja.android.R
 
 @Composable
 fun TwoButtonInRow(
@@ -58,18 +53,16 @@ private fun ButtonInRow(
 ) {
     Button(
         onClick = onClick, shape = RectangleShape, colors = ButtonDefaults.buttonColors(
-            containerColor = colorResource(
-                id = if (isFocused) {
-                    R.color.primary_text_color
-                } else {
-                    R.color.background
-                }
-            )
+            containerColor = if (isFocused) {
+                MaterialTheme.colorScheme.secondary
+            } else {
+                MaterialTheme.colorScheme.background
+            }
         ), modifier = modifier.height(42.dp)
     ) {
         Text(
             text = text,
-            color = colorResource(id = if (isFocused) R.color.white else R.color.disable_text),
+            color = if (isFocused) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onBackground,
             maxLines = 1
         )
     }
@@ -104,8 +97,9 @@ fun OutlineButton(
     text: String,
     isEnable: Boolean = true,
     colors: ButtonColors = ButtonDefaults.outlinedButtonColors(
-        disabledContentColor = colorResource(id = R.color.disable_text),
-        containerColor = colorResource(id = R.color.white),
+        disabledContentColor = MaterialTheme.colorScheme.onBackground,
+        containerColor = MaterialTheme.colorScheme.onSecondary,
+        contentColor = MaterialTheme.colorScheme.secondary
     ),
     onClick: () -> Unit,
 ) {
@@ -119,7 +113,7 @@ fun OutlineButton(
             .height(50.dp)
             .shadow(2.dp, shape = shape),
         shape = shape,
-        border = BorderStroke(1.dp, colorResource(id = R.color.primary_text_color))
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.secondary)
     ) {
         Text(text)
     }

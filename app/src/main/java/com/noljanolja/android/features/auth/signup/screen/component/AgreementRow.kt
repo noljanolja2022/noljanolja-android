@@ -5,11 +5,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -40,7 +40,7 @@ fun AgreementRow(
             tag,
             style = TextStyle(
                 fontSize = 14.sp,
-                color = colorResource(id = R.color.primary_text_color)
+                color = MaterialTheme.colorScheme.secondary
             ),
             modifier = Modifier.padding(top = 7.dp, start = 4.dp)
         )
@@ -48,7 +48,7 @@ fun AgreementRow(
             description,
             style = TextStyle(
                 fontSize = 14.sp,
-                color = colorResource(id = R.color.secondary_text_color)
+                color = MaterialTheme.colorScheme.outline
             ),
             modifier = Modifier
                 .weight(1F)
@@ -83,7 +83,7 @@ fun FullAgreement(checked: Boolean, onClick: () -> Unit) {
             "Full agreement",
             style = TextStyle(
                 fontSize = 14.sp,
-                color = colorResource(id = R.color.primary_text_color),
+                color = MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.W700,
             ),
             modifier = Modifier

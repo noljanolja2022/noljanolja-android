@@ -131,7 +131,7 @@ fun HomeBottomBar(navController: NavHostController) {
                 val iconColor = if (isSelected) {
                     MaterialTheme.colorScheme.secondary
                 } else {
-                    colorResource(id = R.color.secondary_text_color)
+                    MaterialTheme.colorScheme.outline
                 }
                 NavigationBarItem(
                     icon = {

@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -129,10 +128,10 @@ private fun ColumnScope.ForgotForm(
         text = stringResource(id = R.string.auth_email_verification),
         isEnable = email.isNotBlank(),
         colors = ButtonDefaults.buttonColors(
-            containerColor = colorResource(id = R.color.primary_text_color),
-            disabledContainerColor = colorResource(id = R.color.background),
+            containerColor = MaterialTheme.colorScheme.secondary,
+            disabledContainerColor = MaterialTheme.colorScheme.background,
             contentColor = Color.White,
-            disabledContentColor = colorResource(id = R.color.disable_text)
+            disabledContentColor = MaterialTheme.colorScheme.onBackground
         ),
         onClick = onSubmit
     )
@@ -151,7 +150,7 @@ fun ColumnScope.ResendEmailComponent(
         stringResource(id = R.string.auth_reset_email_sended),
         style = TextStyle(
             fontSize = 18.sp,
-            color = colorResource(id = R.color.primary_text_color),
+            color = MaterialTheme.colorScheme.secondary,
             fontWeight = FontWeight.W700
         ),
         modifier = Modifier
@@ -162,7 +161,7 @@ fun ColumnScope.ResendEmailComponent(
     Card(
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = colorResource(id = R.color.background)
+            containerColor = MaterialTheme.colorScheme.background
         ),
         modifier = Modifier
             .padding(vertical = 28.dp)
@@ -172,7 +171,7 @@ fun ColumnScope.ResendEmailComponent(
             stringResource(id = R.string.auth_login_new_password),
             style = TextStyle(
                 fontSize = 14.sp,
-                color = colorResource(id = R.color.secondary_text_color)
+                color = MaterialTheme.colorScheme.outline
             ),
             modifier = Modifier
                 .fillMaxWidth()
@@ -184,7 +183,7 @@ fun ColumnScope.ResendEmailComponent(
     RoundedButton(
         text = stringResource(id = R.string.auth_resend_password),
         colors = ButtonDefaults.buttonColors(
-            containerColor = colorResource(id = R.color.orange),
+            containerColor = MaterialTheme.colorScheme.tertiary,
             contentColor = Color.White,
         ),
         onClick = onResendPassword
@@ -193,7 +192,7 @@ fun ColumnScope.ResendEmailComponent(
     RoundedButton(
         text = stringResource(id = R.string.login),
         colors = ButtonDefaults.buttonColors(
-            containerColor = colorResource(id = R.color.primaryColor),
+            containerColor = MaterialTheme.colorScheme.primary,
             contentColor = Color.White,
         ),
         onClick = onBack
@@ -215,7 +214,7 @@ fun ForgotHeader(
                 painter = painterResource(id = R.drawable.ic_back),
                 contentDescription = null,
                 modifier = Modifier.size(24.dp),
-                tint = colorResource(id = R.color.primary_text_color)
+                tint = MaterialTheme.colorScheme.secondary
             )
         }
         Text(
@@ -223,7 +222,7 @@ fun ForgotHeader(
             style = TextStyle(
                 textAlign = TextAlign.Center,
                 fontSize = 16.sp,
-                color = colorResource(id = R.color.primary_text_color),
+                color = MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.W700
             ),
             modifier = Modifier.weight(1F)
