@@ -33,8 +33,9 @@ class HomeViewModel @Inject constructor(
         launch {
             // Test Logout
             if (item == HomeNavigationItem.UserItem) {
-                sendError(Throwable("Logout Success! This button test logout"))
-                logOut()
+//                sendError(Throwable("Logout Success! This button test logout"))
+//                logOut()
+                onChange.invoke()
                 return@launch
             }
             if (item == HomeNavigationItem.HomeItem) {

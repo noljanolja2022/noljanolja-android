@@ -38,5 +38,10 @@
 
     <!--    Failure-->
     <string name="invalid_email_format">Email is not valid</string>
+    <string name="my_page">My Page</string>
+    <string name="hello">Hello</string>
+    <string name="service_guide">Service Guide</string>
+    <string name="custom_service_center">Custom service center</string>
+    <string name="telephone_number_service_center">1588-1588</string>
 
 </resources>
