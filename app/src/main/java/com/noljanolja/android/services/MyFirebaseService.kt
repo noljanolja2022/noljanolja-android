@@ -24,7 +24,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
 class MyFirebaseService : FirebaseMessagingService() {
 
@@ -59,7 +58,7 @@ class MyFirebaseService : FirebaseMessagingService() {
             this,
             0,
             intent,
-            PendingIntent.FLAG_ONE_SHOT
+            PendingIntent.FLAG_ONE_SHOT,
         )
         val channelId = BuildConfig.APPLICATION_ID
         val defaultSoundUri: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
@@ -69,8 +68,8 @@ class MyFirebaseService : FirebaseMessagingService() {
                 .setLargeIcon(
                     BitmapFactory.decodeResource(
                         resources,
-                        R.mipmap.sym_def_app_icon
-                    )
+                        R.mipmap.sym_def_app_icon,
+                    ),
                 )
                 .setContentTitle(channelId)
                 .setContentText(messageBody)
@@ -87,9 +86,9 @@ class MyFirebaseService : FirebaseMessagingService() {
                             this,
                             0,
                             intent,
-                            PendingIntent.FLAG_CANCEL_CURRENT
-                        )
-                    )
+                            PendingIntent.FLAG_CANCEL_CURRENT,
+                        ),
+                    ),
                 )
                 .addAction(
                     NotificationCompat.Action(
@@ -99,9 +98,9 @@ class MyFirebaseService : FirebaseMessagingService() {
                             this,
                             0,
                             intent,
-                            PendingIntent.FLAG_CANCEL_CURRENT
-                        )
-                    )
+                            PendingIntent.FLAG_CANCEL_CURRENT,
+                        ),
+                    ),
                 )
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -111,7 +110,7 @@ class MyFirebaseService : FirebaseMessagingService() {
             val channel = NotificationChannel(
                 channelId,
                 "Channel human readable title",
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_DEFAULT,
             )
             notificationManager.createNotificationChannel(channel)
         }

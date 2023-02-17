@@ -106,7 +106,7 @@ object NavigationDirections {
 
     // Back
     data class FinishWithResults(
-        val data: Map<String, Any>
+        val data: Map<String, Any>,
     ) : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options: NavOptions? = null

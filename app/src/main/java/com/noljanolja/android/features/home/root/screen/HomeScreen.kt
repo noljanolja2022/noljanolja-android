@@ -11,7 +11,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -36,13 +35,13 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded },
-        skipHalfExpanded = true
+        skipHalfExpanded = true,
     )
 
     LaunchedEffect(key1 = viewModel.showRequireLoginPopupEvent) {
@@ -73,9 +72,9 @@ fun HomeScreen(
                 modalSheetState = modalSheetState,
                 onGoToLogin = {
                     viewModel.handleEvent(HomeEvent.LoginOrVerifyEmail)
-                }
+                },
             )
-        }
+        },
     ) {
         Scaffold(
             floatingActionButton = { HomeFloatingActionButton(navController = navController) },
@@ -87,7 +86,7 @@ fun HomeScreen(
                     backgroundColor = Color.White,
                     cutoutShape = RoundedCornerShape(50),
                     // backgroundColor = Color.White,
-                    elevation = 22.dp
+                    elevation = 22.dp,
                 ) {
                     HomeBottomBar(navController, onItemClick = {
                         viewModel.handleEvent(
@@ -95,17 +94,17 @@ fun HomeScreen(
                                 item = it,
                                 onChange = {
                                     it.click(navController)
-                                }
-                            )
+                                },
+                            ),
                         )
                     })
                 }
-            }
+            },
         ) { contentPadding ->
             NavHost(
                 navController = navController,
                 startDestination = HomeNavigationItem.HomeItem.route,
-                modifier = Modifier.padding(contentPadding)
+                modifier = Modifier.padding(contentPadding),
             ) {
                 addNavigationGraph()
             }
@@ -119,7 +118,7 @@ private fun NavGraphBuilder.addNavigationGraph() {
             "MenuItem",
             modifier = Modifier
                 .fillMaxSize()
-                .padding(100.dp)
+                .padding(100.dp),
         )
     }
     composable(HomeNavigationItem.HomeItem.route) {
@@ -127,7 +126,7 @@ private fun NavGraphBuilder.addNavigationGraph() {
             "HomeItem",
             modifier = Modifier
                 .fillMaxSize()
-                .padding(100.dp)
+                .padding(100.dp),
         )
     }
     composable(HomeNavigationItem.WalletItem.route) {
@@ -135,7 +134,7 @@ private fun NavGraphBuilder.addNavigationGraph() {
             "WalletItem",
             modifier = Modifier
                 .fillMaxSize()
-                .padding(100.dp)
+                .padding(100.dp),
         )
     }
     composable(HomeNavigationItem.ShopItem.route) {
@@ -143,7 +142,7 @@ private fun NavGraphBuilder.addNavigationGraph() {
             "ShopItem",
             modifier = Modifier
                 .fillMaxSize()
-                .padding(100.dp)
+                .padding(100.dp),
         )
     }
     composable(HomeNavigationItem.UserItem.route) {
@@ -154,18 +153,18 @@ private fun NavGraphBuilder.addNavigationGraph() {
 @Composable
 fun HomeBottomBar(
     navController: NavHostController,
-    onItemClick: (HomeNavigationItem) -> Unit
+    onItemClick: (HomeNavigationItem) -> Unit,
 ) {
     val items = listOf(
         HomeNavigationItem.MenuItem,
         HomeNavigationItem.HomeItem,
         HomeNavigationItem.WalletItem,
         HomeNavigationItem.ShopItem,
-        HomeNavigationItem.UserItem
+        HomeNavigationItem.UserItem,
     )
     BottomNavigation(
         elevation = 0.dp,
-        backgroundColor = Color.White
+        backgroundColor = Color.White,
     ) {
         items.forEach { item ->
             if (item != HomeNavigationItem.WalletItem) {
@@ -182,16 +181,16 @@ fun HomeBottomBar(
                             painterResource(id = iconId),
                             null,
                             tint = iconColor,
-                            modifier = Modifier.size(30.dp)
+                            modifier = Modifier.size(30.dp),
                         )
                     },
                     selected = isSelected,
                     colors = NavigationBarItemDefaults.colors(
-                        indicatorColor = Color.White
+                        indicatorColor = Color.White,
                     ),
                     onClick = {
                         onItemClick(item)
-                    }
+                    },
                 )
             } else {
                 Spacer(modifier = Modifier.weight(1F))

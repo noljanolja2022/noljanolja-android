@@ -23,36 +23,36 @@ fun AgreementRow(
     tag: String,
     description: String,
     onToggle: () -> Unit,
-    onGoDetail: () -> Unit
+    onGoDetail: () -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.Start,
         modifier = Modifier.clickable {
             onToggle.invoke()
-        }
+        },
     ) {
         Image(
             painterResource(id = if (checked) R.drawable.ic_checked else R.drawable.ic_uncheck),
-            contentDescription = null
+            contentDescription = null,
         )
         Text(
             tag,
             style = TextStyle(
                 fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.secondary
+                color = MaterialTheme.colorScheme.secondary,
             ),
-            modifier = Modifier.padding(top = 7.dp, start = 4.dp)
+            modifier = Modifier.padding(top = 7.dp, start = 4.dp),
         )
         Text(
             description,
             style = TextStyle(
                 fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.outline
+                color = MaterialTheme.colorScheme.outline,
             ),
             modifier = Modifier
                 .weight(1F)
-                .padding(top = 7.dp, start = 6.dp)
+                .padding(top = 7.dp, start = 6.dp),
         )
         Image(
             painterResource(id = R.drawable.ic_next),
@@ -61,7 +61,7 @@ fun AgreementRow(
                 .padding(top = 4.dp)
                 .clickable {
                     onGoDetail.invoke()
-                }
+                },
         )
     }
 }
@@ -73,27 +73,27 @@ fun FullAgreement(checked: Boolean, onClick: () -> Unit) {
         horizontalArrangement = Arrangement.Start,
         modifier = Modifier.clickable {
             onClick.invoke()
-        }
+        },
     ) {
         Image(
             painterResource(id = if (checked) R.drawable.ic_checked else R.drawable.ic_uncheck),
-            contentDescription = null
+            contentDescription = null,
         )
         Text(
             "Full agreement",
             style = TextStyle(
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.secondary,
-                fontWeight = FontWeight.W700
+                fontWeight = FontWeight.W700,
             ),
             modifier = Modifier
                 .weight(1F)
-                .padding(top = 7.dp, start = 4.dp)
+                .padding(top = 7.dp, start = 4.dp),
         )
         Image(
             painterResource(id = R.drawable.ic_next),
             contentDescription = null,
-            modifier = Modifier.padding(top = 4.dp)
+            modifier = Modifier.padding(top = 4.dp),
         )
     }
 }

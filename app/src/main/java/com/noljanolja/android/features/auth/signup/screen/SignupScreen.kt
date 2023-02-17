@@ -32,9 +32,8 @@ import com.noljanolja.android.features.auth.signup.screen.component.FullAgreemen
 
 @Composable
 fun SignupScreen(
-    signupViewModel: SignupViewModel = hiltViewModel()
+    signupViewModel: SignupViewModel = hiltViewModel(),
 ) {
-
     signupViewModel.handleError()
     val uiState by signupViewModel.uiStateFlow.collectAsState()
     val email by signupViewModel.emailFlow.collectAsState()
@@ -48,7 +47,7 @@ fun SignupScreen(
 
     Column(
         modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         SignupProgress(uiState = uiState)
         when (uiState) {
@@ -57,7 +56,7 @@ fun SignupScreen(
                     uiState = uiState as SignupUIState.Agreement,
                     handleEvent = {
                         signupViewModel.handleEvent(it)
-                    }
+                    },
                 )
             }
             is SignupUIState.SignupForm -> {
@@ -66,7 +65,7 @@ fun SignupScreen(
                     password,
                     emailError,
                     passwordError,
-                    confirmPassword
+                    confirmPassword,
                 ) {
                     signupViewModel.handleEvent(it)
                 }
@@ -83,14 +82,14 @@ fun SignupScreen(
             confirmPassword = confirmPassword,
             handleEvent = {
                 signupViewModel.handleEvent(it)
-            }
+            },
         )
     }
 }
 
 @Composable
 private fun ColumnScope.SignupProgress(
-    uiState: SignupUIState
+    uiState: SignupUIState,
 ) {
     val step: String
     val stepDescription: String
@@ -116,17 +115,17 @@ private fun ColumnScope.SignupProgress(
         step,
         style = TextStyle(
             fontSize = 20.sp,
-            fontWeight = FontWeight.W700
+            fontWeight = FontWeight.W700,
         ),
-        modifier = Modifier.align(Alignment.Start)
+        modifier = Modifier.align(Alignment.Start),
     )
     Text(
         text = stepDescription,
         style = TextStyle(
             fontSize = 10.sp,
-            color = MaterialTheme.colorScheme.secondary
+            color = MaterialTheme.colorScheme.secondary,
         ),
-        modifier = Modifier.align(Alignment.Start)
+        modifier = Modifier.align(Alignment.Start),
     )
     Spacer(modifier = Modifier.height(8.dp))
     Row(modifier = Modifier.fillMaxWidth()) {
@@ -141,7 +140,7 @@ private fun ColumnScope.SignupProgress(
             .fillMaxWidth()
             .height(10.dp),
         color = MaterialTheme.colorScheme.primary,
-        progress = progress
+        progress = progress,
     )
 
     Spacer(modifier = Modifier.height(24.dp))
@@ -154,7 +153,7 @@ private fun ColumnScope.SignupForm(
     emailError: Throwable?,
     passwordError: Throwable?,
     confirmPassword: String,
-    handleEvent: (SignupEvent) -> Unit
+    handleEvent: (SignupEvent) -> Unit,
 ) {
     EmailAndPassword(
         email = email,
@@ -166,7 +165,7 @@ private fun ColumnScope.SignupForm(
         },
         onPasswordChange = {
             handleEvent(SignupEvent.ChangePassword(it))
-        }
+        },
     )
     Spacer(modifier = Modifier.height(12.dp))
     RoundedTextField(
@@ -175,14 +174,14 @@ private fun ColumnScope.SignupForm(
         hideText = true,
         onValueChange = {
             handleEvent(SignupEvent.ChangeConfirmPassword(it))
-        }
+        },
     )
 }
 
 @Composable
 private fun ColumnScope.SignupAgreement(
     uiState: SignupUIState.Agreement,
-    handleEvent: (SignupEvent) -> Unit
+    handleEvent: (SignupEvent) -> Unit,
 ) {
     Box(modifier = Modifier.weight(100F)) {
         LazyColumn {
@@ -192,7 +191,7 @@ private fun ColumnScope.SignupAgreement(
                 }
                 Divider(
                     color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(vertical = 12.dp)
+                    modifier = Modifier.padding(vertical = 12.dp),
                 )
             }
             uiState.agreements.forEach {
@@ -206,7 +205,7 @@ private fun ColumnScope.SignupAgreement(
                         },
                         onGoDetail = {
                             handleEvent(SignupEvent.GoTermsOfService(it.id))
-                        }
+                        },
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                 }
@@ -226,7 +225,7 @@ private fun ColumnScope.SignupActions(
     email: String,
     password: String,
     confirmPassword: String,
-    handleEvent: (SignupEvent) -> Unit
+    handleEvent: (SignupEvent) -> Unit,
 ) {
     Spacer(modifier = Modifier.weight(1F))
     Row {
@@ -234,7 +233,7 @@ private fun ColumnScope.SignupActions(
             is SignupUIState.Agreement -> {
                 SignupRoundedButton(
                     text = stringResource(id = R.string.common_next),
-                    enable = uiState.agreements.all { it.checked }
+                    enable = uiState.agreements.all { it.checked },
                 ) {
                     handleEvent(SignupEvent.Next)
                 }
@@ -246,7 +245,7 @@ private fun ColumnScope.SignupActions(
                 Spacer(modifier = Modifier.width(12.dp))
                 SignupRoundedButton(
                     text = stringResource(id = R.string.common_next),
-                    enable = isEnableSignup(email, password, confirmPassword)
+                    enable = isEnableSignup(email, password, confirmPassword),
                 ) {
                     handleEvent(SignupEvent.Next)
                 }
@@ -269,13 +268,13 @@ private fun ColumnScope.SignupActions(
 fun RowScope.SignupRoundedButton(
     text: String,
     enable: Boolean = true,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     PrimaryButton(
         modifier = Modifier.weight(1F),
         text = text,
         isEnable = enable,
-        onClick = onClick
+        onClick = onClick,
     )
 }
 
@@ -283,18 +282,18 @@ fun RowScope.SignupRoundedButton(
 private fun RowScope.SignupOutlineButton(
     text: String,
     enable: Boolean = true,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     SecondaryButton(
         modifier = Modifier.weight(1F),
         text = text,
         isEnable = enable,
-        onClick = onClick
+        onClick = onClick,
     )
 }
 
 private fun isEnableSignup(
     email: String,
     password: String,
-    confirmPassword: String
+    confirmPassword: String,
 ) = email.isNotBlank() && password.isNotBlank() && password == confirmPassword

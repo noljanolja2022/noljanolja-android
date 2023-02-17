@@ -12,14 +12,14 @@ import com.noljanolja.android.R
 
 @Composable
 fun SplashScreen(
-    viewModel: SplashViewModel = hiltViewModel()
+    viewModel: SplashViewModel = hiltViewModel(),
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painterResource(id = R.drawable.bg_splash),
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.FillWidth
+            contentScale = ContentScale.FillWidth,
         )
     }
 }

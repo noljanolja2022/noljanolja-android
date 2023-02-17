@@ -6,7 +6,7 @@ class NavigationManager {
     val commands = MutableSharedFlow<NavigationCommand>()
 
     suspend fun navigate(
-        direction: NavigationCommand
+        direction: NavigationCommand,
     ) {
         commands.emit(direction)
     }

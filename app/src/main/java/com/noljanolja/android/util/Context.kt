@@ -7,7 +7,7 @@ import com.noljanolja.android.common.error.ValidEmailFailed
 
 fun Context.showToast(
     text: String?,
-    time: Int = Toast.LENGTH_SHORT
+    time: Int = Toast.LENGTH_SHORT,
 ) = Toast.makeText(this, text, time).show()
 
 fun Context.getErrorMessage(error: Throwable) = when (error) {

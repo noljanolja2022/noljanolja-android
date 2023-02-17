@@ -20,7 +20,7 @@ object AnalyticsModule {
     @Singleton
     @Provides
     fun firebaseTracker(): FirebaseTracker = FirebaseTracker(
-        Firebase.analytics
+        Firebase.analytics,
     ).apply {
         // TODO: Should fetch from remote config or use BuildConfig
         isEnable = true
@@ -29,7 +29,7 @@ object AnalyticsModule {
     @Singleton
     @Provides
     fun firebaseLogger(): FirebaseLogger = FirebaseLogger(
-        Firebase.crashlytics
+        Firebase.crashlytics,
     ).apply {
         // TODO: Should fetch from remote config or use BuildConfig
         isEnable = true
@@ -39,9 +39,9 @@ object AnalyticsModule {
     @Provides
     fun bindAnalytics(
         firebaseTracker: FirebaseTracker,
-        firebaseLogger: FirebaseLogger
+        firebaseLogger: FirebaseLogger,
     ): Analytics = AppAnalytics(
         trackers = mutableListOf(firebaseTracker),
-        loggers = mutableListOf(firebaseLogger)
+        loggers = mutableListOf(firebaseLogger),
     )
 }

@@ -16,7 +16,7 @@ import com.noljanolja.android.features.splash.screen.SplashScreen
 
 @Composable
 fun MainScreen(
-    navigationManager: NavigationManager
+    navigationManager: NavigationManager,
 ) {
     val navController = rememberNavController()
     LaunchedEffect(navigationManager.commands) {
@@ -45,7 +45,7 @@ fun MainScreen(
     NavHost(
         navController = navController,
         route = NavigationDirections.Root.destination,
-        startDestination = NavigationDirections.Splash.destination
+        startDestination = NavigationDirections.Splash.destination,
     ) {
         addSplashGraph()
         addHomeGraph()

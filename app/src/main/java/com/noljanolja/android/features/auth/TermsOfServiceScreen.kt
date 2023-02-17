@@ -29,20 +29,20 @@ fun TermsOfServiceScreen() {
                 .fillMaxSize(),
             shape = RoundedCornerShape(
                 topStart = 20.dp,
-                topEnd = 20.dp
-            )
+                topEnd = 20.dp,
+            ),
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.White)
-                    .padding(20.dp)
+                    .padding(20.dp),
             ) {
                 Row() {
                     Image(
                         painterResource(id = R.drawable.ic_back),
                         contentDescription = null,
-                        modifier = Modifier.clickable { }
+                        modifier = Modifier.clickable { },
                     )
                     Text(
                         "[Required]\nAgree to the Terms of Service",
@@ -52,8 +52,8 @@ fun TermsOfServiceScreen() {
                             .weight(1F),
                         style = TextStyle(
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.W700
-                        )
+                            fontWeight = FontWeight.W700,
+                        ),
                     )
                     Spacer(modifier = Modifier.width(24.dp))
                 }
@@ -62,9 +62,9 @@ fun TermsOfServiceScreen() {
                     TEST_TEXT,
                     style = TextStyle(
                         fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.secondary
+                        color = MaterialTheme.colorScheme.secondary,
                     ),
-                    textAlign = TextAlign.Justify
+                    textAlign = TextAlign.Justify,
                 )
             }
         }

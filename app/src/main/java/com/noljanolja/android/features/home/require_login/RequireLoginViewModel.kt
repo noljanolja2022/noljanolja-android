@@ -12,13 +12,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RequireLoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
 ) : BaseViewModel() {
     val hasUser: StateFlow<Boolean> = authRepository.getCurrentUser().map {
         it != null
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = false
+        initialValue = false,
     )
 }

@@ -14,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ForgotViewModel @Inject constructor(
     private val navigationManager: NavigationManager,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
 ) : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow<ForgotUIState>(ForgotUIState.Normal("", false))
     val uiStateFlow = _uiStateFlow.asStateFlow()
@@ -29,9 +29,9 @@ class ForgotViewModel @Inject constructor(
                     navigationManager.navigate(
                         NavigationDirections.FinishWithResults(
                             mapOf(
-                                FORGOT_FINISH_AUTH to true
-                            )
-                        )
+                                FORGOT_FINISH_AUTH to true,
+                            ),
+                        ),
                     )
                 }
             }

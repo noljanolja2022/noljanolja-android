@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 fun RequireLoginBottomSheet(
     viewModel: RequireLoginViewModel = hiltViewModel(),
     modalSheetState: ModalBottomSheetState,
-    onGoToLogin: () -> Unit
+    onGoToLogin: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     BackHandler(modalSheetState.isVisible) {
@@ -52,24 +52,24 @@ fun RequireLoginBottomSheet(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 51.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             stringResource(id = R.string.require_login_title),
             color = MaterialTheme.colorScheme.secondary,
             style = TextStyle(
                 fontSize = 20.sp,
-                fontWeight = FontWeight.W700
-            )
+                fontWeight = FontWeight.W700,
+            ),
         )
         Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = description,
             style = TextStyle(
                 color = MaterialTheme.colorScheme.outline,
-                fontSize = 16.sp
+                fontSize = 16.sp,
             ),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(42.dp))
         PrimaryButton(
@@ -79,7 +79,7 @@ fun RequireLoginBottomSheet(
             text = buttonText,
             shape = RoundedCornerShape(25.dp),
             contentColor = MaterialTheme.colorScheme.secondary,
-            onClick = onGoToLogin
+            onClick = onGoToLogin,
         )
     }
 }

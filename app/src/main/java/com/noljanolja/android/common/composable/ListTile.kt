@@ -33,17 +33,20 @@ fun ListTile(
     @DrawableRes trailingDrawable: Int? = null,
     onClick: () -> Unit,
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier
-        .fillMaxWidth()
-        .height(60.dp)
-        .clickable { onClick() }
-        .padding(vertical = 8.dp)) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(60.dp)
+            .clickable { onClick() }
+            .padding(vertical = 8.dp),
+    ) {
         leadingDrawable?.let {
             Icon(
                 painter = painterResource(id = it),
                 contentDescription = "start icon",
                 modifier = Modifier.size(24.dp),
-                tint = Color.Black
+                tint = Color.Black,
             )
         }
         Spacer(modifier = Modifier.width(16.dp))
@@ -60,7 +63,7 @@ fun ListTile(
                 painter = painterResource(id = it),
                 contentDescription = "start icon",
                 modifier = Modifier.size(24.dp),
-                tint = MaterialTheme.colorScheme.onBackground
+                tint = MaterialTheme.colorScheme.onBackground,
             )
         }
     }
@@ -80,21 +83,26 @@ fun RoundedListTile(
             .shadow(
                 elevation = 2.dp,
                 shape = RoundedCornerShape(8.dp),
-                ambientColor = MaterialTheme.colorScheme.secondary
+                ambientColor = MaterialTheme.colorScheme.secondary,
             )
             .clip(RoundedCornerShape(8.dp))
             .background(MaterialTheme.colorScheme.onPrimary),
 
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(60.dp)
+                .clickable { onClick() }
+                .padding(vertical = 8.dp, horizontal = 12.dp),
         ) {
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-            .fillMaxWidth()
-            .height(60.dp)
-            .clickable { onClick() }
-            .padding(vertical = 8.dp, horizontal = 12.dp)) {
             leadingDrawable?.let {
                 Icon(
-                    painter = painterResource(id = it), contentDescription = "start icon",
-                    modifier = Modifier.size(24.dp), tint = Color.Black
+                    painter = painterResource(id = it),
+                    contentDescription = "start icon",
+                    modifier = Modifier.size(24.dp),
+                    tint = Color.Black,
                 )
             }
             Spacer(modifier = Modifier.width(16.dp))
@@ -105,8 +113,10 @@ fun RoundedListTile(
             Spacer(modifier = Modifier.weight(1f))
             trailingDrawable?.let {
                 Icon(
-                    painter = painterResource(id = it), contentDescription = "start icon",
-                    modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onBackground
+                    painter = painterResource(id = it),
+                    contentDescription = "start icon",
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.onBackground,
                 )
             }
         }

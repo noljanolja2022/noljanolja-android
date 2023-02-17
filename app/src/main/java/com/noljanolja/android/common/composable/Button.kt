@@ -24,26 +24,26 @@ fun TwoButtonInRow(
     fModifier: Modifier = Modifier,
     sModifier: Modifier = Modifier,
     firstClick: () -> Unit,
-    secondClick: () -> Unit
+    secondClick: () -> Unit,
 ) {
     Row(
         modifier = modifier
             .height(42.dp)
             .clip(
-                shape = RoundedCornerShape(8.dp)
-            )
+                shape = RoundedCornerShape(8.dp),
+            ),
     ) {
         ButtonInRow(
             modifier = fModifier,
             text = firstText,
             onClick = firstClick,
-            isFocused = indexFocused == 0
+            isFocused = indexFocused == 0,
         )
         ButtonInRow(
             modifier = sModifier,
             text = secondText,
             onClick = secondClick,
-            isFocused = indexFocused == 1
+            isFocused = indexFocused == 1,
         )
     }
 }
@@ -53,7 +53,7 @@ private fun ButtonInRow(
     text: String,
     isFocused: Boolean,
     modifier: Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Button(
         onClick = onClick,
@@ -63,14 +63,14 @@ private fun ButtonInRow(
                 MaterialTheme.colorScheme.secondary
             } else {
                 MaterialTheme.colorScheme.background
-            }
+            },
         ),
-        modifier = modifier.height(42.dp)
+        modifier = modifier.height(42.dp),
     ) {
         Text(
             text = text,
             color = if (isFocused) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onBackground,
-            maxLines = 1
+            maxLines = 1,
         )
     }
 }
@@ -82,7 +82,7 @@ fun RoundedButton(
     isEnable: Boolean = true,
     colors: ButtonColors = ButtonDefaults.buttonColors(),
     shape: Shape? = null,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val buttonShape = shape ?: RoundedCornerShape(8.dp)
     Button(
@@ -92,7 +92,7 @@ fun RoundedButton(
         modifier = modifier
             .height(50.dp)
             .shadow(2.dp, shape = buttonShape),
-        shape = buttonShape
+        shape = buttonShape,
     ) {
         Text(text)
     }
@@ -106,7 +106,7 @@ fun SecondaryButton(
     shape: Shape? = null,
     containerColor: Color = MaterialTheme.colorScheme.onSecondary,
     contentColor: Color = MaterialTheme.colorScheme.secondary,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val buttonShape = shape ?: RoundedCornerShape(8.dp)
     Button(
@@ -121,7 +121,7 @@ fun SecondaryButton(
             .height(50.dp)
             .shadow(2.dp, shape = buttonShape),
         shape = buttonShape,
-        border = BorderStroke(1.dp, contentColor)
+        border = BorderStroke(1.dp, contentColor),
     ) {
         Text(text)
     }
@@ -135,7 +135,7 @@ fun PrimaryButton(
     containerColor: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
     shape: Shape? = null,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     RoundedButton(
         modifier = modifier,
@@ -146,9 +146,9 @@ fun PrimaryButton(
             containerColor = containerColor,
             disabledContainerColor = MaterialTheme.colorScheme.background,
             contentColor = contentColor,
-            disabledContentColor = MaterialTheme.colorScheme.onBackground
+            disabledContentColor = MaterialTheme.colorScheme.onBackground,
         ),
-        onClick = onClick
+        onClick = onClick,
     )
 }
 

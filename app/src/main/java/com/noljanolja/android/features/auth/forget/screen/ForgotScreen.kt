@@ -49,13 +49,13 @@ fun ForgotScreen(viewModel: ForgotViewModel = hiltViewModel()) {
     FullSizeWithLogo(
         onBack = {
             viewModel.handleEvent(ForgotEvent.Close)
-        }
+        },
     ) {
         ForgotContent(
             uiState = uiState,
             handleEvent = {
                 viewModel.handleEvent(it)
-            }
+            },
         )
     }
 }
@@ -63,16 +63,16 @@ fun ForgotScreen(viewModel: ForgotViewModel = hiltViewModel()) {
 @Composable
 fun ForgotContent(
     uiState: ForgotUIState,
-    handleEvent: (ForgotEvent) -> Unit
+    handleEvent: (ForgotEvent) -> Unit,
 ) {
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         Card(
             shape = RoundedCornerShape(
                 topStart = 20.dp,
-                topEnd = 20.dp
-            )
+                topEnd = 20.dp,
+            ),
         ) {
             Column(
                 modifier = Modifier
@@ -80,9 +80,9 @@ fun ForgotContent(
                     .background(Color.White)
                     .padding(
                         vertical = 24.dp,
-                        horizontal = 20.dp
+                        horizontal = 20.dp,
                     ),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 ForgotHeader()
                 when (uiState) {
@@ -97,7 +97,7 @@ fun ForgotContent(
                             },
                             onSubmit = {
                                 handleEvent(ForgotEvent.VerifyEmail)
-                            }
+                            },
                         )
                     }
                     is ForgotUIState.VerifyCompleted -> {
@@ -107,7 +107,7 @@ fun ForgotContent(
                             },
                             onBack = {
                                 handleEvent(ForgotEvent.Back)
-                            }
+                            },
                         )
                     }
                 }
@@ -124,14 +124,14 @@ private fun ColumnScope.ForgotForm(
     uiState: ForgotUIState.Normal,
     onChangeEmail: (String) -> Unit,
     onBack: () -> Unit,
-    onSubmit: () -> Unit
+    onSubmit: () -> Unit,
 ) {
     val email = uiState.email
     Spacer(modifier = Modifier.height(20.dp))
     RoundedTextField(
         value = email,
         hint = stringResource(id = R.string.email_hint_text),
-        onValueChange = onChangeEmail
+        onValueChange = onChangeEmail,
     )
     Spacer(modifier = Modifier.weight(1F))
     Row(modifier = Modifier.fillMaxWidth()) {
@@ -139,7 +139,7 @@ private fun ColumnScope.ForgotForm(
             modifier = Modifier.weight(1F),
             text = stringResource(id = R.string.common_previous),
             isEnable = true,
-            onClick = onBack
+            onClick = onBack,
         )
         Spacer(modifier = Modifier.width(12.dp))
         PrimaryButton(
@@ -147,7 +147,7 @@ private fun ColumnScope.ForgotForm(
             text = stringResource(id = R.string.auth_email_verification),
             isEnable = email.isNotBlank(),
             containerColor = MaterialTheme.colorScheme.secondary,
-            onClick = onSubmit
+            onClick = onSubmit,
         )
     }
 }
@@ -155,43 +155,43 @@ private fun ColumnScope.ForgotForm(
 @Composable
 fun ColumnScope.ResendEmailComponent(
     onResendPassword: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
 ) {
     Spacer(
         modifier = Modifier
-            .heightIn(min = 56.dp, max = 86.dp)
+            .heightIn(min = 56.dp, max = 86.dp),
     )
     Text(
         stringResource(id = R.string.auth_reset_email_sended),
         style = TextStyle(
             fontSize = 18.sp,
             color = MaterialTheme.colorScheme.secondary,
-            fontWeight = FontWeight.W700
+            fontWeight = FontWeight.W700,
         ),
         modifier = Modifier
             .fillMaxWidth(),
-        textAlign = TextAlign.Center
+        textAlign = TextAlign.Center,
     )
 
     Card(
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background
+            containerColor = MaterialTheme.colorScheme.background,
         ),
         modifier = Modifier
             .padding(vertical = 28.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
     ) {
         Text(
             stringResource(id = R.string.auth_login_new_password),
             style = TextStyle(
                 fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.outline
+                color = MaterialTheme.colorScheme.outline,
             ),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
     }
 
@@ -199,7 +199,7 @@ fun ColumnScope.ResendEmailComponent(
         modifier = Modifier.fillMaxWidth(),
         text = stringResource(id = R.string.auth_resend_password),
         containerColor = MaterialTheme.colorScheme.tertiary,
-        onClick = onResendPassword
+        onClick = onResendPassword,
     )
     Spacer(modifier = Modifier.weight(1F))
     PrimaryButton(
@@ -217,12 +217,11 @@ fun ForgotHeader() {
             textAlign = TextAlign.Center,
             fontSize = 16.sp,
             color = MaterialTheme.colorScheme.secondary,
-            fontWeight = FontWeight.W700
+            fontWeight = FontWeight.W700,
         ),
         modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center
+        textAlign = TextAlign.Center,
     )
-
 }
 
 @Preview

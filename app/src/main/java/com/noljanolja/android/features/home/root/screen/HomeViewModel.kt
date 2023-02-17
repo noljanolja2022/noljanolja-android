@@ -14,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val navigationManager: NavigationManager
+    private val navigationManager: NavigationManager,
 ) : BaseViewModel() {
     private val _showRequireLoginPopupEvent = MutableSharedFlow<Boolean>()
     val showRequireLoginPopupEvent = _showRequireLoginPopupEvent.asSharedFlow()
@@ -28,7 +28,7 @@ class HomeViewModel @Inject constructor(
 
     private fun changeNavigationItem(
         item: HomeNavigationItem,
-        onChange: () -> Unit
+        onChange: () -> Unit,
     ) {
         launch {
             if (item == HomeNavigationItem.HomeItem) {

@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.Color
 private val DarkColorScheme = darkColorScheme(
     primary = YellowF8,
     secondary = Orange36,
-    tertiary = Pink80
+    tertiary = Pink80,
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -24,7 +24,7 @@ private val LightColorScheme = lightColorScheme(
     error = Color(0xFFFF4F4F),
     errorContainer = Color(0xFFFF4F4F),
     outline = Color(0xFF767676),
-    onBackground = Color(0xFFC8C8C8)
+    onBackground = Color(0xFFC8C8C8),
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -42,7 +42,7 @@ fun NoljanoljaTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = false,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
 //    val colorScheme = when {
 //        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
@@ -63,6 +63,6 @@ fun NoljanoljaTheme(
     MaterialTheme(
         colorScheme = LightColorScheme,
         typography = Typography,
-        content = content
+        content = content,
     )
 }

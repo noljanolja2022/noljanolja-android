@@ -11,12 +11,12 @@ import com.noljanolja.android.common.composable.PrimaryButton
 fun LoginButton(
     modifier: Modifier = Modifier,
     isEnable: Boolean = true,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     PrimaryButton(
         text = stringResource(id = R.string.login),
         isEnable = isEnable,
         modifier = modifier.fillMaxWidth(),
-        onClick = onClick
+        onClick = onClick,
     )
 }

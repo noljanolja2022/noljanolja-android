@@ -5,30 +5,30 @@ import com.noljanolja.android.BuildConfig
 
 sealed class Event(
     val name: String,
-    val data: MutableMap<String, String> = mutableMapOf()
+    val data: MutableMap<String, String> = mutableMapOf(),
 ) {
     abstract class Navigate(
         navigated: String,
-        data: MutableMap<String, String> = mutableMapOf()
+        data: MutableMap<String, String> = mutableMapOf(),
     ) : Event(
         name = navigated,
-        data = data
+        data = data,
     )
 
     abstract class Click(
         action: String,
-        data: MutableMap<String, String> = mutableMapOf()
+        data: MutableMap<String, String> = mutableMapOf(),
     ) : Event(
         name = action,
-        data = data
+        data = data,
     )
 
     abstract class Switch(
         changed: String,
-        data: MutableMap<String, String> = mutableMapOf()
+        data: MutableMap<String, String> = mutableMapOf(),
     ) : Event(
         name = changed,
-        data = data
+        data = data,
     )
 }
 

@@ -29,7 +29,7 @@ import com.noljanolja.android.features.auth.signup.screen.SignupViewModel
 
 @Composable
 fun LoginOrSignupScreen(
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
 ) {
     val loginOrSignupViewModel: LoginOrSignupViewModel = hiltViewModel()
     val uiState by loginOrSignupViewModel.uiStateFlow.collectAsState()
@@ -49,7 +49,7 @@ fun LoginOrSignupScreen(
 fun LoginOrSignupContent(
     modifier: Modifier = Modifier,
     uiState: LoginOrSignupUIState,
-    handleEvent: (LoginOrSignupEvent) -> Unit
+    handleEvent: (LoginOrSignupEvent) -> Unit,
 ) {
     val loginViewModel: LoginViewModel = hiltViewModel()
     val signupViewModel: SignupViewModel = hiltViewModel()
@@ -59,14 +59,14 @@ fun LoginOrSignupContent(
         FullSizeWithLogo(
             onBack = {
                 handleEvent(LoginOrSignupEvent.Close)
-            }
+            },
         ) {
             Card(
                 modifier = modifier.fillMaxSize(),
                 shape = RoundedCornerShape(
                     topStart = 20.dp,
-                    topEnd = 20.dp
-                )
+                    topEnd = 20.dp,
+                ),
             ) {
                 Column(
                     modifier = Modifier
@@ -88,7 +88,7 @@ fun LoginOrSignupContent(
                             },
                             secondClick = {
                                 handleEvent(LoginOrSignupEvent.SwitchSignup)
-                            }
+                            },
                         )
                         Spacer(modifier = Modifier.height(24.dp))
 
@@ -96,7 +96,7 @@ fun LoginOrSignupContent(
                             LoginOrSignupUIState.Login -> LoginScreen(viewModel = loginViewModel)
                             LoginOrSignupUIState.Signup -> SignupScreen(signupViewModel = signupViewModel)
                         }
-                    }
+                    },
                 )
             }
         }

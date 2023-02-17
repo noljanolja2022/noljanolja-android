@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignupViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val navigationManager: NavigationManager
+    private val navigationManager: NavigationManager,
 ) : BaseAuthViewModel() {
 
     private val _uiStateFlow = MutableStateFlow<SignupUIState>(SignupUIState.Agreement(AGREEMENTS))
@@ -64,8 +64,8 @@ class SignupViewModel @Inject constructor(
                         is SignupUIState.SignupForm -> {
                             _uiStateFlow.emit(
                                 SignupUIState.Agreement(
-                                    AGREEMENTS.map { it.copy(checked = true) }
-                                )
+                                    AGREEMENTS.map { it.copy(checked = true) },
+                                ),
                             )
                         }
                         SignupUIState.VerificationEmail -> {
@@ -86,7 +86,7 @@ class SignupViewModel @Inject constructor(
                             } else {
                                 agreement
                             }
-                        }
+                        },
                     )
                     _uiStateFlow.emit(newUIState)
                 }
@@ -96,7 +96,7 @@ class SignupViewModel @Inject constructor(
                     val uiState = _uiStateFlow.value as? SignupUIState.Agreement ?: return@launch
                     val isEnable = uiState.agreements.all { it.checked }
                     val newUIState = uiState.copy(
-                        agreements = uiState.agreements.map { it.copy(checked = !isEnable) }
+                        agreements = uiState.agreements.map { it.copy(checked = !isEnable) },
                     )
                     _uiStateFlow.emit(newUIState)
                 }
@@ -123,7 +123,7 @@ class SignupViewModel @Inject constructor(
                 val result =
                     authRepository.createUserWithEmailAndPassword(
                         emailFlow.value,
-                        passwordFlow.value
+                        passwordFlow.value,
                     )
                 if (result.isFailure) {
                     throw result.exceptionOrNull()!!
@@ -147,26 +147,26 @@ class SignupViewModel @Inject constructor(
                 id = "1",
                 true,
                 tag = "[Essential]",
-                description = "Subscribe Terms of Service"
+                description = "Subscribe Terms of Service",
             ),
             SignupUIState.Agreement.Agreement(
                 id = "2",
                 true,
                 tag = "[Essential]",
-                description = "You are 14 years old or older."
+                description = "You are 14 years old or older.",
             ),
             SignupUIState.Agreement.Agreement(
                 id = "3",
                 true,
                 tag = "[Essential]",
-                description = "Collection, Use and Third Parties of Personal Information consent to provide"
+                description = "Collection, Use and Third Parties of Personal Information consent to provide",
             ),
             SignupUIState.Agreement.Agreement(
                 id = "4",
                 true,
                 tag = "[Select]",
-                description = "Consent to receive marketing information"
-            )
+                description = "Consent to receive marketing information",
+            ),
         )
     }
 }
@@ -177,7 +177,7 @@ sealed interface SignupUIState {
             val id: String,
             val checked: Boolean,
             val tag: String,
-            val description: String
+            val description: String,
         )
     }
 
