@@ -22,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val navigationManager: NavigationManager,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
 ) : BaseAuthViewModel() {
 
     private val _uiStateFlow = MutableStateFlow(LoginUIState.Login)
@@ -81,12 +81,10 @@ class LoginViewModel @Inject constructor(
         launch {
             _uiStateFlow.emit(LoginUIState.Loading)
             val result = authRepository.loginWithKakao()
-            if (result.isSuccess) {
-                finishLogin()
-            } else {
+            if (!result.isSuccess) {
                 handleEvent(LoginEvent.ShowError(result.exceptionOrNull()))
             }
-            _uiStateFlow.emit(LoginUIState.Login)
+            finishLogin()
         }
     }
 
@@ -94,12 +92,10 @@ class LoginViewModel @Inject constructor(
         launch {
             _uiStateFlow.emit(LoginUIState.Loading)
             val result = authRepository.loginWithNaver(token)
-            if (result.isSuccess) {
-                finishLogin()
-            } else {
+            if (!result.isSuccess) {
                 handleEvent(LoginEvent.ShowError(result.exceptionOrNull()))
             }
-            _uiStateFlow.emit(LoginUIState.Login)
+            finishLogin()
         }
     }
 
@@ -112,11 +108,10 @@ class LoginViewModel @Inject constructor(
                 val account = task.getResult(ApiException::class.java)
                 val credential = GoogleAuthProvider.getCredential(account.idToken, null)
                 Firebase.auth.signInWithCredential(credential).await()
-                finishLogin()
             } catch (e: ApiException) {
                 sendError(e)
             } finally {
-                _uiStateFlow.emit(LoginUIState.Login)
+                finishLogin()
             }
         }
     }
@@ -151,8 +146,11 @@ class LoginViewModel @Inject constructor(
         launch {
             val user = authRepository.getCurrentUser().first()
             user?.let {
-                if (it.isVerify) navigationManager.navigate(NavigationDirections.Back)
-                else _uiStateFlow.emit(LoginUIState.VerifyEmail)
+                if (it.isVerify) {
+                    navigationManager.navigate(NavigationDirections.Back)
+                } else {
+                    _uiStateFlow.emit(LoginUIState.VerifyEmail)
+                }
             } ?: _uiStateFlow.emit(LoginUIState.Login)
         }
     }
@@ -161,5 +159,5 @@ class LoginViewModel @Inject constructor(
 enum class LoginUIState {
     Loading,
     Login,
-    VerifyEmail
+    VerifyEmail,
 }
