@@ -3,6 +3,8 @@ package com.noljanolja.android.features.auth.common.component
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -14,6 +16,7 @@ import com.noljanolja.android.R
 
 @Composable
 fun FullSizeWithLogo(
+    onBack: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
     Column(
@@ -22,7 +25,22 @@ fun FullSizeWithLogo(
             .background(MaterialTheme.colorScheme.primary),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(36.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(36.dp),
+            verticalAlignment = Alignment.Bottom
+        ) {
+            onBack?.let {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_back),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary
+                    )
+                }
+            }
+        }
         Image(
             painter = painterResource(id = R.drawable.logo),
             contentDescription = null,

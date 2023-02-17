@@ -3,6 +3,7 @@ package com.noljanolja.android.features.auth.forget.screen
 import com.noljanolja.android.common.auth.domain.repository.AuthRepository
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
+import com.noljanolja.android.common.navigation.NavigationCommand.FinishWithResults.Companion.FORGOT_FINISH_AUTH
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +23,17 @@ class ForgotViewModel @Inject constructor(
         when (event) {
             is ForgotEvent.Back -> {
                 launch { navigationManager.navigate(NavigationDirections.Back) }
+            }
+            ForgotEvent.Close -> {
+                launch {
+                    navigationManager.navigate(
+                        NavigationDirections.FinishWithResults(
+                            mapOf(
+                                FORGOT_FINISH_AUTH to true
+                            )
+                        )
+                    )
+                }
             }
             is ForgotEvent.VerifyEmail -> {
                 launch {

@@ -15,6 +15,7 @@ import com.noljanolja.android.features.auth.common.BaseAuthViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -24,39 +25,54 @@ class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : BaseAuthViewModel() {
 
-    private val _uiStateFlow = MutableStateFlow(LoginUIState.None)
+    private val _uiStateFlow = MutableStateFlow(LoginUIState.Login)
     val uiStateFlow = _uiStateFlow.asStateFlow()
 
     fun handleEvent(event: LoginEvent) {
-        when (event) {
-            is LoginEvent.Back -> {
-                launch {
-                    navigationManager.navigate(NavigationDirections.Back)
+        launch {
+            when (event) {
+                is LoginEvent.Back -> {
+                    launch {
+                        when (_uiStateFlow.value) {
+                            LoginUIState.VerifyEmail -> {
+                                _uiStateFlow.emit(LoginUIState.Login)
+                            }
+                            else -> navigationManager.navigate(NavigationDirections.Back)
+                        }
+                    }
                 }
-            }
-            is LoginEvent.GoJoinMember -> TODO("Not implement")
-            is LoginEvent.ShowError -> {
-                event.error?.let {
-                    sendError(event.error)
+                is LoginEvent.GoJoinMember -> TODO("Not implement")
+                is LoginEvent.ShowError -> {
+                    event.error?.let {
+                        sendError(event.error)
+                    }
                 }
-            }
-            is LoginEvent.ChangeEmail -> {
-                changeEmail(event.email)
-            }
-            is LoginEvent.ChangePassword -> {
-                changePassword(event.password)
-            }
-            LoginEvent.GoForgotEmailAndPassword -> {
-                onForgotIdOrPassword()
-            }
-            LoginEvent.LoginEmail -> {
-                signInWithEmailAndPassword()
-            }
-            LoginEvent.LoginKakao -> {
-                loginWithKakao()
-            }
-            is LoginEvent.LoginNaver -> {
-                loginWithNaver(event.token)
+                is LoginEvent.ChangeEmail -> {
+                    changeEmail(event.email)
+                }
+                is LoginEvent.ChangePassword -> {
+                    changePassword(event.password)
+                }
+                LoginEvent.GoForgotEmailAndPassword -> {
+                    onForgotIdOrPassword()
+                }
+                LoginEvent.LoginEmail -> {
+                    signInWithEmailAndPassword()
+                }
+                LoginEvent.LoginKakao -> {
+                    loginWithKakao()
+                }
+                is LoginEvent.LoginNaver -> {
+                    loginWithNaver(event.token)
+                }
+                LoginEvent.VerifyEmail -> {
+                    val user = authRepository.getCurrentUser().first()
+                    if (user?.isVerify == true) {
+                        navigationManager.navigate(NavigationDirections.Home)
+                    } else {
+                        sendError(Throwable("Verify fail"))
+                    }
+                }
             }
         }
     }
@@ -70,7 +86,7 @@ class LoginViewModel @Inject constructor(
             } else {
                 handleEvent(LoginEvent.ShowError(result.exceptionOrNull()))
             }
-            _uiStateFlow.emit(LoginUIState.None)
+            _uiStateFlow.emit(LoginUIState.Login)
         }
     }
 
@@ -83,7 +99,7 @@ class LoginViewModel @Inject constructor(
             } else {
                 handleEvent(LoginEvent.ShowError(result.exceptionOrNull()))
             }
-            _uiStateFlow.emit(LoginUIState.None)
+            _uiStateFlow.emit(LoginUIState.Login)
         }
     }
 
@@ -100,7 +116,7 @@ class LoginViewModel @Inject constructor(
             } catch (e: ApiException) {
                 sendError(e)
             } finally {
-                _uiStateFlow.emit(LoginUIState.None)
+                _uiStateFlow.emit(LoginUIState.Login)
             }
         }
     }
@@ -115,13 +131,12 @@ class LoginViewModel @Inject constructor(
                 result.exceptionOrNull()?.let {
                     throw it
                 }
-                finishLogin()
             } catch (e: ValidEmailFailed) {
                 sendEmailError(e)
             } catch (e: Exception) {
                 sendError(e)
             } finally {
-                _uiStateFlow.emit(LoginUIState.None)
+                finishLogin()
             }
         }
     }
@@ -134,12 +149,17 @@ class LoginViewModel @Inject constructor(
 
     private fun finishLogin() {
         launch {
-            navigationManager.navigate(NavigationDirections.Back)
+            val user = authRepository.getCurrentUser().first()
+            user?.let {
+                if (it.isVerify) navigationManager.navigate(NavigationDirections.Back)
+                else _uiStateFlow.emit(LoginUIState.VerifyEmail)
+            } ?: _uiStateFlow.emit(LoginUIState.Login)
         }
     }
 }
 
 enum class LoginUIState {
     Loading,
-    None
+    Login,
+    VerifyEmail
 }

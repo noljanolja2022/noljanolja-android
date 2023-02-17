@@ -3,7 +3,10 @@ package com.noljanolja.android.features.auth.forget.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -12,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -23,7 +25,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.noljanolja.android.R
 import com.noljanolja.android.common.composable.FullSizeLoading
-import com.noljanolja.android.common.composable.RoundedButton
+import com.noljanolja.android.common.composable.PrimaryButton
+import com.noljanolja.android.common.composable.SecondaryButton
 import com.noljanolja.android.features.auth.common.component.FullSizeWithLogo
 import com.noljanolja.android.features.auth.common.component.RoundedTextField
 import com.noljanolja.android.util.getErrorMessage
@@ -43,7 +46,11 @@ fun ForgotScreen(viewModel: ForgotViewModel = hiltViewModel()) {
         }
     }
     val uiState by viewModel.uiStateFlow.collectAsState()
-    FullSizeWithLogo {
+    FullSizeWithLogo(
+        onBack = {
+            viewModel.handleEvent(ForgotEvent.Close)
+        }
+    ) {
         ForgotContent(
             uiState = uiState,
             handleEvent = {
@@ -77,15 +84,16 @@ fun ForgotContent(
                     ),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                ForgotHeader {
-                    handleEvent(ForgotEvent.Back)
-                }
+                ForgotHeader()
                 when (uiState) {
                     is ForgotUIState.Normal -> {
                         ForgotForm(
                             uiState = uiState,
                             onChangeEmail = {
                                 handleEvent(ForgotEvent.ChangeEmail(it))
+                            },
+                            onBack = {
+                                handleEvent(ForgotEvent.Back)
                             },
                             onSubmit = {
                                 handleEvent(ForgotEvent.VerifyEmail)
@@ -115,6 +123,7 @@ fun ForgotContent(
 private fun ColumnScope.ForgotForm(
     uiState: ForgotUIState.Normal,
     onChangeEmail: (String) -> Unit,
+    onBack: () -> Unit,
     onSubmit: () -> Unit
 ) {
     val email = uiState.email
@@ -125,17 +134,22 @@ private fun ColumnScope.ForgotForm(
         onValueChange = onChangeEmail
     )
     Spacer(modifier = Modifier.weight(1F))
-    RoundedButton(
-        text = stringResource(id = R.string.auth_email_verification),
-        isEnable = email.isNotBlank(),
-        colors = ButtonDefaults.buttonColors(
+    Row(modifier = Modifier.fillMaxWidth()) {
+        SecondaryButton(
+            modifier = Modifier.weight(1F),
+            text = stringResource(id = R.string.common_previous),
+            isEnable = true,
+            onClick = onBack
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        PrimaryButton(
+            modifier = Modifier.weight(1F),
+            text = stringResource(id = R.string.auth_email_verification),
+            isEnable = email.isNotBlank(),
             containerColor = MaterialTheme.colorScheme.secondary,
-            disabledContainerColor = MaterialTheme.colorScheme.background,
-            contentColor = Color.White,
-            disabledContentColor = MaterialTheme.colorScheme.onBackground
-        ),
-        onClick = onSubmit
-    )
+            onClick = onSubmit
+        )
+    }
 }
 
 @Composable
@@ -181,55 +195,34 @@ fun ColumnScope.ResendEmailComponent(
         )
     }
 
-    RoundedButton(
+    PrimaryButton(
+        modifier = Modifier.fillMaxWidth(),
         text = stringResource(id = R.string.auth_resend_password),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.tertiary,
-            contentColor = Color.White
-        ),
+        containerColor = MaterialTheme.colorScheme.tertiary,
         onClick = onResendPassword
     )
     Spacer(modifier = Modifier.weight(1F))
-    RoundedButton(
+    PrimaryButton(
+        modifier = Modifier.fillMaxWidth(),
         text = stringResource(id = R.string.login),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = Color.White
-        ),
-        onClick = onBack
+        onClick = onBack,
     )
 }
 
 @Composable
-fun ForgotHeader(
-    onBack: () -> Unit
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        IconButton(
-            onClick = onBack,
-            modifier = Modifier.size(40.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_back),
-                contentDescription = null,
-                modifier = Modifier.size(24.dp),
-                tint = MaterialTheme.colorScheme.secondary
-            )
-        }
-        Text(
-            stringResource(id = R.string.auth_forgot_title),
-            style = TextStyle(
-                textAlign = TextAlign.Center,
-                fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.secondary,
-                fontWeight = FontWeight.W700
-            ),
-            modifier = Modifier.weight(1F)
-        )
-        Spacer(modifier = Modifier.size(40.dp))
-    }
+fun ForgotHeader() {
+    Text(
+        stringResource(id = R.string.auth_forgot_title),
+        style = TextStyle(
+            textAlign = TextAlign.Center,
+            fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.secondary,
+            fontWeight = FontWeight.W700
+        ),
+        modifier = Modifier.fillMaxWidth(),
+        textAlign = TextAlign.Center
+    )
+
 }
 
 @Preview

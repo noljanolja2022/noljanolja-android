@@ -4,4 +4,5 @@ sealed interface LoginOrSignupEvent {
     object SwitchToLogin : LoginOrSignupEvent
     object SwitchSignup : LoginOrSignupEvent
     object Back : LoginOrSignupEvent
+    object Close : LoginOrSignupEvent
 }

@@ -5,4 +5,5 @@ sealed interface ForgotEvent {
     object VerifyEmail : ForgotEvent
     data class ChangeEmail(val email: String) : ForgotEvent
     object ResendPassword : ForgotEvent
+    object Close : ForgotEvent
 }

@@ -24,14 +24,14 @@ class SignupViewModel @Inject constructor(
     private val _confirmPasswordFlow = MutableStateFlow("")
     val confirmPasswordFlow = _confirmPasswordFlow.asStateFlow()
 
-    init {
-        launch {
-            val currentUser = authRepository.getCurrentUser().first() ?: return@launch
-            if (!currentUser.isVerify) {
-                _uiStateFlow.emit(SignupUIState.VerificationEmail)
-            }
-        }
-    }
+//    init {
+//        launch {
+//            val currentUser = authRepository.getCurrentUser().first() ?: return@launch
+//            if (!currentUser.isVerify) {
+//                _uiStateFlow.emit(SignupUIState.VerificationEmail)
+//            }
+//        }
+//    }
 
     fun handleEvent(event: SignupEvent) {
         when (event) {

@@ -3,13 +3,15 @@ package com.noljanolja.android.features.auth.signup.screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.*
+import androidx.compose.material3.Divider
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -20,10 +22,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.handleError
 import com.noljanolja.android.common.composable.BackHandler
-import com.noljanolja.android.common.composable.OutlineButton
-import com.noljanolja.android.common.composable.RoundedButton
+import com.noljanolja.android.common.composable.PrimaryButton
+import com.noljanolja.android.common.composable.SecondaryButton
 import com.noljanolja.android.features.auth.common.component.EmailAndPassword
 import com.noljanolja.android.features.auth.common.component.RoundedTextField
+import com.noljanolja.android.features.auth.common.component.VerifyEmail
 import com.noljanolja.android.features.auth.signup.screen.component.AgreementRow
 import com.noljanolja.android.features.auth.signup.screen.component.FullAgreement
 
@@ -31,9 +34,7 @@ import com.noljanolja.android.features.auth.signup.screen.component.FullAgreemen
 fun SignupScreen(
     signupViewModel: SignupViewModel = hiltViewModel()
 ) {
-    BackHandler {
-        signupViewModel.handleEvent(SignupEvent.Back)
-    }
+
     signupViewModel.handleError()
     val uiState by signupViewModel.uiStateFlow.collectAsState()
     val email by signupViewModel.emailFlow.collectAsState()
@@ -41,6 +42,9 @@ fun SignupScreen(
     val emailError by signupViewModel.emailError.collectAsState()
     val passwordError by signupViewModel.passwordError.collectAsState()
     val confirmPassword by signupViewModel.confirmPasswordFlow.collectAsState()
+    BackHandler(uiState !is SignupUIState.Agreement) {
+        signupViewModel.handleEvent(SignupEvent.Back)
+    }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -213,17 +217,7 @@ private fun ColumnScope.SignupAgreement(
 
 @Composable
 private fun ColumnScope.SignupVerification() {
-    Spacer(modifier = Modifier.weight(1F))
-    Image(painter = painterResource(id = R.drawable.ic_check_circle), contentDescription = null)
-    Spacer(modifier = Modifier.height(14.dp))
-    Text(
-        stringResource(id = R.string.auth_identity_complete),
-        style = TextStyle(
-            fontWeight = FontWeight.W700,
-            fontSize = 16.sp
-        )
-    )
-    Spacer(modifier = Modifier.weight(1F))
+    VerifyEmail()
 }
 
 @Composable
@@ -277,34 +271,26 @@ fun RowScope.SignupRoundedButton(
     enable: Boolean = true,
     onClick: () -> Unit
 ) {
-    Box(modifier = Modifier.weight(1F)) {
-        RoundedButton(
-            text = text,
-            isEnable = enable,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondary,
-                disabledContainerColor = MaterialTheme.colorScheme.background,
-                contentColor = Color.White,
-                disabledContentColor = MaterialTheme.colorScheme.onBackground
-            ),
-            onClick = onClick
-        )
-    }
+    PrimaryButton(
+        modifier = Modifier.weight(1F),
+        text = text,
+        isEnable = enable,
+        onClick = onClick
+    )
 }
 
 @Composable
-fun RowScope.SignupOutlineButton(
+private fun RowScope.SignupOutlineButton(
     text: String,
     enable: Boolean = true,
     onClick: () -> Unit
 ) {
-    Box(modifier = Modifier.weight(1F)) {
-        OutlineButton(
-            text = text,
-            isEnable = enable,
-            onClick = onClick
-        )
-    }
+    SecondaryButton(
+        modifier = Modifier.weight(1F),
+        text = text,
+        isEnable = enable,
+        onClick = onClick
+    )
 }
 
 private fun isEnableSignup(

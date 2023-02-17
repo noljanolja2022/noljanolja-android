@@ -17,4 +17,6 @@ sealed interface LoginEvent {
     data class ShowError(val error: Throwable?) : LoginEvent
 
     object Back : LoginEvent
+
+    object VerifyEmail : LoginEvent
 }

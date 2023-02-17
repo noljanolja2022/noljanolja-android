@@ -14,5 +14,9 @@ sealed interface NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options: NavOptions? = null
         override val destination: String = "back"
+
+        companion object {
+            const val FORGOT_FINISH_AUTH = "finishAuth"
+        }
     }
 }

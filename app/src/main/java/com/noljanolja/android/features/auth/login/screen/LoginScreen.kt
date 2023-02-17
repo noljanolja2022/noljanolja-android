@@ -32,7 +32,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.navercorp.nid.NaverIdLoginSDK
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.handleError
+import com.noljanolja.android.common.composable.PrimaryButton
+import com.noljanolja.android.common.composable.SecondaryButton
 import com.noljanolja.android.features.auth.common.component.EmailAndPassword
+import com.noljanolja.android.features.auth.common.component.VerifyEmail
 import com.noljanolja.android.features.auth.login.screen.component.LoginButton
 import com.noljanolja.android.util.showToast
 
@@ -49,6 +52,7 @@ fun LoginScreen(
     val googleLauncher = rememberAuthLauncher {
         viewModel.handleLoginGoogleResult(GoogleSignIn.getSignedInAccountFromIntent(it))
     }
+    val uiState by viewModel.uiStateFlow.collectAsState()
     val naverLauncher = rememberAuthLauncher {
         val accessToken = NaverIdLoginSDK.getAccessToken()
         accessToken?.let {
@@ -60,21 +64,35 @@ fun LoginScreen(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        LoginContent(
-            email = email,
-            password = password,
-            emailError = emailError,
-            passwordError = passwordError,
-            handleEvent = {
-                viewModel.handleEvent(it)
-            },
-            onLoginGoogle = {
-                googleLauncher.launch(viewModel.getGoogleIntent())
-            },
-            onLoginNaver = {
-                NaverIdLoginSDK.authenticate(context, naverLauncher)
+        when (uiState) {
+            LoginUIState.VerifyEmail -> {
+                LoginVerifyEmail(
+                    onBack = {
+                        viewModel.handleEvent(LoginEvent.Back)
+                    },
+                    onVerify = {
+                        viewModel.handleEvent(LoginEvent.VerifyEmail)
+                    }
+                )
             }
-        )
+            else -> {
+                LoginContent(
+                    email = email,
+                    password = password,
+                    emailError = emailError,
+                    passwordError = passwordError,
+                    handleEvent = {
+                        viewModel.handleEvent(it)
+                    },
+                    onLoginGoogle = {
+                        googleLauncher.launch(viewModel.getGoogleIntent())
+                    },
+                    onLoginNaver = {
+                        NaverIdLoginSDK.authenticate(context, naverLauncher)
+                    }
+                )
+            }
+        }
     }
 }
 
@@ -154,6 +172,28 @@ private fun ColumnScope.LoginContent(
         )
     }
     Spacer(modifier = Modifier.weight(1F))
+}
+
+@Composable
+fun ColumnScope.LoginVerifyEmail(
+    onBack: () -> Unit,
+    onVerify: () -> Unit
+) {
+    VerifyEmail()
+    Row() {
+        SecondaryButton(
+            modifier = Modifier.weight(1F),
+            text = stringResource(id = R.string.common_previous),
+            onClick = onBack
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        PrimaryButton(
+            modifier = Modifier.weight(1F),
+            text = stringResource(id = R.string.common_verification),
+            onClick = onVerify
+        )
+    }
+    Spacer(modifier = Modifier.height(24.dp))
 }
 
 @Composable

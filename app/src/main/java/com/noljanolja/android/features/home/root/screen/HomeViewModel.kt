@@ -55,11 +55,12 @@ class HomeViewModel @Inject constructor(
         launch {
             val user = authRepository.getCurrentUser().first()
             when {
-                user == null -> {
+                // TODO : Check verify if need after
+                true -> {
                     _showRequireLoginPopupEvent.emit(false)
                     navigationManager.navigate(NavigationDirections.LoginOrSignup)
                 }
-                !user.isVerify -> sendError(Throwable("Verify fail"))
+                !user!!.isVerify -> sendError(Throwable("Verify fail"))
                 else -> _showRequireLoginPopupEvent.emit(false)
             }
         }

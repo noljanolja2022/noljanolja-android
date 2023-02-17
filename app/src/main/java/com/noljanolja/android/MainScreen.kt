@@ -67,7 +67,7 @@ private fun NavGraphBuilder.addHomeGraph() {
 
 private fun NavGraphBuilder.addAuthGraph() {
     composable(NavigationDirections.LoginOrSignup.destination) { backStack ->
-        LoginOrSignupScreen()
+        LoginOrSignupScreen(backStack.savedStateHandle)
     }
     composable(NavigationDirections.Forgot.destination) {
         ForgotScreen()

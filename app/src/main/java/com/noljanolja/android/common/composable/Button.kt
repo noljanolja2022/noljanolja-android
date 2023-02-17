@@ -2,7 +2,6 @@ package com.noljanolja.android.common.composable
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -10,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
@@ -90,7 +90,6 @@ fun RoundedButton(
         enabled = isEnable,
         colors = colors,
         modifier = modifier
-            .fillMaxWidth()
             .height(50.dp)
             .shadow(2.dp, shape = buttonShape),
         shape = buttonShape
@@ -100,31 +99,57 @@ fun RoundedButton(
 }
 
 @Composable
-fun OutlineButton(
+fun SecondaryButton(
     modifier: Modifier = Modifier,
     text: String,
     isEnable: Boolean = true,
-    colors: ButtonColors = ButtonDefaults.outlinedButtonColors(
-        disabledContentColor = MaterialTheme.colorScheme.onBackground,
-        containerColor = MaterialTheme.colorScheme.onSecondary,
-        contentColor = MaterialTheme.colorScheme.secondary
-    ),
+    shape: Shape? = null,
+    containerColor: Color = MaterialTheme.colorScheme.onSecondary,
+    contentColor: Color = MaterialTheme.colorScheme.secondary,
     onClick: () -> Unit
 ) {
-    val shape = RoundedCornerShape(8.dp)
+    val buttonShape = shape ?: RoundedCornerShape(8.dp)
     Button(
         onClick = onClick,
         enabled = isEnable,
-        colors = colors,
+        colors = ButtonDefaults.outlinedButtonColors(
+            disabledContentColor = MaterialTheme.colorScheme.onBackground,
+            containerColor = containerColor,
+            contentColor = contentColor,
+        ),
         modifier = modifier
-            .fillMaxWidth()
             .height(50.dp)
-            .shadow(2.dp, shape = shape),
-        shape = shape,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.secondary)
+            .shadow(2.dp, shape = buttonShape),
+        shape = buttonShape,
+        border = BorderStroke(1.dp, contentColor)
     ) {
         Text(text)
     }
+}
+
+@Composable
+fun PrimaryButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    isEnable: Boolean = true,
+    containerColor: Color = MaterialTheme.colorScheme.primary,
+    contentColor: Color = MaterialTheme.colorScheme.onPrimary,
+    shape: Shape? = null,
+    onClick: () -> Unit
+) {
+    RoundedButton(
+        modifier = modifier,
+        text = text,
+        isEnable = isEnable,
+        shape = shape,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = containerColor,
+            disabledContainerColor = MaterialTheme.colorScheme.background,
+            contentColor = contentColor,
+            disabledContentColor = MaterialTheme.colorScheme.onBackground
+        ),
+        onClick = onClick
+    )
 }
 
 // Preview
