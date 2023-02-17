@@ -31,13 +31,6 @@ class HomeViewModel @Inject constructor(
         onChange: () -> Unit
     ) {
         launch {
-            // Test Logout
-            if (item == HomeNavigationItem.UserItem) {
-//                sendError(Throwable("Logout Success! This button test logout"))
-//                logOut()
-                onChange.invoke()
-                return@launch
-            }
             if (item == HomeNavigationItem.HomeItem) {
                 onChange.invoke()
                 return@launch

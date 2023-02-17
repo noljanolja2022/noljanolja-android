@@ -95,6 +95,8 @@ dependencies {
     implementation("com.google.firebase:firebase-crashlytics-ktx")
     implementation("com.google.android.gms:play-services-auth:20.4.1")
     implementation("com.google.firebase:firebase-functions-ktx")
+    implementation("com.google.firebase:firebase-messaging-ktx")
+
     // Splash
     implementation("androidx.core:core-splashscreen:1.0.0")
 

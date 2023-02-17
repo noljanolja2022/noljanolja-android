@@ -5,6 +5,8 @@ import com.noljanolja.android.R
 import com.noljanolja.android.common.auth.data.repository.AuthRepositoryImpl
 import com.noljanolja.android.common.auth.domain.repository.AuthRepository
 import com.noljanolja.android.common.navigation.NavigationManager
+import com.noljanolja.android.common.user.data.repository.UserRepositoryImpl
+import com.noljanolja.android.common.user.domain.repository.UserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,4 +33,8 @@ class AppModule {
         naver_client_secret = "8keRny2c_4",
         naver_client_name = "놀자놀자"
     )
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(): UserRepository = UserRepositoryImpl()
 }

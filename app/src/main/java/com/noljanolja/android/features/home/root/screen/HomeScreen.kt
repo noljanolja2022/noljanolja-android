@@ -38,7 +38,6 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -70,9 +69,12 @@ fun HomeScreen(
     FullSizeWithBottomSheet(
         modalSheetState = modalSheetState,
         sheetContent = {
-            RequireLoginBottomSheet {
-                viewModel.handleEvent(HomeEvent.LoginOrVerifyEmail)
-            }
+            RequireLoginBottomSheet(
+                modalSheetState = modalSheetState,
+                onGoToLogin = {
+                    viewModel.handleEvent(HomeEvent.LoginOrVerifyEmail)
+                }
+            )
         }
     ) {
         Scaffold(
