@@ -1,7 +1,7 @@
 package com.noljanolja.android.features.home.require_login
 
 import androidx.lifecycle.viewModelScope
-import com.noljanolja.android.common.auth.domain.repository.AuthRepository
+import com.d2brothers.firebase_auth.AuthSdk
 import com.noljanolja.android.common.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -12,9 +12,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RequireLoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
+    private val authSdk: AuthSdk,
 ) : BaseViewModel() {
-    val hasUser: StateFlow<Boolean> = authRepository.getCurrentUser().map {
+    val hasUser: StateFlow<Boolean> = authSdk.currentUser.map {
         it != null
     }.stateIn(
         scope = viewModelScope,

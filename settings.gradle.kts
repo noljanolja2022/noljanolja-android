@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Noljanolja"
 include(":app")
+include(":firebase_auth")

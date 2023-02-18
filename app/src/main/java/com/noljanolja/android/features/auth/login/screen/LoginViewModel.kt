@@ -1,12 +1,7 @@
 package com.noljanolja.android.features.auth.login.screen
 
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import com.noljanolja.android.common.auth.domain.repository.AuthRepository
+import com.d2brothers.firebase_auth.AuthSdk
+import com.d2brothers.firebase_auth.model.AuthUser
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.error.ValidEmailFailed
 import com.noljanolja.android.common.navigation.NavigationDirections
@@ -16,15 +11,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val navigationManager: NavigationManager,
-    private val authRepository: AuthRepository,
+    private val authSdk: AuthSdk,
 ) : BaseAuthViewModel() {
-
     private val _uiStateFlow = MutableStateFlow(LoginUIState.Login)
     val uiStateFlow = _uiStateFlow.asStateFlow()
 
@@ -62,11 +55,8 @@ class LoginViewModel @Inject constructor(
                 LoginEvent.LoginKakao -> {
                     loginWithKakao()
                 }
-                is LoginEvent.LoginNaver -> {
-                    loginWithNaver(event.token)
-                }
                 LoginEvent.VerifyEmail -> {
-                    val user = authRepository.getCurrentUser().first()
+                    val user = authSdk.currentUser.first()
                     if (user?.isVerify == true) {
                         navigationManager.navigate(NavigationDirections.Home)
                     } else {
@@ -79,39 +69,22 @@ class LoginViewModel @Inject constructor(
 
     private fun loginWithKakao() {
         launch {
-            _uiStateFlow.emit(LoginUIState.Loading)
-            val result = authRepository.loginWithKakao()
-            if (!result.isSuccess) {
-                handleEvent(LoginEvent.ShowError(result.exceptionOrNull()))
-            }
-            finishLogin()
+            val result = authSdk.loginWithKakao()
+            handleAuthResult(result)
         }
     }
 
-    private fun loginWithNaver(token: String) {
+    fun handleAuthResult(result: Result<AuthUser>?) {
         launch {
-            _uiStateFlow.emit(LoginUIState.Loading)
-            val result = authRepository.loginWithNaver(token)
-            if (!result.isSuccess) {
-                handleEvent(LoginEvent.ShowError(result.exceptionOrNull()))
-            }
-            finishLogin()
-        }
-    }
-
-    fun getGoogleIntent() = authRepository.getGoogleSignInIntent()
-
-    fun handleLoginGoogleResult(task: Task<GoogleSignInAccount>) {
-        launch {
-            _uiStateFlow.emit(LoginUIState.Loading)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-                Firebase.auth.signInWithCredential(credential).await()
-            } catch (e: ApiException) {
-                sendError(e)
-            } finally {
-                finishLogin()
+            result?.getOrNull()?.let {
+                if (it.isVerify) {
+                    navigationManager.navigate(NavigationDirections.Back)
+                } else {
+                    _uiStateFlow.emit(LoginUIState.VerifyEmail)
+                }
+            } ?: result?.exceptionOrNull()?.let {
+                sendError(it)
+                _uiStateFlow.emit(LoginUIState.Login)
             }
         }
     }
@@ -121,17 +94,14 @@ class LoginViewModel @Inject constructor(
             _uiStateFlow.emit(LoginUIState.Loading)
             try {
                 requireValidEmail()
-                val result =
-                    authRepository.signInWithEmailAndPassword(emailFlow.value, passwordFlow.value)
-                result.exceptionOrNull()?.let {
-                    throw it
-                }
+                val result = authSdk.signInWithEmailAndPassword(emailFlow.value, passwordFlow.value)
+                handleAuthResult(result)
             } catch (e: ValidEmailFailed) {
+                _uiStateFlow.emit(LoginUIState.Login)
                 sendEmailError(e)
             } catch (e: Exception) {
+                _uiStateFlow.emit(LoginUIState.Login)
                 sendError(e)
-            } finally {
-                finishLogin()
             }
         }
     }
@@ -139,19 +109,6 @@ class LoginViewModel @Inject constructor(
     private fun onForgotIdOrPassword() {
         launch {
             navigationManager.navigate(NavigationDirections.Forgot)
-        }
-    }
-
-    private fun finishLogin() {
-        launch {
-            val user = authRepository.getCurrentUser().first()
-            user?.let {
-                if (it.isVerify) {
-                    navigationManager.navigate(NavigationDirections.Back)
-                } else {
-                    _uiStateFlow.emit(LoginUIState.VerifyEmail)
-                }
-            } ?: _uiStateFlow.emit(LoginUIState.Login)
         }
     }
 }

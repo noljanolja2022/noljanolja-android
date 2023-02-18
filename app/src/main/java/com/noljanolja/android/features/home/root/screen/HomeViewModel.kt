@@ -1,6 +1,6 @@
 package com.noljanolja.android.features.home.root.screen
 
-import com.noljanolja.android.common.auth.domain.repository.AuthRepository
+import com.d2brothers.firebase_auth.AuthSdk
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
+    private val authSdk: AuthSdk,
     private val navigationManager: NavigationManager,
 ) : BaseViewModel() {
     private val _showRequireLoginPopupEvent = MutableSharedFlow<Boolean>()
@@ -35,7 +35,7 @@ class HomeViewModel @Inject constructor(
                 onChange.invoke()
                 return@launch
             }
-            val user = authRepository.getCurrentUser().first()
+            val user = authSdk.currentUser.first()
             if (user?.isVerify == true) {
                 onChange.invoke()
             } else {
@@ -46,7 +46,7 @@ class HomeViewModel @Inject constructor(
 
     private fun loginOrVerifyEmail() {
         launch {
-            val user = authRepository.getCurrentUser().first()
+            val user = authSdk.currentUser.first()
             when {
                 // TODO : Check verify if need after
                 true -> {
@@ -61,7 +61,7 @@ class HomeViewModel @Inject constructor(
 
     fun logOut() {
         launch {
-            val result = authRepository.logOut()
+            val result = authSdk.logOut()
             if (result.isSuccess) {
                 navigationManager.navigate(NavigationDirections.Home)
             }

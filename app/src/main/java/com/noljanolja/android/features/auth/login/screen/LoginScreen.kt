@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,8 +29,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.navercorp.nid.NaverIdLoginSDK
+import com.d2brothers.firebase_auth.AuthSdk
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.handleError
 import com.noljanolja.android.common.composable.PrimaryButton
@@ -37,28 +37,33 @@ import com.noljanolja.android.common.composable.SecondaryButton
 import com.noljanolja.android.features.auth.common.component.EmailAndPassword
 import com.noljanolja.android.features.auth.common.component.VerifyEmail
 import com.noljanolja.android.features.auth.login.screen.component.LoginButton
-import com.noljanolja.android.util.showToast
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
+    val authSdk = AuthSdk.instance
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     viewModel.handleError()
     val email by viewModel.emailFlow.collectAsState()
     val password by viewModel.passwordFlow.collectAsState()
     val emailError by viewModel.emailError.collectAsState()
     val passwordError by viewModel.passwordError.collectAsState()
     val googleLauncher = rememberAuthLauncher {
-        viewModel.handleLoginGoogleResult(GoogleSignIn.getSignedInAccountFromIntent(it))
+        scope.launch {
+            val result = authSdk.getAccountFromGoogleIntent(it)
+            viewModel.handleAuthResult(result)
+        }
+    }
+    val naverLauncher = rememberAuthLauncher {
+        scope.launch {
+            val result = authSdk.getAccountFromNaverIntent(it)
+            viewModel.handleAuthResult(result)
+        }
     }
     val uiState by viewModel.uiStateFlow.collectAsState()
-    val naverLauncher = rememberAuthLauncher {
-        val accessToken = NaverIdLoginSDK.getAccessToken()
-        accessToken?.let {
-            viewModel.handleEvent(LoginEvent.LoginNaver(it))
-        } ?: context.showToast(NaverIdLoginSDK.getLastErrorDescription())
-    }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -85,10 +90,10 @@ fun LoginScreen(
                         viewModel.handleEvent(it)
                     },
                     onLoginGoogle = {
-                        googleLauncher.launch(viewModel.getGoogleIntent())
+                        authSdk.authenticateGoogle(context, googleLauncher)
                     },
                     onLoginNaver = {
-                        NaverIdLoginSDK.authenticate(context, naverLauncher)
+                        authSdk.authenticateNaver(context, naverLauncher)
                     },
                 )
             }
@@ -198,10 +203,10 @@ fun ColumnScope.LoginVerifyEmail(
 
 @Composable
 private fun rememberAuthLauncher(
-    handleGoogleSignInResult: (Intent?) -> Unit,
+    handleAuthResult: (Intent?) -> Unit,
 ): ManagedActivityResultLauncher<Intent, ActivityResult> {
     return rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        handleGoogleSignInResult(result.data)
+        handleAuthResult(result.data)
     }
 }
 

@@ -1,6 +1,5 @@
 package com.noljanolja.android.features.auth.login_or_signup.screen
 
-import com.noljanolja.android.common.auth.domain.repository.AuthRepository
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
@@ -13,7 +12,6 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginOrSignupViewModel @Inject constructor(
     private val navigationManager: NavigationManager,
-    private val authRepository: AuthRepository,
 ) : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow(LoginOrSignupUIState.Login)
     val uiStateFlow = _uiStateFlow.asStateFlow()

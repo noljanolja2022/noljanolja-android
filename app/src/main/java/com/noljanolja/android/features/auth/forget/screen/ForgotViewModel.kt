@@ -1,6 +1,6 @@
 package com.noljanolja.android.features.auth.forget.screen
 
-import com.noljanolja.android.common.auth.domain.repository.AuthRepository
+import com.d2brothers.firebase_auth.AuthSdk
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationCommand.FinishWithResults.Companion.FORGOT_FINISH_AUTH
@@ -14,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ForgotViewModel @Inject constructor(
     private val navigationManager: NavigationManager,
-    private val authRepository: AuthRepository,
+    private val authSdk: AuthSdk,
 ) : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow<ForgotUIState>(ForgotUIState.Normal("", false))
     val uiStateFlow = _uiStateFlow.asStateFlow()
@@ -40,7 +40,7 @@ class ForgotViewModel @Inject constructor(
                     val uiState = _uiStateFlow.value as? ForgotUIState.Normal ?: return@launch
                     try {
                         _uiStateFlow.emit(uiState.copy(isLoading = true))
-                        authRepository.sendPasswordResetEmail(uiState.email)
+                        authSdk.sendPasswordResetEmail(uiState.email)
                         _uiStateFlow.emit(ForgotUIState.VerifyCompleted)
                     } catch (e: Exception) {
                         _uiStateFlow.emit(uiState.copy(isLoading = false))
