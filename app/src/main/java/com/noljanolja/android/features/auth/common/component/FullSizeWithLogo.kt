@@ -17,26 +17,26 @@ import com.noljanolja.android.R
 @Composable
 fun FullSizeWithLogo(
     onBack: (() -> Unit)? = null,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.primary),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(36.dp),
-            verticalAlignment = Alignment.Bottom
+            verticalAlignment = Alignment.Bottom,
         ) {
             onBack?.let {
                 IconButton(onClick = onBack) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_back),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.secondary
+                        tint = MaterialTheme.colorScheme.secondary,
                     )
                 }
             }
@@ -46,7 +46,7 @@ fun FullSizeWithLogo(
             contentDescription = null,
             modifier = Modifier
                 .width(166.dp)
-                .height(66.dp)
+                .height(66.dp),
 
         )
         Spacer(modifier = Modifier.height(36.dp))

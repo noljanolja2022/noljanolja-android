@@ -5,7 +5,7 @@ import com.noljanolja.android.services.analytics.Log
 import com.noljanolja.android.services.analytics.Logger
 
 class FirebaseLogger internal constructor(
-    private val firebaseCrashlytics: FirebaseCrashlytics
+    private val firebaseCrashlytics: FirebaseCrashlytics,
 ) : Logger {
 
     override var isEnable: Boolean = false

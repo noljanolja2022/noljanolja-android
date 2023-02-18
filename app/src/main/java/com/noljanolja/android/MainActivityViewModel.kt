@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     val uiState: StateFlow<MainActivityUiState> = authRepository.getCurrentUser().map {
@@ -21,7 +21,7 @@ class MainActivityViewModel @Inject constructor(
     }.stateIn(
         scope = viewModelScope,
         initialValue = MainActivityUiState.Loading,
-        started = SharingStarted.WhileSubscribed(5_000)
+        started = SharingStarted.WhileSubscribed(5_000),
     )
 }
 

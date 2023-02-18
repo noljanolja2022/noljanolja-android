@@ -5,7 +5,7 @@ sealed class Log(
     val tag: String,
     val message: String,
     val error: Throwable?,
-    val recordError: Boolean
+    val recordError: Boolean,
 ) {
     fun formattedLogMessage() = "$level/$tag:$message"
 
@@ -13,77 +13,77 @@ sealed class Log(
         tag: String,
         message: String,
         error: Throwable? = null,
-        recordError: Boolean = false
+        recordError: Boolean = false,
     ) : Log(
         level = "V",
         tag = tag,
         message = message,
         error = error,
-        recordError = recordError
+        recordError = recordError,
     )
 
     class Debug(
         tag: String,
         message: String,
         error: Throwable? = null,
-        recordError: Boolean = false
+        recordError: Boolean = false,
     ) : Log(
         level = "D",
         tag = tag,
         message = message,
         error = error,
-        recordError = recordError
+        recordError = recordError,
     )
 
     class Info(
         tag: String,
         message: String,
         error: Throwable? = null,
-        recordError: Boolean = false
+        recordError: Boolean = false,
     ) : Log(
         level = "I",
         tag = tag,
         message = message,
         error = error,
-        recordError = recordError
+        recordError = recordError,
     )
 
     class Warn(
         tag: String,
         message: String,
         error: Throwable? = null,
-        recordError: Boolean = false
+        recordError: Boolean = false,
     ) : Log(
         level = "W",
         tag = tag,
         message = message,
         error = error,
-        recordError = recordError
+        recordError = recordError,
     )
 
     class Error(
         tag: String,
         message: String,
         error: Throwable? = null,
-        recordError: Boolean = true
+        recordError: Boolean = true,
     ) : Log(
         level = "E",
         tag = tag,
         message = message,
         error = error,
-        recordError = recordError
+        recordError = recordError,
     )
 
     class Assert(
         tag: String,
         message: String,
         error: Throwable? = null,
-        recordError: Boolean = false
+        recordError: Boolean = false,
     ) : Log(
         level = "A",
         tag = tag,
         message = message,
         error = error,
-        recordError = recordError
+        recordError = recordError,
     )
 }

@@ -22,7 +22,7 @@ import kotlin.coroutines.suspendCoroutine
 
 class AuthRepositoryImpl private constructor(
     private val context: Context,
-    private val googleWebClientId: String
+    private val googleWebClientId: String,
 ) : AuthRepository {
     private val _firebaseAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
 
@@ -38,7 +38,7 @@ class AuthRepositoryImpl private constructor(
         return kakaoResult.getOrNull()?.let {
             val result = signInWithCustomToken(
                 FirebaseFunction.Kakao,
-                hashMapOf(KEY_TOKEN to it)
+                hashMapOf(KEY_TOKEN to it),
             )
             if (result.isSuccess) {
                 Result.success(result.getOrNull()!!)
@@ -52,7 +52,7 @@ class AuthRepositoryImpl private constructor(
     override suspend fun loginWithNaver(token: String): Result<User> {
         val result = signInWithCustomToken(
             FirebaseFunction.Naver,
-            hashMapOf(KEY_TOKEN to token)
+            hashMapOf(KEY_TOKEN to token),
         )
         if (result.isSuccess) {
             return Result.success(result.getOrNull()!!)
@@ -65,12 +65,12 @@ class AuthRepositoryImpl private constructor(
     override fun getGoogleSignInIntent(): Intent = GoogleSignIn.getClient(
         context,
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(googleWebClientId).requestEmail().build()
+            .requestIdToken(googleWebClientId).requestEmail().build(),
     ).signInIntent
 
     override suspend fun createUserWithEmailAndPassword(
         email: String,
-        password: String
+        password: String,
     ): Result<User> {
         return try {
             val authResult = _firebaseAuth.createUserWithEmailAndPassword(email, password).await()
@@ -125,7 +125,7 @@ class AuthRepositoryImpl private constructor(
 
     private suspend fun signInWithCustomToken(
         function: FirebaseFunction,
-        data: HashMap<String, Any>
+        data: HashMap<String, Any>,
     ): Result<User> = try {
         val newToken =
             functions.getHttpsCallable(function.funcName).call(data).continueWith { task ->
@@ -163,17 +163,17 @@ class AuthRepositoryImpl private constructor(
             naver_client_id: String,
             naver_client_secret: String,
             naver_client_name: String,
-            googleWebClientId: String
+            googleWebClientId: String,
         ) = AuthRepositoryImpl(
             context,
-            googleWebClientId
+            googleWebClientId,
         ).also {
             KakaoSdk.init(context, kakaoApiKey)
             NaverIdLoginSDK.initialize(
                 context,
                 naver_client_id,
                 naver_client_secret,
-                naver_client_name
+                naver_client_name,
             )
         }
     }

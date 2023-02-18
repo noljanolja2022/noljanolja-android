@@ -13,12 +13,12 @@ fun FullSizeWithBottomSheet(
     sheetShape: Shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
     modalSheetState: ModalBottomSheetState,
     sheetContent: @Composable ColumnScope.() -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     ModalBottomSheetLayout(
         sheetState = modalSheetState,
         sheetShape = sheetShape,
-        sheetContent = sheetContent
+        sheetContent = sheetContent,
     ) {
         content.invoke()
     }

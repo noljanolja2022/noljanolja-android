@@ -28,7 +28,7 @@ fun EmailAndPassword(
     passwordError: Throwable?,
     modifier: Modifier = Modifier,
     onEmailChange: (String) -> Unit,
-    onPasswordChange: (String) -> Unit
+    onPasswordChange: (String) -> Unit,
 ) {
     val context = LocalContext.current
     Column(modifier = modifier) {
@@ -36,7 +36,7 @@ fun EmailAndPassword(
             value = email,
             error = emailError,
             hint = stringResource(id = R.string.email_hint_text),
-            onValueChange = onEmailChange
+            onValueChange = onEmailChange,
         )
         emailError?.let {
             Text(
@@ -46,8 +46,8 @@ fun EmailAndPassword(
                     .align(Alignment.Start),
                 style = TextStyle(
                     color = MaterialTheme.colorScheme.error,
-                    fontSize = 14.sp
-                )
+                    fontSize = 14.sp,
+                ),
             )
         }
         Spacer(modifier = Modifier.height(12.dp))
@@ -56,7 +56,7 @@ fun EmailAndPassword(
             hint = stringResource(id = R.string.password_hint_text),
             error = passwordError,
             hideText = true,
-            onValueChange = onPasswordChange
+            onValueChange = onPasswordChange,
         )
         passwordError?.let {
             Text(
@@ -66,8 +66,8 @@ fun EmailAndPassword(
                     .align(Alignment.Start),
                 style = TextStyle(
                     color = MaterialTheme.colorScheme.error,
-                    fontSize = 14.sp
-                )
+                    fontSize = 14.sp,
+                ),
             )
         }
     }
@@ -80,7 +80,7 @@ fun RoundedTextField(
     hint: String? = null,
     error: Throwable? = null,
     hideText: Boolean = false,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
 ) {
     val shape = RoundedCornerShape(8.dp)
     val borderColor =
@@ -91,10 +91,10 @@ fun RoundedTextField(
         colors = TextFieldDefaults.textFieldColors(
             focusedIndicatorColor = borderColor,
             containerColor = MaterialTheme.colorScheme.background,
-            unfocusedIndicatorColor = borderColor
+            unfocusedIndicatorColor = borderColor,
         ),
         keyboardOptions = KeyboardOptions(
-            keyboardType = if (hideText) KeyboardType.Email else KeyboardType.Password
+            keyboardType = if (hideText) KeyboardType.Email else KeyboardType.Password,
         ),
         shape = shape,
         modifier = Modifier
@@ -102,7 +102,7 @@ fun RoundedTextField(
             .fillMaxWidth()
             .shadow(
                 elevation = 2.dp,
-                shape = shape
+                shape = shape,
             ),
         placeholder = hint?.let {
             {
@@ -111,8 +111,8 @@ fun RoundedTextField(
         },
         textStyle = TextStyle(
             fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.secondary
+            color = MaterialTheme.colorScheme.secondary,
         ),
-        visualTransformation = if (hideText) PasswordVisualTransformation() else VisualTransformation.None
+        visualTransformation = if (hideText) PasswordVisualTransformation() else VisualTransformation.None,
     )
 }

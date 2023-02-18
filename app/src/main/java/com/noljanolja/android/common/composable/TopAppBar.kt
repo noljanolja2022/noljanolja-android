@@ -20,22 +20,22 @@ import com.noljanolja.android.R
 fun CommonTopAppBar(
     title: String = "",
     actions: @Composable (RowScope.() -> Unit) = {},
-    onBack: (() -> Unit)? = null
+    onBack: (() -> Unit)? = null,
 ) {
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
             titleContentColor = MaterialTheme.colorScheme.secondary,
             actionIconContentColor = MaterialTheme.colorScheme.onSecondary,
-            navigationIconContentColor = MaterialTheme.colorScheme.onSecondary
+            navigationIconContentColor = MaterialTheme.colorScheme.onSecondary,
         ),
         title = {
             Text(
                 text = title,
                 style = TextStyle(
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                    fontWeight = FontWeight.Bold,
+                ),
             )
         },
         actions = actions,
@@ -45,5 +45,6 @@ fun CommonTopAppBar(
                     Icon(painter = painterResource(id = R.drawable.ic_back), contentDescription = null)
                 }
             }
-        })
+        },
+    )
 }

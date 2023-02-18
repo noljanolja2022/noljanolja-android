@@ -24,8 +24,8 @@ fun ColumnScope.VerifyEmail() {
         stringResource(id = R.string.auth_identity_complete),
         style = TextStyle(
             fontWeight = FontWeight.W700,
-            fontSize = 16.sp
-        )
+            fontSize = 16.sp,
+        ),
     )
     Spacer(modifier = Modifier.weight(1F))
 }

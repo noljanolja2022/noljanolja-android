@@ -25,11 +25,12 @@ fun MyPageScreen() {
             CommonTopAppBar(
                 title = stringResource(id = R.string.my_page),
             )
-        }) {
+        },
+    ) {
         Column(
             modifier = Modifier
                 .padding(it)
-                .padding(20.dp)
+                .padding(20.dp),
         ) {
             GreetingSection(stringResource(id = R.string.app_name))
             Divider(
@@ -37,7 +38,7 @@ fun MyPageScreen() {
                     .fillMaxWidth()
                     .padding(top = 24.dp, bottom = 16.dp)
                     .height(1.dp)
-                    .background(MaterialTheme.colorScheme.onBackground)
+                    .background(MaterialTheme.colorScheme.onBackground),
 
             )
             RoundedListTile(
@@ -49,11 +50,11 @@ fun MyPageScreen() {
                             fontSize = 16.sp,
                             color = Color.Black,
                             fontWeight = FontWeight.SemiBold,
-                        )
+                        ),
                     )
                 },
                 leadingDrawable = R.drawable.ic_headset,
-                trailingDrawable = R.drawable.ic_forward
+                trailingDrawable = R.drawable.ic_forward,
             ) {}
 
             RoundedListTile(
@@ -64,8 +65,8 @@ fun MyPageScreen() {
                         style = TextStyle(
                             fontSize = 16.sp,
                             color = Color.Black,
-                            fontWeight = FontWeight.SemiBold
-                        )
+                            fontWeight = FontWeight.SemiBold,
+                        ),
                     )
                 },
                 description = {
@@ -74,12 +75,11 @@ fun MyPageScreen() {
                         style = TextStyle(
                             fontSize = 16.sp,
                             color = MaterialTheme.colorScheme.outline,
-                        )
+                        ),
                     )
                 },
-                leadingDrawable = R.drawable.ic_headset
+                leadingDrawable = R.drawable.ic_headset,
             ) {}
-
         }
     }
 }
@@ -93,10 +93,10 @@ private fun GreetingSection(name: String) {
                 style = TextStyle(
                     fontSize = 18.sp,
                     color = Color.Black,
-                    fontWeight = FontWeight.SemiBold
-                )
+                    fontWeight = FontWeight.SemiBold,
+                ),
             )
         },
-        trailingDrawable = R.drawable.ic_forward
+        trailingDrawable = R.drawable.ic_forward,
     ) {}
 }

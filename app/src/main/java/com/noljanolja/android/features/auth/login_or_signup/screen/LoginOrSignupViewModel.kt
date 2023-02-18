@@ -13,7 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginOrSignupViewModel @Inject constructor(
     private val navigationManager: NavigationManager,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
 ) : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow(LoginOrSignupUIState.Login)
     val uiStateFlow = _uiStateFlow.asStateFlow()
@@ -59,5 +59,5 @@ class LoginOrSignupViewModel @Inject constructor(
 
 enum class LoginOrSignupUIState(val index: Int) {
     Login(0),
-    Signup(1)
+    Signup(1),
 }

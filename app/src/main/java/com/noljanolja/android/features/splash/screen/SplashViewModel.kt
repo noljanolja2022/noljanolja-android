@@ -12,7 +12,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val navigationManager: NavigationManager
+    private val navigationManager: NavigationManager,
 ) : BaseViewModel() {
     init {
         launch {
@@ -20,7 +20,7 @@ class SplashViewModel @Inject constructor(
                 // TODO: Keep to see splash screen
                 delay(1000)
                 navigationManager.navigate(
-                    NavigationDirections.Home
+                    NavigationDirections.Home,
                 )
             }
         }

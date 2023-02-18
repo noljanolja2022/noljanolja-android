@@ -28,12 +28,12 @@ fun HomeFloatingActionButton(navController: NavHostController) {
             .size(68.dp),
         onClick = {
             HomeNavigationItem.WalletItem.click(navController)
-        }
+        },
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_wallet),
             contentDescription = null,
-            modifier = Modifier.size(36.dp)
+            modifier = Modifier.size(36.dp),
         )
     }
 }

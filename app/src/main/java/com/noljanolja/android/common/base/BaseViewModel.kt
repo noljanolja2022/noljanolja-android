@@ -28,7 +28,7 @@ fun ViewModel.launch(block: suspend () -> Unit) = viewModelScope.launch {
 fun BaseViewModel.tryLaunch(
     catch: (suspend () -> Unit)? = null,
     finally: (suspend () -> Unit)? = null,
-    block: suspend () -> Unit
+    block: suspend () -> Unit,
 ) = viewModelScope.launch {
     try {
         block.invoke()

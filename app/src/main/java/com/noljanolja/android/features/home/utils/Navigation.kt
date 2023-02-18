@@ -26,7 +26,7 @@ fun HomeNavigationItem.click(navController: NavHostController) {
 
 @Composable
 fun HomeNavigationItem.isNavItemSelect(
-    navController: NavHostController
+    navController: NavHostController,
 ): Boolean {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination

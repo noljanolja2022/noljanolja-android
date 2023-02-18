@@ -9,7 +9,7 @@ sealed interface NavigationCommand {
     val destination: String
     fun createDestination(): String = destination
     data class FinishWithResults(
-        val data: Map<String, Any>
+        val data: Map<String, Any>,
     ) : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options: NavOptions? = null

@@ -9,15 +9,15 @@ interface Analytics {
 
 class AppAnalytics internal constructor(
     private val trackers: MutableList<Tracker>,
-    private val loggers: MutableList<Logger>
+    private val loggers: MutableList<Logger>,
 ) : Analytics {
 
     override fun trackEvent(event: Event) {
         event.setGlobalParams(
             // TODO
             mapOf(
-                USER_ID to "user"
-            )
+                USER_ID to "user",
+            ),
         )
         trackers.forEach { tracker ->
             if (tracker.isEnable) tracker.trackEvent(event)

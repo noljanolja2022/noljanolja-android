@@ -41,7 +41,7 @@ import com.noljanolja.android.util.showToast
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = hiltViewModel()
+    viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     viewModel.handleError()
@@ -62,7 +62,7 @@ fun LoginScreen(
 
     Column(
         modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         when (uiState) {
             LoginUIState.VerifyEmail -> {
@@ -72,7 +72,7 @@ fun LoginScreen(
                     },
                     onVerify = {
                         viewModel.handleEvent(LoginEvent.VerifyEmail)
-                    }
+                    },
                 )
             }
             else -> {
@@ -89,7 +89,7 @@ fun LoginScreen(
                     },
                     onLoginNaver = {
                         NaverIdLoginSDK.authenticate(context, naverLauncher)
-                    }
+                    },
                 )
             }
         }
@@ -104,7 +104,7 @@ private fun ColumnScope.LoginContent(
     passwordError: Throwable?,
     handleEvent: (LoginEvent) -> Unit,
     onLoginGoogle: () -> Unit,
-    onLoginNaver: () -> Unit
+    onLoginNaver: () -> Unit,
 ) {
     val context = LocalContext.current
     EmailAndPassword(
@@ -117,24 +117,24 @@ private fun ColumnScope.LoginContent(
         },
         onPasswordChange = {
             handleEvent(LoginEvent.ChangePassword(it))
-        }
+        },
     )
     Text(
         text = stringResource(id = R.string.forgot_password),
         style = TextStyle(
             fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.outline
+            color = MaterialTheme.colorScheme.outline,
         ),
         modifier = Modifier
             .padding(top = 28.dp)
             .align(Alignment.End)
             .clickable {
                 handleEvent(LoginEvent.GoForgotEmailAndPassword)
-            }
+            },
     )
     LoginButton(
         modifier = Modifier.padding(top = 28.dp),
-        isEnable = email.isNotBlank() && password.isNotBlank()
+        isEnable = email.isNotBlank() && password.isNotBlank(),
     ) {
         handleEvent(LoginEvent.LoginEmail)
     }
@@ -142,20 +142,20 @@ private fun ColumnScope.LoginContent(
         Divider(
             color = MaterialTheme.colorScheme.onBackground,
             thickness = 1.dp,
-            modifier = Modifier.weight(1F)
+            modifier = Modifier.weight(1F),
         )
         Text(
             stringResource(id = R.string.auth_login_with_SNS),
             modifier = Modifier.padding(24.dp),
             style = TextStyle(
                 fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.outline
-            )
+                color = MaterialTheme.colorScheme.outline,
+            ),
         )
         Divider(
             color = MaterialTheme.colorScheme.onBackground,
             thickness = 1.dp,
-            modifier = Modifier.weight(1F)
+            modifier = Modifier.weight(1F),
         )
     }
 
@@ -168,7 +168,7 @@ private fun ColumnScope.LoginContent(
         Spacer(modifier = Modifier.width(24.dp))
         LoginSNSButton(
             painter = painterResource(id = R.drawable.google),
-            onClick = onLoginGoogle
+            onClick = onLoginGoogle,
         )
     }
     Spacer(modifier = Modifier.weight(1F))
@@ -177,20 +177,20 @@ private fun ColumnScope.LoginContent(
 @Composable
 fun ColumnScope.LoginVerifyEmail(
     onBack: () -> Unit,
-    onVerify: () -> Unit
+    onVerify: () -> Unit,
 ) {
     VerifyEmail()
     Row() {
         SecondaryButton(
             modifier = Modifier.weight(1F),
             text = stringResource(id = R.string.common_previous),
-            onClick = onBack
+            onClick = onBack,
         )
         Spacer(modifier = Modifier.width(12.dp))
         PrimaryButton(
             modifier = Modifier.weight(1F),
             text = stringResource(id = R.string.common_verification),
-            onClick = onVerify
+            onClick = onVerify,
         )
     }
     Spacer(modifier = Modifier.height(24.dp))
@@ -198,7 +198,7 @@ fun ColumnScope.LoginVerifyEmail(
 
 @Composable
 private fun rememberAuthLauncher(
-    handleGoogleSignInResult: (Intent?) -> Unit
+    handleGoogleSignInResult: (Intent?) -> Unit,
 ): ManagedActivityResultLauncher<Intent, ActivityResult> {
     return rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         handleGoogleSignInResult(result.data)
@@ -208,19 +208,19 @@ private fun rememberAuthLauncher(
 @Composable
 private fun LoginSNSButton(
     painter: Painter,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     OutlinedButton(
         onClick = onClick,
         modifier = Modifier.size(42.dp),
         shape = CircleShape,
         contentPadding = PaddingValues(0.dp),
-        border = BorderStroke(0.dp, Color.Transparent)
+        border = BorderStroke(0.dp, Color.Transparent),
     ) {
         Image(
             painter = painter,
             modifier = Modifier.size(42.dp),
-            contentDescription = null
+            contentDescription = null,
         )
     }
 }

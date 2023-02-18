@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 @Composable
 fun FullSizeLoading(
     showLoading: Boolean = true,
-    content: @Composable (() -> Unit)? = null
+    content: @Composable (() -> Unit)? = null,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         content?.invoke()
@@ -22,7 +22,7 @@ fun FullSizeLoading(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background.copy(alpha = 0.3F)),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 CircularProgressIndicator()
             }
