@@ -105,7 +105,9 @@ private fun MyInfoContent(
                 )
                 MyInfoItem(
                     title = stringResource(id = R.string.common_log_out),
-                    onClick = {},
+                    onClick = {
+                        handleEvent(MyInfoEvent.Logout)
+                    },
                 )
                 ListTile(
                     modifier = Modifier
