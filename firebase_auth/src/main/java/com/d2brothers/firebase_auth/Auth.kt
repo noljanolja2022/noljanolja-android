@@ -18,6 +18,7 @@ import com.navercorp.nid.NaverIdLoginSDK
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -38,9 +39,10 @@ internal class Auth private constructor(
         } ?: FirebaseFunctions.getInstance()
     }
 
-    val currentUser: Flow<AuthUser?> = flow {
-        firebaseAuth.currentUser?.reload()
+    fun getCurrentUser(reload: Boolean = false): Flow<AuthUser?> = flow {
         emit(firebaseAuth.currentUser?.toAuthUser())
+    }.onStart {
+        if (reload) firebaseAuth.currentUser?.reload()
     }
 
     suspend fun createUserWithEmailAndPassword(
@@ -111,7 +113,7 @@ internal class Auth private constructor(
             val account = task.getResult(ApiException::class.java)
             val credential = GoogleAuthProvider.getCredential(account.idToken, null)
             firebaseAuth.signInWithCredential(credential).await()
-            currentUser.first().let {
+            getCurrentUser().first().let {
                 Result.success(it!!)
             }
         } catch (e: Exception) {

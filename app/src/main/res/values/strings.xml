@@ -8,6 +8,9 @@
     <string name="common_next">Next</string>
     <string name="common_previous">Previous</string>
     <string name="common_verification">Verification</string>
+    <string name="common_setting">Setting</string>
+    <string name="common_log_out">Log out</string>
+    <string name="common_withdrwal">Withdrawal</string>
     <string name="login">Log in</string>
     <string name="signup">Join the membership</string>
     <string name="forgot_password">Forgot your password?</string>
@@ -36,12 +39,19 @@
     <string name="require_verify_description">Verify email to play\nUse a variety of services</string>
     <string name="require_verify_button">Verify Email</string>
 
-    <!--    Failure-->
-    <string name="invalid_email_format">Email is not valid</string>
+
     <string name="my_page">My Page</string>
-    <string name="hello">Hello</string>
+    <string name="hello_user">Hello %s</string>
     <string name="service_guide">Service Guide</string>
     <string name="custom_service_center">Custom service center</string>
     <string name="telephone_number_service_center">1588-1588</string>
+    <string name="my_info">My Info</string>
+    <string name="edit_member_infomation">Edit member infomation</string>
+    <string name="change_password">Change Password</string>
+    <string name="exchange_account_management">Exchange Account Management</string>
+
+
+    <!--    Failure-->
+    <string name="invalid_email_format">Email is not valid</string>
 
 </resources>

@@ -98,6 +98,12 @@ object NavigationDirections {
         override val destination: String = "home_user_item"
     }
 
+    object MyInfo : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "my_info"
+    }
+
     object Back : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options: NavOptions? = null

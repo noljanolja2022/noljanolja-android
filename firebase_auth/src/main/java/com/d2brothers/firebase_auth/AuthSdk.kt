@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 class AuthSdk private constructor() {
     private val auth: Auth by lazy { Auth.instance }
 
-    val currentUser: Flow<AuthUser?> = auth.currentUser
+    fun getCurrentUser(reload: Boolean = false): Flow<AuthUser?> = auth.getCurrentUser(reload)
 
     suspend fun createUserWithEmailAndPassword(
         email: String,

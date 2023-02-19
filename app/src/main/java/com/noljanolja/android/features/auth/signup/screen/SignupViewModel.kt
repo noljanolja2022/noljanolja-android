@@ -44,7 +44,7 @@ class SignupViewModel @Inject constructor(
                         is SignupUIState.Agreement -> _uiStateFlow.emit(SignupUIState.SignupForm())
                         is SignupUIState.SignupForm -> onSignup()
                         SignupUIState.VerificationEmail -> {
-                            val user = authSdk.currentUser.first()
+                            val user = authSdk.getCurrentUser(true).first()
                             if (user?.isVerify == true) {
                                 navigationManager.navigate(NavigationDirections.Home)
                             } else {

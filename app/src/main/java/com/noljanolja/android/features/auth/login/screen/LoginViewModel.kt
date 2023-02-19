@@ -56,7 +56,7 @@ class LoginViewModel @Inject constructor(
                     loginWithKakao()
                 }
                 LoginEvent.VerifyEmail -> {
-                    val user = authSdk.currentUser.first()
+                    val user = authSdk.getCurrentUser(true).first()
                     if (user?.isVerify == true) {
                         navigationManager.navigate(NavigationDirections.Home)
                     } else {

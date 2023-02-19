@@ -14,7 +14,7 @@ import javax.inject.Inject
 class RequireLoginViewModel @Inject constructor(
     private val authSdk: AuthSdk,
 ) : BaseViewModel() {
-    val hasUser: StateFlow<Boolean> = authSdk.currentUser.map {
+    val hasUser: StateFlow<Boolean> = authSdk.getCurrentUser().map {
         it != null
     }.stateIn(
         scope = viewModelScope,

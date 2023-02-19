@@ -11,6 +11,7 @@ import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.features.auth.TermsOfServiceScreen
 import com.noljanolja.android.features.auth.forget.screen.ForgotScreen
 import com.noljanolja.android.features.auth.login_or_signup.screen.LoginOrSignupScreen
+import com.noljanolja.android.features.home.info.screen.MyInfoScreen
 import com.noljanolja.android.features.home.root.screen.HomeScreen
 import com.noljanolja.android.features.splash.screen.SplashScreen
 
@@ -62,6 +63,9 @@ private fun NavGraphBuilder.addSplashGraph() {
 private fun NavGraphBuilder.addHomeGraph() {
     composable(NavigationDirections.Home.destination) { backStack ->
         HomeScreen()
+    }
+    composable(NavigationDirections.MyInfo.destination) {
+        MyInfoScreen()
     }
 }
 

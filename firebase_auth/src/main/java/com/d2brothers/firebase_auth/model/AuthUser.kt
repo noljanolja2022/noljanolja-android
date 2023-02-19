@@ -5,3 +5,5 @@ data class AuthUser(
     val displayName: String?,
     val isVerify: Boolean,
 )
+
+fun AuthUser?.displayIdentity() = this?.displayName ?: this?.email ?: "Anonymous"

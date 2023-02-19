@@ -35,7 +35,7 @@ class HomeViewModel @Inject constructor(
                 onChange.invoke()
                 return@launch
             }
-            val user = authSdk.currentUser.first()
+            val user = authSdk.getCurrentUser(true).first()
             if (user?.isVerify == true) {
                 onChange.invoke()
             } else {
@@ -46,7 +46,7 @@ class HomeViewModel @Inject constructor(
 
     private fun loginOrVerifyEmail() {
         launch {
-            val user = authSdk.currentUser.first()
+            val user = authSdk.getCurrentUser().first()
             when {
                 // TODO : Check verify if need after
                 true -> {

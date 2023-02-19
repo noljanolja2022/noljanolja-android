@@ -3,15 +3,7 @@ package com.noljanolja.android.common.composable
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,11 +27,10 @@ fun ListTile(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
-            .height(60.dp)
             .clickable { onClick() }
-            .padding(vertical = 8.dp),
+            .then(modifier),
     ) {
         leadingDrawable?.let {
             Icon(
@@ -48,8 +39,8 @@ fun ListTile(
                 modifier = Modifier.size(24.dp),
                 tint = Color.Black,
             )
+            Spacer(modifier = Modifier.width(16.dp))
         }
-        Spacer(modifier = Modifier.width(16.dp))
         Column(horizontalAlignment = Alignment.Start) {
             title()
             description?.let {

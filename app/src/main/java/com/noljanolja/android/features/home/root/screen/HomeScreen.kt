@@ -77,15 +77,30 @@ fun HomeScreen(
         },
     ) {
         Scaffold(
-            floatingActionButton = { HomeFloatingActionButton(navController = navController) },
+            floatingActionButton = {
+                val item = HomeNavigationItem.WalletItem
+                val isSelected = item.isNavItemSelect(navController = navController)
+                HomeFloatingActionButton(
+                    selected = isSelected,
+                    onClick = {
+                        viewModel.handleEvent(
+                            HomeEvent.ChangeNavigationItem(
+                                item = item,
+                                onChange = {
+                                    item.click(navController)
+                                },
+                            ),
+                        )
+                    },
+                )
+            },
             isFloatingActionButtonDocked = true,
             floatingActionButtonPosition = FabPosition.Center,
             bottomBar = {
                 BottomAppBar(
                     modifier = Modifier,
-                    backgroundColor = Color.White,
+                    backgroundColor = MaterialTheme.colorScheme.onPrimary,
                     cutoutShape = RoundedCornerShape(50),
-                    // backgroundColor = Color.White,
                     elevation = 22.dp,
                 ) {
                     HomeBottomBar(navController, onItemClick = {
