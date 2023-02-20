@@ -17,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,31 +36,22 @@ import com.noljanolja.android.common.composable.SecondaryButton
 import com.noljanolja.android.features.auth.common.component.EmailAndPassword
 import com.noljanolja.android.features.auth.common.component.VerifyEmail
 import com.noljanolja.android.features.auth.login.screen.component.LoginButton
-import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
-    val authSdk = AuthSdk.instance
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
     viewModel.handleError()
     val email by viewModel.emailFlow.collectAsState()
     val password by viewModel.passwordFlow.collectAsState()
     val emailError by viewModel.emailError.collectAsState()
     val passwordError by viewModel.passwordError.collectAsState()
     val googleLauncher = rememberAuthLauncher {
-        scope.launch {
-            val result = authSdk.getAccountFromGoogleIntent(it)
-            viewModel.handleAuthResult(result)
-        }
+        viewModel.handleLoginWithGoogleFromIntent(it)
     }
     val naverLauncher = rememberAuthLauncher {
-        scope.launch {
-            val result = authSdk.getAccountFromNaverIntent(it)
-            viewModel.handleAuthResult(result)
-        }
+        viewModel.handleLoginWithNaverFromIntent(it)
     }
     val uiState by viewModel.uiStateFlow.collectAsState()
 
@@ -90,10 +80,10 @@ fun LoginScreen(
                         viewModel.handleEvent(it)
                     },
                     onLoginGoogle = {
-                        authSdk.authenticateGoogle(context, googleLauncher)
+                        AuthSdk.authenticateGoogle(context, googleLauncher)
                     },
                     onLoginNaver = {
-                        authSdk.authenticateNaver(context, naverLauncher)
+                        AuthSdk.authenticateNaver(context, naverLauncher)
                     },
                 )
             }
@@ -111,7 +101,6 @@ private fun ColumnScope.LoginContent(
     onLoginGoogle: () -> Unit,
     onLoginNaver: () -> Unit,
 ) {
-    val context = LocalContext.current
     EmailAndPassword(
         email = email,
         password = password,
