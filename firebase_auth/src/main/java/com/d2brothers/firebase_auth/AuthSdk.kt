@@ -10,7 +10,7 @@ import com.navercorp.nid.NaverIdLoginSDK
 import kotlinx.coroutines.flow.Flow
 
 class AuthSdk private constructor() {
-    private val auth: Auth by lazy { Auth.instance }
+    internal val auth: Auth by lazy { Auth.instance }
 
     fun getCurrentUser(reload: Boolean = false): Flow<AuthUser?> = auth.getCurrentUser(reload)
 
@@ -34,21 +34,9 @@ class AuthSdk private constructor() {
 
     suspend fun loginWithKakao(): Result<AuthUser> = auth.loginWithKakao()
 
-    fun authenticateGoogle(
-        context: Context,
-        launcher: ActivityResultLauncher<Intent>,
-    ) {
-        auth.authenticateGoogle(context, launcher)
-    }
-
     suspend fun getAccountFromGoogleIntent(
         data: Intent?,
     ): Result<AuthUser> = auth.getAccountFromGoogleIntent(data)
-
-    fun authenticateNaver(
-        context: Context,
-        launcher: ActivityResultLauncher<Intent>,
-    ) = auth.authenticateNaver(context, launcher)
 
     suspend fun getAccountFromNaverIntent(
         data: Intent?,
@@ -78,6 +66,20 @@ class AuthSdk private constructor() {
             return AuthSdk().also {
                 instance = it
             }
+        }
+
+        fun authenticateGoogle(
+            context: Context,
+            launcher: ActivityResultLauncher<Intent>,
+        ) {
+            instance.auth.authenticateGoogle(context, launcher)
+        }
+
+        fun authenticateNaver(
+            context: Context,
+            launcher: ActivityResultLauncher<Intent>,
+        ) {
+            instance.auth.authenticateNaver(context, launcher)
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.noljanolja.android.features.auth.login.screen
 
+import android.content.Intent
 import com.d2brothers.firebase_auth.AuthSdk
 import com.d2brothers.firebase_auth.model.AuthUser
 import com.noljanolja.android.common.base.launch
@@ -67,8 +68,25 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun handleLoginWithGoogleFromIntent(data: Intent?) {
+        launch {
+            _uiStateFlow.emit(LoginUIState.Loading)
+            val result = authSdk.getAccountFromGoogleIntent(data)
+            handleAuthResult(result)
+        }
+    }
+
+    fun handleLoginWithNaverFromIntent(data: Intent?) {
+        launch {
+            _uiStateFlow.emit(LoginUIState.Loading)
+            val result = authSdk.getAccountFromNaverIntent(data)
+            handleAuthResult(result)
+        }
+    }
+
     private fun loginWithKakao() {
         launch {
+            _uiStateFlow.emit(LoginUIState.Loading)
             val result = authSdk.loginWithKakao()
             handleAuthResult(result)
         }
