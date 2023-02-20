@@ -73,8 +73,8 @@ class AuthSdk private constructor() {
                 naver_client_secret,
                 naver_client_name,
             )
-            Auth.init(context)
             AuthConfig.init(region = region, googleClientId = googleWebClientId)
+            Auth.init(context)
             return AuthSdk().also {
                 instance = it
             }
