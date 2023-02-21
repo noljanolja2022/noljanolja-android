@@ -104,6 +104,12 @@ object NavigationDirections {
         override val destination: String = "my_info"
     }
 
+    object Setting : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "setting"
+    }
+
     object Back : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options: NavOptions? = null

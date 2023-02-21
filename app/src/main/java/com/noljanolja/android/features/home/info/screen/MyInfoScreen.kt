@@ -22,7 +22,7 @@ import com.d2brothers.firebase_auth.model.displayIdentity
 import com.noljanolja.android.R
 import com.noljanolja.android.common.composable.CommonTopAppBar
 import com.noljanolja.android.common.composable.FullSizeLoading
-import com.noljanolja.android.common.composable.ListTile
+import com.noljanolja.android.common.composable.PrimaryListTile
 
 @Composable
 fun MyInfoScreen(
@@ -101,7 +101,9 @@ private fun MyInfoContent(
                 MyInfoItem(
                     title = stringResource(id = R.string.common_setting),
                     trailingDrawable = R.drawable.ic_forward,
-                    onClick = {},
+                    onClick = {
+                        handleEvent(MyInfoEvent.GoSetting)
+                    },
                 )
                 MyInfoItem(
                     title = stringResource(id = R.string.common_log_out),
@@ -109,7 +111,7 @@ private fun MyInfoContent(
                         handleEvent(MyInfoEvent.Logout)
                     },
                 )
-                ListTile(
+                PrimaryListTile(
                     modifier = Modifier
                         .padding(vertical = 5.dp)
                         .padding(top = 18.dp),
@@ -137,7 +139,7 @@ private fun MyInfoItem(
     @DrawableRes trailingDrawable: Int? = null,
     onClick: () -> Unit,
 ) {
-    ListTile(
+    PrimaryListTile(
         modifier = Modifier
             .padding(vertical = 5.dp)
             .padding(top = 18.dp),

@@ -39,18 +39,23 @@
     <string name="require_verify_description">Verify email to play\nUse a variety of services</string>
     <string name="require_verify_button">Verify Email</string>
 
-
+    <!--    My page-->
     <string name="my_page">My Page</string>
     <string name="hello_user">Hello %s</string>
     <string name="service_guide">Service Guide</string>
     <string name="custom_service_center">Custom service center</string>
     <string name="telephone_number_service_center">1588-1588</string>
+    <!--    My info-->
     <string name="my_info">My Info</string>
     <string name="edit_member_infomation">Edit member infomation</string>
     <string name="change_password">Change Password</string>
     <string name="exchange_account_management">Exchange Account Management</string>
 
-
+    <!--    Setting-->
+    <string name="setting_push_notification">App push notification</string>
+    <string name="setting_clear_cache_data">Clear cache data</string>
+    <string name="setting_open_source_license">Open source license</string>
+    <string name="setting_current_version">Current version %s</string>
     <!--    Failure-->
     <string name="invalid_email_format">Email is not valid</string>
 

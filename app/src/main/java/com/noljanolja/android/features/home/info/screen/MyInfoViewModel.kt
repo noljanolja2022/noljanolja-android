@@ -41,6 +41,9 @@ class MyInfoViewModel @Inject constructor(
                     authSdk.logOut()
                     navigationManager.navigate(NavigationDirections.Home)
                 }
+                MyInfoEvent.GoSetting -> {
+                    navigationManager.navigate(NavigationDirections.Setting)
+                }
             }
         }
     }

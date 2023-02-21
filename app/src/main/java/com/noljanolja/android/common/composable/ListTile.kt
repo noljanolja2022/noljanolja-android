@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,7 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ListTile(
+fun PrimaryListTile(
     modifier: Modifier = Modifier,
     title: @Composable () -> Unit,
     description: (@Composable () -> Unit)? = null,
@@ -25,39 +26,34 @@ fun ListTile(
     @DrawableRes trailingDrawable: Int? = null,
     onClick: () -> Unit,
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .then(modifier),
-    ) {
+    CommonListTile(
+        modifier = modifier,
+        title = title,
+        description = description,
+        leading =
         leadingDrawable?.let {
-            Icon(
-                painter = painterResource(id = it),
-                contentDescription = "start icon",
-                modifier = Modifier.size(24.dp),
-                tint = Color.Black,
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-        }
-        Column(horizontalAlignment = Alignment.Start) {
-            title()
-            description?.let {
-                Spacer(modifier = Modifier.padding(8.dp))
-                it()
+            {
+                Icon(
+                    painter = painterResource(id = it),
+                    contentDescription = "start icon",
+                    modifier = Modifier.size(24.dp),
+                    tint = Color.Black,
+                )
+                Spacer(modifier = Modifier.width(16.dp))
             }
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        trailingDrawable?.let {
-            Icon(
-                painter = painterResource(id = it),
-                contentDescription = "start icon",
-                modifier = Modifier.size(24.dp),
-                tint = MaterialTheme.colorScheme.onBackground,
-            )
-        }
-    }
+        },
+        trailing = trailingDrawable?.let {
+            {
+                Icon(
+                    painter = painterResource(id = it),
+                    contentDescription = "start icon",
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.onBackground,
+                )
+            }
+        },
+        onClick = onClick,
+    )
 }
 
 @Composable
@@ -111,5 +107,59 @@ fun RoundedListTile(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun ListTileWithToggleButton(
+    modifier: Modifier = Modifier,
+    title: @Composable () -> Unit,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    CommonListTile(
+        modifier = modifier,
+        title = title,
+        trailing = {
+            Switch(
+                modifier = Modifier
+                    .height(30.dp)
+                    .width(50.dp),
+                checked = checked,
+                onCheckedChange = onCheckedChange,
+            )
+        },
+    )
+}
+
+@Composable
+fun CommonListTile(
+    modifier: Modifier = Modifier,
+    title: @Composable () -> Unit,
+    description: (@Composable () -> Unit)? = null,
+    leading: (@Composable () -> Unit)? = null,
+    trailing: (@Composable () -> Unit)? = null,
+    onClick: (() -> Unit)? = null,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick?.invoke() }
+            .then(modifier),
+    ) {
+        leading?.let {
+            leading.invoke()
+            Spacer(modifier = Modifier.width(16.dp))
+        }
+        Column(horizontalAlignment = Alignment.Start) {
+            title()
+            description?.let {
+                Spacer(modifier = Modifier.padding(8.dp))
+                it()
+            }
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        trailing?.invoke()
     }
 }

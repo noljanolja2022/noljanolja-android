@@ -18,7 +18,7 @@ import com.d2brothers.firebase_auth.model.displayIdentity
 import com.noljanolja.android.R
 import com.noljanolja.android.common.composable.CommonTopAppBar
 import com.noljanolja.android.common.composable.FullSizeLoading
-import com.noljanolja.android.common.composable.ListTile
+import com.noljanolja.android.common.composable.PrimaryListTile
 import com.noljanolja.android.common.composable.RoundedListTile
 
 @Composable
@@ -122,7 +122,7 @@ private fun GreetingSection(
     name: String,
     onClick: () -> Unit,
 ) {
-    ListTile(
+    PrimaryListTile(
         modifier = modifier,
         title = {
             Text(
