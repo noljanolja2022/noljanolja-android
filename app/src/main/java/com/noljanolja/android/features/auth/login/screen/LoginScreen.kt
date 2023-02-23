@@ -15,7 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,17 +43,17 @@ fun LoginScreen(
 ) {
     val context = LocalContext.current
     viewModel.handleError()
-    val email by viewModel.emailFlow.collectAsState()
-    val password by viewModel.passwordFlow.collectAsState()
-    val emailError by viewModel.emailError.collectAsState()
-    val passwordError by viewModel.passwordError.collectAsState()
+    val email by viewModel.emailFlow.collectAsStateWithLifecycle()
+    val password by viewModel.passwordFlow.collectAsStateWithLifecycle()
+    val emailError by viewModel.emailError.collectAsStateWithLifecycle()
+    val passwordError by viewModel.passwordError.collectAsStateWithLifecycle()
     val googleLauncher = rememberAuthLauncher {
         viewModel.handleLoginWithGoogleFromIntent(it)
     }
     val naverLauncher = rememberAuthLauncher {
         viewModel.handleLoginWithNaverFromIntent(it)
     }
-    val uiState by viewModel.uiStateFlow.collectAsState()
+    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier.fillMaxSize(),

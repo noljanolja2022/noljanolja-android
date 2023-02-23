@@ -42,6 +42,10 @@ class AuthSdk private constructor() {
         data: Intent?,
     ): Result<AuthUser> = auth.getAccountFromNaverIntent(data)
 
+    suspend fun getIdToken(forceRefresh: Boolean): String? {
+        return auth.getIdToken(forceRefresh)
+    }
+
     companion object {
         @SuppressLint("StaticFieldLeak")
         lateinit var instance: AuthSdk

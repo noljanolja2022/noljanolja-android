@@ -7,7 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -28,7 +28,7 @@ import com.noljanolja.android.common.composable.PrimaryListTile
 fun MyInfoScreen(
     viewModel: MyInfoViewModel = hiltViewModel(),
 ) {
-    val uiState by viewModel.uiStateFlow.collectAsState()
+    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     MyInfoContent(
         uiState,
         handleEvent = {

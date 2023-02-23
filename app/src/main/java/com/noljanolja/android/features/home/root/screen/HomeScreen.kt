@@ -24,6 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.noljanolja.android.common.composable.FullSizeWithBottomSheet
 import com.noljanolja.android.features.home.component.HomeFloatingActionButton
+import com.noljanolja.android.features.home.menu.screen.MenuScreen
 import com.noljanolja.android.features.home.mypage.screen.MyPageScreen
 import com.noljanolja.android.features.home.require_login.RequireLoginBottomSheet
 import com.noljanolja.android.features.home.utils.click
@@ -129,12 +130,7 @@ fun HomeScreen(
 
 private fun NavGraphBuilder.addNavigationGraph() {
     composable(HomeNavigationItem.MenuItem.route) {
-        Text(
-            "MenuItem",
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(100.dp),
-        )
+        MenuScreen()
     }
     composable(HomeNavigationItem.HomeItem.route) {
         Text(

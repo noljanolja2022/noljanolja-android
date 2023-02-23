@@ -6,7 +6,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,7 +32,7 @@ fun LoginOrSignupScreen(
     savedStateHandle: SavedStateHandle,
 ) {
     val loginOrSignupViewModel: LoginOrSignupViewModel = hiltViewModel()
-    val uiState by loginOrSignupViewModel.uiStateFlow.collectAsState()
+    val uiState by loginOrSignupViewModel.uiStateFlow.collectAsStateWithLifecycle()
     LoginOrSignupContent(uiState = uiState) {
         loginOrSignupViewModel.handleEvent(it)
     }
@@ -53,8 +53,8 @@ fun LoginOrSignupContent(
 ) {
     val loginViewModel: LoginViewModel = hiltViewModel()
     val signupViewModel: SignupViewModel = hiltViewModel()
-    val loginUIState by loginViewModel.uiStateFlow.collectAsState()
-    val signupUIState by signupViewModel.uiStateFlow.collectAsState()
+    val loginUIState by loginViewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val signupUIState by signupViewModel.uiStateFlow.collectAsStateWithLifecycle()
     FullSizeLoading(loginUIState == LoginUIState.Loading || (signupUIState as? SignupUIState.SignupForm)?.isLoading == true) {
         FullSizeWithLogo(
             onBack = {

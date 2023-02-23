@@ -9,7 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,7 +45,7 @@ fun ForgotScreen(viewModel: ForgotViewModel = hiltViewModel()) {
             }
         }
     }
-    val uiState by viewModel.uiStateFlow.collectAsState()
+    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     FullSizeWithLogo(
         onBack = {
             viewModel.handleEvent(ForgotEvent.Close)

@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +38,7 @@ fun PrimaryListTile(
                     painter = painterResource(id = it),
                     contentDescription = "start icon",
                     modifier = Modifier.size(24.dp),
-                    tint = Color.Black,
+                    tint = MaterialTheme.colorScheme.onBackground,
                 )
                 Spacer(modifier = Modifier.width(16.dp))
             }
@@ -127,6 +128,11 @@ fun ListTileWithToggleButton(
                     .width(50.dp),
                 checked = checked,
                 onCheckedChange = onCheckedChange,
+                colors = SwitchDefaults.colors(
+                    uncheckedBorderColor = Color.Transparent,
+                    uncheckedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                    uncheckedTrackColor = MaterialTheme.colorScheme.onBackground,
+                ),
             )
         },
     )
@@ -155,7 +161,6 @@ fun CommonListTile(
         Column(horizontalAlignment = Alignment.Start) {
             title()
             description?.let {
-                Spacer(modifier = Modifier.padding(8.dp))
                 it()
             }
         }

@@ -132,6 +132,10 @@ internal class Auth private constructor(
         } ?: Result.failure(Exception(NaverIdLoginSDK.getLastErrorDescription()))
     }
 
+    suspend fun getIdToken(forceRefresh: Boolean): String? {
+        return firebaseAuth.currentUser?.getIdToken(forceRefresh)?.await()?.token
+    }
+
     private suspend fun loginWithNaverToken(token: String): Result<AuthUser> {
         val result = signInWithCustomToken(
             FirebaseFunction.Naver,

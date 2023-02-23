@@ -4,7 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,7 +25,7 @@ import com.noljanolja.android.common.composable.RoundedListTile
 fun MyPageScreen(
     viewModel: MyPageViewModel = hiltViewModel(),
 ) {
-    val uiState by viewModel.uiStateFlow.collectAsState()
+    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     MyPageContent(
         uiState,
         handleEvent = {

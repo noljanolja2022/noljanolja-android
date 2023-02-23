@@ -8,7 +8,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,12 +35,12 @@ fun SignupScreen(
     signupViewModel: SignupViewModel = hiltViewModel(),
 ) {
     signupViewModel.handleError()
-    val uiState by signupViewModel.uiStateFlow.collectAsState()
-    val email by signupViewModel.emailFlow.collectAsState()
-    val password by signupViewModel.passwordFlow.collectAsState()
-    val emailError by signupViewModel.emailError.collectAsState()
-    val passwordError by signupViewModel.passwordError.collectAsState()
-    val confirmPassword by signupViewModel.confirmPasswordFlow.collectAsState()
+    val uiState by signupViewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val email by signupViewModel.emailFlow.collectAsStateWithLifecycle()
+    val password by signupViewModel.passwordFlow.collectAsStateWithLifecycle()
+    val emailError by signupViewModel.emailError.collectAsStateWithLifecycle()
+    val passwordError by signupViewModel.passwordError.collectAsStateWithLifecycle()
+    val confirmPassword by signupViewModel.confirmPasswordFlow.collectAsStateWithLifecycle()
     BackHandler(uiState !is SignupUIState.Agreement) {
         signupViewModel.handleEvent(SignupEvent.Back)
     }

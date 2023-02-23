@@ -56,6 +56,15 @@
     <string name="setting_clear_cache_data">Clear cache data</string>
     <string name="setting_open_source_license">Open source license</string>
     <string name="setting_current_version">Current version %s</string>
+
+    <!--    Menu-->
+    <string name="menu_title">Menu</string>
+    <string name="menu_announcement">Announcement</string>
+    <string name="menu_play_video">Let\'s play while watching the video</string>
+    <string name="menu_join_and_play">Let\'s join and play</string>
+    <string name="menu_checkout_and_play">Check out and play</string>
+    <string name="menu_point_details">Point details</string>
+    <string name="menu_exchange_money">Exchanging money</string>
     <!--    Failure-->
     <string name="invalid_email_format">Email is not valid</string>
 
