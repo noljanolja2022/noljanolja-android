@@ -23,6 +23,16 @@ android {
         testInstrumentationRunner = "com.noljanolja.android.InstrumentationTestRunner"
         multiDexEnabled = true
     }
+
+    signingConfigs {
+        named("debug") {
+            keyAlias = "signin_debug"
+            keyPassword = "3131994no1"
+            storeFile = file("../key/signin_debug.jks")
+            storePassword = "3131994no1"
+        }
+    }
+
     buildFeatures {
         compose = true
     }
@@ -58,14 +68,6 @@ android {
                 serviceCredentialsFile = "key/key_distributor.json"
                 releaseNotes = ""
                 testers = "doduchieu.kstn@gmail.com"
-            }
-            signingConfigs {
-                create("config") {
-                    keyAlias = "signin_debug"
-                    keyPassword = "3131994no1"
-                    storeFile = file("key/signin_debug.jks")
-                    storePassword = "3131994no1"
-                }
             }
         }
     }
