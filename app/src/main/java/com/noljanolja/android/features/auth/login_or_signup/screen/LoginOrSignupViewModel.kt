@@ -16,15 +16,6 @@ class LoginOrSignupViewModel @Inject constructor(
     private val _uiStateFlow = MutableStateFlow(LoginOrSignupUIState.Login)
     val uiStateFlow = _uiStateFlow.asStateFlow()
 
-//    init {
-//        launch {
-//            val currentUser = authRepository.getCurrentUser().first() ?: return@launch
-//            if (!currentUser.isVerify) {
-//                _uiStateFlow.emit(LoginOrSignupUIState.Signup)
-//            }
-//        }
-//    }
-
     fun handleEvent(event: LoginOrSignupEvent) {
         when (event) {
             LoginOrSignupEvent.SwitchSignup -> {

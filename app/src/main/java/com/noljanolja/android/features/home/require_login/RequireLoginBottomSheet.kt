@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,7 +32,7 @@ fun RequireLoginBottomSheet(
     val scope = rememberCoroutineScope()
     BackHandler(modalSheetState.isVisible) {
         scope.launch {
-            modalSheetState.animateTo(ModalBottomSheetValue.Hidden)
+            modalSheetState.hide()
         }
     }
 

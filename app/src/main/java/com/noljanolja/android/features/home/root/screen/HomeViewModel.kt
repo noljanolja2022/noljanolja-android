@@ -31,7 +31,7 @@ class HomeViewModel @Inject constructor(
         onChange: () -> Unit,
     ) {
         launch {
-            if (item == HomeNavigationItem.HomeItem) {
+            if (item == HomeNavigationItem.CelebrationItem) {
                 onChange.invoke()
                 return@launch
             }
@@ -55,15 +55,6 @@ class HomeViewModel @Inject constructor(
                 }
                 !user!!.isVerify -> sendError(Throwable("Verify fail"))
                 else -> _showRequireLoginPopupEvent.emit(false)
-            }
-        }
-    }
-
-    fun logOut() {
-        launch {
-            val result = authSdk.logOut()
-            if (result.isSuccess) {
-                navigationManager.navigate(NavigationDirections.Home)
             }
         }
     }

@@ -6,6 +6,7 @@
         <option value="no-wildcard-imports" />
         <option value="package-name" />
         <option value="filename" />
+        <option value="trailing-comma" />
       </list>
     </disabledRules>
   </component>

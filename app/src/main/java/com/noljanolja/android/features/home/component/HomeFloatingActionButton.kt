@@ -7,13 +7,12 @@ import androidx.compose.material.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.noljanolja.android.R
+import com.noljanolja.android.features.home.root.screen.HomeNavigationItem
 
 @Composable
 fun HomeFloatingActionButton(
+    item: HomeNavigationItem,
     selected: Boolean,
     onClick: () -> Unit,
 ) {
@@ -26,7 +25,7 @@ fun HomeFloatingActionButton(
         onClick = onClick,
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_wallet),
+            item.icon,
             contentDescription = null,
             modifier = Modifier.size(36.dp),
         )

@@ -92,11 +92,11 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun handleAuthResult(result: Result<AuthUser>?) {
+    private fun handleAuthResult(result: Result<AuthUser>?) {
         launch {
             result?.getOrNull()?.let {
                 if (it.isVerify) {
-                    navigationManager.navigate(NavigationDirections.Back)
+                    navigationManager.navigate(NavigationDirections.Home)
                 } else {
                     _uiStateFlow.emit(LoginUIState.VerifyEmail)
                 }
