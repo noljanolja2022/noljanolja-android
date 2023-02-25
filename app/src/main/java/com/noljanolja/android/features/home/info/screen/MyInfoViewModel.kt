@@ -1,23 +1,22 @@
 package com.noljanolja.android.features.home.info.screen
 
 import androidx.lifecycle.viewModelScope
-import com.d2brothers.firebase_auth.AuthSdk
-import com.d2brothers.firebase_auth.model.AuthUser
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
+import com.noljanolja.android.common.user.domain.model.User
+import com.noljanolja.android.common.user.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MyInfoViewModel @Inject constructor(
     private val navigationManager: NavigationManager,
-    private val authSdk: AuthSdk,
+    private val userRepository: UserRepository,
 ) : BaseViewModel() {
 
     private val _uiStateFlow = MutableStateFlow<MyInfoUIState>(MyInfoUIState.Loading)
@@ -25,9 +24,7 @@ class MyInfoViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            authSdk.getCurrentUser().collectLatest {
-                _uiStateFlow.emit(MyInfoUIState.Loaded(it))
-            }
+            _uiStateFlow.emit(MyInfoUIState.Loaded(userRepository.getCurrentUser()))
         }
     }
 
@@ -38,7 +35,7 @@ class MyInfoViewModel @Inject constructor(
                     navigationManager.navigate(NavigationDirections.Back)
                 }
                 MyInfoEvent.Logout -> {
-                    authSdk.logOut()
+                    userRepository.logout()
                     navigationManager.navigate(NavigationDirections.LoginOrSignup)
                 }
                 MyInfoEvent.GoSetting -> {
@@ -51,5 +48,5 @@ class MyInfoViewModel @Inject constructor(
 
 sealed interface MyInfoUIState {
     object Loading : MyInfoUIState
-    data class Loaded(val user: AuthUser?) : MyInfoUIState
+    data class Loaded(val user: User?) : MyInfoUIState
 }

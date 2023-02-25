@@ -1,23 +1,22 @@
 package com.noljanolja.android.features.auth.login.screen
 
 import android.content.Intent
-import com.d2brothers.firebase_auth.AuthSdk
-import com.d2brothers.firebase_auth.model.AuthUser
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.error.ValidEmailFailed
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
+import com.noljanolja.android.common.user.domain.model.User
+import com.noljanolja.android.common.user.domain.repository.UserRepository
 import com.noljanolja.android.features.auth.common.BaseAuthViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val navigationManager: NavigationManager,
-    private val authSdk: AuthSdk,
+    private val userRepository: UserRepository,
 ) : BaseAuthViewModel() {
     private val _uiStateFlow = MutableStateFlow(LoginUIState.Login)
     val uiStateFlow = _uiStateFlow.asStateFlow()
@@ -56,13 +55,12 @@ class LoginViewModel @Inject constructor(
                 LoginEvent.LoginKakao -> {
                     loginWithKakao()
                 }
-                LoginEvent.VerifyEmail -> {
-                    val user = authSdk.getCurrentUser(true).first()
-                    if (user?.isVerify == true) {
-                        navigationManager.navigate(NavigationDirections.Home)
-                    } else {
-                        sendError(Throwable("Verify fail"))
-                    }
+                LoginEvent.VerifyEmail -> {}
+                LoginEvent.OpenCountryList -> {
+                    navigationManager.navigate(NavigationDirections.CountryPicker)
+                }
+                is LoginEvent.SendOTP -> {
+                    navigationManager.navigate(NavigationDirections.AuthOTP(event.phone))
                 }
             }
         }
@@ -71,7 +69,7 @@ class LoginViewModel @Inject constructor(
     fun handleLoginWithGoogleFromIntent(data: Intent?) {
         launch {
             _uiStateFlow.emit(LoginUIState.Loading)
-            val result = authSdk.getAccountFromGoogleIntent(data)
+            val result = userRepository.getAccountFromGoogleIntent(data)
             handleAuthResult(result)
         }
     }
@@ -79,7 +77,7 @@ class LoginViewModel @Inject constructor(
     fun handleLoginWithNaverFromIntent(data: Intent?) {
         launch {
             _uiStateFlow.emit(LoginUIState.Loading)
-            val result = authSdk.getAccountFromNaverIntent(data)
+            val result = userRepository.getAccountFromNaverIntent(data)
             handleAuthResult(result)
         }
     }
@@ -87,19 +85,20 @@ class LoginViewModel @Inject constructor(
     private fun loginWithKakao() {
         launch {
             _uiStateFlow.emit(LoginUIState.Loading)
-            val result = authSdk.loginWithKakao()
+            val result = userRepository.loginWithKakao()
             handleAuthResult(result)
         }
     }
 
-    private fun handleAuthResult(result: Result<AuthUser>?) {
+    private fun handleAuthResult(result: Result<User>?) {
         launch {
             result?.getOrNull()?.let {
-                if (it.isVerify) {
-                    navigationManager.navigate(NavigationDirections.Home)
-                } else {
-                    _uiStateFlow.emit(LoginUIState.VerifyEmail)
-                }
+                navigationManager.navigate(NavigationDirections.Home)
+//                if (it.isVerify) {
+//
+//                } else {
+//                    _uiStateFlow.emit(LoginUIState.VerifyEmail)
+//                }
             } ?: result?.exceptionOrNull()?.let {
                 sendError(it)
                 _uiStateFlow.emit(LoginUIState.Login)
@@ -112,7 +111,8 @@ class LoginViewModel @Inject constructor(
             _uiStateFlow.emit(LoginUIState.Loading)
             try {
                 requireValidEmail()
-                val result = authSdk.signInWithEmailAndPassword(emailFlow.value, passwordFlow.value)
+                val result =
+                    userRepository.signInWithEmailAndPassword(emailFlow.value, passwordFlow.value)
                 handleAuthResult(result)
             } catch (e: ValidEmailFailed) {
                 _uiStateFlow.emit(LoginUIState.Login)

@@ -1,4 +1,4 @@
-package com.noljanolja.android.common.composable
+package com.noljanolja.android.ui.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

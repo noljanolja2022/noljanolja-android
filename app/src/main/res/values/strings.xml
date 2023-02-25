@@ -5,13 +5,30 @@
     <string name="web_client_id" translatable="false">954965503519-4indv4tab6cr141999er2dd8nj43mtcr.apps.googleusercontent.com</string>
     <string name="kakao_api_key" translatable="false">&kakao_api_key;</string>
     <string name="kakao_scheme" translatable="false">kakao&kakao_api_key;</string>
+
     <string name="common_next">Next</string>
     <string name="common_previous">Previous</string>
     <string name="common_verification">Verification</string>
     <string name="common_setting">Setting</string>
     <string name="common_log_out">Log out</string>
     <string name="common_withdrwal">Withdrawal</string>
-    <string name="login">Log in</string>
+    <string name="common_login">Log in</string>
+    <string name="common_continue">Continue</string>
+    <string name="common_ok">OK</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_confirm">Confirm</string>
+    <string name="common_skip">Skip</string>
+    <string name="common_error_title">Error</string>
+    <string name="common_error_description">An unexpected error has occurred. Please try again.</string>
+    <string name="common_loading">Loading…</string>
+    <string name="common_search">Search</string>
+    <string name="common_unexpected_error">Unexpected Error</string>
+    <string name="common_size">Size %s</string>
+    <string name="common_today">Today</string>
+    <string name="common_yesterday">Yesterday</string>
+    <string name="common_id">Id</string>
+
+
     <string name="signup">Join the membership</string>
     <string name="forgot_password">Forgot your password?</string>
     <string name="email_hint_text">Please enter your email</string>
@@ -38,6 +55,27 @@
     <string name="require_login_button">Let\'s Play Log in</string>
     <string name="require_verify_description">Verify email to play\nUse a variety of services</string>
     <string name="require_verify_button">Verify Email</string>
+
+    <!--    Login-->
+    <string name="login_title">What\'s the phone number for this device?</string>
+    <string name="login_country_input_label">Country</string>
+    <string name="login_phone_input_label">Phone Number</string>
+    <string name="login_invalid_phone_title">Incorrect Number</string>
+    <string name="login_invalid_phone_description">Please input the correct phone number since this number will be used to verify your account.</string>
+    <string name="login_confirm_phone_description">You will receive a code to verify to this phone number via text message.</string>
+
+    <!--    Countries-->
+    <string name="countries_title">Select country</string>
+    <string name="countries_search">Search</string>
+
+    <!--    OTP-->
+    <string name="otp_title">Enter verification code</string>
+    <string name="otp_description">We\'ve sent a text message with your verification code to</string>
+    <string name="otp_resend_code">Resend Code</string>
+    <string name="otp_resend_code_waiting">Resend code in %s seconds</string>
+    <string name="otp_verifying">Verifying…</string>
+    <string name="otp_invalid_otp_title">Incorrect Code</string>
+    <string name="otp_invalid_otp_description">Please make sure you input the correct code received via messages.</string>
 
     <!--    My page-->
     <string name="my_page">My Page</string>

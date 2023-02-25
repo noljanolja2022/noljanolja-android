@@ -8,9 +8,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
-import com.noljanolja.android.features.auth.TermsOfServiceScreen
-import com.noljanolja.android.features.auth.forget.screen.ForgotScreen
+import com.noljanolja.android.features.auth.countries.screen.CountriesScreen
 import com.noljanolja.android.features.auth.login_or_signup.screen.LoginOrSignupScreen
+import com.noljanolja.android.features.auth.otp.screen.OTPScreen
 import com.noljanolja.android.features.home.info.screen.MyInfoScreen
 import com.noljanolja.android.features.home.root.screen.HomeScreen
 import com.noljanolja.android.features.setting.screen.SettingScreen
@@ -77,10 +77,24 @@ private fun NavGraphBuilder.addAuthGraph() {
     composable(NavigationDirections.LoginOrSignup.destination) { backStack ->
         LoginOrSignupScreen(backStack.savedStateHandle)
     }
-    composable(NavigationDirections.Forgot.destination) {
-        ForgotScreen()
+    composable(NavigationDirections.CountryPicker.destination) {
+        CountriesScreen()
     }
-    composable(NavigationDirections.TermsOfService.destination) {
-        TermsOfServiceScreen()
+    with(NavigationDirections.AuthOTP()) {
+        composable(
+            destination,
+            arguments,
+        ) { backStack ->
+            with(backStack.arguments) {
+                val phone = this?.getString("phone") ?: ""
+                OTPScreen(phone = phone)
+            }
+        }
     }
+//    composable(NavigationDirections.Forgot.destination) {
+//        ForgotScreen()
+//    }
+//    composable(NavigationDirections.TermsOfService.destination) {
+//        TermsOfServiceScreen()
+//    }
 }

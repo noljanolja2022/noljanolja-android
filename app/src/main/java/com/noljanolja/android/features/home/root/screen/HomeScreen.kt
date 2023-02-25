@@ -88,7 +88,7 @@ private fun NavGraphBuilder.addNavigationGraph() {
                 .padding(100.dp),
         )
     }
-    composable(HomeNavigationItem.ShopItem.route) {
+    composable(HomeNavigationItem.StoreItem.route) {
         Text(
             "ShopItem",
             modifier = Modifier
@@ -110,7 +110,7 @@ fun HomeBottomBar(
         HomeNavigationItem.ChatItem,
         HomeNavigationItem.CelebrationItem,
         HomeNavigationItem.PlayItem,
-        HomeNavigationItem.ShopItem,
+        HomeNavigationItem.StoreItem,
         HomeNavigationItem.UserItem,
     )
     BottomAppBar(

@@ -23,10 +23,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.noljanolja.android.R
-import com.noljanolja.android.common.composable.CommonListTile
-import com.noljanolja.android.common.composable.CommonTopAppBar
-import com.noljanolja.android.common.composable.PrimaryDivider
-import com.noljanolja.android.common.composable.PrimaryListTile
+import com.noljanolja.android.ui.composable.CommonListTile
+import com.noljanolja.android.ui.composable.CommonTopAppBar
+import com.noljanolja.android.ui.composable.PrimaryDivider
+import com.noljanolja.android.ui.composable.PrimaryListTile
 import com.noljanolja.android.common.user.domain.model.displayIdentity
 import com.noljanolja.android.util.primaryTextColor
 import com.noljanolja.android.util.secondaryTextColor

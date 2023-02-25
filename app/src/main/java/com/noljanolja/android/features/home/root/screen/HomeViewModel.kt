@@ -1,20 +1,19 @@
 package com.noljanolja.android.features.home.root.screen
 
-import com.d2brothers.firebase_auth.AuthSdk
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
+import com.noljanolja.android.common.user.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val authSdk: AuthSdk,
     private val navigationManager: NavigationManager,
+    private val userRepository: UserRepository,
 ) : BaseViewModel() {
     private val _showRequireLoginPopupEvent = MutableSharedFlow<Boolean>()
     val showRequireLoginPopupEvent = _showRequireLoginPopupEvent.asSharedFlow()
@@ -31,29 +30,30 @@ class HomeViewModel @Inject constructor(
         onChange: () -> Unit,
     ) {
         launch {
-            if (item == HomeNavigationItem.CelebrationItem) {
-                onChange.invoke()
-                return@launch
-            }
-            val user = authSdk.getCurrentUser(true).first()
-            if (user?.isVerify == true) {
-                onChange.invoke()
-            } else {
-                _showRequireLoginPopupEvent.emit(true)
-            }
+            onChange.invoke()
+//            if (item == HomeNavigationItem.CelebrationItem) {
+//                onChange.invoke()
+//                return@launch
+//            }
+//            val user = userRepository.getCurrentUser()
+//            if (user?.isVerify == true) {
+//                onChange.invoke()
+//            } else {
+//                _showRequireLoginPopupEvent.emit(true)
+//            }
         }
     }
 
     private fun loginOrVerifyEmail() {
         launch {
-            val user = authSdk.getCurrentUser().first()
+            val user = userRepository.getCurrentUser()
             when {
                 // TODO : Check verify if need after
                 true -> {
                     _showRequireLoginPopupEvent.emit(false)
                     navigationManager.navigate(NavigationDirections.LoginOrSignup)
                 }
-                !user!!.isVerify -> sendError(Throwable("Verify fail"))
+//                !user!!.isVerify -> sendError(Throwable("Verify fail"))
                 else -> _showRequireLoginPopupEvent.emit(false)
             }
         }

@@ -17,4 +17,8 @@ sealed interface LoginEvent {
     object Back : LoginEvent
 
     object VerifyEmail : LoginEvent
+
+    object OpenCountryList : LoginEvent
+
+    data class SendOTP(val phone: String) : LoginEvent
 }

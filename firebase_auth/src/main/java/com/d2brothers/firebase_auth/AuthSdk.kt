@@ -1,28 +1,35 @@
 package com.d2brothers.firebase_auth
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
-import com.d2brothers.firebase_auth.model.AuthUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.kakao.sdk.common.KakaoSdk
 import com.navercorp.nid.NaverIdLoginSDK
-import kotlinx.coroutines.flow.Flow
+import java.util.*
 
-class AuthSdk private constructor() {
-    internal val auth: Auth by lazy { Auth.instance }
+class AuthSdk private constructor(private val context: Context) {
+    internal val auth: Auth by lazy { Auth(context) }
 
-    fun getCurrentUser(reload: Boolean = false): Flow<AuthUser?> = auth.getCurrentUser(reload)
+    // Phone
+    suspend fun verifyOTPCode(
+        verificationId: String,
+        code: String,
+    ): Result<String> = auth.verifyOTPCode(verificationId, code)
 
+    // Email
     suspend fun createUserWithEmailAndPassword(
         email: String,
         password: String,
-    ): Result<AuthUser> = auth.createUserWithEmailAndPassword(email, password)
+    ): Result<String> = auth.createUserWithEmailAndPassword(email, password)
 
     suspend fun signInWithEmailAndPassword(
         email: String,
         password: String,
-    ): Result<AuthUser> = auth.signInWithEmailAndPassword(email, password)
+    ): Result<String> = auth.signInWithEmailAndPassword(email, password)
 
     suspend fun sendPasswordResetEmail(
         email: String,
@@ -30,21 +37,25 @@ class AuthSdk private constructor() {
 
     suspend fun sendEmailVerification(): Result<Boolean> = auth.sendEmailVerification()
 
-    fun logOut(): Result<Boolean> = auth.logOut()
+    // Kakao
+    suspend fun loginWithKakao(): Result<String> = auth.loginWithKakao()
 
-    suspend fun loginWithKakao(): Result<AuthUser> = auth.loginWithKakao()
-
+    // Google
     suspend fun getAccountFromGoogleIntent(
         data: Intent?,
-    ): Result<AuthUser> = auth.getAccountFromGoogleIntent(data)
+    ): Result<String> = auth.getAccountFromGoogleIntent(data)
 
+    // Naver
     suspend fun getAccountFromNaverIntent(
         data: Intent?,
-    ): Result<AuthUser> = auth.getAccountFromNaverIntent(data)
+    ): Result<String> = auth.getAccountFromNaverIntent(data)
 
     suspend fun getIdToken(forceRefresh: Boolean): String? {
         return auth.getIdToken(forceRefresh)
     }
+
+    // Logout
+    fun logOut(): Result<Boolean> = auth.logOut()
 
     companion object {
         @SuppressLint("StaticFieldLeak")
@@ -52,22 +63,22 @@ class AuthSdk private constructor() {
         fun init(
             context: Context,
             kakaoApiKey: String,
-            naver_client_id: String,
-            naver_client_secret: String,
-            naver_client_name: String,
+            naverClientId: String,
+            naverClientSecret: String,
+            naverClientName: String,
             googleWebClientId: String,
             region: String?,
         ): AuthSdk {
             KakaoSdk.init(context, kakaoApiKey)
             NaverIdLoginSDK.initialize(
                 context,
-                naver_client_id,
-                naver_client_secret,
-                naver_client_name,
+                naverClientId,
+                naverClientSecret,
+                naverClientName,
             )
+            Firebase.auth.setLanguageCode(Locale.getDefault().language)
             AuthConfig.init(region = region, googleClientId = googleWebClientId)
-            Auth.init(context)
-            return AuthSdk().also {
+            return AuthSdk(context).also {
                 instance = it
             }
         }
@@ -84,6 +95,22 @@ class AuthSdk private constructor() {
             launcher: ActivityResultLauncher<Intent>,
         ) {
             instance.auth.authenticateNaver(context, launcher)
+        }
+
+        fun loginWithPhone(
+            context: Activity,
+            phone: String,
+            timeout: Long,
+            onVerificationCompleted: (String?) -> Unit,
+            onCodeSent: (String) -> Unit,
+        ) {
+            instance.auth.loginWithPhone(
+                context = context,
+                phone = phone,
+                timeout = timeout,
+                onVerificationCompleted = onVerificationCompleted,
+                onCodeSent = onCodeSent,
+            )
         }
     }
 }

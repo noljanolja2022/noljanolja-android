@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -14,8 +13,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
-import com.noljanolja.android.common.composable.*
+import com.noljanolja.android.ui.composable.*
 import com.noljanolja.android.util.secondaryTextColor
 
 @Composable
@@ -50,10 +50,12 @@ private fun SettingContent(
     ) {
         Column(modifier = Modifier.padding(it)) {
             ListTileWithToggleButton(
-                modifier = Modifier.padding(horizontal = 20.dp).padding(
-                    top = 18.dp,
-                    bottom = 12.dp,
-                ),
+                modifier = Modifier
+                    .padding(horizontal = 20.dp)
+                    .padding(
+                        top = 18.dp,
+                        bottom = 12.dp,
+                    ),
                 title = {
                     Text(
                         text = stringResource(id = R.string.setting_push_notification),

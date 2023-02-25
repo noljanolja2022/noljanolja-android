@@ -24,9 +24,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.noljanolja.android.R
-import com.noljanolja.android.common.composable.FullSizeLoading
-import com.noljanolja.android.common.composable.PrimaryButton
-import com.noljanolja.android.common.composable.SecondaryButton
+import com.noljanolja.android.ui.composable.FullSizeLoading
+import com.noljanolja.android.ui.composable.PrimaryButton
+import com.noljanolja.android.ui.composable.SecondaryButton
 import com.noljanolja.android.features.auth.common.component.FullSizeWithLogo
 import com.noljanolja.android.features.auth.common.component.RoundedTextField
 import com.noljanolja.android.util.getErrorMessage
@@ -204,7 +204,7 @@ fun ColumnScope.ResendEmailComponent(
     Spacer(modifier = Modifier.weight(1F))
     PrimaryButton(
         modifier = Modifier.fillMaxWidth(),
-        text = stringResource(id = R.string.login),
+        text = stringResource(id = R.string.common_login),
         onClick = onBack,
     )
 }

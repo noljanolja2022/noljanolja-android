@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -14,12 +13,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.d2brothers.firebase_auth.model.displayIdentity
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
-import com.noljanolja.android.common.composable.CommonTopAppBar
-import com.noljanolja.android.common.composable.FullSizeLoading
-import com.noljanolja.android.common.composable.PrimaryListTile
-import com.noljanolja.android.common.composable.RoundedListTile
+import com.noljanolja.android.common.user.domain.model.displayIdentity
+import com.noljanolja.android.ui.composable.CommonTopAppBar
+import com.noljanolja.android.ui.composable.FullSizeLoading
+import com.noljanolja.android.ui.composable.PrimaryListTile
+import com.noljanolja.android.ui.composable.RoundedListTile
 
 @Composable
 fun MyPageScreen(

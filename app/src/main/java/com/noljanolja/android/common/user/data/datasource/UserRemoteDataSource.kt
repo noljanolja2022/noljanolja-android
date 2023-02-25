@@ -1,7 +1,7 @@
 package com.noljanolja.android.common.user.data.datasource
 
-import com.noljanolja.android.common.user.data.model.toDomainUser
 import com.noljanolja.android.common.user.domain.model.User
+import com.noljanolja.android.util.toDomainUser
 
 interface UserRemoteDataSource {
     suspend fun getMe(): Result<User>

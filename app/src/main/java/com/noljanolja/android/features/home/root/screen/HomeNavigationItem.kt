@@ -13,27 +13,27 @@ sealed class HomeNavigationItem(
     @StringRes val label: Int?,
 ) {
     object ChatItem : HomeNavigationItem(
-        NavigationDirections.MenuItem.destination,
+        NavigationDirections.ChatItem.destination,
         Icons.Default.Chat,
         Icons.Default.Chat,
         null,
     )
 
     object CelebrationItem : HomeNavigationItem(
-        NavigationDirections.HomeItem.destination,
+        NavigationDirections.CelebrationItem.destination,
         Icons.Default.Celebration,
         Icons.Default.Celebration,
         null,
     )
 
     object PlayItem : HomeNavigationItem(
-        NavigationDirections.WalletItem.destination,
+        NavigationDirections.PlayItem.destination,
         Icons.Default.PlayCircle,
         Icons.Default.PlayCircle,
         null,
     )
 
-    object ShopItem : HomeNavigationItem(
+    object StoreItem : HomeNavigationItem(
         NavigationDirections.StoreItem.destination,
         Icons.Default.Store,
         Icons.Default.Store,

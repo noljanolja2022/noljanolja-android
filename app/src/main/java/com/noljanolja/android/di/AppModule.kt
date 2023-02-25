@@ -28,19 +28,20 @@ class AppModule {
     @Provides
     @Singleton
     fun provideUserRepository(
-        dataSource: UserRemoteDataSource
-    ): UserRepository = UserRepositoryImpl(dataSource)
+        dataSource: UserRemoteDataSource,
+        authSdk: AuthSdk,
+    ): UserRepository = UserRepositoryImpl(dataSource, authSdk)
 
     @Provides
     @Singleton
     fun provideAuthSdk(@ApplicationContext appContext: Context): AuthSdk = AuthSdk.init(
-        appContext,
+        context = appContext,
         kakaoApiKey = appContext.getString(R.string.kakao_api_key),
         googleWebClientId = appContext.getString(R.string.web_client_id),
-        naver_client_id = "3zDg6vMsJmoFk2TGOjcq",
-        naver_client_secret = "8keRny2c_4",
-        naver_client_name = "놀자놀자",
-        region = "asia-northeast3"
+        naverClientId = "3zDg6vMsJmoFk2TGOjcq",
+        naverClientSecret = "8keRny2c_4",
+        naverClientName = "놀자놀자",
+        region = "asia-northeast3",
     )
 
     @Provides
@@ -54,6 +55,6 @@ class AppModule {
     @Provides
     @Singleton
     fun provideUserRemoteDataSource(
-        api: UserApi
+        api: UserApi,
     ): UserRemoteDataSource = UserRemoteDataSourceImpl(api)
 }

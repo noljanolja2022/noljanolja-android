@@ -6,18 +6,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
-import com.noljanolja.android.R
-import com.noljanolja.android.common.composable.FullSizeLoading
-import com.noljanolja.android.common.composable.TwoButtonInRow
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.common.navigation.NavigationCommand.FinishWithResults.Companion.FORGOT_FINISH_AUTH
 import com.noljanolja.android.features.auth.common.component.FullSizeWithLogo
 import com.noljanolja.android.features.auth.login.screen.LoginScreen
@@ -26,6 +22,7 @@ import com.noljanolja.android.features.auth.login.screen.LoginViewModel
 import com.noljanolja.android.features.auth.signup.screen.SignupScreen
 import com.noljanolja.android.features.auth.signup.screen.SignupUIState
 import com.noljanolja.android.features.auth.signup.screen.SignupViewModel
+import com.noljanolja.android.ui.composable.FullSizeLoading
 
 @Composable
 fun LoginOrSignupScreen(
@@ -33,7 +30,7 @@ fun LoginOrSignupScreen(
 ) {
     val loginOrSignupViewModel: LoginOrSignupViewModel = hiltViewModel()
     val uiState by loginOrSignupViewModel.uiStateFlow.collectAsStateWithLifecycle()
-    LoginOrSignupContent(uiState = uiState) {
+    LoginOrSignupContent(uiState = uiState, savedStateHandle = savedStateHandle) {
         loginOrSignupViewModel.handleEvent(it)
     }
     val closeAuth = savedStateHandle.get<Boolean>(FORGOT_FINISH_AUTH) ?: false
@@ -48,6 +45,7 @@ fun LoginOrSignupScreen(
 @Composable
 fun LoginOrSignupContent(
     modifier: Modifier = Modifier,
+    savedStateHandle: SavedStateHandle,
     uiState: LoginOrSignupUIState,
     handleEvent: (LoginOrSignupEvent) -> Unit,
 ) {
@@ -56,11 +54,7 @@ fun LoginOrSignupContent(
     val loginUIState by loginViewModel.uiStateFlow.collectAsStateWithLifecycle()
     val signupUIState by signupViewModel.uiStateFlow.collectAsStateWithLifecycle()
     FullSizeLoading(loginUIState == LoginUIState.Loading || (signupUIState as? SignupUIState.SignupForm)?.isLoading == true) {
-        FullSizeWithLogo(
-            onBack = {
-                handleEvent(LoginOrSignupEvent.Close)
-            },
-        ) {
+        FullSizeWithLogo {
             Card(
                 modifier = modifier.fillMaxSize(),
                 shape = RoundedCornerShape(
@@ -76,24 +70,27 @@ fun LoginOrSignupContent(
                         .padding(top = 18.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     content = {
-                        TwoButtonInRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            fModifier = Modifier.weight(1F),
-                            sModifier = Modifier.weight(2F),
-                            firstText = stringResource(id = R.string.login),
-                            secondText = stringResource(id = R.string.signup),
-                            indexFocused = uiState.index,
-                            firstClick = {
-                                handleEvent(LoginOrSignupEvent.SwitchToLogin)
-                            },
-                            secondClick = {
-                                handleEvent(LoginOrSignupEvent.SwitchSignup)
-                            },
-                        )
-                        Spacer(modifier = Modifier.height(24.dp))
+//                        TwoButtonInRow(
+//                            modifier = Modifier.fillMaxWidth(),
+//                            fModifier = Modifier.weight(1F),
+//                            sModifier = Modifier.weight(2F),
+//                            firstText = stringResource(id = R.string.common_login),
+//                            secondText = stringResource(id = R.string.signup),
+//                            indexFocused = uiState.index,
+//                            firstClick = {
+//                                handleEvent(LoginOrSignupEvent.SwitchToLogin)
+//                            },
+//                            secondClick = {
+//                                handleEvent(LoginOrSignupEvent.SwitchSignup)
+//                            },
+//                        )
+//                        Spacer(modifier = Modifier.height(24.dp))
 
                         when (uiState) {
-                            LoginOrSignupUIState.Login -> LoginScreen(viewModel = loginViewModel)
+                            LoginOrSignupUIState.Login -> LoginScreen(
+                                viewModel = loginViewModel,
+                                savedStateHandle = savedStateHandle,
+                            )
                             LoginOrSignupUIState.Signup -> SignupScreen(signupViewModel = signupViewModel)
                         }
                     },

@@ -9,6 +9,7 @@ plugins {
     id("com.google.firebase.crashlytics")
     id("com.google.firebase.appdistribution")
     id("kotlinx-serialization")
+    id("kotlin-parcelize")
 }
 
 android {

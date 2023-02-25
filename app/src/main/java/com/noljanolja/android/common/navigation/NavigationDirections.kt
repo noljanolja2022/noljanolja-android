@@ -1,8 +1,7 @@
 package com.noljanolja.android.common.navigation
 
-import androidx.navigation.NamedNavArgument
-import androidx.navigation.NavOptions
-import androidx.navigation.navOptions
+import androidx.navigation.*
+import java.net.URLEncoder
 
 object NavigationDirections {
     object Root : NavigationCommand {
@@ -59,6 +58,33 @@ object NavigationDirections {
         }
         override val destination: String = "termsOfService"
     }
+
+    object CountryPicker : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options: NavOptions = navOptions {
+            launchSingleTop = true
+        }
+        override val destination: String = "country_picker"
+    }
+
+    data class AuthOTP(
+        val phone: String = "",
+    ) : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf(
+            navArgument("phone") {
+                defaultValue = ""
+                type = NavType.StringType
+            },
+        )
+        override val options: NavOptions = navOptions {
+            launchSingleTop = true
+        }
+        override val destination: String = "auth_otp?phone={phone}"
+        override fun createDestination(): String {
+            return "auth_otp?phone=${URLEncoder.encode(phone, Charsets.UTF_8.name())}"
+        }
+    }
+
     // Home
 
     object Home : NavigationCommand {
@@ -72,22 +98,22 @@ object NavigationDirections {
         override val destination: String = "home"
     }
 
-    object MenuItem : NavigationCommand {
+    object ChatItem : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options = null
-        override val destination: String = "home_menu_item"
+        override val destination: String = "home_chat_item"
     }
 
-    object HomeItem : NavigationCommand {
+    object CelebrationItem : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options = null
-        override val destination: String = "home_item"
+        override val destination: String = "home_celebration_item"
     }
 
-    object WalletItem : NavigationCommand {
+    object PlayItem : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options = null
-        override val destination: String = "home_wallet_item"
+        override val destination: String = "home_play_item"
     }
 
     object StoreItem : NavigationCommand {

@@ -9,7 +9,6 @@ import com.noljanolja.android.features.auth.common.BaseAuthViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,12 +34,12 @@ class SignupViewModel @Inject constructor(
                         is SignupUIState.Agreement -> _uiStateFlow.emit(SignupUIState.SignupForm())
                         is SignupUIState.SignupForm -> onSignup()
                         SignupUIState.VerificationEmail -> {
-                            val user = authSdk.getCurrentUser(true).first()
-                            if (user?.isVerify == true) {
-                                navigationManager.navigate(NavigationDirections.Home)
-                            } else {
-                                sendError(Throwable("Verify fail"))
-                            }
+//                            val user = authSdk.getCurrentUser(true).first()
+//                            if (user?.isVerify == true) {
+//                                navigationManager.navigate(NavigationDirections.Home)
+//                            } else {
+//                                sendError(Throwable("Verify fail"))
+//                            }
                         }
                     }
                 }

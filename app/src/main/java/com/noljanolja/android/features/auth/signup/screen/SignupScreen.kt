@@ -21,9 +21,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.handleError
-import com.noljanolja.android.common.composable.BackHandler
-import com.noljanolja.android.common.composable.PrimaryButton
-import com.noljanolja.android.common.composable.SecondaryButton
+import com.noljanolja.android.ui.composable.BackHandler
+import com.noljanolja.android.ui.composable.PrimaryButton
+import com.noljanolja.android.ui.composable.SecondaryButton
 import com.noljanolja.android.features.auth.common.component.EmailAndPassword
 import com.noljanolja.android.features.auth.common.component.RoundedTextField
 import com.noljanolja.android.features.auth.common.component.VerifyEmail
