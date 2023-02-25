@@ -45,6 +45,7 @@ internal class Auth(
         phone: String,
         timeout: Long,
         onVerificationCompleted: (String?) -> Unit,
+        onError: (Exception) -> Unit,
         onCodeSent: (String) -> Unit,
     ) {
         val options = PhoneAuthOptions.newBuilder(Firebase.auth)
@@ -61,7 +62,7 @@ internal class Auth(
                 override fun onVerificationFailed(
                     exception: FirebaseException,
                 ) {
-                    throw exception
+                    onError(exception)
                 }
 
                 override fun onCodeSent(
@@ -208,6 +209,7 @@ internal class Auth(
 
     // Get token
     suspend fun getIdToken(forceRefresh: Boolean = false): String? {
+        if (forceRefresh) firebaseAuth.currentUser?.reload()?.await()
         return firebaseAuth.currentUser?.getIdToken(forceRefresh)?.await()?.token
     }
 

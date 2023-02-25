@@ -16,7 +16,7 @@ import io.ktor.serialization.kotlinx.json.*
 
 object KtorClient {
     private const val TIME_OUT = 30_000L
-    fun createInstance() = HttpClient(Android) {
+    fun createInstance(authSdk: AuthSdk) = HttpClient(Android) {
         install(ContentNegotiation) {
             json(
                 kotlinx.serialization.json.Json {
@@ -28,9 +28,10 @@ object KtorClient {
         install(Auth) {
             bearer {
                 loadTokens {
-                    AuthSdk.instance.getIdToken(false)?.let {
-                        BearerTokens(it, it)
-                    }
+                    getToken(authSdk)
+                }
+                refreshTokens {
+                    getToken(authSdk)
                 }
             }
         }
@@ -54,5 +55,11 @@ object KtorClient {
             header(HttpHeaders.ContentType, ContentType.Application.Json)
         }
     }
+}
 
+private suspend fun getToken(authSdk: AuthSdk): BearerTokens? {
+    val token = authSdk.getIdToken(false) ?: authSdk.getIdToken(true)
+    return token?.let {
+        BearerTokens(it, it)
+    }
 }

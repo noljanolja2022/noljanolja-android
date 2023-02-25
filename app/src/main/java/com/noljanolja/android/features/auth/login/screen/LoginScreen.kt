@@ -114,7 +114,7 @@ private fun LoginContent(
     val country by remember {
         mutableStateOf(
             Countries.first {
-                it.nameCode == (countryCode ?: "kr")
+                it.nameCode == (countryCode ?: "vn")
             }
         )
     }

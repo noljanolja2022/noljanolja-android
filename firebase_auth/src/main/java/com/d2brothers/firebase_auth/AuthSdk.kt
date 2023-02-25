@@ -102,6 +102,7 @@ class AuthSdk private constructor(private val context: Context) {
             phone: String,
             timeout: Long,
             onVerificationCompleted: (String?) -> Unit,
+            onError: (Exception) -> Unit,
             onCodeSent: (String) -> Unit,
         ) {
             instance.auth.loginWithPhone(
@@ -109,6 +110,7 @@ class AuthSdk private constructor(private val context: Context) {
                 phone = phone,
                 timeout = timeout,
                 onVerificationCompleted = onVerificationCompleted,
+                onError = onError,
                 onCodeSent = onCodeSent,
             )
         }

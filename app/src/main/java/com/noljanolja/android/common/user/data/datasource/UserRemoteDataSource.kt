@@ -13,7 +13,7 @@ class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSou
             val user = userApi.getMe().data.toDomainUser()
             Result.success(user)
         } catch (e: Exception) {
-            Result.failure(Throwable("Cannot get User"))
+            Result.failure(e)
         }
     }
 }

@@ -15,7 +15,7 @@ class SplashViewModel @Inject constructor(
 ) : BaseViewModel() {
     init {
         launch {
-            val user = userRepository.getCurrentUser() ?: userRepository.getMe().getOrNull()
+            val user = userRepository.getMe().getOrNull()
             navigationManager.navigate(
                 NavigationDirections.Home.takeIf { user != null }
                     ?: NavigationDirections.LoginOrSignup

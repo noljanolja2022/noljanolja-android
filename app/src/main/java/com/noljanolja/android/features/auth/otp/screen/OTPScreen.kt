@@ -21,6 +21,7 @@ import com.noljanolja.android.R
 import com.noljanolja.android.features.auth.otp.composable.OTPRow
 import com.noljanolja.android.ui.composable.ErrorDialog
 import com.noljanolja.android.ui.composable.LoadingDialog
+import com.noljanolja.android.util.showToast
 import kotlinx.coroutines.delay
 
 private const val BLOCK_RESEND_TIME = 90_000
@@ -67,6 +68,9 @@ fun OTPScreenContent(
                         newOTP[index] = char
                     }
                     otp = newOTP
+                },
+                onError = {
+                    context.showToast(it.message)
                 },
                 onCodeSent = {
                     otpVerificationId = it
@@ -161,7 +165,7 @@ fun OTPScreenContent(
     ErrorDialog(
         showError = error != null,
         title = stringResource(R.string.common_error_title),
-        description = stringResource(R.string.common_error_description),
+        description = error?.message ?: stringResource(R.string.common_error_description),
         onDismiss = { handleEvent(OTPEvent.DismissError) }
     )
 }

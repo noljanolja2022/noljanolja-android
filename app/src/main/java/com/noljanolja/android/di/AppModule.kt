@@ -46,7 +46,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideHttpClient(authSdk: AuthSdk): HttpClient = KtorClient.createInstance()
+    fun provideHttpClient(authSdk: AuthSdk): HttpClient = KtorClient.createInstance(authSdk)
 
     @Provides
     @Singleton
