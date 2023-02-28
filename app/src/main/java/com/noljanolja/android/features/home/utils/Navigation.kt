@@ -6,7 +6,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.noljanolja.android.features.home.root.screen.HomeNavigationItem
+import com.noljanolja.android.features.home.root.HomeNavigationItem
 
 fun HomeNavigationItem.click(navController: NavHostController) {
     navController.navigate(route) {

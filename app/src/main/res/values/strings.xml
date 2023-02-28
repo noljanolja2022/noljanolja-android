@@ -103,6 +103,20 @@
     <string name="menu_checkout_and_play">Check out and play</string>
     <string name="menu_point_details">Point details</string>
     <string name="menu_exchange_money">Exchanging money</string>
+
+    <!--    Terms of service-->
+    <string name="tos_title">Terms of service</string>
+    <string name="tos_description">You may choose to agree to the terms individually. \nYou may use the service even if you don\'t agree to the optional terms and conditions</string>
+    <string name="tos_compulsory">Compulsory</string>
+    <string name="tos_compulsory_item_title_1">I\'m 14 years old older.</string>
+    <string name="tos_compulsory_item_title_2">Terms and Conditions</string>
+    <string name="tos_compulsory_item_title_3">Comprehensive Terms and Conditions</string>
+    <string name="tos_compulsory_item_title_4">Collection and Use of Personal Information</string>
+    <string name="tos_optional">Optional</string>
+    <string name="tos_optional_item_title_1">Consent to the collection and use of information</string>
+    <string name="tos_optional_item_title_2">Collection and Use of Profile Information</string>
+    <string name="tos_read_and_agree">I have read and agreed to all terms and conditions</string>
+    <string name="tos_agree_and_continue">Agree and Continue</string>
     <!--    Failure-->
     <string name="invalid_email_format">Email is not valid</string>
 

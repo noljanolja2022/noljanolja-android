@@ -8,13 +8,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
-import com.noljanolja.android.features.auth.countries.screen.CountriesScreen
-import com.noljanolja.android.features.auth.login_or_signup.screen.LoginOrSignupScreen
-import com.noljanolja.android.features.auth.otp.screen.OTPScreen
-import com.noljanolja.android.features.home.info.screen.MyInfoScreen
-import com.noljanolja.android.features.home.root.screen.HomeScreen
-import com.noljanolja.android.features.setting.screen.SettingScreen
-import com.noljanolja.android.features.splash.screen.SplashScreen
+import com.noljanolja.android.features.auth.countries.CountriesScreen
+import com.noljanolja.android.features.auth.login_or_signup.LoginOrSignupScreen
+import com.noljanolja.android.features.auth.otp.OTPScreen
+import com.noljanolja.android.features.auth.terms_of_service.TermsOfServiceScreen
+import com.noljanolja.android.features.home.info.MyInfoScreen
+import com.noljanolja.android.features.home.root.HomeScreen
+import com.noljanolja.android.features.setting.SettingScreen
+import com.noljanolja.android.features.splash.SplashScreen
 
 @Composable
 fun MainScreen(
@@ -59,6 +60,9 @@ private fun NavGraphBuilder.addSplashGraph() {
     composable(NavigationDirections.Splash.destination) {
         SplashScreen()
     }
+    composable(NavigationDirections.TermsOfService.destination) {
+        TermsOfServiceScreen()
+    }
 }
 
 private fun NavGraphBuilder.addHomeGraph() {
@@ -74,7 +78,7 @@ private fun NavGraphBuilder.addHomeGraph() {
 }
 
 private fun NavGraphBuilder.addAuthGraph() {
-    composable(NavigationDirections.LoginOrSignup.destination) { backStack ->
+    composable(NavigationDirections.Auth.destination) { backStack ->
         LoginOrSignupScreen(backStack.savedStateHandle)
     }
     composable(NavigationDirections.CountryPicker.destination) {

@@ -13,6 +13,7 @@ buildscript {
         classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.2")
         classpath("com.google.firebase:firebase-appdistribution-gradle:3.2.0")
         classpath("org.jetbrains.kotlin:kotlin-serialization:1.8.0")
+        classpath("com.squareup.sqldelight:gradle-plugin:1.5.4")
     }
 }
 

@@ -6,20 +6,18 @@ import com.d2brothers.firebase_auth.AuthSdk
 import com.noljanolja.android.common.user.data.datasource.UserRemoteDataSource
 import com.noljanolja.android.common.user.domain.model.User
 import com.noljanolja.android.common.user.domain.repository.UserRepository
+import io.ktor.client.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.auth.*
+import io.ktor.client.plugins.auth.providers.*
 
 class UserRepositoryImpl(
     private val userRemoteDataSource: UserRemoteDataSource,
     private val authSdk: AuthSdk,
+    private val client: HttpClient,
 ) : UserRepository {
     private var _currentUser: User? = null
-    override fun getCurrentUser(): User? = _currentUser
-
-    override suspend fun sendRegistrationToServer(token: String) {
-        // TODO
-        Log.e("USER_REPOSITORY", "SEND$token")
-    }
-
-    override suspend fun getMe(forceRefresh: Boolean): Result<User> {
+    override suspend fun getCurrentUser(forceRefresh: Boolean): Result<User> {
         return if (_currentUser != null && !forceRefresh) {
             Result.success(_currentUser!!)
         } else {
@@ -27,6 +25,11 @@ class UserRepositoryImpl(
                 _currentUser = it.getOrNull()
             }
         }
+    }
+
+    override suspend fun sendRegistrationToServer(token: String) {
+        // TODO
+        Log.e("USER_REPOSITORY", "SEND$token")
     }
 
     override suspend fun verifyOTPCode(verificationId: String, otp: String): Result<User> {
@@ -66,12 +69,15 @@ class UserRepositoryImpl(
     override suspend fun logout(): Result<Boolean> {
         return authSdk.logOut().also {
             _currentUser = null
+            val provider =
+                client.plugin(Auth).providers.filterIsInstance<BearerAuthProvider>().firstOrNull()
+            provider?.clearToken()
         }
     }
 
     private suspend fun <T> handleResult(result: Result<T>): Result<User> {
         return result.exceptionOrNull()?.let {
             Result.failure(it)
-        } ?: getMe()
+        } ?: getCurrentUser(true)
     }
 }

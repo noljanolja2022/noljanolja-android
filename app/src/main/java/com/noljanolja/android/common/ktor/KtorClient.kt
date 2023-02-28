@@ -13,15 +13,17 @@ import io.ktor.client.plugins.observer.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.json.Json as KJson
 
 object KtorClient {
     private const val TIME_OUT = 30_000L
     fun createInstance(authSdk: AuthSdk) = HttpClient(Android) {
         install(ContentNegotiation) {
             json(
-                kotlinx.serialization.json.Json {
+                KJson {
                     prettyPrint = true
                     isLenient = true
+                    ignoreUnknownKeys = true
                 }
             )
         }

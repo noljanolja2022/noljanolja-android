@@ -118,9 +118,11 @@ private fun OTPChar(
         BasicTextField(
             value = code,
             onValueChange = {
-                if (it.length <= maxChar) onCharChange(
-                    it.toCharArray().firstOrNull() ?: Char.MIN_VALUE
-                )
+                if (it.length <= maxChar) {
+                    onCharChange(
+                        it.toCharArray().firstOrNull() ?: Char.MIN_VALUE
+                    )
+                }
                 if (it.isEmpty()) {
                     leftFocusRequester?.requestFocus()
                 } else {

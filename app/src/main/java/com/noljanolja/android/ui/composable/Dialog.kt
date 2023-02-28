@@ -43,11 +43,32 @@ fun LoadingDialog(
 }
 
 @Composable
+fun InfoDialog(
+    content: String,
+    isShown: Boolean = false,
+    dismissText: String,
+    onDismiss: () -> Unit,
+) {
+    if (isShown) {
+        AlertDialog(
+            text = { Text(text = content) },
+            dismissButton = {
+                TextButton(onClick = onDismiss) {
+                    Text(dismissText)
+                }
+            },
+            confirmButton = {},
+            onDismissRequest = onDismiss,
+        )
+    }
+}
+
+@Composable
 fun ErrorDialog(
     showError: Boolean,
     title: String,
     description: String,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     if (showError) {
         AlertDialog(

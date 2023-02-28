@@ -81,6 +81,8 @@ android {
     }
 }
 dependencies {
+    implementation(project(":core"))
+
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
     implementation("androidx.activity:activity-compose:1.6.1")
@@ -114,13 +116,7 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.2.2")
 
     // ktor
-    implementation("io.ktor:ktor-client-core:2.1.1")
     implementation("io.ktor:ktor-client-android:2.1.1")
-    implementation("io.ktor:ktor-client-logging:2.1.1")
-    implementation("io.ktor:ktor-client-auth:2.1.1")
-    implementation("io.ktor:ktor-client-content-negotiation:2.1.1")
-    implementation("io.ktor:ktor-client-serialization:1.6.7")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.1.1")
 }
 
 kapt {

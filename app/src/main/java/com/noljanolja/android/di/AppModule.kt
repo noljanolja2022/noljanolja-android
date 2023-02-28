@@ -30,7 +30,8 @@ class AppModule {
     fun provideUserRepository(
         dataSource: UserRemoteDataSource,
         authSdk: AuthSdk,
-    ): UserRepository = UserRepositoryImpl(dataSource, authSdk)
+        client: HttpClient,
+    ): UserRepository = UserRepositoryImpl(dataSource, authSdk, client)
 
     @Provides
     @Singleton

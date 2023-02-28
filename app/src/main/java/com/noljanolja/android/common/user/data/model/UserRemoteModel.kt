@@ -7,4 +7,7 @@ data class UserRemoteModel(
     val profileImage: String,
     val pushNotiEnabled: Boolean,
     val pushToken: String,
+    val phone: String,
+    val email: String,
+    val isEmailVerified: Boolean,
 )

@@ -21,9 +21,20 @@ object NavigationDirections {
         override val destination: String = "splash"
     }
 
+    object TermsOfService : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options: NavOptions = navOptions {
+            popUpTo(Root.destination) {
+                inclusive = true
+            }
+            launchSingleTop = true
+        }
+        override val destination: String = "terms_of_service"
+    }
+
     // AUTH
 
-    object LoginOrSignup : NavigationCommand {
+    object Auth : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options: NavOptions = navOptions {
             popUpTo(Root.destination) {
@@ -32,7 +43,7 @@ object NavigationDirections {
             launchSingleTop = true
         }
 
-        override val destination: String = "loginOrSignup"
+        override val destination: String = "auth"
     }
 
     object Signup : NavigationCommand {
@@ -49,14 +60,6 @@ object NavigationDirections {
             launchSingleTop = true
         }
         override val destination: String = "forget"
-    }
-
-    object TermsOfService : NavigationCommand {
-        override val arguments: List<NamedNavArgument> = listOf()
-        override val options: NavOptions = navOptions {
-            launchSingleTop = true
-        }
-        override val destination: String = "termsOfService"
     }
 
     object CountryPicker : NavigationCommand {
