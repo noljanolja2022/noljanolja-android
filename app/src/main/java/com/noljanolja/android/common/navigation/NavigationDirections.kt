@@ -88,6 +88,16 @@ object NavigationDirections {
         }
     }
 
+    object UpdateProfile : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options: NavOptions = navOptions {
+            popUpTo(Root.destination) {
+                inclusive = true
+            }
+            launchSingleTop = true
+        }
+        override val destination: String = "update_profile"
+    }
     // Home
 
     object Home : NavigationCommand {

@@ -117,6 +117,18 @@
     <string name="tos_optional_item_title_2">Collection and Use of Profile Information</string>
     <string name="tos_read_and_agree">I have read and agreed to all terms and conditions</string>
     <string name="tos_agree_and_continue">Agree and Continue</string>
+
+    <!--    Update profile-->
+    <string name="update_profile_avatar">Set Avatar</string>
+    <string name="update_profile_avatar_open_camera">Open Camera</string>
+    <string name="update_profile_avatar_select_photo">Select Photo</string>
+    <string name="update_profile_name">Name</string>
+    <string name="update_profile_name_required">Required</string>
+    <string name="update_profile_dob">Day of Birth</string>
+    <string name="update_profile_gender">Gender</string>
+    <string name="update_profile_gender_male">Male</string>
+    <string name="update_profile_gender_female">Female</string>
+    <string name="update_profile_gender_other">Other</string>
     <!--    Failure-->
     <string name="invalid_email_format">Email is not valid</string>
 

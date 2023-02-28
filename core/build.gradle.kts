@@ -42,6 +42,8 @@ kotlin {
                 implementation("com.squareup.sqldelight:runtime:1.5.4")
                 implementation("com.squareup.sqldelight:coroutines-extensions:1.5.4")
 
+                api("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+
                 api("io.ktor:ktor-client-core:2.1.1")
                 api("io.ktor:ktor-client-logging:2.1.1")
                 api("io.ktor:ktor-client-auth:2.1.1")

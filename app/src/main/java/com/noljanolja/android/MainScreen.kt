@@ -12,6 +12,7 @@ import com.noljanolja.android.features.auth.countries.CountriesScreen
 import com.noljanolja.android.features.auth.login_or_signup.LoginOrSignupScreen
 import com.noljanolja.android.features.auth.otp.OTPScreen
 import com.noljanolja.android.features.auth.terms_of_service.TermsOfServiceScreen
+import com.noljanolja.android.features.auth.updateprofile.UpdateProfileScreen
 import com.noljanolja.android.features.home.info.MyInfoScreen
 import com.noljanolja.android.features.home.root.HomeScreen
 import com.noljanolja.android.features.setting.SettingScreen
@@ -94,6 +95,9 @@ private fun NavGraphBuilder.addAuthGraph() {
                 OTPScreen(phone = phone)
             }
         }
+    }
+    composable(NavigationDirections.UpdateProfile.destination) {
+        UpdateProfileScreen()
     }
 //    composable(NavigationDirections.Forgot.destination) {
 //        ForgotScreen()

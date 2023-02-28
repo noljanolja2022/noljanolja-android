@@ -38,8 +38,12 @@ class OTPViewModel @Inject constructor(
 
     private fun handleAuthResult(result: Result<User>?) {
         launch {
-            result?.getOrNull()?.let {
-                navigationManager.navigate(NavigationDirections.Home)
+            result?.getOrNull()?.let { user ->
+                if (user.name.isNullOrBlank()) {
+                    navigationManager.navigate(NavigationDirections.UpdateProfile)
+                } else {
+                    navigationManager.navigate(NavigationDirections.Home)
+                }
             } ?: result?.exceptionOrNull()?.let {
                 sendError(it)
                 _uiStateFlow.emit(OTPUIState(error = it))

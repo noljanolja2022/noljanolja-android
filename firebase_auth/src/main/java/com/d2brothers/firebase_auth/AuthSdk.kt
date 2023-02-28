@@ -54,6 +54,12 @@ class AuthSdk private constructor(private val context: Context) {
         return auth.getIdToken(forceRefresh)
     }
 
+    // update
+    suspend fun updateUser(
+        name: String,
+        photo: String?,
+    ): Result<Unit> = auth.updateUser(name, photo)
+
     // Logout
     fun logOut(): Result<Boolean> = auth.logOut()
 

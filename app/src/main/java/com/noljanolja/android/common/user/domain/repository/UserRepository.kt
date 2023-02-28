@@ -23,6 +23,11 @@ interface UserRepository {
     // Email
     suspend fun signInWithEmailAndPassword(email: String, password: String): Result<User>
 
+    suspend fun updateUser(
+        name: String,
+        photo: String?,
+    ): Result<User>
+
     // logout
 
     suspend fun logout(): Result<Boolean>

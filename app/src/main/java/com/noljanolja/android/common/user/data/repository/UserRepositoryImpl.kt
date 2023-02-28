@@ -65,6 +65,15 @@ class UserRepositoryImpl(
         return handleResult(result)
     }
 
+    // Update user
+    override suspend fun updateUser(
+        name: String,
+        photo: String?,
+    ): Result<User> {
+        val result = authSdk.updateUser(name, photo)
+        return handleResult(result)
+    }
+
     // Logout
     override suspend fun logout(): Result<Boolean> {
         return authSdk.logOut().also {

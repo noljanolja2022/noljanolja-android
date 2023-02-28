@@ -3,6 +3,7 @@ package com.d2brothers.firebase_auth
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.activity.result.ActivityResultLauncher
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -13,11 +14,13 @@ import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.ktx.Firebase
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import com.navercorp.nid.NaverIdLoginSDK
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
@@ -211,6 +214,34 @@ internal class Auth(
     suspend fun getIdToken(forceRefresh: Boolean = false): String? {
         if (forceRefresh) firebaseAuth.currentUser?.reload()?.await()
         return firebaseAuth.currentUser?.getIdToken(forceRefresh)?.await()?.token
+    }
+
+    suspend fun updateUser(
+        name: String,
+        photo: String?,
+    ): Result<Unit> = suspendCancellableCoroutine { continuation ->
+        firebaseAuth.currentUser?.let { user ->
+            val profileUpdates = userProfileChangeRequest {
+                displayName = name
+                photoUri = photo?.let { Uri.parse(it) }
+            }
+            user.updateProfile(profileUpdates)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        continuation.resume(Result.success(Unit))
+                    } else {
+                        continuation.resume(
+                            Result.failure(
+                                task.exception ?: Throwable("UnknownError")
+                            )
+                        )
+                    }
+                }.addOnFailureListener {
+                    continuation.resume(
+                        Result.failure(it)
+                    )
+                }
+        } ?: continuation.resume(Result.failure(Throwable("Cannot get user")))
     }
 
     private suspend fun signInWithCustomToken(

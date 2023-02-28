@@ -22,9 +22,15 @@ class SplashViewModel @Inject constructor(
         launch {
             val user = userRepository.getCurrentUser().getOrNull()
             user?.let {
-                navigationManager.navigate(
-                    NavigationDirections.Home
-                )
+                if (user.name.isNullOrBlank()) {
+                    navigationManager.navigate(
+                        NavigationDirections.UpdateProfile
+                    )
+                } else {
+                    navigationManager.navigate(
+                        NavigationDirections.Home
+                    )
+                }
             } ?: _uiStateFlow.emit(SplashUiState(loading = false))
         }
     }
