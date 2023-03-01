@@ -118,6 +118,9 @@ dependencies {
 
     // ktor
     implementation("io.ktor:ktor-client-android:2.1.1")
+
+    // lottie
+    implementation("com.airbnb.android:lottie-compose:6.0.0")
 }
 
 kapt {

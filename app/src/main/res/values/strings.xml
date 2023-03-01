@@ -56,6 +56,13 @@
     <string name="require_verify_description">Verify email to play\nUse a variety of services</string>
     <string name="require_verify_button">Verify Email</string>
 
+    <!--    home-->
+    <string name="home_chats">Chats</string>
+    <string name="home_events">Events</string>
+    <string name="home_contents">Contents</string>
+    <string name="home_shop">Shop</string>
+    <string name="home_person">Person</string>
+
     <!--    Login-->
     <string name="login_title">What\'s the phone number for this device?</string>
     <string name="login_country_input_label">Country</string>

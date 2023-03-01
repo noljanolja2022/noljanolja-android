@@ -1,14 +1,13 @@
 package com.noljanolja.android.features.home.root
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
@@ -20,6 +19,7 @@ import com.noljanolja.android.features.home.menu.MenuScreen
 import com.noljanolja.android.features.home.mypage.MyPageScreen
 import com.noljanolja.android.features.home.utils.click
 import com.noljanolja.android.features.home.utils.isNavItemSelect
+import com.noljanolja.android.ui.composable.FullSizeUnderConstruction
 import com.noljanolja.android.util.getErrorMessage
 import com.noljanolja.android.util.showToast
 import kotlinx.coroutines.launch
@@ -40,22 +40,9 @@ fun HomeScreen(
     val navController = rememberNavController()
     Scaffold(
         bottomBar = {
-            BottomAppBar(
-                modifier = Modifier,
-                containerColor = MaterialTheme.colorScheme.onPrimary,
-                tonalElevation = 22.dp,
-            ) {
-                HomeBottomBar(navController, onItemClick = {
-                    viewModel.handleEvent(
-                        HomeEvent.ChangeNavigationItem(
-                            item = it,
-                            onChange = {
-                                it.click(navController)
-                            },
-                        ),
-                    )
-                })
-            }
+            HomeBottomBar(
+                navController,
+            )
         },
     ) { contentPadding ->
         NavHost(
@@ -73,28 +60,13 @@ private fun NavGraphBuilder.addNavigationGraph() {
         MenuScreen()
     }
     composable(HomeNavigationItem.CelebrationItem.route) {
-        Text(
-            "HomeItem",
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(100.dp),
-        )
+        FullSizeUnderConstruction()
     }
     composable(HomeNavigationItem.PlayItem.route) {
-        Text(
-            "WalletItem",
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(100.dp),
-        )
+        FullSizeUnderConstruction()
     }
     composable(HomeNavigationItem.StoreItem.route) {
-        Text(
-            "ShopItem",
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(100.dp),
-        )
+        FullSizeUnderConstruction()
     }
     composable(HomeNavigationItem.UserItem.route) {
         MyPageScreen()
@@ -104,7 +76,6 @@ private fun NavGraphBuilder.addNavigationGraph() {
 @Composable
 fun HomeBottomBar(
     navController: NavHostController,
-    onItemClick: (HomeNavigationItem) -> Unit,
 ) {
     val items = listOf(
         HomeNavigationItem.ChatItem,
@@ -113,7 +84,7 @@ fun HomeBottomBar(
         HomeNavigationItem.StoreItem,
         HomeNavigationItem.UserItem,
     )
-    BottomAppBar(
+    NavigationBar(
         tonalElevation = 0.dp,
         containerColor = Color.White,
     ) {
@@ -124,21 +95,13 @@ fun HomeBottomBar(
             } else {
                 MaterialTheme.colorScheme.outline
             }
+            val label = stringResource(item.label)
             NavigationBarItem(
-                icon = {
-                    Icon(
-                        item.icon,
-                        null,
-                        tint = iconColor,
-                        modifier = Modifier.size(30.dp),
-                    )
-                },
+                icon = { Icon(item.icon, label, tint = iconColor) },
+                label = { Text(label, maxLines = 1) },
                 selected = isSelected,
-                colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = Color.White,
-                ),
                 onClick = {
-                    onItemClick(item)
+                    item.click(navController)
                 },
             )
         }

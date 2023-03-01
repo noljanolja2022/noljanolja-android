@@ -20,27 +20,7 @@ class HomeViewModel @Inject constructor(
 
     fun handleEvent(event: HomeEvent) {
         when (event) {
-            is HomeEvent.ChangeNavigationItem -> changeNavigationItem(event.item, event.onChange)
             HomeEvent.LoginOrVerifyEmail -> loginOrVerifyEmail()
-        }
-    }
-
-    private fun changeNavigationItem(
-        item: HomeNavigationItem,
-        onChange: () -> Unit,
-    ) {
-        launch {
-            onChange.invoke()
-//            if (item == HomeNavigationItem.CelebrationItem) {
-//                onChange.invoke()
-//                return@launch
-//            }
-//            val user = userRepository.getCurrentUser()
-//            if (user?.isVerify == true) {
-//                onChange.invoke()
-//            } else {
-//                _showRequireLoginPopupEvent.emit(true)
-//            }
         }
     }
 
