@@ -121,6 +121,8 @@ dependencies {
 
     // lottie
     implementation("com.airbnb.android:lottie-compose:6.0.0")
+
+    implementation("com.google.accompanist:accompanist-permissions:0.29.1-alpha")
 }
 
 kapt {

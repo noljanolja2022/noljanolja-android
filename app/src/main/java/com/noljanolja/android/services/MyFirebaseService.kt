@@ -47,7 +47,7 @@ class MyFirebaseService : FirebaseMessagingService() {
 
     private fun sendRegistrationToServer(token: String) {
         scope.launch {
-            userRepository.sendRegistrationToServer(token)
+            userRepository.pushTokens(token)
         }
     }
 

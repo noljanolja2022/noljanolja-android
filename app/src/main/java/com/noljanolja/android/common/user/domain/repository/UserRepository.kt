@@ -6,7 +6,7 @@ import com.noljanolja.android.common.user.domain.model.User
 interface UserRepository {
     suspend fun getCurrentUser(forceRefresh: Boolean = false): Result<User>
 
-    suspend fun sendRegistrationToServer(token: String)
+    suspend fun pushTokens(token: String): Result<Boolean>
 
     // Phone
     suspend fun verifyOTPCode(verificationId: String, otp: String): Result<User>

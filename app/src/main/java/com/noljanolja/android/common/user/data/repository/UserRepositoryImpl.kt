@@ -1,7 +1,6 @@
 package com.noljanolja.android.common.user.data.repository
 
 import android.content.Intent
-import android.util.Log
 import com.d2brothers.firebase_auth.AuthSdk
 import com.noljanolja.android.common.user.data.datasource.UserRemoteDataSource
 import com.noljanolja.android.common.user.domain.model.User
@@ -17,6 +16,8 @@ class UserRepositoryImpl(
     private val client: HttpClient,
 ) : UserRepository {
     private var _currentUser: User? = null
+
+    // Remote
     override suspend fun getCurrentUser(forceRefresh: Boolean): Result<User> {
         return if (_currentUser != null && !forceRefresh) {
             Result.success(_currentUser!!)
@@ -27,10 +28,11 @@ class UserRepositoryImpl(
         }
     }
 
-    override suspend fun sendRegistrationToServer(token: String) {
-        // TODO
-        Log.e("USER_REPOSITORY", "SEND$token")
-    }
+    override suspend fun pushTokens(
+        token: String,
+    ): Result<Boolean> = userRemoteDataSource.pushToken(token)
+
+    // Firebase
 
     override suspend fun verifyOTPCode(verificationId: String, otp: String): Result<User> {
         val result = authSdk.verifyOTPCode(verificationId, otp)

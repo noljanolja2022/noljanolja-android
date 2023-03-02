@@ -1,7 +1,9 @@
 package com.noljanolja.android.common.ktor
 
+import android.os.Build
 import android.util.Log
 import com.d2brothers.firebase_auth.AuthSdk
+import com.noljanolja.android.BuildConfig
 import io.ktor.client.*
 import io.ktor.client.engine.android.*
 import io.ktor.client.plugins.*
@@ -55,6 +57,10 @@ object KtorClient {
 
         install(DefaultRequest) {
             header(HttpHeaders.ContentType, ContentType.Application.Json)
+            header(
+                HttpHeaders.UserAgent,
+                "noljanolja/${BuildConfig.VERSION_NAME} (Mobile; Android ${Build.VERSION.RELEASE}; ${Build.MANUFACTURER} ${Build.MODEL})"
+            )
         }
     }
 }
