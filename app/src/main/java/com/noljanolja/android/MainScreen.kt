@@ -1,7 +1,11 @@
 package com.noljanolja.android
 
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,12 +26,20 @@ import com.noljanolja.android.features.splash.SplashScreen
 fun MainScreen(
     navigationManager: NavigationManager,
 ) {
+    val context = LocalContext.current
     val navController = rememberNavController()
     LaunchedEffect(navigationManager.commands) {
         navigationManager.commands.collect { commands ->
             val destination = commands.createDestination()
             if (destination.isNotEmpty()) {
                 when (commands) {
+                    is NavigationDirections.PhoneSettings -> {
+                        context.startActivity(
+                            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                data = Uri.fromParts("package", context.packageName, null)
+                            }
+                        )
+                    }
                     is NavigationDirections.Back -> {
                         navController.popBackStack()
                     }

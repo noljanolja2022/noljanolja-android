@@ -167,4 +167,10 @@ object NavigationDirections {
         override val options: NavOptions? = null
         override val destination: String = "back"
     }
+
+    object PhoneSettings : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options: NavOptions? = null
+        override val destination: String = "phone_settings"
+    }
 }

@@ -3,6 +3,9 @@ package com.noljanolja.android.di
 import android.content.Context
 import com.d2brothers.firebase_auth.AuthSdk
 import com.noljanolja.android.R
+import com.noljanolja.android.common.contact.data.ContactsLoader
+import com.noljanolja.android.common.contact.data.repository.ContactsRepositoryImpl
+import com.noljanolja.android.common.contact.domain.repository.ContactsRepository
 import com.noljanolja.android.common.ktor.KtorClient
 import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.common.user.data.datasource.UserApi
@@ -58,4 +61,16 @@ class AppModule {
     fun provideUserRemoteDataSource(
         api: UserApi,
     ): UserRemoteDataSource = UserRemoteDataSourceImpl(api)
+
+    @Provides
+    @Singleton
+    fun provideContactsLoader(
+        @ApplicationContext appContext: Context,
+    ): ContactsLoader = ContactsLoader(appContext)
+
+    @Provides
+    @Singleton
+    fun provideContactsRepository(
+        contactsLoader: ContactsLoader,
+    ): ContactsRepository = ContactsRepositoryImpl(contactsLoader)
 }

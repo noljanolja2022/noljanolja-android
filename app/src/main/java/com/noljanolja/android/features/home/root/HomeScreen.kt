@@ -15,7 +15,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.noljanolja.android.features.home.menu.MenuScreen
+import com.noljanolja.android.features.home.contacts.ContactsScreen
 import com.noljanolja.android.features.home.mypage.MyPageScreen
 import com.noljanolja.android.features.home.utils.click
 import com.noljanolja.android.features.home.utils.isNavItemSelect
@@ -47,7 +47,7 @@ fun HomeScreen(
     ) { contentPadding ->
         NavHost(
             navController = navController,
-            startDestination = HomeNavigationItem.CelebrationItem.route,
+            startDestination = HomeNavigationItem.ChatItem.route,
             modifier = Modifier.padding(contentPadding),
         ) {
             addNavigationGraph()
@@ -57,7 +57,7 @@ fun HomeScreen(
 
 private fun NavGraphBuilder.addNavigationGraph() {
     composable(HomeNavigationItem.ChatItem.route) {
-        MenuScreen()
+        ContactsScreen()
     }
     composable(HomeNavigationItem.CelebrationItem.route) {
         FullSizeUnderConstruction()

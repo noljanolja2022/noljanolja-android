@@ -1,10 +1,10 @@
 package com.noljanolja.android.ui.composable
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -19,7 +19,7 @@ import com.noljanolja.android.R
 
 @Composable
 fun LoadingDialog(
-    title: String,
+    title: String? = null,
     isLoading: Boolean = false,
 ) {
     if (isLoading) {
@@ -34,8 +34,10 @@ fun LoadingDialog(
                     .wrapContentSize()
                     .padding(16.dp)
             ) {
-                Text(title)
-                Spacer(modifier = Modifier.height(16.dp))
+                title?.let {
+                    Text(title)
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
                 CircularProgressIndicator()
             }
         }
@@ -86,6 +88,38 @@ fun ErrorDialog(
                 }
             },
             confirmButton = {},
+            onDismissRequest = {},
+            properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+        )
+    }
+}
+
+@Composable
+fun WarningDialog(
+    title: String?,
+    content: String,
+    isWarning: Boolean = false,
+    dismissText: String,
+    confirmText: String,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    if (isWarning) {
+        AlertDialog(
+            title = title?.let {
+                { Text(text = title) }
+            },
+            text = { Text(text = content) },
+            dismissButton = {
+                TextButton(onClick = onDismiss) {
+                    Text(dismissText)
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = onConfirm) {
+                    Text(confirmText)
+                }
+            },
             onDismissRequest = {},
             properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
         )
