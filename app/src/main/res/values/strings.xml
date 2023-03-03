@@ -147,6 +147,20 @@
     <string name="permission_accept">Accept</string>
     <string name="permission_required_description">You\'re unable to use this feature without the required permissions. \nTap the Settings button to allow Noljanolja to access the required permission.</string>
     <string name="permission_go_to_settings">Settings</string>
+
+    <!--    Chats-->
+    <string name="chats_title">Chats</string>
+    <string name="chats_new_chat">New Chat</string>
+    <string name="chats_message_sticker">You received a sticker</string>
+    <string name="chats_message_my_sticker">You sent a sticker</string>
+    <string name="chats_message_photo">You received a photo</string>
+    <string name="chats_message_my_photo">You sent a photo</string>
+    <string name="chats_message_video">You received a video</string>
+    <string name="chats_message_my_video">You sent a video</string>
+    <string name="chats_message_file">You received a file</string>
+    <string name="chats_message_my_file">You sent a file</string>
+    <string name="chats_message_unknown">You received a message</string>
+    <string name="chats_message_my_unknown">You sent a message</string>
     <!--    Failure-->
     <string name="invalid_email_format">Email is not valid</string>
 

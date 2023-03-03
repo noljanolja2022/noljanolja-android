@@ -1,7 +1,7 @@
 package com.noljanolja.android.common.base
 
-abstract class UiState<D>(
-    open val loading: Boolean,
-    open val error: Throwable?,
-    open val data: D?,
+data class UiState<D>(
+    val loading: Boolean = false,
+    val error: Throwable? = null,
+    val data: D? = null,
 )

@@ -24,6 +24,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.noljanolja.android.R
+import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.contact.domain.model.Contact
 import com.noljanolja.android.ui.composable.*
 
@@ -43,7 +44,7 @@ fun ContactsScreen(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun ContactsScreenContent(
-    uiState: ContactsUIState,
+    uiState: UiState<List<Contact>>,
     handleEvent: (ContactsEvent) -> Unit,
 ) {
     var openDialog by remember { mutableStateOf(false) }
@@ -99,7 +100,7 @@ fun ContactsScreenContent(
                                         hint = stringResource(R.string.common_search),
                                         onSearch = { text -> searchText = text }
                                     )
-                                    val visibleContacts = uiState.data.filter { contact ->
+                                    val visibleContacts = uiState.data.orEmpty().filter { contact ->
                                         with(searchText.trim()) {
                                             contact.name.contains(
                                                 this,

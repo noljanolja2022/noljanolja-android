@@ -159,6 +159,45 @@ object NavigationDirections {
         override val destination: String = "back"
     }
 
+    // Chat
+    data class Chat(
+        val conversationId: Long = 0,
+        val userId: Long = 0,
+        val userName: String = "",
+    ) : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf(
+            navArgument("conversationId") {
+                defaultValue = 0
+                type = NavType.LongType
+            },
+            navArgument("userId") {
+                defaultValue = 0
+                type = NavType.LongType
+            },
+            navArgument("userName") {
+                defaultValue = ""
+                type = NavType.StringType
+            },
+        )
+        override val options: NavOptions = navOptions {
+            launchSingleTop = true
+        }
+        override val destination: String =
+            "chat?conversationId={conversationId}&userId={userId}&userName={userName}"
+
+        override fun createDestination(): String {
+            return "chat?conversationId=$conversationId&userId=$userId&userName=$userName"
+        }
+    }
+
+    object SelectContact : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options: NavOptions = navOptions {
+            launchSingleTop = true
+        }
+        override val destination: String = "select_contact"
+    }
+
     // Back
     data class FinishWithResults(
         val data: Map<String, Any>,

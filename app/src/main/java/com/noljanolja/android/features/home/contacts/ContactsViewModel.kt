@@ -18,7 +18,7 @@ class ContactsViewModel @Inject constructor(
     private val navigationManager: NavigationManager,
     private val contactsRepository: ContactsRepository,
 ) : BaseViewModel() {
-    private val _uiStateFlow = MutableStateFlow(ContactsUIState())
+    private val _uiStateFlow = MutableStateFlow(UiState<List<Contact>>())
     val uiStateFlow = _uiStateFlow.asStateFlow()
 
     init {
@@ -47,16 +47,10 @@ class ContactsViewModel @Inject constructor(
         _uiStateFlow.emit(value.copy(loading = true))
         contactsRepository.syncContacts().collect {
             if (it.isSuccess) {
-                _uiStateFlow.emit(ContactsUIState(data = it.getOrDefault(listOf())))
+                _uiStateFlow.emit(UiState(data = it.getOrDefault(listOf())))
             } else {
                 _uiStateFlow.emit(value.copy(error = it.exceptionOrNull()))
             }
         }
     }
 }
-
-data class ContactsUIState(
-    override val loading: Boolean = false,
-    override val error: Throwable? = null,
-    override val data: List<Contact> = listOf(),
-) : UiState<List<Contact>>(loading, error, data)

@@ -17,10 +17,12 @@ import com.noljanolja.android.features.auth.login_or_signup.LoginOrSignupScreen
 import com.noljanolja.android.features.auth.otp.OTPScreen
 import com.noljanolja.android.features.auth.terms_of_service.TermsOfServiceScreen
 import com.noljanolja.android.features.auth.updateprofile.UpdateProfileScreen
+import com.noljanolja.android.features.home.contacts.ContactsScreen
 import com.noljanolja.android.features.home.info.MyInfoScreen
 import com.noljanolja.android.features.home.root.HomeScreen
 import com.noljanolja.android.features.setting.SettingScreen
 import com.noljanolja.android.features.splash.SplashScreen
+import com.noljanolja.android.ui.composable.FullSizeUnderConstruction
 
 @Composable
 fun MainScreen(
@@ -66,6 +68,8 @@ fun MainScreen(
         addSplashGraph()
         addHomeGraph()
         addAuthGraph()
+        addContactsGraph()
+        addChatGraph()
     }
 }
 
@@ -111,10 +115,22 @@ private fun NavGraphBuilder.addAuthGraph() {
     composable(NavigationDirections.UpdateProfile.destination) {
         UpdateProfileScreen()
     }
-//    composable(NavigationDirections.Forgot.destination) {
-//        ForgotScreen()
-//    }
-//    composable(NavigationDirections.TermsOfService.destination) {
-//        TermsOfServiceScreen()
-//    }
+}
+
+private fun NavGraphBuilder.addContactsGraph() {
+    composable(NavigationDirections.SelectContact.destination) {
+        ContactsScreen()
+    }
+}
+
+private fun NavGraphBuilder.addChatGraph() {
+    val chatDirection = NavigationDirections.Chat()
+    composable(
+        chatDirection.destination,
+        chatDirection.arguments,
+    ) { backStack ->
+        with(backStack.arguments) {
+            FullSizeUnderConstruction()
+        }
+    }
 }

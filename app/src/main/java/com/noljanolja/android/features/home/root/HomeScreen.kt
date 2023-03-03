@@ -15,7 +15,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.noljanolja.android.features.home.contacts.ContactsScreen
+import com.noljanolja.android.features.home.conversations.ConversationsScreen
 import com.noljanolja.android.features.home.mypage.MyPageScreen
 import com.noljanolja.android.features.home.utils.click
 import com.noljanolja.android.features.home.utils.isNavItemSelect
@@ -57,7 +57,7 @@ fun HomeScreen(
 
 private fun NavGraphBuilder.addNavigationGraph() {
     composable(HomeNavigationItem.ChatItem.route) {
-        ContactsScreen()
+        ConversationsScreen()
     }
     composable(HomeNavigationItem.CelebrationItem.route) {
         FullSizeUnderConstruction()
