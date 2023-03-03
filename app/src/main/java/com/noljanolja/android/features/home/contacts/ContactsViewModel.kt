@@ -36,7 +36,6 @@ class ContactsViewModel @Inject constructor(
                 ContactsEvent.OpenPhoneSettings -> {
                     navigationManager.navigate(NavigationDirections.PhoneSettings)
                 }
-                is ContactsEvent.SearchFriend -> TODO()
                 ContactsEvent.SyncContacts -> syncContacts()
             }
         }

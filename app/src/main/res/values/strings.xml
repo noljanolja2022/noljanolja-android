@@ -161,6 +161,7 @@
     <string name="chats_message_my_file">You sent a file</string>
     <string name="chats_message_unknown">You received a message</string>
     <string name="chats_message_my_unknown">You sent a message</string>
+    <string name="chat_input_hint">Aa</string>
     <!--    Failure-->
     <string name="invalid_email_format">Email is not valid</string>
 

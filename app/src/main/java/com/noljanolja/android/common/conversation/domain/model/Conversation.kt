@@ -4,6 +4,7 @@ import com.noljanolja.android.common.user.domain.model.User
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
+import kotlin.random.Random
 
 @Serializable
 data class Conversation(
@@ -29,6 +30,31 @@ data class Conversation(
             (participants.find { !it.isMe } ?: participants.firstOrNull())?.getAvatarUrl().orEmpty()
         } else {
             ""
+        }
+    }
+
+    companion object {
+        fun mock(): Conversation {
+            val random = Random.nextInt(100_000_000)
+            return Conversation(
+                id = 0,
+                title = random.toString(),
+                type = ConversationType.Single,
+                creator = User(
+                    name = random.toString()
+                ),
+                messages = listOf(
+                    Message(
+                        message = "Hello, I'm $random",
+                        type = MessageType.PlainText
+                    )
+                ),
+                participants = listOf(
+                    User(
+                        name = random.toString()
+                    )
+                )
+            )
         }
     }
 }

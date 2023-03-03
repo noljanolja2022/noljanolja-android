@@ -6,9 +6,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalLifecycleOwner
 
 @Composable
-fun BackHandler(enabled: Boolean = true, onBack: () -> Unit) {
+fun BackPressHandler(enabled: Boolean = true, onBackPressed: () -> Unit) {
     // Safely update the current `onBack` lambda when a new one is provided
-    val currentOnBack by rememberUpdatedState(onBack)
+    val currentOnBack by rememberUpdatedState(onBackPressed)
     // Remember in Composition a back callback that calls the `onBack` lambda
     val backCallback = remember {
         object : OnBackPressedCallback(enabled) {

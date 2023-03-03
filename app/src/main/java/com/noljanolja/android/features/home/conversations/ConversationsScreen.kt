@@ -8,8 +8,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Chat
-import androidx.compose.material.icons.outlined.ChatBubble
-import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,7 +29,7 @@ import com.noljanolja.android.common.conversation.domain.model.Conversation
 import com.noljanolja.android.common.conversation.domain.model.MessageType
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.EmptyPage
-import com.noljanolja.android.ui.composable.FullSizeWithUiState
+import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.util.humanReadableDate
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -46,13 +44,12 @@ fun ConversationsScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConversationsScreenContent(
     uiState: UiState<List<Conversation>>,
     handleEvent: (ConversationsEvent) -> Unit,
 ) {
-    Scaffold(
+    ScaffoldWithUiState(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             CommonTopAppBar(title = stringResource(R.string.chats_title))
@@ -64,23 +61,19 @@ fun ConversationsScreenContent(
                     handleEvent(ConversationsEvent.OpenContactPicker)
                 }
             )
-        }
+        },
+        uiState = uiState,
+        error = {}
     ) {
-        FullSizeWithUiState(
-            modifier = Modifier.padding(it),
-            uiState = uiState,
-            error = {}
-        ) {
-            if (uiState.data.isNullOrEmpty()) {
-                EmptyPage("No conversations found")
-            } else {
-                ConversationList(uiState.data) { conversation ->
-                    handleEvent(
-                        ConversationsEvent.OpenConversation(
-                            conversation.id
-                        )
+        if (uiState.data.isNullOrEmpty()) {
+            EmptyPage("No conversations found")
+        } else {
+            ConversationList(uiState.data) { conversation ->
+                handleEvent(
+                    ConversationsEvent.OpenConversation(
+                        conversation.id,
                     )
-                }
+                )
             }
         }
     }

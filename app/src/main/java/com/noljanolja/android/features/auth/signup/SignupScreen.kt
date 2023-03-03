@@ -26,7 +26,7 @@ import com.noljanolja.android.features.auth.common.component.RoundedTextField
 import com.noljanolja.android.features.auth.common.component.VerifyEmail
 import com.noljanolja.android.features.auth.signup.component.AgreementRow
 import com.noljanolja.android.features.auth.signup.component.FullAgreement
-import com.noljanolja.android.ui.composable.BackHandler
+import com.noljanolja.android.ui.composable.BackPressHandler
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.SecondaryButton
 
@@ -41,7 +41,7 @@ fun SignupScreen(
     val emailError by signupViewModel.emailError.collectAsStateWithLifecycle()
     val passwordError by signupViewModel.passwordError.collectAsStateWithLifecycle()
     val confirmPassword by signupViewModel.confirmPasswordFlow.collectAsStateWithLifecycle()
-    BackHandler(uiState !is SignupUIState.Agreement) {
+    BackPressHandler(uiState !is SignupUIState.Agreement) {
         signupViewModel.handleEvent(SignupEvent.Back)
     }
 

@@ -17,12 +17,12 @@ import com.noljanolja.android.features.auth.login_or_signup.LoginOrSignupScreen
 import com.noljanolja.android.features.auth.otp.OTPScreen
 import com.noljanolja.android.features.auth.terms_of_service.TermsOfServiceScreen
 import com.noljanolja.android.features.auth.updateprofile.UpdateProfileScreen
+import com.noljanolja.android.features.home.chat.ChatScreen
 import com.noljanolja.android.features.home.contacts.ContactsScreen
 import com.noljanolja.android.features.home.info.MyInfoScreen
 import com.noljanolja.android.features.home.root.HomeScreen
 import com.noljanolja.android.features.setting.SettingScreen
 import com.noljanolja.android.features.splash.SplashScreen
-import com.noljanolja.android.ui.composable.FullSizeUnderConstruction
 
 @Composable
 fun MainScreen(
@@ -130,7 +130,10 @@ private fun NavGraphBuilder.addChatGraph() {
         chatDirection.arguments,
     ) { backStack ->
         with(backStack.arguments) {
-            FullSizeUnderConstruction()
+            val conversationId = (this?.getLong("conversationId") ?: 0)
+            val userId = (this?.getString("userId")).orEmpty()
+            val userName = (this?.getString("userName").orEmpty())
+            ChatScreen(conversationId = conversationId, userId = userId, userName = userName)
         }
     }
 }

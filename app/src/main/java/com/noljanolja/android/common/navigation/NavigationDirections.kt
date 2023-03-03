@@ -162,7 +162,7 @@ object NavigationDirections {
     // Chat
     data class Chat(
         val conversationId: Long = 0,
-        val userId: Long = 0,
+        val userId: String = "",
         val userName: String = "",
     ) : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf(
@@ -171,8 +171,8 @@ object NavigationDirections {
                 type = NavType.LongType
             },
             navArgument("userId") {
-                defaultValue = 0
-                type = NavType.LongType
+                defaultValue = ""
+                type = NavType.StringType
             },
             navArgument("userName") {
                 defaultValue = ""

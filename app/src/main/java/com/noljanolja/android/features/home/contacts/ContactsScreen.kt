@@ -60,8 +60,9 @@ fun ContactsScreenContent(
         }
     }
     Surface(modifier = Modifier.fillMaxSize()) {
-        Scaffold(
+        ScaffoldWithUiState(
             modifier = Modifier.fillMaxSize(),
+            uiState = uiState,
             topBar = {
                 CommonTopAppBar(
                     title = stringResource(id = R.string.contacts_title),
@@ -70,77 +71,70 @@ fun ContactsScreenContent(
                     }
                 )
             },
-        ) {
-            when {
-                !contactsPermissionState.status.isGranted -> {
-                    Rationale(
-                        modifier = Modifier.fillMaxSize().padding(it),
-                        permissions = mapOf(
-                            android.Manifest.permission.READ_CONTACTS to stringResource(
-                                id = R.string.permission_contacts_description
+            content = {
+                when {
+                    !contactsPermissionState.status.isGranted -> {
+                        Rationale(
+                            modifier = Modifier.fillMaxSize(),
+                            permissions = mapOf(
+                                android.Manifest.permission.READ_CONTACTS to stringResource(
+                                    id = R.string.permission_contacts_description
+                                )
+                            ),
+                            onRequestPermission = { contactsPermissionState.launchPermissionRequest() }
+                        )
+                    }
+                    !uiState.loading -> {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                        ) {
+                            SearchBar(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 12.dp),
+                                searchText = searchText,
+                                hint = stringResource(R.string.common_search),
+                                onSearch = { text -> searchText = text }
                             )
-                        ),
-                        onRequestPermission = { contactsPermissionState.launchPermissionRequest() }
-                    )
-                }
-                else -> {
-                    FullSizeWithUiState(
-                        modifier = Modifier.fillMaxSize().padding(it),
-                        uiState = uiState,
-                        content = {
-                            if (!uiState.loading) {
-                                Column(
-                                    modifier = Modifier.fillMaxSize(),
-                                ) {
-                                    SearchBar(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 12.dp),
-                                        searchText = searchText,
-                                        hint = stringResource(R.string.common_search),
-                                        onSearch = { text -> searchText = text }
-                                    )
-                                    val visibleContacts = uiState.data.orEmpty().filter { contact ->
-                                        with(searchText.trim()) {
-                                            contact.name.contains(
-                                                this,
-                                                true
-                                            ) || contact.phones.any { phone ->
-                                                phone.contains(
-                                                    this,
-                                                    true
-                                                )
-                                            }
-                                        }
-                                    }
-                                    if (visibleContacts.isEmpty()) {
-                                        EmptyPage(message = stringResource(id = R.string.contacts_not_found))
-                                    } else {
-                                        ContactList(contacts = visibleContacts) {
-                                        }
+                            val visibleContacts = uiState.data.orEmpty().filter { contact ->
+                                with(searchText.trim()) {
+                                    contact.name.contains(
+                                        this,
+                                        true
+                                    ) || contact.phones.any { phone ->
+                                        phone.contains(
+                                            this,
+                                            true
+                                        )
                                     }
                                 }
                             }
+                            if (visibleContacts.isEmpty()) {
+                                EmptyPage(message = stringResource(id = R.string.contacts_not_found))
+                            } else {
+                                ContactList(contacts = visibleContacts) {
+                                }
+                            }
                         }
-                    )
+                    }
                 }
             }
+        )
 
-            WarningDialog(
-                title = null,
-                content = stringResource(R.string.permission_required_description),
-                isWarning = openDialog,
-                dismissText = stringResource(R.string.common_cancel),
-                confirmText = stringResource(R.string.permission_go_to_settings),
-                onDismiss = {
-                    openDialog = false
-                },
-                onConfirm = {
-                    openDialog = false
-                    handleEvent(ContactsEvent.OpenPhoneSettings)
-                }
-            )
-        }
+        WarningDialog(
+            title = null,
+            content = stringResource(R.string.permission_required_description),
+            isWarning = openDialog,
+            dismissText = stringResource(R.string.common_cancel),
+            confirmText = stringResource(R.string.permission_go_to_settings),
+            onDismiss = {
+                openDialog = false
+            },
+            onConfirm = {
+                openDialog = false
+                handleEvent(ContactsEvent.OpenPhoneSettings)
+            }
+        )
     }
 }
 

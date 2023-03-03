@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.noljanolja.android.R
-import com.noljanolja.android.ui.composable.BackHandler
+import com.noljanolja.android.ui.composable.BackPressHandler
 import com.noljanolja.android.ui.composable.PrimaryButton
 import kotlinx.coroutines.launch
 
@@ -30,7 +30,7 @@ fun RequireLoginBottomSheet(
     onGoToLogin: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    BackHandler(modalSheetState.isVisible) {
+    BackPressHandler(modalSheetState.isVisible) {
         scope.launch {
             modalSheetState.hide()
         }

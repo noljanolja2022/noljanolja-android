@@ -4,12 +4,8 @@ import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.conversation.domain.model.Conversation
-import com.noljanolja.android.common.conversation.domain.model.ConversationType
-import com.noljanolja.android.common.conversation.domain.model.Message
-import com.noljanolja.android.common.conversation.domain.model.MessageType
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
-import com.noljanolja.android.common.user.domain.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -50,25 +46,8 @@ class ConversationsViewModel @Inject constructor(
             _uiStateFlow.emit(
                 UiState(
                     data = listOf(
-                        Conversation(
-                            id = 0,
-                            title = "Test conversations",
-                            type = ConversationType.Single,
-                            creator = User(
-                                name = "Jenny"
-                            ),
-                            messages = listOf(
-                                Message(
-                                    message = "Hihihaha",
-                                    type = MessageType.PlainText
-                                )
-                            ),
-                            participants = listOf(
-                                User(
-                                    name = "Jenny"
-                                )
-                            )
-                        )
+                        Conversation.mock(),
+                        Conversation.mock()
                     )
                 )
             )
