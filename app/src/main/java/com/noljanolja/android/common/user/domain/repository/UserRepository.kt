@@ -1,6 +1,7 @@
 package com.noljanolja.android.common.user.domain.repository
 
 import android.content.Intent
+import com.noljanolja.android.common.contact.domain.model.Contact
 import com.noljanolja.android.common.user.domain.model.User
 
 interface UserRepository {
@@ -27,6 +28,8 @@ interface UserRepository {
         name: String,
         photo: String?,
     ): Result<User>
+
+    suspend fun syncUserContacts(contacts: List<Contact>): Result<List<User>>
 
     // logout
 

@@ -28,6 +28,9 @@
     <string name="common_yesterday">Yesterday</string>
     <string name="common_id">Id</string>
 
+    <string name="welcome_noljanolja">Welcome to Noja Noja. Follow these steps to be our member.</string>
+
+    <string name="splash_explore">EXPLORE NOW</string>
 
     <string name="signup">Join the membership</string>
     <string name="forgot_password">Forgot your password?</string>

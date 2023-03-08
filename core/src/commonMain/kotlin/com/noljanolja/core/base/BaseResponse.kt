@@ -1,4 +1,4 @@
-package com.noljanolja.android.common.base
+package com.noljanolja.core.base
 
 abstract class BaseResponse<D> {
     abstract val code: Int

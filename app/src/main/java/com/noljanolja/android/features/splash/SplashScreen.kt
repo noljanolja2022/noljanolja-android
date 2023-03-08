@@ -1,43 +1,57 @@
 package com.noljanolja.android.features.splash
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.PrimaryButton
+import com.noljanolja.android.ui.composable.ScaffoldWithLogo
 
 @Composable
 fun SplashScreen(
     viewModel: SplashViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    Box(modifier = Modifier.fillMaxSize()) {
-        Image(
-            painterResource(id = R.drawable.bg_splash),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.FillWidth,
+    ScaffoldWithLogo(
+        modifier = Modifier.paint(
+            painter = painterResource(id = R.drawable.bg_splash),
+            contentScale = ContentScale.FillWidth
         )
+    ) {
+        Spacer(modifier = Modifier.height(28.dp))
+        Text(
+            stringResource(id = R.string.welcome_noljanolja),
+            modifier = Modifier.padding(horizontal = 47.dp),
+            style = with(MaterialTheme) {
+                typography.bodyLarge.copy(colorScheme.onPrimary)
+            },
+            textAlign = TextAlign.Center,
+        )
+        Spacer(modifier = Modifier.height(46.dp))
         if (!uiState.loading) {
             PrimaryButton(
-                modifier = Modifier.align(Alignment.BottomCenter).padding(20.dp).fillMaxWidth(),
-                text = "Continue",
-                containerColor = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(),
+                text = stringResource(id = R.string.splash_explore),
+                containerColor = MaterialTheme.colorScheme.onPrimary,
+                contentColor = MaterialTheme.colorScheme.primary,
             ) {
                 viewModel.handleEvent(SplashEvent.Continue)
             }
+        } else {
+            Spacer(modifier = Modifier.height(50.dp))
         }
     }
 }

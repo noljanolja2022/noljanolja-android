@@ -2,6 +2,7 @@ package com.noljanolja.android.common.user.data.repository
 
 import android.content.Intent
 import com.d2brothers.firebase_auth.AuthSdk
+import com.noljanolja.android.common.contact.domain.model.Contact
 import com.noljanolja.android.common.user.data.datasource.UserRemoteDataSource
 import com.noljanolja.android.common.user.domain.model.User
 import com.noljanolja.android.common.user.domain.repository.UserRepository
@@ -74,6 +75,10 @@ class UserRepositoryImpl(
     ): Result<User> {
         val result = authSdk.updateUser(name, photo)
         return handleResult(result)
+    }
+
+    override suspend fun syncUserContacts(contacts: List<Contact>): Result<List<User>> {
+        return userRemoteDataSource.syncUserContacts(contacts)
     }
 
     // Logout

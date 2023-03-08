@@ -1,8 +1,10 @@
 package com.noljanolja.android.common.user.data.datasource
 
 import com.noljanolja.android.common.user.data.model.CommonResponse
-import com.noljanolja.android.common.user.data.model.GetMeResponse
-import com.noljanolja.android.common.user.data.model.request.PushTokensRequest
+import com.noljanolja.android.common.user.domain.model.request.PushTokensRequest
+import com.noljanolja.android.common.user.domain.model.request.SyncUserContactsRequest
+import com.noljanolja.android.common.user.domain.model.response.GetMeResponse
+import com.noljanolja.android.common.user.domain.model.response.SyncUserContactsResponse
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.android.*
@@ -17,7 +19,6 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.util.*
 
-@OptIn(InternalAPI::class)
 class UserApi(private val client: HttpClient) {
 
     suspend fun getMe(): GetMeResponse {
@@ -26,7 +27,13 @@ class UserApi(private val client: HttpClient) {
 
     suspend fun pushTokens(pushTokensRequest: PushTokensRequest): CommonResponse {
         return client.post("$END_POINT/push-tokens") {
-            body = pushTokensRequest
+            setBody(pushTokensRequest)
+        }.body()
+    }
+
+    suspend fun syncUserContacts(request: SyncUserContactsRequest): SyncUserContactsResponse {
+        return client.post("$END_POINT/users/me/contacts") {
+            setBody(request)
         }.body()
     }
 

@@ -25,7 +25,7 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
-import com.noljanolja.android.common.contact.domain.model.Contact
+import com.noljanolja.android.common.user.domain.model.User
 import com.noljanolja.android.ui.composable.*
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -44,7 +44,7 @@ fun ContactsScreen(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun ContactsScreenContent(
-    uiState: UiState<List<Contact>>,
+    uiState: UiState<List<User>>,
     handleEvent: (ContactsEvent) -> Unit,
 ) {
     var openDialog by remember { mutableStateOf(false) }
@@ -96,17 +96,16 @@ fun ContactsScreenContent(
                                 hint = stringResource(R.string.common_search),
                                 onSearch = { text -> searchText = text }
                             )
-                            val visibleContacts = uiState.data.orEmpty().filter { contact ->
+                            val visibleContacts = uiState.data.orEmpty().filter { user ->
                                 with(searchText.trim()) {
-                                    contact.name.contains(
+                                    user.name!!.contains(
                                         this,
                                         true
-                                    ) || contact.phones.any { phone ->
-                                        phone.contains(
+                                    ) ||
+                                        user.phone!!.contains(
                                             this,
                                             true
                                         )
-                                    }
                                 }
                             }
                             if (visibleContacts.isEmpty()) {
@@ -140,8 +139,8 @@ fun ContactsScreenContent(
 
 @Composable
 fun ContactList(
-    contacts: List<Contact>,
-    onItemClick: (Contact) -> Unit,
+    contacts: List<User>,
+    onItemClick: (User) -> Unit,
 ) {
     LazyColumn {
         items(contacts, key = { it.id }) { contact ->
@@ -153,8 +152,8 @@ fun ContactList(
 
 @Composable
 fun ContactRow(
-    contact: Contact,
-    onClick: (Contact) -> Unit,
+    contact: User,
+    onClick: (User) -> Unit,
 ) {
     val context = LocalContext.current
     Row(
@@ -183,7 +182,7 @@ fun ContactRow(
         }
 
         Text(
-            text = contact.name,
+            text = contact.name!!,
             modifier = Modifier
                 .padding(start = 24.dp)
                 .weight(1F),
