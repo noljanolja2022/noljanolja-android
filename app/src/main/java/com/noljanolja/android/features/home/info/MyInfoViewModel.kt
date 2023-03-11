@@ -5,8 +5,8 @@ import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
-import com.noljanolja.android.common.user.domain.model.User
-import com.noljanolja.android.common.user.domain.repository.UserRepository
+import com.noljanolja.core.CoreManager
+import com.noljanolja.core.user.domain.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MyInfoViewModel @Inject constructor(
     private val navigationManager: NavigationManager,
-    private val userRepository: UserRepository,
+    private val coreManager: CoreManager,
 ) : BaseViewModel() {
 
     private val _uiStateFlow = MutableStateFlow<MyInfoUIState>(MyInfoUIState.Loading)
@@ -24,7 +24,7 @@ class MyInfoViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _uiStateFlow.emit(MyInfoUIState.Loaded(userRepository.getCurrentUser().getOrNull()))
+            _uiStateFlow.emit(MyInfoUIState.Loaded(coreManager.getCurrentUser().getOrNull()))
         }
     }
 
@@ -35,7 +35,7 @@ class MyInfoViewModel @Inject constructor(
                     navigationManager.navigate(NavigationDirections.Back)
                 }
                 MyInfoEvent.Logout -> {
-                    userRepository.logout()
+                    coreManager.logout()
                     navigationManager.navigate(NavigationDirections.Auth)
                 }
                 MyInfoEvent.GoSetting -> {

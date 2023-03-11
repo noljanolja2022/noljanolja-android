@@ -25,8 +25,9 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
-import com.noljanolja.android.common.user.domain.model.User
+import com.noljanolja.android.services.PermissionChecker
 import com.noljanolja.android.ui.composable.*
+import com.noljanolja.core.user.domain.model.User
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -41,15 +42,19 @@ fun ContactsScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun ContactsScreenContent(
     uiState: UiState<List<User>>,
     handleEvent: (ContactsEvent) -> Unit,
 ) {
+    val context = LocalContext.current
     var openDialog by remember { mutableStateOf(false) }
     var searchText by remember { mutableStateOf("") }
 
+    LaunchedEffect(key1 = true) {
+        if (PermissionChecker(context).canReadContacts()) handleEvent(ContactsEvent.SyncContacts)
+    }
     val contactsPermissionState = rememberPermissionState(
         android.Manifest.permission.READ_CONTACTS
     ) { result ->
@@ -112,6 +117,7 @@ fun ContactsScreenContent(
                                 EmptyPage(message = stringResource(id = R.string.contacts_not_found))
                             } else {
                                 ContactList(contacts = visibleContacts) {
+                                    handleEvent(ContactsEvent.Chat(it))
                                 }
                             }
                         }
@@ -182,7 +188,7 @@ fun ContactRow(
         }
 
         Text(
-            text = contact.name!!,
+            text = contact.name,
             modifier = Modifier
                 .padding(start = 24.dp)
                 .weight(1F),

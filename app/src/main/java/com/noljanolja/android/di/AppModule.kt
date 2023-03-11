@@ -4,21 +4,14 @@ import android.content.Context
 import com.d2brothers.firebase_auth.AuthSdk
 import com.noljanolja.android.R
 import com.noljanolja.android.common.contact.data.ContactsLoader
-import com.noljanolja.android.common.contact.data.repository.ContactsRepositoryImpl
-import com.noljanolja.android.common.contact.domain.repository.ContactsRepository
-import com.noljanolja.android.common.ktor.KtorClient
 import com.noljanolja.android.common.navigation.NavigationManager
-import com.noljanolja.android.common.user.data.datasource.UserApi
-import com.noljanolja.android.common.user.data.datasource.UserRemoteDataSource
-import com.noljanolja.android.common.user.data.datasource.UserRemoteDataSourceImpl
-import com.noljanolja.android.common.user.data.repository.UserRepositoryImpl
-import com.noljanolja.android.common.user.domain.repository.UserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.*
+import io.ktor.client.engine.okhttp.*
 import javax.inject.Singleton
 
 @Module
@@ -27,14 +20,6 @@ class AppModule {
     @Provides
     @Singleton
     fun provideNavigationManager() = NavigationManager()
-
-    @Provides
-    @Singleton
-    fun provideUserRepository(
-        dataSource: UserRemoteDataSource,
-        authSdk: AuthSdk,
-        client: HttpClient,
-    ): UserRepository = UserRepositoryImpl(dataSource, authSdk, client)
 
     @Provides
     @Singleton
@@ -50,27 +35,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideHttpClient(authSdk: AuthSdk): HttpClient = KtorClient.createInstance(authSdk)
-
-    @Provides
-    @Singleton
-    fun provideUserApi(client: HttpClient): UserApi = UserApi(client)
-
-    @Provides
-    @Singleton
-    fun provideUserRemoteDataSource(
-        api: UserApi,
-    ): UserRemoteDataSource = UserRemoteDataSourceImpl(api)
-
-    @Provides
-    @Singleton
     fun provideContactsLoader(
         @ApplicationContext appContext: Context,
     ): ContactsLoader = ContactsLoader(appContext)
-
-    @Provides
-    @Singleton
-    fun provideContactsRepository(
-        contactsLoader: ContactsLoader,
-    ): ContactsRepository = ContactsRepositoryImpl(contactsLoader)
 }

@@ -13,7 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun EmptyPage(
-    message: String
+    message: String,
 ) {
     Column(
         modifier = Modifier

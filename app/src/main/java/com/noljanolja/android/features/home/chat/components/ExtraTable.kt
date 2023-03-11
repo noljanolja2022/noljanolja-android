@@ -1,40 +1,40 @@
-//package com.noljanolja.android.features.home.chat.components
+// package com.noljanolja.android.features.home.chat.components
 //
-//import android.net.Uri
-//import androidx.activity.compose.rememberLauncherForActivityResult
-//import androidx.activity.result.contract.ActivityResultContracts
-//import androidx.compose.foundation.Image
-//import androidx.compose.foundation.background
-//import androidx.compose.foundation.layout.*
-//import androidx.compose.foundation.shape.CircleShape
-//import androidx.compose.material3.MaterialTheme
-//import androidx.compose.material3.Text
-//import androidx.compose.material3.TextButton
-//import androidx.compose.runtime.Composable
-//import androidx.compose.runtime.mutableStateOf
-//import androidx.compose.runtime.remember
-//import androidx.compose.ui.Alignment
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.draw.clip
-//import androidx.compose.ui.graphics.Color
-//import androidx.compose.ui.graphics.ColorFilter
-//import androidx.compose.ui.graphics.painter.Painter
-//import androidx.compose.ui.layout.ContentScale
-//import androidx.compose.ui.res.painterResource
-//import androidx.compose.ui.unit.dp
+// import android.net.Uri
+// import androidx.activity.compose.rememberLauncherForActivityResult
+// import androidx.activity.result.contract.ActivityResultContracts
+// import androidx.compose.foundation.Image
+// import androidx.compose.foundation.background
+// import androidx.compose.foundation.layout.*
+// import androidx.compose.foundation.shape.CircleShape
+// import androidx.compose.material3.MaterialTheme
+// import androidx.compose.material3.Text
+// import androidx.compose.material3.TextButton
+// import androidx.compose.runtime.Composable
+// import androidx.compose.runtime.mutableStateOf
+// import androidx.compose.runtime.remember
+// import androidx.compose.ui.Alignment
+// import androidx.compose.ui.Modifier
+// import androidx.compose.ui.draw.clip
+// import androidx.compose.ui.graphics.Color
+// import androidx.compose.ui.graphics.ColorFilter
+// import androidx.compose.ui.graphics.painter.Painter
+// import androidx.compose.ui.layout.ContentScale
+// import androidx.compose.ui.res.painterResource
+// import androidx.compose.ui.unit.dp
 //
-//private enum class FileSelector {
+// private enum class FileSelector {
 //    CALL,
 //    FILE,
 //    NONE,
-//}
+// }
 //
-//@Composable
-//fun ExtraTable(
+// @Composable
+// fun ExtraTable(
 //    modifier: Modifier,
 //    onCall: () -> Unit,
 //    onDocumentSelected: (List<Uri>) -> Unit,
-//) {
+// ) {
 //    val selector = remember { mutableStateOf(FileSelector.NONE) }
 //
 //    Row(
@@ -73,15 +73,15 @@
 //        else -> {}
 //    }
 //
-//}
+// }
 //
-//@Composable
-//private fun ExtraButton(
+// @Composable
+// private fun ExtraButton(
 //    label: String,
 //    icon: Painter,
 //    color: Color,
 //    onClick: () -> Unit,
-//) {
+// ) {
 //    TextButton(
 //        onClick = onClick,
 //        shape = CircleShape,
@@ -105,4 +105,4 @@
 //            )
 //        }
 //    }
-//}
+// }

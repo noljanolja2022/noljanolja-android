@@ -12,7 +12,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.noljanolja.android.R
-import com.noljanolja.android.common.user.domain.model.Gender
+import com.noljanolja.core.user.domain.model.Gender
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -27,9 +27,9 @@ fun GenderInput(
     val context = LocalContext.current
     val displayGenders = remember {
         mutableStateMapOf(
-            Gender.Male.name to context.getString(R.string.update_profile_gender_male),
-            Gender.Female.name to context.getString(R.string.update_profile_gender_female),
-            Gender.Other.name to context.getString(R.string.update_profile_gender_other),
+            Gender.MALE.name to context.getString(R.string.update_profile_gender_male),
+            Gender.FEMALE.name to context.getString(R.string.update_profile_gender_female),
+            Gender.OTHER.name to context.getString(R.string.update_profile_gender_other),
         )
     }
     ExposedDropdownMenuBox(

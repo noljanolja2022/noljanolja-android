@@ -33,17 +33,18 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
-import com.noljanolja.android.common.conversation.domain.model.Conversation
-import com.noljanolja.android.common.conversation.domain.model.Message
-import com.noljanolja.android.common.conversation.domain.model.MessageType
-import com.noljanolja.android.common.user.domain.model.User
 import com.noljanolja.android.features.home.chat.components.ChatInput
-import com.noljanolja.android.features.home.chat.components.ChatTopBar
 import com.noljanolja.android.features.home.chat.components.ClickableMessage
+import com.noljanolja.android.ui.composable.CommonTopAppBar
+import com.noljanolja.android.ui.composable.InfiniteListHandler
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.util.chatMessageBubbleTime
 import com.noljanolja.android.util.chatMessageHeaderDate
 import com.noljanolja.android.util.isSameDate
+import com.noljanolja.core.conversation.domain.model.Conversation
+import com.noljanolja.core.conversation.domain.model.Message
+import com.noljanolja.core.conversation.domain.model.MessageType
+import com.noljanolja.core.user.domain.model.User
 import kotlinx.coroutines.launch
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -82,7 +83,7 @@ fun ChatScreenContent(
     ScaffoldWithUiState(
         uiState = chatUiState,
         topBar = {
-            ChatTopBar(
+            CommonTopAppBar(
                 title = conversation.getDisplayTitle(),
                 onBack = { handleEvent(ChatEvent.GoBack) }
             )
@@ -117,14 +118,17 @@ fun ChatScreenContent(
                     onMessageSent = { message, type, attachments ->
 
                         val sendMessage = when (type) {
-                            MessageType.Gif,
-                            MessageType.PlainText -> {
+                            MessageType.GIF,
+                            MessageType.PLAINTEXT,
+                            -> {
                                 if (message.isNotBlank()) {
                                     Message(
                                         message = message.trim(),
                                         type = type,
                                     )
-                                } else null
+                                } else {
+                                    null
+                                }
                             }
                             else -> null
                         }
@@ -200,6 +204,7 @@ private fun MessageList(
                 }
             }
         }
+        InfiniteListHandler(scrollState, onLoadMore = loadMoreMessages)
     }
 }
 
@@ -365,7 +370,7 @@ object MessageChatBubbleShape {
     fun getChatBubbleShape(
         isFirstMessage: Boolean,
         isLastMessage: Boolean,
-        isMe: Boolean
+        isMe: Boolean,
     ): RoundedCornerShape {
         return if (isMe) {
             getChatBubbleShapeOfMine(isFirstMessage, isLastMessage)
@@ -376,7 +381,7 @@ object MessageChatBubbleShape {
 
     private fun getChatBubbleShapeOfPartner(
         isFirstMessage: Boolean,
-        isLastMessage: Boolean
+        isLastMessage: Boolean,
     ): RoundedCornerShape {
         return when {
             isFirstMessage && isLastMessage -> SINGLE_MESSAGE
@@ -388,7 +393,7 @@ object MessageChatBubbleShape {
 
     private fun getChatBubbleShapeOfMine(
         isFirstMessage: Boolean,
-        isLastMessage: Boolean
+        isLastMessage: Boolean,
     ): RoundedCornerShape {
         return when {
             isFirstMessage && isLastMessage -> SINGLE_MESSAGE
@@ -412,20 +417,21 @@ private fun ChatItemBubble(
         isLastMessageByAuthorSameDay,
         message.sender.isMe
     )
-    var backgroundBubbleColor: Color = MaterialTheme.colorScheme.surfaceVariant
+    var backgroundBubbleColor: Color = MaterialTheme.colorScheme.primaryContainer
     if (message.sender.isMe) {
-        backgroundBubbleColor = MaterialTheme.colorScheme.primary
+        backgroundBubbleColor = MaterialTheme.colorScheme.onPrimary
     }
     when (message.type) {
-        MessageType.Document -> {
+        MessageType.DOCUMENT -> {
             backgroundBubbleShape = RoundedCornerShape(18.dp)
             if (message.sender.isMe) {
                 backgroundBubbleColor = MaterialTheme.colorScheme.primaryContainer
             }
         }
-        MessageType.Gif,
-        MessageType.Sticker,
-        MessageType.Photo -> {
+        MessageType.GIF,
+        MessageType.STICKER,
+        MessageType.PHOTO,
+        -> {
             backgroundBubbleShape = RectangleShape
             backgroundBubbleColor = Color.Transparent
         }
@@ -435,6 +441,7 @@ private fun ChatItemBubble(
     Column {
         Surface(
             color = backgroundBubbleColor,
+            contentColor = Color.White,
             shape = backgroundBubbleShape,
         ) {
             ClickableMessage(

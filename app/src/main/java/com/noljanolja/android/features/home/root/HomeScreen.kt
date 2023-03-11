@@ -90,19 +90,23 @@ fun HomeBottomBar(
     ) {
         items.forEach { item ->
             val isSelected = item.isNavItemSelect(navController = navController)
-            val iconColor = if (isSelected) {
-                MaterialTheme.colorScheme.tertiary
-            } else {
-                MaterialTheme.colorScheme.outline
-            }
             val label = stringResource(item.label)
             NavigationBarItem(
-                icon = { Icon(item.icon, label, tint = iconColor) },
+                icon = { Icon(item.icon, label) },
                 label = { Text(label, maxLines = 1) },
                 selected = isSelected,
                 onClick = {
                     item.click(navController)
                 },
+                colors = with(MaterialTheme.colorScheme) {
+                    NavigationBarItemDefaults.colors(
+                        selectedIconColor = secondary,
+                        selectedTextColor = secondary,
+                        unselectedIconColor = outline,
+                        unselectedTextColor = outline,
+                        indicatorColor = Color.White
+                    )
+                }
             )
         }
     }

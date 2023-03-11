@@ -16,22 +16,17 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.noljanolja.android.BuildConfig
 import com.noljanolja.android.MainActivity
-import com.noljanolja.android.common.user.domain.repository.UserRepository
+import com.noljanolja.core.CoreManager
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MyFirebaseService : FirebaseMessagingService() {
 
     @Inject
-    lateinit var userRepository: UserRepository
-
-    private val job = SupervisorJob()
-    private val scope = CoroutineScope(Dispatchers.IO + job)
+    lateinit var coreManager: CoreManager
+    private val scope = MainScope()
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
@@ -47,7 +42,7 @@ class MyFirebaseService : FirebaseMessagingService() {
 
     private fun sendRegistrationToServer(token: String) {
         scope.launch {
-            userRepository.pushTokens(token)
+            coreManager.pushTokens(token)
         }
     }
 
@@ -115,10 +110,5 @@ class MyFirebaseService : FirebaseMessagingService() {
             notificationManager.createNotificationChannel(channel)
         }
         notificationManager.notify(0, notificationBuilder.build())
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
     }
 }

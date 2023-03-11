@@ -40,8 +40,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.d2brothers.firebase_auth.AuthSdk
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.handleError
-import com.noljanolja.android.common.country.domain.model.Countries
-import com.noljanolja.android.common.country.domain.model.Country
+import com.noljanolja.core.country.domain.model.Countries
+import com.noljanolja.core.country.domain.model.Country
 import com.noljanolja.android.features.auth.common.component.EmailAndPassword
 import com.noljanolja.android.features.auth.common.component.VerifyEmail
 import com.noljanolja.android.features.auth.login.component.LoginButton
@@ -63,10 +63,10 @@ fun LoginScreen(
     val emailError by viewModel.emailError.collectAsStateWithLifecycle()
     val passwordError by viewModel.passwordError.collectAsStateWithLifecycle()
     val googleLauncher = rememberAuthLauncher {
-        viewModel.handleLoginWithGoogleFromIntent(it)
+//        viewModel.handleLoginWithGoogleFromIntent(it)
     }
     val naverLauncher = rememberAuthLauncher {
-        viewModel.handleLoginWithNaverFromIntent(it)
+//        viewModel.handleLoginWithNaverFromIntent(it)
     }
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
 

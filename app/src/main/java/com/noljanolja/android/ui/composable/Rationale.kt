@@ -19,7 +19,7 @@ import com.noljanolja.android.R
 fun Rationale(
     modifier: Modifier,
     permissions: Map<String, String>,
-    onRequestPermission: () -> Unit
+    onRequestPermission: () -> Unit,
 ) {
     Surface(
         modifier = modifier.fillMaxSize(),

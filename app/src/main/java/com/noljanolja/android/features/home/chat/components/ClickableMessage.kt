@@ -9,8 +9,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.noljanolja.android.common.conversation.domain.model.Message
-import com.noljanolja.android.common.conversation.domain.model.MessageType
+import com.noljanolja.core.conversation.domain.model.Message
+import com.noljanolja.core.conversation.domain.model.MessageStatus
+import com.noljanolja.core.conversation.domain.model.MessageType
 
 @Composable
 fun ClickableMessage(
@@ -19,7 +20,7 @@ fun ClickableMessage(
     onMessageClick: (Message) -> Unit,
 ) {
     when (message.type) {
-        MessageType.PlainText -> {
+        MessageType.PLAINTEXT -> {
             ClickableTextMessage(
                 message = message,
                 modifier = Modifier.clickable { onMessageClick(message) }
@@ -49,7 +50,13 @@ private fun ClickableTextMessage(
     ClickableText(
         text = styledMessage,
         style = MaterialTheme.typography.bodyMedium.copy(
-            color = if (message.sender.isMe) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+            color = if (message.status == MessageStatus.FAILED) {
+                MaterialTheme.colorScheme.error
+            } else if (message.sender.isMe) {
+                MaterialTheme.colorScheme.background
+            } else {
+                MaterialTheme.colorScheme.onPrimary
+            },
         ),
         modifier = modifier,
         onClick = {

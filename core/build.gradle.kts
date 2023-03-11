@@ -51,6 +51,10 @@ kotlin {
                 api("io.ktor:ktor-client-content-negotiation:2.1.1")
                 api("io.ktor:ktor-client-serialization:2.1.1")
                 api("io.ktor:ktor-serialization-kotlinx-json:2.1.1")
+                api("io.rsocket.kotlin:rsocket-ktor-client:0.15.4")
+                api("io.ktor:ktor-client-okhttp:2.1.1")
+
+                api("co.touchlab:kermit:1.0.0")
             }
         }
         val androidMain by getting {

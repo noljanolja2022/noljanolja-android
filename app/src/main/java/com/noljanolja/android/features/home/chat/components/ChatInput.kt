@@ -32,8 +32,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.noljanolja.android.R
-import com.noljanolja.android.common.conversation.domain.model.MessageType
 import com.noljanolja.android.ui.composable.BackPressHandler
+import com.noljanolja.core.conversation.domain.model.MessageType
 
 private enum class InputSelector {
     NONE,
@@ -46,7 +46,7 @@ private enum class InputSelector {
 
 private enum class EmojiStickerSelector {
     STICKER,
-    GIF
+    GIF,
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -94,7 +94,7 @@ fun ChatInput(
                 selector = currentInputSelector,
                 onSelectorChanged = { currentInputSelector = it },
                 onMessageSent = {
-                    onMessageSent(message.text, MessageType.PlainText, listOf())
+                    onMessageSent(message.text, MessageType.PLAINTEXT, listOf())
                     // Reset text field and close keyboard
                     message = TextFieldValue()
                     // Move scroll to bottom
@@ -116,13 +116,13 @@ private fun ChatInputText(
     selector: InputSelector,
     onSelectorChanged: (InputSelector) -> Unit,
     onMessageSent: () -> Unit,
-    shouldShowSendButton: Boolean = false
+    shouldShowSendButton: Boolean = false,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(MaterialTheme.colorScheme.onPrimary)
+            .background(MaterialTheme.colorScheme.primaryContainer)
             .padding(4.dp),
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.Bottom,
@@ -139,10 +139,13 @@ private fun ChatInputText(
                         .then(Modifier.size(36.dp))
                 ) {
                     Icon(
-                        if (selector == InputSelector.EXTRA) Icons.Default.More
-                        else Icons.Outlined.More,
+                        if (selector == InputSelector.EXTRA) {
+                            Icons.Default.More
+                        } else {
+                            Icons.Outlined.More
+                        },
                         contentDescription = null,
-                        tint = if (selector == InputSelector.EXTRA) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                        tint = if (selector == InputSelector.EXTRA) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.secondary,
                     )
                 }
 
@@ -154,7 +157,7 @@ private fun ChatInputText(
                     Icon(
                         Icons.Outlined.Camera,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface,
+                        tint = MaterialTheme.colorScheme.secondary,
                     )
                 }
                 IconButton(
@@ -163,10 +166,13 @@ private fun ChatInputText(
                         .then(Modifier.size(36.dp))
                 ) {
                     Icon(
-                        if (selector == InputSelector.GALLERY) Icons.Filled.PhotoLibrary
-                        else Icons.Outlined.PhotoLibrary,
+                        if (selector == InputSelector.GALLERY) {
+                            Icons.Filled.PhotoLibrary
+                        } else {
+                            Icons.Outlined.PhotoLibrary
+                        },
                         contentDescription = null,
-                        tint = if (selector == InputSelector.GALLERY) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                        tint = if (selector == InputSelector.GALLERY) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.secondary,
                     )
                 }
             }
@@ -260,7 +266,7 @@ private fun ChatInputText(
                         Icons.Outlined.EmojiEmotions
                     },
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurface,
+                    tint = MaterialTheme.colorScheme.secondary,
                 )
             }
             AnimatedVisibility(visible = textField.text.isNotEmpty() || shouldShowSendButton) {
@@ -279,7 +285,6 @@ private fun ChatInputText(
                             shape = RoundedCornerShape(12.dp)
                         )
                         .padding(4.dp)
-
                 ) {
                     Icon(
                         Icons.Outlined.Send,

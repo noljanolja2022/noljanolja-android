@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Chat
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -25,12 +26,12 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
-import com.noljanolja.android.common.conversation.domain.model.Conversation
-import com.noljanolja.android.common.conversation.domain.model.MessageType
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.EmptyPage
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.util.humanReadableDate
+import com.noljanolja.core.conversation.domain.model.Conversation
+import com.noljanolja.core.conversation.domain.model.MessageType
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -63,6 +64,7 @@ fun ConversationsScreenContent(
             )
         },
         uiState = uiState,
+        showContentWithLoading = false,
         error = {}
     ) {
         if (uiState.data.isNullOrEmpty()) {
@@ -86,10 +88,11 @@ fun NewChatButton(
 ) {
     if (hasConversation) {
         FloatingActionButton(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
             content = {
                 Icon(
-                    Icons.Outlined.Chat,
+                    Icons.Outlined.Add,
                     contentDescription = null,
                 )
             },
@@ -97,7 +100,8 @@ fun NewChatButton(
         )
     } else {
         ExtendedFloatingActionButton(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
             icon = {
                 Icon(
                     Icons.Outlined.Chat,
@@ -107,9 +111,7 @@ fun NewChatButton(
             text = {
                 Text(
                     stringResource(R.string.chats_new_chat),
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        color = MaterialTheme.colorScheme.onTertiaryContainer,
-                    )
+                    style = MaterialTheme.typography.labelLarge,
                 )
             },
             onClick = onItemClick,
@@ -122,8 +124,8 @@ fun ConversationList(
     conversations: List<Conversation>,
     onItemClick: (Conversation) -> Unit,
 ) {
-    LazyColumn {
-        items(conversations) { conversation ->
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        items(conversations, key = { it.id }) { conversation ->
             ConversationRow(conversation) { onItemClick(it) }
         }
     }
@@ -141,8 +143,7 @@ fun ConversationRow(
             .clickable { onClick(conversation) }
             .padding(vertical = 10.dp, horizontal = 16.dp),
     ) {
-        val message = conversation.messages.first()
-
+        val message = conversation.messages.firstOrNull() ?: return
         Box(
             modifier = Modifier
                 .padding(top = 6.dp)
@@ -178,17 +179,17 @@ fun ConversationRow(
                 color = MaterialTheme.colorScheme.onSurface,
             )
             val formattedMessage = when (message.type) {
-                MessageType.PlainText -> {
+                MessageType.PLAINTEXT -> {
                     message.message
                 }
-                MessageType.Sticker -> {
+                MessageType.STICKER -> {
                     if (message.sender.isMe) {
                         stringResource(R.string.chats_message_my_sticker)
                     } else {
                         stringResource(R.string.chats_message_sticker)
                     }
                 }
-                MessageType.Document, MessageType.Gif -> {
+                MessageType.DOCUMENT, MessageType.GIF -> {
                     if (message.sender.isMe) {
                         stringResource(R.string.chats_message_my_file)
                     } else {

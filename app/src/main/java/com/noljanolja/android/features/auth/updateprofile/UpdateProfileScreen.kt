@@ -25,13 +25,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.noljanolja.android.R
-import com.noljanolja.android.common.user.domain.model.Gender
 import com.noljanolja.android.features.auth.updateprofile.components.AvatarInput
 import com.noljanolja.android.features.auth.updateprofile.components.DoBInput
 import com.noljanolja.android.features.auth.updateprofile.components.GenderInput
 import com.noljanolja.android.features.auth.updateprofile.components.NameInput
 import com.noljanolja.android.ui.composable.ErrorDialog
 import com.noljanolja.android.ui.composable.LoadingDialog
+import com.noljanolja.core.user.domain.model.Gender
 import kotlinx.datetime.toKotlinLocalDate
 import java.time.LocalDate
 
@@ -54,7 +54,7 @@ fun UpdateProfileContent(
     handleEvent: (UpdateProfileEvent) -> Unit,
 ) {
     val genders =
-        remember { mutableStateListOf(Gender.Male.name, Gender.Female.name, Gender.Other.name) }
+        remember { mutableStateListOf(Gender.MALE.name, Gender.FEMALE.name, Gender.OTHER.name) }
     var showAvatarInputDialog by rememberSaveable { mutableStateOf(false) }
     var avatar by rememberSaveable { mutableStateOf<Uri?>(null) }
     val maxNameLength = rememberSaveable { 20 }

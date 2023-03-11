@@ -1,13 +1,10 @@
 package com.noljanolja.android.features.auth.login
 
-import android.content.Intent
 import com.noljanolja.android.common.base.launch
-import com.noljanolja.android.common.error.ValidEmailFailed
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
-import com.noljanolja.android.common.user.domain.model.User
-import com.noljanolja.android.common.user.domain.repository.UserRepository
 import com.noljanolja.android.features.auth.common.BaseAuthViewModel
+import com.noljanolja.core.user.domain.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,7 +13,6 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val navigationManager: NavigationManager,
-    private val userRepository: UserRepository,
 ) : BaseAuthViewModel() {
     private val _uiStateFlow = MutableStateFlow(LoginUIState.Login)
     val uiStateFlow = _uiStateFlow.asStateFlow()
@@ -50,10 +46,10 @@ class LoginViewModel @Inject constructor(
                     onForgotIdOrPassword()
                 }
                 LoginEvent.LoginEmail -> {
-                    signInWithEmailAndPassword()
+//                    signInWithEmailAndPassword()
                 }
                 LoginEvent.LoginKakao -> {
-                    loginWithKakao()
+//                    loginWithKakao()
                 }
                 LoginEvent.VerifyEmail -> {}
                 LoginEvent.OpenCountryList -> {
@@ -66,29 +62,29 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun handleLoginWithGoogleFromIntent(data: Intent?) {
-        launch {
-            _uiStateFlow.emit(LoginUIState.Loading)
-            val result = userRepository.getAccountFromGoogleIntent(data)
-            handleAuthResult(result)
-        }
-    }
+//    fun handleLoginWithGoogleFromIntent(data: Intent?) {
+//        launch {
+//            _uiStateFlow.emit(LoginUIState.Loading)
+//            val result = userRepository.getAccountFromGoogleIntent(data)
+//            handleAuthResult(result)
+//        }
+//    }
+//
+//    fun handleLoginWithNaverFromIntent(data: Intent?) {
+//        launch {
+//            _uiStateFlow.emit(LoginUIState.Loading)
+//            val result = userRepository.getAccountFromNaverIntent(data)
+//            handleAuthResult(result)
+//        }
+//    }
 
-    fun handleLoginWithNaverFromIntent(data: Intent?) {
-        launch {
-            _uiStateFlow.emit(LoginUIState.Loading)
-            val result = userRepository.getAccountFromNaverIntent(data)
-            handleAuthResult(result)
-        }
-    }
-
-    private fun loginWithKakao() {
-        launch {
-            _uiStateFlow.emit(LoginUIState.Loading)
-            val result = userRepository.loginWithKakao()
-            handleAuthResult(result)
-        }
-    }
+//    private fun loginWithKakao() {
+//        launch {
+//            _uiStateFlow.emit(LoginUIState.Loading)
+//            val result = userRepository.loginWithKakao()
+//            handleAuthResult(result)
+//        }
+//    }
 
     private fun handleAuthResult(result: Result<User>?) {
         launch {
@@ -106,23 +102,23 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun signInWithEmailAndPassword() {
-        launch {
-            _uiStateFlow.emit(LoginUIState.Loading)
-            try {
-                requireValidEmail()
-                val result =
-                    userRepository.signInWithEmailAndPassword(emailFlow.value, passwordFlow.value)
-                handleAuthResult(result)
-            } catch (e: ValidEmailFailed) {
-                _uiStateFlow.emit(LoginUIState.Login)
-                sendEmailError(e)
-            } catch (e: Exception) {
-                _uiStateFlow.emit(LoginUIState.Login)
-                sendError(e)
-            }
-        }
-    }
+//    private fun signInWithEmailAndPassword() {
+//        launch {
+//            _uiStateFlow.emit(LoginUIState.Loading)
+//            try {
+//                requireValidEmail()
+//                val result =
+//                    userRepository.signInWithEmailAndPassword(emailFlow.value, passwordFlow.value)
+//                handleAuthResult(result)
+//            } catch (e: ValidEmailFailed) {
+//                _uiStateFlow.emit(LoginUIState.Login)
+//                sendEmailError(e)
+//            } catch (e: Exception) {
+//                _uiStateFlow.emit(LoginUIState.Login)
+//                sendError(e)
+//            }
+//        }
+//    }
 
     private fun onForgotIdOrPassword() {
         launch {

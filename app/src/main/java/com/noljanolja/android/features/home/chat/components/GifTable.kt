@@ -1,25 +1,25 @@
-//package com.noljanolja.android.features.home.chat.components
+// package com.noljanolja.android.features.home.chat.components
 //
-//import androidx.compose.animation.*
-//import androidx.compose.foundation.*
-//import androidx.compose.foundation.layout.*
-//import androidx.compose.foundation.lazy.*
-//import androidx.compose.material3.FloatingActionButton
-//import androidx.compose.material3.Icon
-//import androidx.compose.runtime.*
-//import androidx.compose.ui.Alignment
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.graphics.graphicsLayer
-//import androidx.compose.ui.layout.ContentScale
-//import androidx.compose.ui.res.painterResource
-//import androidx.compose.ui.res.stringResource
-//import androidx.compose.ui.unit.dp
-//import coil.compose.AsyncImage
-//import com.google.accompanist.pager.ExperimentalPagerApi
+// import androidx.compose.animation.*
+// import androidx.compose.foundation.*
+// import androidx.compose.foundation.layout.*
+// import androidx.compose.foundation.lazy.*
+// import androidx.compose.material3.FloatingActionButton
+// import androidx.compose.material3.Icon
+// import androidx.compose.runtime.*
+// import androidx.compose.ui.Alignment
+// import androidx.compose.ui.Modifier
+// import androidx.compose.ui.graphics.graphicsLayer
+// import androidx.compose.ui.layout.ContentScale
+// import androidx.compose.ui.res.painterResource
+// import androidx.compose.ui.res.stringResource
+// import androidx.compose.ui.unit.dp
+// import coil.compose.AsyncImage
+// import com.google.accompanist.pager.ExperimentalPagerApi
 //
-//@OptIn(ExperimentalPagerApi::class, ExperimentalAnimationApi::class)
-//@Composable
-//fun GifTable(
+// @OptIn(ExperimentalPagerApi::class, ExperimentalAnimationApi::class)
+// @Composable
+// fun GifTable(
 //    modifier: Modifier,
 //    onGifClick: (Gif) -> Unit,
 //    onLoadMoreGifs: (String) -> Unit,
@@ -29,7 +29,7 @@
 //    isLoading: Boolean,
 //    isDisplaySearchBar: Boolean,
 //    currentFraction: Float,
-//) {
+// ) {
 //    var searchText by remember { mutableStateOf("") }
 //
 //    Box(
@@ -81,14 +81,14 @@
 //            }
 //        }
 //    }
-//}
+// }
 //
-//@Composable
-//private fun GifList(
+// @Composable
+// private fun GifList(
 //    gifs: List<Gif>,
 //    onGifClick: (Gif) -> Unit,
 //    onLoadMoreGifs: () -> Unit
-//) {
+// ) {
 //    val scrollState = rememberLazyListState()
 //
 //    Column(
@@ -105,13 +105,13 @@
 //    }
 //
 //    InfiniteListHandler(scrollState, onLoadMore = onLoadMoreGifs)
-//}
+// }
 //
-//@Composable
-//private fun GifItem(
+// @Composable
+// private fun GifItem(
 //    gif: Gif,
 //    onGifClick: (Gif) -> Unit
-//) {
+// ) {
 //    AsyncImage(
 //        gif.url,
 //        contentDescription = null,
@@ -122,4 +122,4 @@
 //            .clickable { onGifClick(gif) },
 //        contentScale = ContentScale.Fit
 //    )
-//}
+// }

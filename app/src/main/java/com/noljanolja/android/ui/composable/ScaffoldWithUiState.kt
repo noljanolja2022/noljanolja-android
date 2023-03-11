@@ -17,6 +17,7 @@ fun <D> ScaffoldWithUiState(
     modifier: Modifier = Modifier,
     uiState: UiState<D>,
     topBar: @Composable () -> Unit = {},
+    showContentWithLoading: Boolean = true,
     floatingActionButton: @Composable () -> Unit = {},
     error: @Composable ((Throwable?) -> Unit)? = null,
     content: @Composable (() -> Unit)? = null,
@@ -26,8 +27,10 @@ fun <D> ScaffoldWithUiState(
         topBar = topBar,
         floatingActionButton = floatingActionButton,
     ) {
-        Box(modifier = Modifier.fillMaxSize().padding(it)) {
-            content?.invoke()
+        Box(modifier = Modifier.padding(it).fillMaxSize()) {
+            if (showContentWithLoading || !uiState.loading) {
+                content?.invoke()
+            }
         }
         LoadingDialog(isLoading = uiState.loading)
         if (uiState.error != null && error != null) {

@@ -3,27 +3,29 @@ package com.noljanolja.android.features.home.chat
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
-import com.noljanolja.android.common.conversation.domain.model.Conversation
-import com.noljanolja.android.common.conversation.domain.model.ConversationType
-import com.noljanolja.android.common.conversation.domain.model.Message
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
-import com.noljanolja.android.common.user.domain.model.User
+import com.noljanolja.core.CoreManager
+import com.noljanolja.core.conversation.domain.model.Conversation
+import com.noljanolja.core.conversation.domain.model.ConversationType
+import com.noljanolja.core.conversation.domain.model.Message
+import com.noljanolja.core.user.domain.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
-import kotlin.random.Random
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
-    private val navigationManager: NavigationManager
+    private val navigationManager: NavigationManager,
+    private val coreManager: CoreManager,
 ) : BaseViewModel() {
     private var conversationId: Long = 0L
     private var userId: String = ""
     private var userName: String = ""
+    private var noMoreMessages: Boolean = false
+
     private var job: Job? = null
 
     private val _chatUiStateFlow = MutableStateFlow(UiState<Conversation>())
@@ -34,7 +36,20 @@ class ChatViewModel @Inject constructor(
             when (event) {
                 is ChatEvent.ClickMessage -> {}
                 ChatEvent.GoBack -> navigationManager.navigate(NavigationDirections.Back)
-                ChatEvent.LoadMoreMessages -> {}
+                ChatEvent.LoadMoreMessages -> {
+                    if (noMoreMessages) return@launch
+
+                    _chatUiStateFlow.value.data?.let { conversation ->
+                        val oldestMessageId = conversation.messages.lastOrNull()?.id
+
+                        coreManager.getConversationMessages(
+                            conversationId = conversationId,
+                            messageBefore = oldestMessageId,
+                            messageAfter = null,
+                        ).takeIf { it.isNotEmpty() }
+                            ?: let { noMoreMessages = true }
+                    }
+                }
                 is ChatEvent.NavigateToProfile -> {}
                 is ChatEvent.ReloadConversation -> {}
                 is ChatEvent.SendMessage -> {
@@ -59,48 +74,45 @@ class ChatViewModel @Inject constructor(
     }
 
     private suspend fun sendMessage(message: Message) {
-        val conversation = _chatUiStateFlow.value.data ?: return
-        val messages = conversation.messages
-        val newMessages = mutableListOf<Message>().also {
-            it.add(
-                message.copy(
-                    sender = User(isMe = true)
-                )
-            )
-            it.addAll(messages)
+        coreManager.sendConversationMessage(conversationId, userId, message)
+            .takeIf { it > 0L && conversationId == 0L }?.let {
+            conversationId = it
+            fetchConversation(onlyLocalData = true)
         }
-        _chatUiStateFlow.emit(UiState(data = conversation.copy(messages = newMessages)))
-        testReply(message)
     }
 
-    // Test
-    private suspend fun testReply(message: Message) {
-        delay(500)
-        Random.nextInt(2).takeIf { it > 0 } ?: return
-        val conversation = _chatUiStateFlow.value.data ?: return
-        val messages = conversation.messages
-        val newMessages = mutableListOf<Message>().also {
-            it.add(
-                message.copy(
-                    message = "Reply ${message.message}"
-                )
-            )
-            it.addAll(messages)
-        }
-        _chatUiStateFlow.emit(UiState(data = conversation.copy(messages = newMessages)))
-    }
-
-    private fun fetchConversation() {
+    private fun fetchConversation(onlyLocalData: Boolean = false) {
         job?.cancel()
         job = launch {
             val value = _chatUiStateFlow.value
-            _chatUiStateFlow.emit(value.copy(loading = true))
-            delay(1_000)
-            _chatUiStateFlow.emit(
-                UiState(
-                    data = Conversation.mock().copy(id = conversationId)
+            if (!onlyLocalData) {
+                _chatUiStateFlow.emit(value.copy(loading = true))
+            }
+            if (conversationId == 0L) {
+                coreManager.findConversationWithUser(userId)?.let {
+                    conversationId = it.id
+                    _chatUiStateFlow.emit(
+                        UiState(
+                            data = it
+                        )
+                    )
+                }
+            }
+            if (conversationId != 0L) {
+                coreManager.getConversation(conversationId).collect { conversation ->
+                    _chatUiStateFlow.emit(
+                        UiState(
+                            data = conversation
+                        )
+                    )
+                }
+            } else {
+                _chatUiStateFlow.emit(
+                    UiState(
+                        data = createEmptyConversation()
+                    )
                 )
-            )
+            }
         }
     }
 
@@ -108,7 +120,7 @@ class ChatViewModel @Inject constructor(
         return Conversation(
             id = 0,
             title = "",
-            type = ConversationType.Single,
+            type = ConversationType.SINGLE,
             creator = User(),
             participants = listOf(User(name = userName)),
         )

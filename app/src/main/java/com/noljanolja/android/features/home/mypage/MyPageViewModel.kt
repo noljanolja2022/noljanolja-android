@@ -5,8 +5,8 @@ import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
-import com.noljanolja.android.common.user.domain.model.User
-import com.noljanolja.android.common.user.domain.repository.UserRepository
+import com.noljanolja.core.CoreManager
+import com.noljanolja.core.user.domain.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyPageViewModel @Inject constructor(
-    private val userRepository: UserRepository,
+    private val coreManager: CoreManager,
     private val navigationManager: NavigationManager,
 ) : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow<MyPageUIState>(MyPageUIState.Loading)
@@ -23,7 +23,7 @@ class MyPageViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _uiStateFlow.emit(MyPageUIState.Loaded(userRepository.getCurrentUser().getOrNull()))
+            _uiStateFlow.emit(MyPageUIState.Loaded(coreManager.getCurrentUser().getOrNull()))
         }
     }
 

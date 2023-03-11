@@ -1,48 +1,48 @@
-//package com.noljanolja.android.features.home.chat.components
+// package com.noljanolja.android.features.home.chat.components
 //
-//import android.Manifest
-//import android.annotation.SuppressLint
-//import android.content.Context
-//import android.content.Intent
-//import android.net.Uri
-//import androidx.activity.compose.rememberLauncherForActivityResult
-//import androidx.activity.result.contract.ActivityResultContracts
-//import androidx.compose.foundation.ExperimentalFoundationApi
-//import androidx.compose.foundation.background
-//import androidx.compose.foundation.border
-//import androidx.compose.foundation.clickable
-//import androidx.compose.foundation.layout.*
-//import androidx.compose.foundation.lazy.GridCells
-//import androidx.compose.foundation.lazy.LazyVerticalGrid
-//import androidx.compose.foundation.shape.CircleShape
-//import androidx.compose.foundation.shape.RoundedCornerShape
-//import androidx.compose.material3.FloatingActionButton
-//import androidx.compose.material3.Icon
-//import androidx.compose.material3.MaterialTheme
-//import androidx.compose.material3.Text
-//import androidx.compose.runtime.Composable
-//import androidx.compose.ui.Alignment
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.draw.clip
-//import androidx.compose.ui.graphics.Color
-//import androidx.compose.ui.layout.ContentScale
-//import androidx.compose.ui.platform.LocalContext
-//import androidx.compose.ui.res.painterResource
-//import androidx.compose.ui.res.stringResource
-//import androidx.compose.ui.unit.dp
-//import coil.compose.AsyncImage
-//import coil.request.ImageRequest
+// import android.Manifest
+// import android.annotation.SuppressLint
+// import android.content.Context
+// import android.content.Intent
+// import android.net.Uri
+// import androidx.activity.compose.rememberLauncherForActivityResult
+// import androidx.activity.result.contract.ActivityResultContracts
+// import androidx.compose.foundation.ExperimentalFoundationApi
+// import androidx.compose.foundation.background
+// import androidx.compose.foundation.border
+// import androidx.compose.foundation.clickable
+// import androidx.compose.foundation.layout.*
+// import androidx.compose.foundation.lazy.GridCells
+// import androidx.compose.foundation.lazy.LazyVerticalGrid
+// import androidx.compose.foundation.shape.CircleShape
+// import androidx.compose.foundation.shape.RoundedCornerShape
+// import androidx.compose.material3.FloatingActionButton
+// import androidx.compose.material3.Icon
+// import androidx.compose.material3.MaterialTheme
+// import androidx.compose.material3.Text
+// import androidx.compose.runtime.Composable
+// import androidx.compose.ui.Alignment
+// import androidx.compose.ui.Modifier
+// import androidx.compose.ui.draw.clip
+// import androidx.compose.ui.graphics.Color
+// import androidx.compose.ui.layout.ContentScale
+// import androidx.compose.ui.platform.LocalContext
+// import androidx.compose.ui.res.painterResource
+// import androidx.compose.ui.res.stringResource
+// import androidx.compose.ui.unit.dp
+// import coil.compose.AsyncImage
+// import coil.request.ImageRequest
 //
-//@SuppressLint("StateFlowValueCalledInComposition")
-//@Composable
-//fun PhotoTable(
+// @SuppressLint("StateFlowValueCalledInComposition")
+// @Composable
+// fun PhotoTable(
 //    mediaList: List<Pair<Uri, Long?>>,
 //    selectedMedia: List<Uri>,
 //    modifier: Modifier,
 //    onMediaSelect: (List<Uri>, Boolean?) -> Unit,
 //    loadMedia: () -> Unit,
 //    openPhoneSetting: () -> Unit
-//) {
+// ) {
 //    val libraryLauncher =
 //        rememberLauncherForActivityResult(object : ActivityResultContracts.GetMultipleContents() {
 //            override fun createIntent(context: Context, input: String): Intent {
@@ -75,16 +75,16 @@
 //            )
 //        }
 //    }
-//}
+// }
 //
-//@Composable
-//fun BuildInGallery(
+// @Composable
+// fun BuildInGallery(
 //    mediaList: List<Pair<Uri, Long?>>,
 //    selectedMedia: List<Uri>,
 //    onMediaSelect: (List<Uri>, Boolean) -> Unit,
 //    loadMedia: () -> Unit,
 //    openPhoneSetting: () -> Unit
-//) {
+// ) {
 //    val context = LocalContext.current
 //    val permissionChecker = PermissionChecker(context)
 //    if (!permissionChecker.canReadExternalStorage()) {
@@ -103,15 +103,15 @@
 //            onMediaSelect = onMediaSelect
 //        )
 //    }
-//}
+// }
 //
-//@OptIn(ExperimentalFoundationApi::class)
-//@Composable
-//fun GridContent(
+// @OptIn(ExperimentalFoundationApi::class)
+// @Composable
+// fun GridContent(
 //    mediaList: List<Pair<Uri, Long?>>,
 //    selectedMedia: List<Uri>,
 //    onMediaSelect: (List<Uri>, Boolean) -> Unit,
-//) {
+// ) {
 //    LazyVerticalGrid(
 //        cells = GridCells.Fixed(3),
 //        contentPadding = PaddingValues(3.dp),
@@ -132,16 +132,16 @@
 //            }
 //        }
 //    }
-//}
+// }
 //
-//@Composable
-//fun PhotoItem(
+// @Composable
+// fun PhotoItem(
 //    uri: Uri,
 //    durationInMil: Long?,
 //    isSelected: Boolean,
 //    indexSelected: Int,
 //    onMediaSelect: (List<Uri>, Boolean) -> Unit,
-//) {
+// ) {
 //    val context = LocalContext.current
 //    Box {
 //        AsyncImage(
@@ -209,9 +209,9 @@
 //            )
 //        }
 //    }
-//}
+// }
 //
-//private fun setDurationDisplay(durationInMil: Long): String {
+// private fun setDurationDisplay(durationInMil: Long): String {
 //    val hour: Long = durationInMil / 3600000L
 //    val minute: Long = (durationInMil % 3600000L) / 60000L
 //    val seconds: Long = (durationInMil % 3600000L) % 60000L / 1000L
@@ -221,4 +221,4 @@
 //    }
 //    durationDisplay += String.format("%02d:%02d", minute.toInt(), seconds.toInt())
 //    return durationDisplay
-//}
+// }

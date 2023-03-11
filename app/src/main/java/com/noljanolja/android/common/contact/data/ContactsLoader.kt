@@ -3,15 +3,17 @@ package com.noljanolja.android.common.contact.data
 import android.content.ContentResolver
 import android.content.Context
 import android.provider.ContactsContract
-import com.noljanolja.android.common.contact.domain.model.Contact
 import com.noljanolja.android.services.PermissionChecker
+import com.noljanolja.android.util.formatPhone
+import com.noljanolja.core.contacts.domain.model.Contact
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import java.util.*
 
 class ContactsLoader(
-    context: Context,
+    val context: Context,
 ) {
     private val resolver: ContentResolver = context.contentResolver
     private val permissionChecker: PermissionChecker = PermissionChecker(context)
@@ -58,8 +60,9 @@ class ContactsLoader(
         )?.use { cursor ->
             if (cursor.moveToFirst()) {
                 do {
-                    cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER).takeIf { it >= 0 }?.let {
-                        result.add(cursor.getString(it))
+                    cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                        .takeIf { it >= 0 }?.let {
+                        result.add(cursor.getString(it).formatPhone(context))
                     }
                 } while (cursor.moveToNext())
             }
@@ -78,7 +81,8 @@ class ContactsLoader(
         )?.use { cursor ->
             if (cursor.moveToFirst()) {
                 do {
-                    cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA).takeIf { it >= 0 }?.let {
+                    cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA)
+                        .takeIf { it >= 0 }?.let {
                         result.add(cursor.getString(it))
                     }
                 } while (cursor.moveToNext())

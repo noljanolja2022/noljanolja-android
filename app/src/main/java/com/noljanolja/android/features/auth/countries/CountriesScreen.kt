@@ -15,8 +15,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.noljanolja.android.R
-import com.noljanolja.android.common.country.domain.model.Countries
-import com.noljanolja.android.common.country.domain.model.Country
+import com.noljanolja.core.country.domain.model.Countries
+import com.noljanolja.core.country.domain.model.Country
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.SearchBar
 

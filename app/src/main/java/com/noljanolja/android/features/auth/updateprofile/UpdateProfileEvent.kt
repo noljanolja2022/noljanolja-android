@@ -1,6 +1,6 @@
 package com.noljanolja.android.features.auth.updateprofile
 
-import com.noljanolja.android.common.user.domain.model.Gender
+import com.noljanolja.core.user.domain.model.Gender
 import kotlinx.datetime.LocalDate
 
 sealed interface UpdateProfileEvent {

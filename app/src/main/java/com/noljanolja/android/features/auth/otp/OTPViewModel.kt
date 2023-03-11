@@ -4,8 +4,8 @@ import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
-import com.noljanolja.android.common.user.domain.model.User
-import com.noljanolja.android.common.user.domain.repository.UserRepository
+import com.noljanolja.core.CoreManager
+import com.noljanolja.core.user.domain.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class OTPViewModel @Inject constructor(
     private val navigationManager: NavigationManager,
-    private val userRepository: UserRepository,
+    private val coreManager: CoreManager,
 ) : BaseViewModel() {
     private val _uiStateFlow: MutableStateFlow<OTPUIState> = MutableStateFlow(OTPUIState())
     val uiStateFlow: StateFlow<OTPUIState> = _uiStateFlow.asStateFlow()
@@ -29,7 +29,7 @@ class OTPViewModel @Inject constructor(
                     }
                 }
                 is OTPEvent.VerifyOTP -> {
-                    val result = userRepository.verifyOTPCode(event.verificationId, event.otp)
+                    val result = coreManager.verifyOTPCode(event.verificationId, event.otp)
                     handleAuthResult(result)
                 }
             }

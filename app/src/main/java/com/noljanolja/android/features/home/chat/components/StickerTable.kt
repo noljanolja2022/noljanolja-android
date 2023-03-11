@@ -1,42 +1,42 @@
-//package com.noljanolja.android.features.home.chat.components
+// package com.noljanolja.android.features.home.chat.components
 //
-//import androidx.compose.foundation.Image
-//import androidx.compose.foundation.background
-//import androidx.compose.foundation.layout.*
-//import androidx.compose.foundation.lazy.LazyColumn
-//import androidx.compose.foundation.lazy.LazyRow
-//import androidx.compose.foundation.lazy.rememberLazyListState
-//import androidx.compose.foundation.shape.RoundedCornerShape
-//import androidx.compose.material.Divider
-//import androidx.compose.material3.Icon
-//import androidx.compose.material3.IconButton
-//import androidx.compose.material3.MaterialTheme
-//import androidx.compose.runtime.Composable
-//import androidx.compose.runtime.remember
-//import androidx.compose.runtime.rememberCoroutineScope
-//import androidx.compose.ui.Alignment
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.platform.LocalConfiguration
-//import androidx.compose.ui.res.painterResource
-//import androidx.compose.ui.unit.dp
-//import coil.compose.rememberAsyncImagePainter
-//import com.google.accompanist.pager.ExperimentalPagerApi
-//import com.google.accompanist.pager.HorizontalPager
-//import com.google.accompanist.pager.PagerState
-//import com.google.accompanist.pager.rememberPagerState
-//import kotlinx.coroutines.launch
+// import androidx.compose.foundation.Image
+// import androidx.compose.foundation.background
+// import androidx.compose.foundation.layout.*
+// import androidx.compose.foundation.lazy.LazyColumn
+// import androidx.compose.foundation.lazy.LazyRow
+// import androidx.compose.foundation.lazy.rememberLazyListState
+// import androidx.compose.foundation.shape.RoundedCornerShape
+// import androidx.compose.material.Divider
+// import androidx.compose.material3.Icon
+// import androidx.compose.material3.IconButton
+// import androidx.compose.material3.MaterialTheme
+// import androidx.compose.runtime.Composable
+// import androidx.compose.runtime.remember
+// import androidx.compose.runtime.rememberCoroutineScope
+// import androidx.compose.ui.Alignment
+// import androidx.compose.ui.Modifier
+// import androidx.compose.ui.platform.LocalConfiguration
+// import androidx.compose.ui.res.painterResource
+// import androidx.compose.ui.unit.dp
+// import coil.compose.rememberAsyncImagePainter
+// import com.google.accompanist.pager.ExperimentalPagerApi
+// import com.google.accompanist.pager.HorizontalPager
+// import com.google.accompanist.pager.PagerState
+// import com.google.accompanist.pager.rememberPagerState
+// import kotlinx.coroutines.launch
 //
 //
-//private const val tabSizeDp = 40
-//private const val stickerSizeDp = 90
+// private const val tabSizeDp = 40
+// private const val stickerSizeDp = 90
 //
-//@OptIn(ExperimentalPagerApi::class)
-//@Composable
-//fun StickerTable(
+// @OptIn(ExperimentalPagerApi::class)
+// @Composable
+// fun StickerTable(
 //    modifier: Modifier = Modifier,
 //    stickersLoader: StickersLoader = get(),
 //    onStickerClicked: (Sticker) -> Unit,
-//) {
+// ) {
 //    val coroutineScope = rememberCoroutineScope()
 //    val pagerState = rememberPagerState()
 //    val stickerPacks = remember { stickersLoader.stickerPacks }
@@ -63,15 +63,15 @@
 //            }
 //        )
 //    }
-//}
+// }
 //
-//@Composable
-//private fun StickerTabs(
+// @Composable
+// private fun StickerTabs(
 //    stickerPacks: List<StickerPack>,
 //    selectedTab: Int,
 //    onTabSelected: (Int) -> Unit,
 //    modifier: Modifier = Modifier
-//) {
+// ) {
 //    Row(
 //        modifier = modifier,
 //        verticalAlignment = Alignment.CenterVertically
@@ -112,14 +112,14 @@
 //            )
 //        }
 //    }
-//}
+// }
 //
-//@Composable
-//private fun StickerTab(
+// @Composable
+// private fun StickerTab(
 //    stickerPack: StickerPack,
 //    isSelected: Boolean,
 //    onTabSelected: () -> Unit,
-//) {
+// ) {
 //    Box(
 //        modifier = Modifier
 //            .padding(horizontal = 2.dp)
@@ -150,16 +150,16 @@
 //            )
 //        }
 //    }
-//}
+// }
 //
-//@OptIn(ExperimentalPagerApi::class)
-//@Composable
-//private fun StickerList(
+// @OptIn(ExperimentalPagerApi::class)
+// @Composable
+// private fun StickerList(
 //    stickerPacks: List<StickerPack>,
 //    pagerState: PagerState,
 //    modifier: Modifier = Modifier,
 //    onStickerClicked: (Sticker) -> Unit,
-//) {
+// ) {
 //    val screenWidthDp = LocalConfiguration.current.screenWidthDp
 //    val stickerPerRow = screenWidthDp / stickerSizeDp
 //
@@ -193,15 +193,15 @@
 //            }
 //        }
 //    }
-//}
+// }
 //
-//@Composable
-//private fun StickerRow(
+// @Composable
+// private fun StickerRow(
 //    totalStickers: List<Sticker>,
 //    stickerRow: Int,
 //    stickersPerRow: Int,
 //    onStickerClicked: (Sticker) -> Unit,
-//) {
+// ) {
 //    Row(
 //        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
 //        horizontalArrangement = Arrangement.SpaceEvenly,
@@ -227,4 +227,4 @@
 //            }
 //        }
 //    }
-//}
+// }

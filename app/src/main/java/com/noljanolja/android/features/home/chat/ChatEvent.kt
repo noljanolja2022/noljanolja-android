@@ -1,7 +1,7 @@
 package com.noljanolja.android.features.home.chat
 
-import com.noljanolja.android.common.conversation.domain.model.Message
-import com.noljanolja.android.common.user.domain.model.User
+import com.noljanolja.core.conversation.domain.model.Message
+import com.noljanolja.core.user.domain.model.User
 
 sealed interface ChatEvent {
     object GoBack : ChatEvent

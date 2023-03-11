@@ -74,7 +74,7 @@ fun RoundedListTile(
                 ambientColor = MaterialTheme.colorScheme.secondary,
             )
             .clip(RoundedCornerShape(8.dp))
-            .background(MaterialTheme.colorScheme.onPrimary),
+            .background(MaterialTheme.colorScheme.background),
 
     ) {
         Row(
