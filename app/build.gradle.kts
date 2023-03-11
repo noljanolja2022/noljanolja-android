@@ -19,8 +19,8 @@ android {
         applicationId = "com.noljanolja.app.android"
         minSdk = 21
         targetSdk = 33
-        versionCode = 6
-        versionName = "0.0.6"
+        versionCode = 7
+        versionName = "1.0.0"
         testInstrumentationRunner = "com.noljanolja.android.InstrumentationTestRunner"
         multiDexEnabled = true
     }
