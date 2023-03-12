@@ -19,8 +19,8 @@ android {
         applicationId = "com.noljanolja.app.android"
         minSdk = 21
         targetSdk = 33
-        versionCode = 7
-        versionName = "1.0.0"
+        versionCode = 8
+        versionName = "1.0.1"
         testInstrumentationRunner = "com.noljanolja.android.InstrumentationTestRunner"
         multiDexEnabled = true
     }
@@ -124,6 +124,7 @@ dependencies {
 
     implementation("com.google.accompanist:accompanist-permissions:0.29.1-alpha")
     implementation("com.google.accompanist:accompanist-insets:0.29.1-alpha")
+    implementation ("com.googlecode.libphonenumber:libphonenumber:8.12.39")
 }
 
 kapt {

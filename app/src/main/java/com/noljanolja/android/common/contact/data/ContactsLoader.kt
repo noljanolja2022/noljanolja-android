@@ -4,7 +4,7 @@ import android.content.ContentResolver
 import android.content.Context
 import android.provider.ContactsContract
 import com.noljanolja.android.services.PermissionChecker
-import com.noljanolja.android.util.formatPhone
+import com.noljanolja.android.util.formatPhoneNumber
 import com.noljanolja.core.contacts.domain.model.Contact
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -62,7 +62,7 @@ class ContactsLoader(
                 do {
                     cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
                         .takeIf { it >= 0 }?.let {
-                        result.add(cursor.getString(it).formatPhone(context))
+                        result.add(formatPhoneNumber(cursor.getString(it), context))
                     }
                 } while (cursor.moveToNext())
             }
