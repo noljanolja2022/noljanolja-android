@@ -1,21 +1,25 @@
 package com.noljanolja.android.services
 
-import android.R
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
-import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.media.RingtoneManager
-import android.net.Uri
 import android.os.Build
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.NotificationCompat
+import androidx.core.app.Person
+import androidx.core.graphics.drawable.IconCompat
+import androidx.core.graphics.drawable.toBitmap
+import co.touchlab.kermit.Logger
+import coil.Coil
+import coil.request.ImageRequest
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.noljanolja.android.BuildConfig
 import com.noljanolja.android.MainActivity
+import com.noljanolja.android.MyApplication
+import com.noljanolja.android.R
 import com.noljanolja.core.CoreManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -30,8 +34,10 @@ class MyFirebaseService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        message.notification?.body?.let {
-            sendNotification(it)
+        Logger.d("onMessageReceived: ${message.data}")
+
+        scope.launch {
+            displayNotification(message.data)
         }
     }
 
@@ -46,69 +52,90 @@ class MyFirebaseService : FirebaseMessagingService() {
         }
     }
 
-    private fun sendNotification(messageBody: String) {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent = PendingIntent.getActivity(
-            this,
-            0,
-            intent,
-            PendingIntent.FLAG_ONE_SHOT,
-        )
-        val channelId = BuildConfig.APPLICATION_ID
-        val defaultSoundUri: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val notificationBuilder: NotificationCompat.Builder =
-            NotificationCompat.Builder(this, channelId)
-                .setSmallIcon(R.drawable.sym_def_app_icon)
-                .setLargeIcon(
-                    BitmapFactory.decodeResource(
-                        resources,
-                        R.mipmap.sym_def_app_icon,
-                    ),
-                )
-                .setContentTitle(channelId)
-                .setContentText(messageBody)
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent)
-                .setDefaults(Notification.DEFAULT_ALL)
-                .setPriority(NotificationManager.IMPORTANCE_HIGH)
-                .addAction(
-                    NotificationCompat.Action(
-                        R.drawable.ic_menu_close_clear_cancel,
-                        "Cancel",
-                        PendingIntent.getActivity(
-                            this,
-                            0,
-                            intent,
-                            PendingIntent.FLAG_CANCEL_CURRENT,
-                        ),
-                    ),
-                )
-                .addAction(
-                    NotificationCompat.Action(
-                        R.drawable.sym_call_outgoing,
-                        "OK",
-                        PendingIntent.getActivity(
-                            this,
-                            0,
-                            intent,
-                            PendingIntent.FLAG_CANCEL_CURRENT,
-                        ),
-                    ),
-                )
-        val notificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private suspend fun displayNotification(data: Map<String, String>) {
+        val conversationId = data["conversationId"]?.toInt() ?: 0
+//        if (conversationId.toLong() == coreManager.latestConversationId && MyApplication.isAppInForeground) return
 
-        // Since android Oreo notification channel is needed.
+        val channelId = getString(R.string.app_channel_id)
+        val notificationManager =
+            (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).apply {
+                createMessageNotificationChannel(channelId)
+            }
+        val notification = createMessageNotification(
+            channelId = channelId,
+            conversationId = conversationId,
+            conversationType = data["conversationType"].orEmpty(),
+            senderAvatar = data["senderAvatar"].orEmpty(),
+            senderName = data["senderName"].orEmpty(),
+            messageType = data["messageType"].orEmpty(),
+            message = data["message"].orEmpty(),
+            messageTime = data["messageTime"]?.toLong() ?: 0,
+        )
+        notificationManager.notify(conversationId, notification)
+    }
+
+    private suspend fun createMessageNotification(
+        channelId: String,
+        conversationId: Int,
+        conversationType: String,
+        senderAvatar: String,
+        senderName: String,
+        messageType: String,
+        message: String,
+        messageTime: Long,
+    ): Notification {
+        val senderIconRequest = ImageRequest.Builder(this)
+            .data(senderAvatar)
+            .allowHardware(false)
+            .build()
+        val senderIcon = Coil.imageLoader(this)
+            .execute(senderIconRequest)
+            .drawable
+            ?.let { (it as BitmapDrawable).bitmap }
+            ?: AppCompatResources.getDrawable(this, R.drawable.placeholder_avatar)!!.toBitmap()
+
+        val sender = Person.Builder()
+            .setIcon(IconCompat.createWithBitmap(senderIcon))
+            .setName(senderName)
+            .build()
+
+        val messageContent = when (messageType) {
+            "PlainText" -> message
+            "Sticker" -> "Sticker"
+            else -> "New message"
+        }
+
+        val messageStyle = NotificationCompat.MessagingStyle(sender)
+            .addMessage(messageContent, messageTime, sender)
+            .setGroupConversation(conversationType == "Group")
+
+        return NotificationCompat.Builder(this, channelId)
+            .setContentTitle("New message from ${sender.name}")
+            .setContentText(messageContent)
+            .setSmallIcon(R.drawable.logo)
+            .setStyle(messageStyle)
+            .setAutoCancel(true)
+            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(MainActivity.getPendingIntent(this, conversationId.toString()))
+            .build()
+    }
+
+    private fun NotificationManager.createMessageNotificationChannel(
+        channelId: String,
+    ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelName = getString(R.string.app_channel_name)
+            val channelDescription = getString(R.string.app_channel_description)
             val channel = NotificationChannel(
                 channelId,
-                "Channel human readable title",
-                NotificationManager.IMPORTANCE_DEFAULT,
-            )
-            notificationManager.createNotificationChannel(channel)
+                channelName,
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = channelDescription
+            }
+
+            createNotificationChannel(channel)
         }
-        notificationManager.notify(0, notificationBuilder.build())
     }
 }

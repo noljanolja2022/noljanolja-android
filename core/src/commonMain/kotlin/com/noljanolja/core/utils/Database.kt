@@ -2,10 +2,13 @@ package com.noljanolja.core.utils
 
 import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.Message
+import com.squareup.sqldelight.Transacter
+import com.squareup.sqldelight.TransactionWithoutReturn
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.withContext
+import kotlin.coroutines.CoroutineContext
 
 object Database {
-    private var CACHED_TOKEN: String? = null
     private val CACHED_CONVERSATIONS = MutableStateFlow<List<Conversation>>(listOf())
 
     suspend fun getLocalConversation(conversationId: Long): Flow<Conversation> {
@@ -63,13 +66,7 @@ object Database {
         )
     }
 
-    fun getToken() = CACHED_TOKEN
-    fun saveToken(token: String) {
-        CACHED_TOKEN = token
-    }
-
     suspend fun clear() {
-        CACHED_TOKEN = null
         CACHED_CONVERSATIONS.emit(emptyList())
     }
 }
@@ -87,4 +84,16 @@ private fun Conversation.combineConversation(conversation: Conversation): Conver
         createdAt = createdAt,
         updatedAt = maxOf(updatedAt, conversation.updatedAt)
     )
+}
+
+internal suspend fun Transacter.transactionWithContext(
+    coroutineContext: CoroutineContext,
+    noEnclosing: Boolean = false,
+    body: TransactionWithoutReturn.() -> Unit,
+) {
+    withContext(coroutineContext) {
+        this@transactionWithContext.transaction(noEnclosing) {
+            body()
+        }
+    }
 }

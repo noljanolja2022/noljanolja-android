@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE resources [<!ENTITY kakao_api_key "15d1b0d5dde51ea18a397effc5f25e3c">]>
 <resources>
     <string name="app_name" translatable="false">Noljanolja</string>
+    <string name="app_channel_id" translatable="false">noljanolja_notification_channel</string>
+    <string name="app_channel_name" translatable="false">noljanolja</string>
+    <string name="app_channel_description" translatable="false">noljanolja</string>
     <string name="home_item_1" translatable="false">Home 1</string>
     <string name="web_client_id" translatable="false">954965503519-4indv4tab6cr141999er2dd8nj43mtcr.apps.googleusercontent.com</string>
     <string name="kakao_api_key" translatable="false">&kakao_api_key;</string>

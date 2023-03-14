@@ -1,5 +1,6 @@
 package com.noljanolja.core
 
+import com.noljanolja.core.auth.domain.repository.AuthRepository
 import com.noljanolja.core.contacts.domain.model.Contact
 import com.noljanolja.core.contacts.domain.repository.ContactsRepository
 import com.noljanolja.core.conversation.domain.model.Conversation
@@ -13,7 +14,10 @@ class CoreManager(
     private val contactsRepository: ContactsRepository,
     private val userRepository: UserRepository,
     private val conversationRepository: ConversationRepository,
+    private val authRepository: AuthRepository,
 ) {
+
+    var latestConversationId: Long = 0
     suspend fun syncUserContacts(contacts: List<Contact>): Result<List<User>> {
         return contactsRepository.syncUserContacts(contacts)
     }
@@ -59,6 +63,7 @@ class CoreManager(
     }
 
     suspend fun pushTokens(token: String): Result<Boolean> {
+        authRepository.savePushToken(token)
         return userRepository.pushTokens(token)
     }
 
@@ -71,6 +76,15 @@ class CoreManager(
     }
 
     suspend fun logout(): Result<Boolean> {
+        authRepository.delete()
         return userRepository.logout()
     }
+
+    suspend fun getAuthToken(): String? = authRepository.getAuthToken()
+
+    suspend fun saveAuthToken(
+        authToken: String,
+    ) = authRepository.saveAuthToken(authToken)
+
+    suspend fun delete() = authRepository.delete()
 }

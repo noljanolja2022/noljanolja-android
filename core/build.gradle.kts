@@ -38,6 +38,7 @@ kotlin {
     }
 
     sourceSets {
+        val sqlDelightVersion = "1.5.5"
         val commonMain by getting {
             dependencies {
                 implementation("com.squareup.sqldelight:runtime:1.5.4")
@@ -54,12 +55,15 @@ kotlin {
                 api("io.rsocket.kotlin:rsocket-ktor-client:0.15.4")
                 api("io.ktor:ktor-client-okhttp:2.1.1")
 
-                api("co.touchlab:kermit:1.0.0")
+                api("co.touchlab:kermit:1.1.3")
+                implementation("com.squareup.sqldelight:runtime:$sqlDelightVersion")
+                implementation("com.squareup.sqldelight:coroutines-extensions:$sqlDelightVersion")
             }
         }
         val androidMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-client-okhttp:2.1.1")
+                implementation("com.squareup.sqldelight:android-driver:$sqlDelightVersion")
             }
         }
         val iosX64Main by getting
@@ -74,5 +78,11 @@ kotlin {
                 implementation("io.ktor:ktor-client-ios:2.1.1")
             }
         }
+    }
+}
+
+sqldelight {
+    database("Noljanolja") {
+        packageName = "com.noljanolja.core.db"
     }
 }

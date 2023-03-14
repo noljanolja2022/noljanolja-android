@@ -1,5 +1,6 @@
 package com.noljanolja.core.conversation.data.datasource
 
+import com.noljanolja.core.auth.domain.repository.AuthRepository
 import com.noljanolja.core.conversation.data.model.request.CreateConversationRequest
 import com.noljanolja.core.conversation.data.model.request.GetConversationMessagesRequest
 import com.noljanolja.core.conversation.data.model.request.GetConversationRequest
@@ -9,7 +10,6 @@ import com.noljanolja.core.conversation.data.model.response.GetConversationMessa
 import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.utils.Const.BASE_SOCKET_URL
 import com.noljanolja.core.utils.Const.BASE_URL
-import com.noljanolja.core.utils.Database
 import com.noljanolja.core.utils.default
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -36,6 +36,7 @@ import kotlinx.serialization.json.Json
 class ConversationApi(
     private val client: HttpClient,
     private val socketClient: HttpClient,
+    private val authRepository: AuthRepository,
 ) {
 
     suspend fun getConversations(): GetConversationsResponse {
@@ -76,7 +77,7 @@ class ConversationApi(
 
     @OptIn(ExperimentalMetadataApi::class, ExperimentalSerializationApi::class)
     suspend fun streamConversations(): Flow<Conversation> {
-        val token = Database.getToken()
+        val token = authRepository.getAuthToken()
         val rSocket: RSocket = socketClient.rSocket(BASE_SOCKET_URL)
         // request stream
         val stream: Flow<Payload> = rSocket.requestStream(

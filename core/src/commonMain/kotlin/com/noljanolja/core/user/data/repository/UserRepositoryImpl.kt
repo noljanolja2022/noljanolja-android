@@ -1,5 +1,6 @@
 package com.noljanolja.core.user.data.repository
 
+import com.noljanolja.core.auth.domain.repository.AuthRepository
 import com.noljanolja.core.user.data.datasource.AuthDataSource
 import com.noljanolja.core.user.data.datasource.UserRemoteDataSource
 import com.noljanolja.core.user.domain.model.User
@@ -14,6 +15,7 @@ class UserRepositoryImpl(
     private val userRemoteDataSource: UserRemoteDataSource,
     private val authDataSource: AuthDataSource,
     private val client: HttpClient,
+    private val authRepository: AuthRepository,
 ) : UserRepository {
     private var _currentUser: User? = null
         set(value) {
@@ -28,13 +30,18 @@ class UserRepositoryImpl(
         } else {
             userRemoteDataSource.getMe().also {
                 _currentUser = it.getOrNull()
+                authRepository.getPushToken()?.let {
+                    pushTokens(it)
+                }
             }
         }
     }
 
     override suspend fun pushTokens(
         token: String,
-    ): Result<Boolean> = userRemoteDataSource.pushToken(token)
+    ): Result<Boolean> {
+        return userRemoteDataSource.pushToken(userId = _currentUser?.id.orEmpty(), token)
+    }
 
     // Firebase
 
@@ -87,6 +94,7 @@ class UserRepositoryImpl(
             val provider =
                 client.plugin(Auth).providers.filterIsInstance<BearerAuthProvider>().firstOrNull()
             provider?.clearToken()
+            authRepository.delete()
             Database.clear()
         }
     }

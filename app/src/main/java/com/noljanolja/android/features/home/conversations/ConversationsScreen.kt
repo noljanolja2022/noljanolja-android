@@ -11,6 +11,7 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Chat
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,11 +25,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.noljanolja.android.MainActivity.Companion.getConversationId
+import com.noljanolja.android.MainActivity.Companion.removeConversationId
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.EmptyPage
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
+import com.noljanolja.android.util.findActivity
 import com.noljanolja.android.util.humanReadableDate
 import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.MessageType
@@ -38,6 +42,14 @@ import com.noljanolja.core.conversation.domain.model.MessageType
 fun ConversationsScreen(
     viewModel: ConversationsViewModel = hiltViewModel(),
 ) {
+    LocalContext.current.findActivity()?.intent?.let { intent ->
+        val conversationId = intent.getConversationId().also { intent.removeConversationId() }
+        LaunchedEffect(conversationId) {
+            if (conversationId > 0) {
+                viewModel.handleEvent(ConversationsEvent.OpenConversation(conversationId))
+            }
+        }
+    }
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     ConversationsScreenContent(
         uiState = uiState,

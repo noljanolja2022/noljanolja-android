@@ -1,6 +1,7 @@
 package com.noljanolja.core.user.data.datasource
 
 import com.noljanolja.core.contacts.domain.model.Contact
+import com.noljanolja.core.user.data.model.request.DeviceType
 import com.noljanolja.core.user.data.model.request.PushTokensRequest
 import com.noljanolja.core.user.data.model.request.SyncUserContactsRequest
 import com.noljanolja.core.user.data.model.request.UpdateUserRequest
@@ -10,7 +11,7 @@ import com.noljanolja.core.utils.toDomainUser
 interface UserRemoteDataSource {
     suspend fun getMe(): Result<User>
 
-    suspend fun pushToken(token: String): Result<Boolean>
+    suspend fun pushToken(userId: String, token: String): Result<Boolean>
 
     suspend fun updateUser(name: String?, email: String?): Result<Boolean>
 
@@ -27,9 +28,18 @@ class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSou
         }
     }
 
-    override suspend fun pushToken(token: String): Result<Boolean> {
+    override suspend fun pushToken(userId: String, token: String): Result<Boolean> {
         return try {
-            val result = userApi.pushTokens(PushTokensRequest(token))
+            if (userId.isBlank() || token.isBlank()) {
+                throw Exception("invalid arg: userId: $userId token: $token")
+            }
+            val result = userApi.pushTokens(
+                PushTokensRequest(
+                    userId = userId,
+                    deviceToken = token,
+                    deviceType = DeviceType.MOBILE
+                )
+            )
             if (result.isSuccessful()) {
                 Result.success(true)
             } else {

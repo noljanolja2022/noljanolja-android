@@ -1,5 +1,8 @@
 package com.noljanolja.android
 
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,17 +14,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.ui.theme.NoljanoljaTheme
+import com.noljanolja.core.CoreManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var navigationManager: NavigationManager
+
+    @Inject
+    lateinit var coreManager: CoreManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
@@ -37,6 +47,49 @@ class MainActivity : ComponentActivity() {
                     MainScreen(navigationManager)
                 }
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        lifecycleScope.launch {
+            navigationManager.navigate(
+                NavigationDirections.Chat(
+                    conversationId = intent.getConversationId()
+                )
+            )
+        }
+    }
+
+    companion object {
+        const val EXTRA_CONVERSATION_ID = "conversationId"
+
+        fun getIntent(
+            context: Context,
+            conversationId: String,
+        ): Intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            putExtra(EXTRA_CONVERSATION_ID, conversationId)
+        }
+
+        fun getPendingIntent(
+            context: Context,
+            conversationId: String,
+        ): PendingIntent = with(getIntent(context, conversationId)) {
+            val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            } else {
+                PendingIntent.FLAG_UPDATE_CURRENT
+            }
+            PendingIntent.getActivity(context, 0, this, flags)
+        }
+
+        fun Intent.getConversationId(): Long {
+            return extras?.getString(EXTRA_CONVERSATION_ID)?.toLong() ?: 0
+        }
+
+        fun Intent.removeConversationId() {
+            removeExtra(EXTRA_CONVERSATION_ID)
         }
     }
 }

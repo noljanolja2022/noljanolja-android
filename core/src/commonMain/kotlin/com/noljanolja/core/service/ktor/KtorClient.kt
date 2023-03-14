@@ -1,6 +1,6 @@
 package com.noljanolja.core.service.ktor
 
-import com.noljanolja.core.utils.Database
+import com.noljanolja.core.auth.domain.repository.AuthRepository
 import com.noljanolja.core.utils.default
 import io.ktor.client.*
 import io.ktor.client.engine.*
@@ -28,7 +28,7 @@ object KtorClient {
     fun createInstance(
         engine: HttpClientEngine,
         config: KtorConfig,
-        getToken: suspend () -> Unit,
+        authRepository: AuthRepository,
         refreshToken: suspend () -> Unit,
     ) = HttpClient(engine) {
         install(ContentNegotiation) {
@@ -39,14 +39,13 @@ object KtorClient {
         install(Auth) {
             bearer {
                 loadTokens {
-                    getToken.invoke()
-                    Database.getToken()?.let {
+                    authRepository.getAuthToken()?.let {
                         BearerTokens(it, it)
                     }
                 }
                 refreshTokens {
                     refreshToken.invoke()
-                    Database.getToken()?.let {
+                    authRepository.getAuthToken()?.let {
                         BearerTokens(it, it)
                     }
                 }
