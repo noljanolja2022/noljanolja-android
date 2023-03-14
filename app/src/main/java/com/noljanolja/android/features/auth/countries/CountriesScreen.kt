@@ -13,7 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.getViewModel
 import com.noljanolja.android.R
 import com.noljanolja.core.country.domain.model.Countries
 import com.noljanolja.core.country.domain.model.Country
@@ -22,7 +22,7 @@ import com.noljanolja.android.ui.composable.SearchBar
 
 @Composable
 fun CountriesScreen(
-    viewModel: CountriesViewModel = hiltViewModel(),
+    viewModel: CountriesViewModel = getViewModel(),
 ) {
     CountriesScreenContent(
         viewModel::handleEvent,

@@ -5,21 +5,14 @@ import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.contact.data.ContactsLoader
 import com.noljanolja.android.common.navigation.NavigationDirections
-import com.noljanolja.android.common.navigation.NavigationManager
-import com.noljanolja.core.CoreManager
 import com.noljanolja.core.user.domain.model.User
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.toList
-import javax.inject.Inject
+import org.koin.core.component.inject
 
-@HiltViewModel
-class ContactsViewModel @Inject constructor(
-    private val navigationManager: NavigationManager,
-    private val coreManager: CoreManager,
-    private val contactsLoader: ContactsLoader,
-) : BaseViewModel() {
+class ContactsViewModel : BaseViewModel() {
+    private val contactsLoader: ContactsLoader by inject()
     private val _uiStateFlow = MutableStateFlow(UiState<List<User>>())
     val uiStateFlow = _uiStateFlow.asStateFlow()
     fun handleEvent(event: ContactsEvent) {

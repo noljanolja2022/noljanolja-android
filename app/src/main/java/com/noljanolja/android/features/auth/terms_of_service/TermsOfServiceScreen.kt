@@ -20,7 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.getViewModel
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.InfoDialog
 import com.noljanolja.android.ui.composable.ScaffoldWithRoundedContent
@@ -28,7 +28,7 @@ import com.noljanolja.android.util.secondaryTextColor
 
 @Composable
 fun TermsOfServiceScreen(
-    viewModel: TermsOfServiceViewModel = hiltViewModel(),
+    viewModel: TermsOfServiceViewModel = getViewModel(),
 ) {
     TermsOfServiceScreenContent(
         viewModel::handleEvent,

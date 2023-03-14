@@ -34,7 +34,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.getViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.d2brothers.firebase_auth.AuthSdk
@@ -53,7 +53,7 @@ import com.noljanolja.android.util.PrefixTransformation
 @Composable
 fun LoginScreen(
     savedStateHandle: SavedStateHandle,
-    viewModel: LoginViewModel = hiltViewModel(),
+    viewModel: LoginViewModel = getViewModel(),
 ) {
     val countryCode = savedStateHandle.get<String>("countryCode")
     val context = LocalContext.current

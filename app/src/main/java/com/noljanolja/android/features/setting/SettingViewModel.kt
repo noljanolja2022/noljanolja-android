@@ -4,16 +4,10 @@ import com.noljanolja.android.BuildConfig
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
-import com.noljanolja.android.common.navigation.NavigationManager
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
 
-@HiltViewModel
-class SettingViewModel @Inject constructor(
-    private val navigationManager: NavigationManager,
-) : BaseViewModel() {
+class SettingViewModel : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow(SettingUIState())
     val uiStateFlow = _uiStateFlow.asStateFlow()
 

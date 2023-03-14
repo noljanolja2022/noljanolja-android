@@ -4,18 +4,13 @@ import com.d2brothers.firebase_auth.AuthSdk
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.error.ValidEmailFailed
 import com.noljanolja.android.common.navigation.NavigationDirections
-import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.features.auth.common.BaseAuthViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
+import org.koin.core.component.inject
 
-@HiltViewModel
-class SignupViewModel @Inject constructor(
-    private val navigationManager: NavigationManager,
-    private val authSdk: AuthSdk,
-) : BaseAuthViewModel() {
+class SignupViewModel : BaseAuthViewModel() {
+    private val authSdk: AuthSdk by inject()
     private val _uiStateFlow = MutableStateFlow<SignupUIState>(SignupUIState.Agreement(AGREEMENTS))
     val uiStateFlow = _uiStateFlow.asStateFlow()
 

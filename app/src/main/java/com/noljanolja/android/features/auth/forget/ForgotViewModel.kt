@@ -5,17 +5,12 @@ import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationCommand.FinishWithResults.Companion.FORGOT_FINISH_AUTH
 import com.noljanolja.android.common.navigation.NavigationDirections
-import com.noljanolja.android.common.navigation.NavigationManager
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
+import org.koin.core.component.inject
 
-@HiltViewModel
-class ForgotViewModel @Inject constructor(
-    private val navigationManager: NavigationManager,
-    private val authSdk: AuthSdk,
-) : BaseViewModel() {
+class ForgotViewModel : BaseViewModel() {
+    private val authSdk: AuthSdk by inject()
     private val _uiStateFlow = MutableStateFlow<ForgotUIState>(ForgotUIState.Normal("", false))
     val uiStateFlow = _uiStateFlow.asStateFlow()
 

@@ -3,18 +3,10 @@ package com.noljanolja.android.features.auth.updateprofile
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
-import com.noljanolja.android.common.navigation.NavigationManager
-import com.noljanolja.core.CoreManager
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
 
-@HiltViewModel
-class UpdateProfileViewModel @Inject constructor(
-    private val navigationManager: NavigationManager,
-    private val coreManager: CoreManager,
-) : BaseViewModel() {
+class UpdateProfileViewModel : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow(UpdateProfileUiState())
     val uiStateFlow = _uiStateFlow.asStateFlow()
 

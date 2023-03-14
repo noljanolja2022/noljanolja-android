@@ -21,7 +21,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -36,11 +35,12 @@ import com.noljanolja.android.util.findActivity
 import com.noljanolja.android.util.humanReadableDate
 import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.MessageType
+import org.koin.androidx.compose.getViewModel
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun ConversationsScreen(
-    viewModel: ConversationsViewModel = hiltViewModel(),
+    viewModel: ConversationsViewModel = getViewModel(),
 ) {
     LocalContext.current.findActivity()?.intent?.let { intent ->
         val conversationId = intent.getConversationId().also { intent.removeConversationId() }

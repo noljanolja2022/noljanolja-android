@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.getViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.common.navigation.NavigationCommand.FinishWithResults.Companion.FORGOT_FINISH_AUTH
@@ -28,7 +28,7 @@ import com.noljanolja.android.ui.composable.FullSizeLoading
 fun LoginOrSignupScreen(
     savedStateHandle: SavedStateHandle,
 ) {
-    val loginOrSignupViewModel: LoginOrSignupViewModel = hiltViewModel()
+    val loginOrSignupViewModel: LoginOrSignupViewModel = getViewModel()
     val uiState by loginOrSignupViewModel.uiStateFlow.collectAsStateWithLifecycle()
     LoginOrSignupContent(uiState = uiState, savedStateHandle = savedStateHandle) {
         loginOrSignupViewModel.handleEvent(it)
@@ -49,8 +49,8 @@ fun LoginOrSignupContent(
     uiState: LoginOrSignupUIState,
     handleEvent: (LoginOrSignupEvent) -> Unit,
 ) {
-    val loginViewModel: LoginViewModel = hiltViewModel()
-    val signupViewModel: SignupViewModel = hiltViewModel()
+    val loginViewModel: LoginViewModel = getViewModel()
+    val signupViewModel: SignupViewModel = getViewModel()
     val loginUIState by loginViewModel.uiStateFlow.collectAsStateWithLifecycle()
     val signupUIState by signupViewModel.uiStateFlow.collectAsStateWithLifecycle()
     FullSizeLoading(loginUIState == LoginUIState.Loading || (signupUIState as? SignupUIState.SignupForm)?.isLoading == true) {

@@ -4,7 +4,6 @@ plugins {
     id("com.android.application")
     kotlin("android")
     kotlin("kapt")
-    id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
     id("com.google.firebase.appdistribution")
@@ -95,16 +94,12 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material")
-    implementation("androidx.hilt:hilt-navigation-compose:1.1.0-alpha01")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.0")
     implementation("androidx.navigation:navigation-compose:2.5.3")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0-rc01")
     implementation("androidx.compose.material:material-icons-extended:1.4.0-beta02")
 
-    // Hilt
-    implementation("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:31.2.0"))
     implementation("com.google.firebase:firebase-analytics-ktx")
@@ -125,7 +120,11 @@ dependencies {
 
     implementation("com.google.accompanist:accompanist-permissions:0.29.1-alpha")
     implementation("com.google.accompanist:accompanist-insets:0.29.1-alpha")
-    implementation ("com.googlecode.libphonenumber:libphonenumber:8.12.39")
+    implementation("com.googlecode.libphonenumber:libphonenumber:8.12.39")
+
+    // koin
+    implementation("io.insert-koin:koin-android:3.1.4")
+    implementation("io.insert-koin:koin-androidx-compose:3.1.4")
 }
 
 kapt {

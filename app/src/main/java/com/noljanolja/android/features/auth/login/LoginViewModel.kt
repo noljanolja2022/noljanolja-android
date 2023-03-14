@@ -2,18 +2,12 @@ package com.noljanolja.android.features.auth.login
 
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
-import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.features.auth.common.BaseAuthViewModel
 import com.noljanolja.core.user.domain.model.User
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
 
-@HiltViewModel
-class LoginViewModel @Inject constructor(
-    private val navigationManager: NavigationManager,
-) : BaseAuthViewModel() {
+class LoginViewModel : BaseAuthViewModel() {
     private val _uiStateFlow = MutableStateFlow(LoginUIState.Login)
     val uiStateFlow = _uiStateFlow.asStateFlow()
 

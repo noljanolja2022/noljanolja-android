@@ -58,6 +58,8 @@ kotlin {
                 api("co.touchlab:kermit:1.1.3")
                 implementation("com.squareup.sqldelight:runtime:$sqlDelightVersion")
                 implementation("com.squareup.sqldelight:coroutines-extensions:$sqlDelightVersion")
+                // koin
+                implementation("io.insert-koin:koin-core:3.1.4")
             }
         }
         val androidMain by getting {

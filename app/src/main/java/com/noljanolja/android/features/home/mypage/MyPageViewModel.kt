@@ -4,20 +4,12 @@ import androidx.lifecycle.viewModelScope
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
-import com.noljanolja.android.common.navigation.NavigationManager
-import com.noljanolja.core.CoreManager
 import com.noljanolja.core.user.domain.model.User
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class MyPageViewModel @Inject constructor(
-    private val coreManager: CoreManager,
-    private val navigationManager: NavigationManager,
-) : BaseViewModel() {
+class MyPageViewModel : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow<MyPageUIState>(MyPageUIState.Loading)
     val uiStateFlow = _uiStateFlow.asStateFlow()
 

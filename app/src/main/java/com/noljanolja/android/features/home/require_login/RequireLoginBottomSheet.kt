@@ -16,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.getViewModel
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.BackPressHandler
 import com.noljanolja.android.ui.composable.PrimaryButton
@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RequireLoginBottomSheet(
-    viewModel: RequireLoginViewModel = hiltViewModel(),
+    viewModel: RequireLoginViewModel = getViewModel(),
     modalSheetState: ModalBottomSheetState,
     onGoToLogin: () -> Unit,
 ) {

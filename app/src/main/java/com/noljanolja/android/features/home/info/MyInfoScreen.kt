@@ -16,7 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.getViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.CommonTopAppBar
@@ -26,7 +26,7 @@ import com.noljanolja.core.user.domain.model.displayIdentity
 
 @Composable
 fun MyInfoScreen(
-    viewModel: MyInfoViewModel = hiltViewModel(),
+    viewModel: MyInfoViewModel = getViewModel(),
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     MyInfoContent(

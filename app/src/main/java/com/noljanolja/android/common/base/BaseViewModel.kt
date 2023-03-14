@@ -5,12 +5,19 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.util.showToast
+import com.noljanolja.core.CoreManager
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-open class BaseViewModel : ViewModel() {
+open class BaseViewModel : ViewModel(), KoinComponent {
+    protected val navigationManager: NavigationManager by inject()
+    protected val coreManager: CoreManager by inject()
+
     private val _errorFlow = MutableSharedFlow<Throwable>()
     val errorFlow = _errorFlow.asSharedFlow()
 

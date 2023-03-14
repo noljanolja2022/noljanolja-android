@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.getViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.features.auth.common.component.FullSizeWithLogo
@@ -34,7 +34,7 @@ import com.noljanolja.android.util.showToast
 import kotlinx.coroutines.launch
 
 @Composable
-fun ForgotScreen(viewModel: ForgotViewModel = hiltViewModel()) {
+fun ForgotScreen(viewModel: ForgotViewModel = getViewModel()) {
     val context = LocalContext.current
     LaunchedEffect(key1 = viewModel.errorFlow) {
         launch {

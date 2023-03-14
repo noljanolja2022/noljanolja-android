@@ -18,18 +18,14 @@ import coil.request.ImageRequest
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.noljanolja.android.MainActivity
-import com.noljanolja.android.MyApplication
 import com.noljanolja.android.R
 import com.noljanolja.core.CoreManager
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
 
-@AndroidEntryPoint
 class MyFirebaseService : FirebaseMessagingService() {
 
-    @Inject
-    lateinit var coreManager: CoreManager
+    private val coreManager: CoreManager by inject()
     private val scope = MainScope()
 
     override fun onMessageReceived(message: RemoteMessage) {
