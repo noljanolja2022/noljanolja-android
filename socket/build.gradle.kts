@@ -2,12 +2,11 @@ plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     id("com.android.library")
-    id("com.squareup.sqldelight")
     id("kotlinx-serialization")
 }
 
 android {
-    namespace = "com.noljanolja.core"
+    namespace = "com.noljanolja.socket"
     compileSdk = 33
     defaultConfig {
         minSdk = 21
@@ -24,6 +23,7 @@ kotlin {
         }
     }
     ios()
+    // Note: iosSimulatorArm64 target requires that all dependencies have M1 support
     iosSimulatorArm64()
 
     cocoapods {
@@ -32,42 +32,32 @@ kotlin {
         version = "1.0"
         ios.deploymentTarget = "14.1"
         framework {
-            baseName = "core"
+            baseName = "socket"
         }
     }
 
     sourceSets {
-        val sqlDelightVersion = "1.5.5"
         val commonMain by getting {
             dependencies {
-                implementation(project(":socket"))
-                implementation("com.squareup.sqldelight:runtime:1.5.4")
-                implementation("com.squareup.sqldelight:coroutines-extensions:1.5.4")
-
-                api("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
-
-                api("io.ktor:ktor-client-core:2.1.1")
-                api("io.ktor:ktor-client-logging:2.1.1")
-                api("io.ktor:ktor-client-auth:2.1.1")
-                api("io.ktor:ktor-client-content-negotiation:2.1.1")
-                api("io.ktor:ktor-client-serialization:2.1.1")
-                api("io.ktor:ktor-serialization-kotlinx-json:2.1.1")
                 api("io.rsocket.kotlin:rsocket-ktor-client:0.15.4")
 //                api("io.ktor:ktor-client-okhttp:2.1.1")
-
-                api("co.touchlab:kermit:1.1.3")
-                implementation("com.squareup.sqldelight:runtime:$sqlDelightVersion")
-                implementation("com.squareup.sqldelight:coroutines-extensions:$sqlDelightVersion")
+                api("io.ktor:ktor-client-core:2.1.1")
+                api("io.ktor:ktor-client-logging:2.1.1")
                 // koin
                 implementation("io.insert-koin:koin-core:3.3.3")
+            }
+        }
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
             }
         }
         val androidMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-client-okhttp:2.1.1")
-                implementation("com.squareup.sqldelight:android-driver:$sqlDelightVersion")
             }
         }
+        val androidUnitTest by getting
         val iosMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-client-darwin:2.1.1")
@@ -80,11 +70,5 @@ kotlin {
         val iosSimulatorArm64Test by getting {
             dependsOn(iosTest)
         }
-    }
-}
-
-sqldelight {
-    database("Noljanolja") {
-        packageName = "com.noljanolja.core.db"
     }
 }

@@ -123,8 +123,8 @@ dependencies {
     implementation("com.googlecode.libphonenumber:libphonenumber:8.12.39")
 
     // koin
-    implementation("io.insert-koin:koin-android:3.1.4")
-    implementation("io.insert-koin:koin-androidx-compose:3.1.4")
+    implementation("io.insert-koin:koin-android:3.3.3")
+    implementation("io.insert-koin:koin-androidx-compose:3.4.1")
 }
 
 kapt {

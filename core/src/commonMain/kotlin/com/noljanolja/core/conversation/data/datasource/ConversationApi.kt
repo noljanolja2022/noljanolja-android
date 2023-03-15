@@ -8,35 +8,25 @@ import com.noljanolja.core.conversation.data.model.request.SendConversationMessa
 import com.noljanolja.core.conversation.data.model.response.*
 import com.noljanolja.core.conversation.data.model.response.GetConversationMessagesResponse
 import com.noljanolja.core.conversation.domain.model.Conversation
-import com.noljanolja.core.utils.Const.BASE_SOCKET_URL
 import com.noljanolja.core.utils.Const.BASE_URL
 import com.noljanolja.core.utils.default
+import com.noljanolja.socket.SocketManager
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.util.*
-import io.rsocket.kotlin.ExperimentalMetadataApi
-import io.rsocket.kotlin.RSocket
-import io.rsocket.kotlin.ktor.client.rSocket
-import io.rsocket.kotlin.metadata.CompositeMetadata
-import io.rsocket.kotlin.metadata.RoutingMetadata
-import io.rsocket.kotlin.metadata.metadata
-import io.rsocket.kotlin.metadata.security.BearerAuthMetadata
-import io.rsocket.kotlin.payload.Payload
-import io.rsocket.kotlin.payload.buildPayload
 import io.rsocket.kotlin.payload.data
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 class ConversationApi(
     private val client: HttpClient,
-    private val socketClient: HttpClient,
     private val authRepository: AuthRepository,
+    private val socketManager: SocketManager,
 ) {
 
     suspend fun getConversations(): GetConversationsResponse {
@@ -75,24 +65,10 @@ class ConversationApi(
         }.body()
     }
 
-    @OptIn(ExperimentalMetadataApi::class, ExperimentalSerializationApi::class)
     suspend fun streamConversations(): Flow<Conversation> {
         val token = authRepository.getAuthToken()
-        val rSocket: RSocket = socketClient.rSocket(BASE_SOCKET_URL)
-        // request stream
-        val stream: Flow<Payload> = rSocket.requestStream(
-            buildPayload {
-                data("""{ "data": "hello world" }""")
-                metadata(
-                    CompositeMetadata(
-                        RoutingMetadata("v1/conversations"),
-                        BearerAuthMetadata("Bearer $token")
-                    )
-                )
-            }
-        )
-        return stream.map {
-            Json.default().decodeFromPayload(it)
+        return socketManager.streamConversations(token.orEmpty()).map {
+            Json.default().decodeFromString(it)
         }
     }
 
@@ -105,8 +81,3 @@ class ConversationApi(
         }.body()
     }
 }
-
-@ExperimentalSerializationApi
-internal inline fun <reified T> Json.decodeFromPayload(
-    payload: Payload,
-): T = decodeFromString(payload.data.readText())

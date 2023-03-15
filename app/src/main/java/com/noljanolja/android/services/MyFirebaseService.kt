@@ -18,6 +18,7 @@ import coil.request.ImageRequest
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.noljanolja.android.MainActivity
+import com.noljanolja.android.MyApplication
 import com.noljanolja.android.R
 import com.noljanolja.core.CoreManager
 import kotlinx.coroutines.*
@@ -49,8 +50,8 @@ class MyFirebaseService : FirebaseMessagingService() {
     }
 
     private suspend fun displayNotification(data: Map<String, String>) {
-        val conversationId = data["conversationId"]?.toInt() ?: 0
-//        if (conversationId.toLong() == coreManager.latestConversationId && MyApplication.isAppInForeground) return
+        val conversationId = data["conversationId"]?.toLong() ?: 0
+        if (!isShowNotification(conversationId)) return
 
         val channelId = getString(R.string.app_channel_id)
         val notificationManager =
@@ -67,12 +68,12 @@ class MyFirebaseService : FirebaseMessagingService() {
             message = data["message"].orEmpty(),
             messageTime = data["messageTime"]?.toLong() ?: 0,
         )
-        notificationManager.notify(conversationId, notification)
+        notificationManager.notify(conversationId.toInt(), notification)
     }
 
     private suspend fun createMessageNotification(
         channelId: String,
-        conversationId: Int,
+        conversationId: Long,
         conversationType: String,
         senderAvatar: String,
         senderName: String,
@@ -133,5 +134,9 @@ class MyFirebaseService : FirebaseMessagingService() {
 
             createNotificationChannel(channel)
         }
+    }
+
+    private fun isShowNotification(conversationId: Long): Boolean {
+        return !with(MyApplication) { conversationId == latestConversationId && isAppInForeground }
     }
 }

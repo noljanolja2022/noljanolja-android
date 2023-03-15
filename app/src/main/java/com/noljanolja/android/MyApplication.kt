@@ -35,33 +35,18 @@ import com.noljanolja.android.features.splash.SplashViewModel
 import com.noljanolja.android.services.analytics.AppAnalytics
 import com.noljanolja.android.services.analytics.firebase.FirebaseLogger
 import com.noljanolja.android.services.analytics.firebase.FirebaseTracker
-import com.noljanolja.core.CoreManager
-import com.noljanolja.core.auth.data.AuthRepositoryImpl
 import com.noljanolja.core.auth.domain.repository.AuthRepository
-import com.noljanolja.core.contacts.data.repository.ContactsRepositoryImpl
-import com.noljanolja.core.contacts.domain.repository.ContactsRepository
-import com.noljanolja.core.conversation.data.datasource.ConversationApi
-import com.noljanolja.core.conversation.data.repository.ConversationRepositoryImpl
-import com.noljanolja.core.conversation.domain.repository.ConversationRepository
-import com.noljanolja.core.db.Noljanolja
+import com.noljanolja.core.di.initKoin
 import com.noljanolja.core.service.ktor.KtorClient
 import com.noljanolja.core.service.ktor.KtorConfig
 import com.noljanolja.core.user.data.datasource.AuthDataSource
-import com.noljanolja.core.user.data.datasource.UserApi
-import com.noljanolja.core.user.data.datasource.UserRemoteDataSource
-import com.noljanolja.core.user.data.datasource.UserRemoteDataSourceImpl
-import com.noljanolja.core.user.data.repository.UserRepositoryImpl
-import com.noljanolja.core.user.domain.repository.UserRepository
-import com.noljanolja.core.utils.DriverFactory
-import io.ktor.client.engine.okhttp.*
-import kotlinx.coroutines.Dispatchers
 import org.koin.androidx.viewmodel.dsl.viewModel
-import org.koin.core.context.startKoin
 import org.koin.dsl.module
 
 class MyApplication : Application() {
     companion object {
         var isAppInForeground: Boolean = false
+        var latestConversationId: Long = 0L
     }
 
     override fun onCreate() {
@@ -81,159 +66,123 @@ class MyApplication : Application() {
     }
 
     private fun initKoin() {
-        startKoin {
-            modules(
-                module {
-                    single<Context> { this@MyApplication }
-                    single {
-                        FirebaseTracker(
-                            Firebase.analytics,
-                        ).apply {
-                            // TODO: Should fetch from remote config or use BuildConfig
-                            isEnable = true
-                        }
-                    }
-                    single {
-                        FirebaseLogger(
-                            Firebase.crashlytics,
-                        ).apply {
-                            // TODO: Should fetch from remote config or use BuildConfig
-                            isEnable = true
-                        }
-                    }
-                    single {
-                        AppAnalytics(
-                            trackers = mutableListOf(get()),
-                            loggers = mutableListOf(get()),
-                        )
-                    }
-                    single {
-                        NavigationManager()
-                    }
-                    single {
-                        AuthSdk.init(
-                            context = get(),
-                            kakaoApiKey = get<Context>().getString(R.string.kakao_api_key),
-                            googleWebClientId = get<Context>().getString(R.string.web_client_id),
-                            naverClientId = "3zDg6vMsJmoFk2TGOjcq",
-                            naverClientSecret = "8keRny2c_4",
-                            naverClientName = "놀자놀자",
-                            region = "asia-northeast3",
-                        )
-                    }
-                    single {
-                        ContactsLoader(get())
-                    }
-                    single<AuthDataSource> {
-                        AuthDataSourceImpl(get())
-                    }
-                    single<UserRepository> {
-                        UserRepositoryImpl(get(), get(), get(), get())
-                    }
-                    single {
-                        KtorConfig(
-                            userAgent = "noljanolja/${BuildConfig.VERSION_NAME} (Mobile; Android ${Build.VERSION.RELEASE}; ${Build.MANUFACTURER} ${Build.MODEL})"
-                        )
-                    }
-                    single {
-                        KtorClient.createInstance(
-                            OkHttp.create(),
-                            get(),
-                            get(),
-                            refreshToken = {
-                                get<AuthRepository>().saveAuthToken(
-                                    get<AuthSdk>().getIdToken(true).orEmpty()
-                                )
-                            }
-                        )
-                    }
-                    single {
-                        UserApi(get())
-                    }
-                    single<UserRemoteDataSource> {
-                        UserRemoteDataSourceImpl(get())
-                    }
-                    single<ContactsRepository> {
-                        ContactsRepositoryImpl(get())
-                    }
-                    single {
-                        ConversationApi(
-                            get(),
-                            KtorClient.createRocketInstance(OkHttp.create()),
-                            get()
-                        )
-                    }
-                    single<ConversationRepository> {
-                        ConversationRepositoryImpl(get(), get())
-                    }
-                    single {
-                        DriverFactory(get()).createDriver()
-                    }
-                    single {
-                        Noljanolja(get())
-                    }
-                    single<AuthRepository> {
-                        AuthRepositoryImpl(get<Noljanolja>().authQueries, Dispatchers.Default)
-                    }
-                    single {
-                        CoreManager(get(), get(), get(), get())
-                    }
-                    viewModel {
-                        ChatViewModel()
-                    }
-                    viewModel {
-                        ContactsViewModel()
-                    }
-                    viewModel {
-                        ConversationsViewModel()
-                    }
-                    viewModel {
-                        CountriesViewModel()
-                    }
-                    viewModel {
-                        ForgotViewModel()
-                    }
-                    viewModel {
-                        HomeViewModel()
-                    }
-                    viewModel {
-                        LoginOrSignupViewModel()
-                    }
-                    viewModel {
-                        LoginViewModel()
-                    }
-                    viewModel {
-                        MenuViewModel()
-                    }
-                    viewModel {
-                        MyInfoViewModel()
-                    }
-                    viewModel {
-                        MyPageViewModel()
-                    }
-                    viewModel {
-                        OTPViewModel()
-                    }
-                    viewModel {
-                        RequireLoginViewModel()
-                    }
-                    viewModel {
-                        SettingViewModel()
-                    }
-                    viewModel {
-                        SignupViewModel()
-                    }
-                    viewModel {
-                        SplashViewModel()
-                    }
-                    viewModel {
-                        TermsOfServiceViewModel()
-                    }
-                    viewModel {
-                        UpdateProfileViewModel()
+        initKoin(
+            module {
+                single<Context> { this@MyApplication }
+                single {
+                    FirebaseTracker(
+                        Firebase.analytics,
+                    ).apply {
+                        // TODO: Should fetch from remote config or use BuildConfig
+                        isEnable = true
                     }
                 }
-            )
-        }
+                single {
+                    FirebaseLogger(
+                        Firebase.crashlytics,
+                    ).apply {
+                        // TODO: Should fetch from remote config or use BuildConfig
+                        isEnable = true
+                    }
+                }
+                single {
+                    AppAnalytics(
+                        trackers = mutableListOf(get()),
+                        loggers = mutableListOf(get()),
+                    )
+                }
+                single {
+                    NavigationManager()
+                }
+                single {
+                    AuthSdk.init(
+                        context = get(),
+                        kakaoApiKey = get<Context>().getString(R.string.kakao_api_key),
+                        googleWebClientId = get<Context>().getString(R.string.web_client_id),
+                        naverClientId = "3zDg6vMsJmoFk2TGOjcq",
+                        naverClientSecret = "8keRny2c_4",
+                        naverClientName = "놀자놀자",
+                        region = "asia-northeast3",
+                    )
+                }
+                single {
+                    ContactsLoader(get())
+                }
+                single {
+                    KtorConfig(
+                        userAgent = "noljanolja/${BuildConfig.VERSION_NAME} (Mobile; Android ${Build.VERSION.RELEASE}; ${Build.MANUFACTURER} ${Build.MODEL})"
+                    )
+                }
+                single {
+                    KtorClient.createInstance(
+                        get(),
+                        get(),
+                        get(),
+                        refreshToken = {
+                            get<AuthRepository>().saveAuthToken(
+                                get<AuthSdk>().getIdToken(true).orEmpty()
+                            )
+                        }
+                    )
+                }
+                single<AuthDataSource> {
+                    AuthDataSourceImpl(get())
+                }
+                viewModel {
+                    ChatViewModel()
+                }
+                viewModel {
+                    ContactsViewModel()
+                }
+                viewModel {
+                    ConversationsViewModel()
+                }
+                viewModel {
+                    CountriesViewModel()
+                }
+                viewModel {
+                    ForgotViewModel()
+                }
+                viewModel {
+                    HomeViewModel()
+                }
+                viewModel {
+                    LoginOrSignupViewModel()
+                }
+                viewModel {
+                    LoginViewModel()
+                }
+                viewModel {
+                    MenuViewModel()
+                }
+                viewModel {
+                    MyInfoViewModel()
+                }
+                viewModel {
+                    MyPageViewModel()
+                }
+                viewModel {
+                    OTPViewModel()
+                }
+                viewModel {
+                    RequireLoginViewModel()
+                }
+                viewModel {
+                    SettingViewModel()
+                }
+                viewModel {
+                    SignupViewModel()
+                }
+                viewModel {
+                    SplashViewModel()
+                }
+                viewModel {
+                    TermsOfServiceViewModel()
+                }
+                viewModel {
+                    UpdateProfileViewModel()
+                }
+            }
+        )
     }
 }

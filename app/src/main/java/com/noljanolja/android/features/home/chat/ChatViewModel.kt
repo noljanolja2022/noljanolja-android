@@ -1,5 +1,6 @@
 package com.noljanolja.android.features.home.chat
 
+import com.noljanolja.android.MyApplication
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
@@ -81,6 +82,7 @@ class ChatViewModel : BaseViewModel() {
                 _chatUiStateFlow.emit(value.copy(loading = true))
             }
             if (conversationId == 0L) {
+                MyApplication.latestConversationId = conversationId
                 coreManager.findConversationWithUser(userId)?.let {
                     conversationId = it.id
                     _chatUiStateFlow.emit(
@@ -116,5 +118,10 @@ class ChatViewModel : BaseViewModel() {
             creator = User(),
             participants = listOf(User(name = userName)),
         )
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        MyApplication.latestConversationId = 0L
     }
 }
