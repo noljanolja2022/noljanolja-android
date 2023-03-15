@@ -33,11 +33,11 @@ class ConversationRepositoryImpl(
 
     override suspend fun getConversation(conversationId: Long): Flow<Conversation> = flow {
         try {
-            conversationApi.getConversation(GetConversationRequest(conversationId)).data?.let {
-                updateLocalConversation(it)
-            }
             getLocalConversation(conversationId).collect {
                 emit(it)
+            }
+            conversationApi.getConversation(GetConversationRequest(conversationId)).data?.let {
+                updateLocalConversation(it)
             }
         } catch (e: Throwable) {
             // Logger
@@ -46,14 +46,14 @@ class ConversationRepositoryImpl(
 
     override suspend fun getConversations(): Flow<List<Conversation>> = flow {
         try {
+            streamConversations()
+            getLocalConversations().collect {
+                emit(it.sortedByDescending { it.messages.maxByOrNull { it.createdAt }?.createdAt })
+            }
             scope.launch {
                 conversationApi.getConversations().data?.forEach {
                     updateLocalConversation(it)
                 }
-            }
-            streamConversations()
-            getLocalConversations().collect {
-                emit(it.sortedByDescending { it.messages.maxByOrNull { it.createdAt }?.createdAt })
             }
         } catch (e: Throwable) {
             emit(emptyList())
@@ -148,7 +148,8 @@ class ConversationRepositoryImpl(
             .combine(localConversationDataSource.findConversationMessages(conversationId)) { conversation, messages ->
                 localUserDataSource.let {
                     conversation.copy(
-                        creator = it.findById(conversation.creator.id) ?: conversation.creator,
+                        creator = it.findById(conversation.creator.id)
+                            ?: conversation.creator,
                         participants = it.findConversationParticipants(conversation.id),
                         messages = messages.map { message ->
                             message.copy(sender = it.findById(message.sender.id) ?: message.sender)
@@ -178,8 +179,7 @@ class ConversationRepositoryImpl(
         if (saveMessage) {
             localConversationDataSource.upsertConversationMessages(
                 conversation.id,
-                conversation.messages
-                    .filter { if (saveMyMessage) true else it.sender.id != me.id }
+                conversation.messages.filter { if (saveMyMessage) true else it.sender.id != me.id }
                     .map { it.copy(status = MessageStatus.SENT) }
             )
         }
@@ -195,8 +195,7 @@ class ConversationRepositoryImpl(
                 val messages = localConversationDataSource.findConversationMessages(
                     localConversation.id,
                     limit = 1
-                )
-                    .firstOrNull() ?: listOf()
+                ).firstOrNull() ?: listOf()
                 if (messages.isNotEmpty()) {
                     Conversation(
                         id = localConversation.id,
