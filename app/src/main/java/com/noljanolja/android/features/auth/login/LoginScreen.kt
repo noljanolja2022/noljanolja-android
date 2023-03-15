@@ -27,21 +27,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.koin.androidx.compose.getViewModel
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.d2brothers.firebase_auth.AuthSdk
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.handleError
-import com.noljanolja.core.country.domain.model.Countries
-import com.noljanolja.core.country.domain.model.Country
 import com.noljanolja.android.features.auth.common.component.EmailAndPassword
 import com.noljanolja.android.features.auth.common.component.VerifyEmail
 import com.noljanolja.android.features.auth.login.component.LoginButton
@@ -49,6 +46,9 @@ import com.noljanolja.android.ui.composable.ErrorDialog
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.SecondaryButton
 import com.noljanolja.android.util.PrefixTransformation
+import com.noljanolja.core.country.domain.model.Countries
+import com.noljanolja.core.country.domain.model.Country
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun LoginScreen(
@@ -120,6 +120,7 @@ private fun LoginContent(
     }
     var phone by rememberSaveable { mutableStateOf("") }
     var showErrorPhoneNumber by remember { mutableStateOf(false) }
+    var showConfirmPhoneNumber by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -140,7 +141,7 @@ private fun LoginContent(
                 if (formattedPhoneNumber == null) {
                     showErrorPhoneNumber = true
                 } else {
-                    handleEvent(LoginEvent.SendOTP(formattedPhoneNumber))
+                    showConfirmPhoneNumber = true
                 }
             }
         )
@@ -152,39 +153,39 @@ private fun LoginContent(
 //        handleEvent = handleEvent
 //    )
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Divider(
-                color = MaterialTheme.colorScheme.onBackground,
-                thickness = 1.dp,
-                modifier = Modifier.weight(1F),
-            )
-            Text(
-                stringResource(id = R.string.auth_login_with_SNS),
-                modifier = Modifier.padding(24.dp),
-                style = TextStyle(
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.outline,
-                ),
-            )
-            Divider(
-                color = MaterialTheme.colorScheme.onBackground,
-                thickness = 1.dp,
-                modifier = Modifier.weight(1F),
-            )
-        }
+//        Row(verticalAlignment = Alignment.CenterVertically) {
+//            Divider(
+//                color = MaterialTheme.colorScheme.onBackground,
+//                thickness = 1.dp,
+//                modifier = Modifier.weight(1F),
+//            )
+//            Text(
+//                stringResource(id = R.string.auth_login_with_SNS),
+//                modifier = Modifier.padding(24.dp),
+//                style = TextStyle(
+//                    fontSize = 12.sp,
+//                    color = MaterialTheme.colorScheme.outline,
+//                ),
+//            )
+//            Divider(
+//                color = MaterialTheme.colorScheme.onBackground,
+//                thickness = 1.dp,
+//                modifier = Modifier.weight(1F),
+//            )
+//        }
 
-        Row {
+//        Row {
 //        LoginSNSButton(painter = painterResource(id = R.drawable.kakao), onClick = {
 //            handleEvent(LoginEvent.LoginKakao)
 //        })
 //        Spacer(modifier = Modifier.width(24.dp))
 //        LoginSNSButton(painter = painterResource(id = R.drawable.naver), onClick = onLoginNaver)
 //        Spacer(modifier = Modifier.width(24.dp))
-            LoginSNSButton(
-                painter = painterResource(id = R.drawable.google),
-                onClick = onLoginGoogle,
-            )
-        }
+//            LoginSNSButton(
+//                painter = painterResource(id = R.drawable.google),
+//                onClick = onLoginGoogle,
+//            )
+//        }
         Spacer(modifier = Modifier.weight(1F))
     }
 
@@ -194,6 +195,32 @@ private fun LoginContent(
         description = stringResource(R.string.login_invalid_phone_description)
     ) {
         showErrorPhoneNumber = false
+    }
+    if (showConfirmPhoneNumber) {
+        val formattedPhoneNumber =
+            PhoneNumberUtils.formatNumberToE164(phone.trim(), country.nameCode.uppercase())
+
+        AlertDialog(
+            title = { Text(formattedPhoneNumber) },
+            text = { Text(stringResource(R.string.login_confirm_phone_description)) },
+            dismissButton = {
+                TextButton(onClick = {
+                    showConfirmPhoneNumber = false
+                }) {
+                    Text(stringResource(R.string.common_cancel))
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showConfirmPhoneNumber = false
+                    handleEvent(LoginEvent.SendOTP(formattedPhoneNumber))
+                }) {
+                    Text(stringResource(R.string.common_confirm))
+                }
+            },
+            onDismissRequest = {},
+            properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false),
+        )
     }
 }
 

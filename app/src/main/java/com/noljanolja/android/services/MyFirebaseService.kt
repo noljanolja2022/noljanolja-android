@@ -21,6 +21,8 @@ import com.noljanolja.android.MainActivity
 import com.noljanolja.android.MyApplication
 import com.noljanolja.android.R
 import com.noljanolja.core.CoreManager
+import com.noljanolja.core.conversation.domain.model.ConversationType
+import com.noljanolja.core.conversation.domain.model.MessageType
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 
@@ -97,14 +99,14 @@ class MyFirebaseService : FirebaseMessagingService() {
             .build()
 
         val messageContent = when (messageType) {
-            "PlainText" -> message
-            "Sticker" -> "Sticker"
+            MessageType.PLAINTEXT.name -> message
+            MessageType.PLAINTEXT.name -> "Sticker"
             else -> "New message"
         }
 
         val messageStyle = NotificationCompat.MessagingStyle(sender)
             .addMessage(messageContent, messageTime, sender)
-            .setGroupConversation(conversationType == "Group")
+            .setGroupConversation(conversationType == ConversationType.GROUP.name)
 
         return NotificationCompat.Builder(this, channelId)
             .setContentTitle("New message from ${sender.name}")

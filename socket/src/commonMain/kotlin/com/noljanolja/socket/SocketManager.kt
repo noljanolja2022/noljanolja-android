@@ -1,5 +1,6 @@
 package com.noljanolja.socket
 
+import co.touchlab.kermit.Logger
 import io.ktor.client.*
 import io.rsocket.kotlin.ExperimentalMetadataApi
 import io.rsocket.kotlin.RSocket
@@ -12,6 +13,7 @@ import io.rsocket.kotlin.payload.Payload
 import io.rsocket.kotlin.payload.buildPayload
 import io.rsocket.kotlin.payload.data
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
 class SocketManager(private val socketClient: HttpClient) {
@@ -29,7 +31,9 @@ class SocketManager(private val socketClient: HttpClient) {
                     )
                 )
             }
-        )
+        ).catch {
+            Logger.e("Stream error", it)
+        }
         return stream.map {
             it.data.readText()
         }

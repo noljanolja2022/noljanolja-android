@@ -1,11 +1,12 @@
 package com.noljanolja.core.user.data.repository
 
 import com.noljanolja.core.auth.domain.repository.AuthRepository
+import com.noljanolja.core.conversation.data.datasource.LocalConversationDataSource
 import com.noljanolja.core.user.data.datasource.AuthDataSource
+import com.noljanolja.core.user.data.datasource.LocalUserDataSource
 import com.noljanolja.core.user.data.datasource.UserRemoteDataSource
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.user.domain.repository.UserRepository
-import com.noljanolja.core.utils.Database
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.auth.*
@@ -16,22 +17,22 @@ class UserRepositoryImpl(
     private val authDataSource: AuthDataSource,
     private val client: HttpClient,
     private val authRepository: AuthRepository,
+    private val localUserDataSource: LocalUserDataSource,
+    private val localConversationDataSource: LocalConversationDataSource,
 ) : UserRepository {
-    private var _currentUser: User? = null
-        set(value) {
-            User.currentUserId = value?.id
-            field = value?.apply { isMe = true }
-        }
 
     // Remote
     override suspend fun getCurrentUser(forceRefresh: Boolean): Result<User> {
-        return if (_currentUser != null && !forceRefresh) {
-            Result.success(_currentUser!!)
+        val currentUser = localUserDataSource.findMe()
+        return if (currentUser != null && !forceRefresh) {
+            Result.success(currentUser)
         } else {
             userRemoteDataSource.getMe().also {
-                _currentUser = it.getOrNull()
-                authRepository.getPushToken()?.let {
-                    pushTokens(it)
+                it.getOrNull()?.let {
+                    localUserDataSource.upsert(it.apply { isMe = true })
+                    authRepository.getPushToken()?.let {
+                        pushTokens(it)
+                    }
                 }
             }
         }
@@ -40,7 +41,8 @@ class UserRepositoryImpl(
     override suspend fun pushTokens(
         token: String,
     ): Result<Boolean> {
-        return userRemoteDataSource.pushToken(userId = _currentUser?.id.orEmpty(), token)
+        val currentUser = localUserDataSource.findMe()
+        return userRemoteDataSource.pushToken(userId = currentUser?.id.orEmpty(), token)
     }
 
     // Firebase
@@ -90,12 +92,14 @@ class UserRepositoryImpl(
     // Logout
     override suspend fun logout(): Result<Boolean> {
         return authDataSource.logout().also {
-            _currentUser = null
             val provider =
                 client.plugin(Auth).providers.filterIsInstance<BearerAuthProvider>().firstOrNull()
             provider?.clearToken()
             authRepository.delete()
-            Database.clear()
+            localConversationDataSource.deleteAll()
+            localConversationDataSource.deleteAllMessages()
+            localUserDataSource.deleteAllParticipants()
+            localUserDataSource.deleteAll()
         }
     }
 

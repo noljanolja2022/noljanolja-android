@@ -2,6 +2,7 @@ package com.noljanolja.core.conversation.data.repository
 
 import co.touchlab.kermit.Logger
 import com.noljanolja.core.conversation.data.datasource.ConversationApi
+import com.noljanolja.core.conversation.data.datasource.LocalConversationDataSource
 import com.noljanolja.core.conversation.data.model.request.CreateConversationRequest
 import com.noljanolja.core.conversation.data.model.request.GetConversationMessagesRequest
 import com.noljanolja.core.conversation.data.model.request.GetConversationRequest
@@ -11,27 +12,23 @@ import com.noljanolja.core.conversation.domain.model.ConversationType
 import com.noljanolja.core.conversation.domain.model.Message
 import com.noljanolja.core.conversation.domain.model.MessageStatus
 import com.noljanolja.core.conversation.domain.repository.ConversationRepository
+import com.noljanolja.core.user.data.datasource.LocalUserDataSource
 import com.noljanolja.core.user.domain.repository.UserRepository
-import com.noljanolja.core.utils.Database.findSingleConversationWithUser
-import com.noljanolja.core.utils.Database.getLocalConversation
-import com.noljanolja.core.utils.Database.getLocalConversations
-import com.noljanolja.core.utils.Database.updateLocalConversation
-import com.noljanolja.core.utils.Database.upsertConversationMessages
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.*
 import kotlin.random.Random
 
 class ConversationRepositoryImpl(
     private val conversationApi: ConversationApi,
     private val userRepository: UserRepository,
+    private val localConversationDataSource: LocalConversationDataSource,
+    private val localUserDataSource: LocalUserDataSource,
 ) : ConversationRepository {
 
     private val scope = CoroutineScope(Dispatchers.Default)
     private var job: Job? = null
     override suspend fun findConversationWithUser(userId: String): Conversation? {
-        return findSingleConversationWithUser(userId)
+        return localConversationDataSource.findSingleConversationWithUser(userId)
     }
 
     override suspend fun getConversation(conversationId: Long): Flow<Conversation> = flow {
@@ -93,7 +90,10 @@ class ConversationRepositoryImpl(
                     status = MessageStatus.FAILED,
                 )
             }
-            upsertConversationMessages(conversationId, listOf(sentMessage))
+            localConversationDataSource.upsertConversationMessages(
+                conversationId,
+                listOf(sentMessage)
+            )
             return sentConversationId
         }
         return 0L
@@ -130,7 +130,7 @@ class ConversationRepositoryImpl(
             return if (response.isSuccessful()) {
                 val messages =
                     (response.data ?: listOf()).map { it.copy(status = MessageStatus.SENT) }
-                upsertConversationMessages(conversationId, messages)
+                localConversationDataSource.upsertConversationMessages(conversationId, messages)
                 messages
             } else {
                 listOf()
@@ -140,6 +140,86 @@ class ConversationRepositoryImpl(
                 "getConversationMessages"
             }
             return listOf()
+        }
+    }
+
+    private suspend fun getLocalConversation(conversationId: Long): Flow<Conversation> {
+        return localConversationDataSource.findById(conversationId)
+            .combine(localConversationDataSource.findConversationMessages(conversationId)) { conversation, messages ->
+                localUserDataSource.let {
+                    conversation.copy(
+                        creator = it.findById(conversation.creator.id) ?: conversation.creator,
+                        participants = it.findConversationParticipants(conversation.id),
+                        messages = messages.map { message ->
+                            message.copy(sender = it.findById(message.sender.id) ?: message.sender)
+                        }
+                    )
+                }
+            }
+    }
+
+    private suspend fun updateLocalConversation(
+        conversation: Conversation,
+        saveCreator: Boolean = true,
+        saveParticipants: Boolean = true,
+        saveMessage: Boolean = true,
+        saveMyMessage: Boolean = true,
+        saveSender: Boolean = true,
+    ) {
+        val me = localUserDataSource.findMe() ?: return
+        localConversationDataSource.upsert(conversation)
+        if (saveCreator) localUserDataSource.upsert(conversation.creator)
+        if (saveParticipants) {
+            localUserDataSource.upsertConversationParticipants(
+                conversation.id,
+                conversation.participants
+            )
+        }
+        if (saveMessage) {
+            localConversationDataSource.upsertConversationMessages(
+                conversation.id,
+                conversation.messages
+                    .filter { if (saveMyMessage) true else it.sender.id != me.id }
+                    .map { it.copy(status = MessageStatus.SENT) }
+            )
+        }
+        if (saveSender) {
+            conversation.messages.map { it.sender }.distinctBy { it.id }
+                .forEach { localUserDataSource.upsert(it) }
+        }
+    }
+
+    private suspend fun getLocalConversations(): Flow<List<Conversation>> {
+        return localConversationDataSource.findAll().map { localConversations ->
+            localConversations.mapNotNull { localConversation ->
+                val messages = localConversationDataSource.findConversationMessages(
+                    localConversation.id,
+                    limit = 1
+                )
+                    .firstOrNull() ?: listOf()
+                if (messages.isNotEmpty()) {
+                    Conversation(
+                        id = localConversation.id,
+                        title = localConversation.title,
+                        type = localConversation.type,
+                        creator = localUserDataSource.findById(localConversation.creator.id)
+                            ?: localConversation.creator,
+                        participants = localUserDataSource.findConversationParticipants(
+                            localConversation.id,
+                            limit = 4
+                        ),
+                        messages = messages.map {
+                            it.copy(
+                                sender = localUserDataSource.findById(it.sender.id) ?: it.sender
+                            )
+                        },
+                        createdAt = localConversation.createdAt,
+                        updatedAt = localConversation.updatedAt,
+                    )
+                } else {
+                    null
+                }
+            }
         }
     }
 

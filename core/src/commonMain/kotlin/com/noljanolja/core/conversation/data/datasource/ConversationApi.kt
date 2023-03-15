@@ -67,7 +67,9 @@ class ConversationApi(
 
     suspend fun streamConversations(): Flow<Conversation> {
         val token = authRepository.getAuthToken()
-        return socketManager.streamConversations(token.orEmpty()).map {
+        return socketManager.streamConversations(
+            token.orEmpty()
+        ).map {
             Json.default().decodeFromString(it)
         }
     }

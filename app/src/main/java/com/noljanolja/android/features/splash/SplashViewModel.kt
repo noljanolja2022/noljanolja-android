@@ -12,7 +12,7 @@ class SplashViewModel : BaseViewModel() {
 
     init {
         launch {
-            val user = coreManager.getCurrentUser().getOrNull()
+            val user = coreManager.getCurrentUser(true).getOrNull()
             user?.let {
                 if (user.name.isNullOrBlank()) {
                     navigationManager.navigate(

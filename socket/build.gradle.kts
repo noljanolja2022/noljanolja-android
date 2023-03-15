@@ -45,6 +45,7 @@ kotlin {
                 api("io.ktor:ktor-client-logging:2.1.1")
                 // koin
                 implementation("io.insert-koin:koin-core:3.3.3")
+                api("co.touchlab:kermit:1.1.3")
             }
         }
         val commonTest by getting {

@@ -82,7 +82,6 @@ class ChatViewModel : BaseViewModel() {
                 _chatUiStateFlow.emit(value.copy(loading = true))
             }
             if (conversationId == 0L) {
-                MyApplication.latestConversationId = conversationId
                 coreManager.findConversationWithUser(userId)?.let {
                     conversationId = it.id
                     _chatUiStateFlow.emit(
@@ -93,6 +92,7 @@ class ChatViewModel : BaseViewModel() {
                 }
             }
             if (conversationId != 0L) {
+                MyApplication.latestConversationId = conversationId
                 coreManager.getConversation(conversationId).collect { conversation ->
                     _chatUiStateFlow.emit(
                         UiState(

@@ -1,0 +1,57 @@
+CREATE TABLE `conversation` (
+  id INTEGER NOT NULL PRIMARY KEY,
+  title TEXT NOT NULL,
+  type TEXT NOT NULL,
+  creator TEXT NOT NULL,
+  created_at INTEGER NOT NULL DEFAULT 0,
+  updated_at INTEGER NOT NULL DEFAULT 0,
+
+  FOREIGN KEY (creator) REFERENCES user(id)
+);
+
+findAll:
+SELECT *
+FROM `conversation`
+ORDER BY updated_at DESC;
+
+findById:
+SELECT *
+FROM `conversation`
+WHERE id = :id;
+
+findConversationWithUser:
+SELECT conversation.*
+FROM conversation
+JOIN participant ON conversation.id = participant.conversation
+WHERE participant.user = :userId AND conversation.type = :type LIMIT 1;
+
+upsert {
+  UPDATE `conversation`
+  SET title = :title,
+      updated_at = :updated_at
+  WHERE id = :id;
+
+  INSERT OR IGNORE INTO `conversation`(
+    id,
+    title,
+    type,
+    creator,
+    created_at,
+    updated_at
+  )
+  VALUES (
+    :id,
+    :title,
+    :type,
+    :creator,
+    :created_at,
+    :updated_at
+  );
+}
+
+deleteById:
+DELETE FROM `conversation`
+WHERE id = :id;
+
+deleteAll:
+DELETE FROM `conversation`;

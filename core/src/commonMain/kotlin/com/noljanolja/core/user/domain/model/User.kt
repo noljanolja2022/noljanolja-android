@@ -1,5 +1,8 @@
 package com.noljanolja.core.user.domain.model
 
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -10,13 +13,12 @@ data class User(
     val avatar: String? = null,
     val phone: String? = null,
     val gender: Gender? = null,
+    val dob: LocalDate? = null,
+    val createdAt: Instant = Clock.System.now(),
+    val updatedAt: Instant = Clock.System.now(),
+    var isMe: Boolean = false,
 ) {
-    var isMe: Boolean = id == currentUserId
     fun getAvatarUrl() = avatar
-
-    companion object {
-        var currentUserId: String? = null
-    }
 }
 
 @Serializable

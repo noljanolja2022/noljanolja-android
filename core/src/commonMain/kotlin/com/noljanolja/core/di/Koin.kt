@@ -6,9 +6,11 @@ import com.noljanolja.core.auth.domain.repository.AuthRepository
 import com.noljanolja.core.contacts.data.repository.ContactsRepositoryImpl
 import com.noljanolja.core.contacts.domain.repository.ContactsRepository
 import com.noljanolja.core.conversation.data.datasource.ConversationApi
+import com.noljanolja.core.conversation.data.datasource.LocalConversationDataSource
 import com.noljanolja.core.conversation.data.repository.ConversationRepositoryImpl
 import com.noljanolja.core.conversation.domain.repository.ConversationRepository
 import com.noljanolja.core.db.Noljanolja
+import com.noljanolja.core.user.data.datasource.LocalUserDataSource
 import com.noljanolja.core.user.data.datasource.UserApi
 import com.noljanolja.core.user.data.datasource.UserRemoteDataSource
 import com.noljanolja.core.user.data.datasource.UserRemoteDataSourceImpl
@@ -37,9 +39,19 @@ fun initKoin(appModule: Module): KoinApplication {
 expect val platformModule: Module
 
 private val coreModule = module {
+    single {
+        with(get<Noljanolja>()) {
+            LocalUserDataSource(userQueries, participantQueries, Dispatchers.Default)
+        }
+    }
+    single {
+        with(get<Noljanolja>()) {
+            LocalConversationDataSource(conversationQueries, messageQueries, Dispatchers.Default)
+        }
+    }
 
     single<UserRepository> {
-        UserRepositoryImpl(get(), get(), get(), get())
+        UserRepositoryImpl(get(), get(), get(), get(), get(), get())
     }
     single {
         UserApi(get())
@@ -58,7 +70,7 @@ private val coreModule = module {
         )
     }
     single<ConversationRepository> {
-        ConversationRepositoryImpl(get(), get())
+        ConversationRepositoryImpl(get(), get(), get(), get())
     }
     single {
         Noljanolja(get())

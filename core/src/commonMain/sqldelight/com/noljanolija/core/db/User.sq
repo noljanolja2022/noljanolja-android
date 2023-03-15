@@ -1,0 +1,75 @@
+CREATE TABLE `user` (
+  id TEXT NOT NULL PRIMARY KEY,
+  name TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  email TEXT NOT NULL,
+  gender TEXT,
+  dob TEXT,
+  isMe INTEGER AS Boolean NOT NULL DEFAULT 0,
+  created_at INTEGER NOT NULL DEFAULT 0,
+  updated_at INTEGER NOT NULL DEFAULT 0
+);
+
+findAllByConversation:
+SELECT `user`.*
+FROM `user`
+JOIN `participant` ON `user`.id = `participant`.user AND `participant`.conversation = :conversation_id
+ORDER BY `participant`.created_at DESC;
+
+findByConversation:
+SELECT `user`.*
+FROM `user`
+JOIN `participant` ON `user`.id = `participant`.user AND `participant`.conversation = :conversation_id
+ORDER BY `participant`.created_at DESC
+LIMIT :limit;
+
+findById:
+SELECT `user`.*
+FROM `user`
+WHERE id = :userId;
+
+findMe:
+SELECT `user`.*
+FROM `user`
+WHERE isMe = 1;
+
+upsert {
+  UPDATE `user`
+  SET name = :name,
+      email = :email,
+      gender = :gender,
+      dob = :dob,
+      created_at = :created_at,
+      updated_at = :updated_at
+  WHERE id = :id;
+
+  INSERT OR IGNORE INTO `user` (
+    id,
+    name,
+    phone,
+    email,
+    gender,
+    dob,
+    isMe,
+    created_at,
+    updated_at
+  )
+  VALUES (
+    :id,
+    :name,
+    :phone,
+    :email,
+    :gender,
+    :dob,
+    :isMe,
+    :created_at,
+    :updated_at
+  );
+}
+
+deleteById:
+DELETE FROM `user`
+WHERE id = :userId;
+
+deleteAll:
+DELETE FROM `user`;

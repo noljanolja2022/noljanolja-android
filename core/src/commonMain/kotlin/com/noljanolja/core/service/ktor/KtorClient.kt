@@ -37,9 +37,13 @@ object KtorClient {
                     }
                 }
                 refreshTokens {
-                    refreshToken.invoke()
-                    authRepository.getAuthToken()?.let {
-                        BearerTokens(it, it)
+                    if (response.status == HttpStatusCode.Unauthorized) {
+                        refreshToken.invoke()
+                        authRepository.getAuthToken()?.let {
+                            BearerTokens(it, it)
+                        }
+                    } else {
+                        null
                     }
                 }
             }
