@@ -212,8 +212,12 @@ internal class Auth(
 
     // Get token
     suspend fun getIdToken(forceRefresh: Boolean = false): String? {
-        if (forceRefresh) firebaseAuth.currentUser?.reload()?.await()
-        return firebaseAuth.currentUser?.getIdToken(forceRefresh)?.await()?.token
+        return try {
+            if (forceRefresh) firebaseAuth.currentUser?.reload()?.await()
+            firebaseAuth.currentUser?.getIdToken(forceRefresh)?.await()?.token
+        } catch (e: Exception) {
+            null
+        }
     }
 
     suspend fun updateUser(

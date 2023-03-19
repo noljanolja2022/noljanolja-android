@@ -32,7 +32,7 @@ class CoreManager : KoinComponent {
                     Logger.e(it) { "Collect token error ${it.message}" }
                 }
                 .collect {
-                    streamConversation()
+                    it?.let { streamConversation() }
                 }
         }
     }
