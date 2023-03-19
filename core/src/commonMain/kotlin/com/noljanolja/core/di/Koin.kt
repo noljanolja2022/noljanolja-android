@@ -66,7 +66,6 @@ private val coreModule = module {
         ConversationApi(
             get(),
             get(),
-            get()
         )
     }
     single<ConversationRepository> {
@@ -79,6 +78,6 @@ private val coreModule = module {
         AuthRepositoryImpl(get<Noljanolja>().authQueries, Dispatchers.Default)
     }
     single {
-        CoreManager(get(), get(), get(), get())
+        CoreManager()
     }
 }

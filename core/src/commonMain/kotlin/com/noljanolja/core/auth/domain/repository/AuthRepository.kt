@@ -1,8 +1,10 @@
 package com.noljanolja.core.auth.domain.repository
 
-interface AuthRepository {
+import kotlinx.coroutines.flow.Flow
 
-    suspend fun getAuthToken(): String?
+internal interface AuthRepository {
+
+    suspend fun getAuthToken(): Flow<String?>
 
     suspend fun saveAuthToken(
         authToken: String,

@@ -7,9 +7,10 @@ import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
 
-class AuthRepositoryImpl(
+internal class AuthRepositoryImpl(
     private val tokenQueries: AuthQueries,
     private val backgroundDispatcher: CoroutineDispatcher,
 ) : AuthRepository {
@@ -17,7 +18,7 @@ class AuthRepositoryImpl(
     override suspend fun getAuthToken() = tokenQueries.find()
         .asFlow()
         .mapToOneOrNull(backgroundDispatcher)
-        .firstOrNull()?.auth_token
+        .map { it?.auth_token }
 
     override suspend fun saveAuthToken(
         authToken: String,

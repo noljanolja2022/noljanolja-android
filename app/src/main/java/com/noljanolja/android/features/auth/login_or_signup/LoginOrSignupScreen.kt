@@ -11,7 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import org.koin.androidx.compose.getViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.common.navigation.NavigationCommand.FinishWithResults.Companion.FORGOT_FINISH_AUTH
@@ -23,6 +22,7 @@ import com.noljanolja.android.features.auth.signup.SignupScreen
 import com.noljanolja.android.features.auth.signup.SignupUIState
 import com.noljanolja.android.features.auth.signup.SignupViewModel
 import com.noljanolja.android.ui.composable.FullSizeLoading
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun LoginOrSignupScreen(

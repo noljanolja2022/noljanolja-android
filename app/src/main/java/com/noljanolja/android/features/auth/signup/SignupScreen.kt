@@ -17,7 +17,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.koin.androidx.compose.getViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.handleError
@@ -29,6 +28,7 @@ import com.noljanolja.android.features.auth.signup.component.FullAgreement
 import com.noljanolja.android.ui.composable.BackPressHandler
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.SecondaryButton
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun SignupScreen(

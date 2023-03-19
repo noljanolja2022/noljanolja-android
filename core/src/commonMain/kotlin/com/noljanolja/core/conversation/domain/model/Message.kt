@@ -15,9 +15,13 @@ data class Message(
     var stickerUrl: String = "",
     val type: MessageType = MessageType.UNDEFINED,
     val status: MessageStatus = MessageStatus.SENDING,
+    val seenBy: List<String> = emptyList(),
     val createdAt: Instant = Clock.System.now(),
     val updatedAt: Instant = Clock.System.now(),
-)
+) {
+    var seenUsers: List<User> = emptyList()
+    var isSeenByMe: Boolean = false
+}
 
 @Serializable
 enum class MessageStatus {

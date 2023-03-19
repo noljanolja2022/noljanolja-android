@@ -12,7 +12,7 @@ import io.ktor.client.plugins.*
 import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.auth.providers.*
 
-class UserRepositoryImpl(
+internal class UserRepositoryImpl(
     private val userRemoteDataSource: UserRemoteDataSource,
     private val authDataSource: AuthDataSource,
     private val client: HttpClient,
@@ -91,15 +91,20 @@ class UserRepositoryImpl(
 
     // Logout
     override suspend fun logout(): Result<Boolean> {
-        return authDataSource.logout().also {
-            val provider =
-                client.plugin(Auth).providers.filterIsInstance<BearerAuthProvider>().firstOrNull()
-            provider?.clearToken()
-            authRepository.delete()
-            localConversationDataSource.deleteAll()
-            localConversationDataSource.deleteAllMessages()
-            localUserDataSource.deleteAllParticipants()
-            localUserDataSource.deleteAll()
+        return pushTokens("").also {
+            if (it.isSuccess) {
+                authDataSource.logout().also {
+                    val provider =
+                        client.plugin(Auth).providers.filterIsInstance<BearerAuthProvider>()
+                            .firstOrNull()
+                    provider?.clearToken()
+                    authRepository.saveAuthToken("")
+                    localConversationDataSource.deleteAll()
+                    localConversationDataSource.deleteAllMessages()
+                    localUserDataSource.deleteAllParticipants()
+                    localUserDataSource.deleteAll()
+                }
+            }
         }
     }
 

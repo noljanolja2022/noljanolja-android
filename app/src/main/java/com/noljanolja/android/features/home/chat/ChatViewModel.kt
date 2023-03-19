@@ -20,6 +20,7 @@ class ChatViewModel : BaseViewModel() {
     private var noMoreMessages: Boolean = false
 
     private var job: Job? = null
+    private var seenJob: Job? = null
 
     private val _chatUiStateFlow = MutableStateFlow(UiState<Conversation>())
     val chatUiStateFlow = _chatUiStateFlow.asStateFlow()
@@ -84,28 +85,16 @@ class ChatViewModel : BaseViewModel() {
             if (conversationId == 0L) {
                 coreManager.findConversationWithUser(userId)?.let {
                     conversationId = it.id
-                    _chatUiStateFlow.emit(
-                        UiState(
-                            data = it
-                        )
-                    )
+                    updateUiState(it)
                 }
             }
             if (conversationId != 0L) {
                 MyApplication.latestConversationId = conversationId
                 coreManager.getConversation(conversationId).collect { conversation ->
-                    _chatUiStateFlow.emit(
-                        UiState(
-                            data = conversation
-                        )
-                    )
+                    updateUiState(conversation)
                 }
             } else {
-                _chatUiStateFlow.emit(
-                    UiState(
-                        data = createEmptyConversation()
-                    )
-                )
+                updateUiState(createEmptyConversation())
             }
         }
     }
@@ -118,6 +107,22 @@ class ChatViewModel : BaseViewModel() {
             creator = User(),
             participants = listOf(User(name = userName)),
         )
+    }
+
+    private suspend fun updateUiState(conversation: Conversation) {
+        _chatUiStateFlow.emit(
+            UiState(
+                data = conversation
+            )
+        )
+        seenJob?.cancel()
+        seenJob = launch {
+            conversation.messages.firstOrNull()?.let { message ->
+                if (!message.isSeenByMe) {
+                    coreManager.updateMessageStatus(conversationId, message.id)
+                }
+            }
+        }
     }
 
     override fun onCleared() {

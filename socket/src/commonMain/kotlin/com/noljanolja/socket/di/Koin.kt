@@ -1,5 +1,6 @@
 package com.noljanolja.socket.di
 
+import co.touchlab.kermit.Logger
 import com.noljanolja.socket.SocketManager
 import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
@@ -31,12 +32,15 @@ val socketModule = module {
                             }
                         }
                     }
-                    reconnectable { _, attempt -> attempt <= 3 }
+                    reconnectable { error, attempt ->
+                        Logger.e(error, { "Stream error 1 $error" })
+                        attempt <= 3
+                    }
                 }
             }
         }
     }
     single {
-        SocketManager(get(named("rSocket")))
+        SocketManager(get(named("rSocket")), get())
     }
 }

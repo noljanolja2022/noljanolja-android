@@ -14,6 +14,7 @@ import com.google.firebase.ktx.Firebase
 import com.noljanolja.android.common.contact.data.ContactsLoader
 import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.common.user.data.AuthDataSourceImpl
+import com.noljanolja.android.common.user.data.TokenRepoImpl
 import com.noljanolja.android.features.auth.countries.CountriesViewModel
 import com.noljanolja.android.features.auth.forget.ForgotViewModel
 import com.noljanolja.android.features.auth.login.LoginViewModel
@@ -32,14 +33,15 @@ import com.noljanolja.android.features.home.require_login.RequireLoginViewModel
 import com.noljanolja.android.features.home.root.HomeViewModel
 import com.noljanolja.android.features.setting.SettingViewModel
 import com.noljanolja.android.features.splash.SplashViewModel
+import com.noljanolja.android.services.PermissionChecker
 import com.noljanolja.android.services.analytics.AppAnalytics
 import com.noljanolja.android.services.analytics.firebase.FirebaseLogger
 import com.noljanolja.android.services.analytics.firebase.FirebaseTracker
-import com.noljanolja.core.auth.domain.repository.AuthRepository
 import com.noljanolja.core.di.initKoin
 import com.noljanolja.core.service.ktor.KtorClient
 import com.noljanolja.core.service.ktor.KtorConfig
 import com.noljanolja.core.user.data.datasource.AuthDataSource
+import com.noljanolja.socket.TokenRepo
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -52,17 +54,19 @@ class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         initKoin()
-        ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
-            override fun onStart(owner: LifecycleOwner) {
-                isAppInForeground = true
-                Logger.d("Noljanolja: foregrounded: ${ProcessLifecycleOwner.get().lifecycle.currentState.name}")
-            }
+        ProcessLifecycleOwner.get().lifecycle.apply {
+            addObserver(object : DefaultLifecycleObserver {
+                override fun onStart(owner: LifecycleOwner) {
+                    isAppInForeground = true
+                    Logger.d("Noljanolja: foregrounded: ${ProcessLifecycleOwner.get().lifecycle.currentState.name}")
+                }
 
-            override fun onStop(owner: LifecycleOwner) {
-                isAppInForeground = false
-                Logger.d("Noljanolja: backgrounded: ${ProcessLifecycleOwner.get().lifecycle.currentState.name}")
-            }
-        })
+                override fun onStop(owner: LifecycleOwner) {
+                    isAppInForeground = false
+                    Logger.d("Noljanolja: backgrounded: ${ProcessLifecycleOwner.get().lifecycle.currentState.name}")
+                }
+            })
+        }
     }
 
     private fun initKoin() {
@@ -105,6 +109,12 @@ class MyApplication : Application() {
                         region = "asia-northeast3",
                     )
                 }
+                single<TokenRepo> {
+                    TokenRepoImpl(get(), get())
+                }
+                single {
+                    PermissionChecker(get())
+                }
                 single {
                     ContactsLoader(get())
                 }
@@ -118,11 +128,7 @@ class MyApplication : Application() {
                         get(),
                         get(),
                         get(),
-                        refreshToken = {
-                            get<AuthRepository>().saveAuthToken(
-                                get<AuthSdk>().getIdToken(true).orEmpty()
-                            )
-                        }
+                        get(),
                     )
                 }
                 single<AuthDataSource> {

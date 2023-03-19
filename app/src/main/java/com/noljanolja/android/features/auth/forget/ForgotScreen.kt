@@ -21,7 +21,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.koin.androidx.compose.getViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.features.auth.common.component.FullSizeWithLogo
@@ -32,6 +31,7 @@ import com.noljanolja.android.ui.composable.SecondaryButton
 import com.noljanolja.android.util.getErrorMessage
 import com.noljanolja.android.util.showToast
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun ForgotScreen(viewModel: ForgotViewModel = getViewModel()) {

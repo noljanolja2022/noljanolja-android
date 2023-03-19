@@ -1,10 +1,10 @@
 package com.noljanolja.core.user.data.datasource
 
+import com.noljanolja.core.base.ResponseWithoutData
 import com.noljanolja.core.user.data.model.request.PushTokensRequest
 import com.noljanolja.core.user.data.model.request.SyncUserContactsRequest
 import com.noljanolja.core.user.data.model.request.UpdateUserRequest
 import com.noljanolja.core.user.data.model.response.GetMeResponse
-import com.noljanolja.core.user.data.model.response.ResponseWithoutData
 import com.noljanolja.core.user.data.model.response.SyncUserContactsResponse
 import com.noljanolja.core.user.data.model.response.UpdateUserResponse
 import com.noljanolja.core.utils.Const.BASE_URL

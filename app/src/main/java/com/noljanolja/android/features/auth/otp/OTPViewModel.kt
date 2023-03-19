@@ -1,5 +1,6 @@
 package com.noljanolja.android.features.auth.otp
 
+import com.d2brothers.firebase_auth.AuthSdk
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
@@ -7,8 +8,10 @@ import com.noljanolja.core.user.domain.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import org.koin.core.component.inject
 
 class OTPViewModel : BaseViewModel() {
+    private val authSdk: AuthSdk by inject()
     private val _uiStateFlow: MutableStateFlow<OTPUIState> = MutableStateFlow(OTPUIState())
     val uiStateFlow: StateFlow<OTPUIState> = _uiStateFlow.asStateFlow()
 
@@ -22,7 +25,10 @@ class OTPViewModel : BaseViewModel() {
                 }
                 is OTPEvent.VerifyOTP -> {
                     val result = coreManager.verifyOTPCode(event.verificationId, event.otp)
-                    handleAuthResult(result)
+                    authSdk.getIdToken(true)?.let {
+                        coreManager.saveAuthToken(it)
+                        handleAuthResult(result)
+                    }
                 }
             }
         }
@@ -36,6 +42,7 @@ class OTPViewModel : BaseViewModel() {
                 } else {
                     navigationManager.navigate(NavigationDirections.Home)
                 }
+                coreManager.pushToken()
             } ?: result?.exceptionOrNull()?.let {
                 sendError(it)
                 _uiStateFlow.emit(OTPUIState(error = it))

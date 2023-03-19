@@ -13,12 +13,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.koin.androidx.compose.getViewModel
 import com.noljanolja.android.R
-import com.noljanolja.core.country.domain.model.Countries
-import com.noljanolja.core.country.domain.model.Country
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.SearchBar
+import com.noljanolja.core.country.domain.model.Countries
+import com.noljanolja.core.country.domain.model.Country
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun CountriesScreen(

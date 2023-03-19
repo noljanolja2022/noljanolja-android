@@ -35,5 +35,3 @@ fun Context.getTmpFileUri(name: String, ext: String): Uri {
 
     return FileProvider.getUriForFile(this, "${BuildConfig.APPLICATION_ID}.provider", tmpFile)
 }
-
-fun Context.getLocalLocale() = resources.configuration.locale.country

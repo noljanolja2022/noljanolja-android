@@ -1,6 +1,7 @@
 package com.noljanolja.android.features.home.conversations
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -255,6 +256,15 @@ fun ConversationRow(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
             )
+            if (!message.isSeenByMe) {
+                Box(
+                    modifier = Modifier
+                        .padding(top = 2.dp)
+                        .size(6.dp)
+                        .clip(RoundedCornerShape(3.dp))
+                        .background(MaterialTheme.colorScheme.errorContainer)
+                )
+            }
         }
     }
 }

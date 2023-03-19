@@ -1,7 +1,8 @@
 package com.noljanolja.core.service.ktor
 
-import com.noljanolja.core.auth.domain.repository.AuthRepository
+import com.noljanolja.core.CoreManager
 import com.noljanolja.core.utils.default
+import com.noljanolja.socket.TokenRepo
 import io.ktor.client.*
 import io.ktor.client.engine.*
 import io.ktor.client.plugins.*
@@ -10,7 +11,6 @@ import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.plugins.observer.*
-import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
@@ -21,8 +21,8 @@ object KtorClient {
     fun createInstance(
         engine: HttpClientEngine,
         config: KtorConfig,
-        authRepository: AuthRepository,
-        refreshToken: suspend () -> Unit,
+        coreManager: CoreManager,
+        tokenRepo: TokenRepo,
     ) = HttpClient(engine) {
         install(ContentNegotiation) {
             json(
@@ -32,14 +32,14 @@ object KtorClient {
         install(Auth) {
             bearer {
                 loadTokens {
-                    authRepository.getAuthToken()?.let {
+                    coreManager.getAuthToken()?.let {
                         BearerTokens(it, it)
                     }
                 }
                 refreshTokens {
                     if (response.status == HttpStatusCode.Unauthorized) {
-                        refreshToken.invoke()
-                        authRepository.getAuthToken()?.let {
+                        tokenRepo.refreshToken()
+                        coreManager.getAuthToken()?.let {
                             BearerTokens(it, it)
                         }
                     } else {

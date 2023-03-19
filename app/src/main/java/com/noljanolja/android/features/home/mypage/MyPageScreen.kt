@@ -12,7 +12,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.koin.androidx.compose.getViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.CommonTopAppBar
@@ -20,6 +19,7 @@ import com.noljanolja.android.ui.composable.FullSizeLoading
 import com.noljanolja.android.ui.composable.PrimaryListTile
 import com.noljanolja.android.ui.composable.RoundedListTile
 import com.noljanolja.core.user.domain.model.displayIdentity
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun MyPageScreen(

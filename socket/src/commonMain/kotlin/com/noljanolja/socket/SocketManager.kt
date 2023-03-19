@@ -16,9 +16,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
-class SocketManager(private val socketClient: HttpClient) {
+class SocketManager(private val socketClient: HttpClient, private val tokenRepo: TokenRepo) {
     @OptIn(ExperimentalMetadataApi::class)
-    suspend fun streamConversations(token: String): Flow<String> {
+    suspend fun streamConversations(): Flow<String> {
         val rSocket: RSocket = socketClient.rSocket(BASE_SOCKET_URL)
         // request stream
         val stream: Flow<Payload> = rSocket.requestStream(
@@ -27,14 +27,20 @@ class SocketManager(private val socketClient: HttpClient) {
                 metadata(
                     CompositeMetadata(
                         RoutingMetadata("v1/conversations"),
-                        BearerAuthMetadata("Bearer $token")
+                        BearerAuthMetadata("Bearer ${tokenRepo.getToken()}")
                     )
                 )
             }
         ).catch {
-            Logger.e("Stream error", it)
+            if (it.message == "Unauthorized") {
+                Logger.e(it) {
+                    "Stream error 0 $it"
+                }
+                tokenRepo.refreshToken()
+            }
         }
         return stream.map {
+            Logger.d("Stream success}")
             it.data.readText()
         }
     }

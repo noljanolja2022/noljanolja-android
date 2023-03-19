@@ -1,7 +1,6 @@
-package com.noljanolja.core.user.data.model.response
+package com.noljanolja.core.base
 
-import com.noljanolja.core.base.BaseResponse
-
+@kotlinx.serialization.Serializable
 data class ResponseWithoutData(
     override val code: Int,
     override val message: String,

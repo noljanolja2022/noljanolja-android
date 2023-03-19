@@ -30,8 +30,8 @@ class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSou
 
     override suspend fun pushToken(userId: String, token: String): Result<Boolean> {
         return try {
-            if (userId.isBlank() || token.isBlank()) {
-                throw Exception("invalid arg: userId: $userId token: $token")
+            if (userId.isBlank()) {
+                Result.failure<Boolean>(Exception("invalid arg: userId: $userId"))
             }
             val result = userApi.pushTokens(
                 PushTokensRequest(

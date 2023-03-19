@@ -1,10 +1,6 @@
 package com.noljanolja.core.conversation.data.datasource
 
-import com.noljanolja.core.auth.domain.repository.AuthRepository
-import com.noljanolja.core.conversation.data.model.request.CreateConversationRequest
-import com.noljanolja.core.conversation.data.model.request.GetConversationMessagesRequest
-import com.noljanolja.core.conversation.data.model.request.GetConversationRequest
-import com.noljanolja.core.conversation.data.model.request.SendConversationMessageRequest
+import com.noljanolja.core.conversation.data.model.request.*
 import com.noljanolja.core.conversation.data.model.response.*
 import com.noljanolja.core.conversation.data.model.response.GetConversationMessagesResponse
 import com.noljanolja.core.conversation.domain.model.Conversation
@@ -25,7 +21,6 @@ import kotlinx.serialization.json.Json
 
 class ConversationApi(
     private val client: HttpClient,
-    private val authRepository: AuthRepository,
     private val socketManager: SocketManager,
 ) {
 
@@ -66,10 +61,7 @@ class ConversationApi(
     }
 
     suspend fun streamConversations(): Flow<Conversation> {
-        val token = authRepository.getAuthToken()
-        return socketManager.streamConversations(
-            token.orEmpty()
-        ).map {
+        return socketManager.streamConversations().map {
             Json.default().decodeFromString(it)
         }
     }
@@ -81,5 +73,13 @@ class ConversationApi(
             parameter("beforeMessageId", request.messageBefore)
             parameter("afterMessageId", request.messageAfter)
         }.body()
+    }
+
+    suspend fun updateMessageStatus(
+        request: UpdateMessageStatusRequest,
+    ) {
+        return client.post(
+            "$BASE_URL/conversations/${request.conversationId}/messages/${request.messageId}/seen"
+        ).body()
     }
 }

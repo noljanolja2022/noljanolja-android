@@ -1,7 +1,6 @@
 package com.noljanolja.core.user.data.model.response
 
 import com.noljanolja.core.base.BaseResponse
-import com.noljanolja.core.user.domain.model.User
 import kotlinx.serialization.Serializable
 
 @Serializable

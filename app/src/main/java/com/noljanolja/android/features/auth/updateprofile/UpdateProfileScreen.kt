@@ -21,7 +21,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.koin.androidx.compose.getViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.noljanolja.android.R
@@ -33,6 +32,7 @@ import com.noljanolja.android.ui.composable.ErrorDialog
 import com.noljanolja.android.ui.composable.LoadingDialog
 import com.noljanolja.core.user.domain.model.Gender
 import kotlinx.datetime.toKotlinLocalDate
+import org.koin.androidx.compose.getViewModel
 import java.time.LocalDate
 
 @SuppressLint("StateFlowValueCalledInComposition")

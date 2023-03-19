@@ -16,7 +16,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.koin.androidx.compose.getViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -25,9 +24,9 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
-import com.noljanolja.android.services.PermissionChecker
 import com.noljanolja.android.ui.composable.*
 import com.noljanolja.core.user.domain.model.User
+import org.koin.androidx.compose.getViewModel
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -48,13 +47,9 @@ fun ContactsScreenContent(
     uiState: UiState<List<User>>,
     handleEvent: (ContactsEvent) -> Unit,
 ) {
-    val context = LocalContext.current
     var openDialog by remember { mutableStateOf(false) }
     var searchText by remember { mutableStateOf("") }
 
-    LaunchedEffect(key1 = true) {
-        if (PermissionChecker(context).canReadContacts()) handleEvent(ContactsEvent.SyncContacts)
-    }
     val contactsPermissionState = rememberPermissionState(
         android.Manifest.permission.READ_CONTACTS
     ) { result ->

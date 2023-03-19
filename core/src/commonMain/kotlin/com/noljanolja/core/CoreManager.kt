@@ -1,5 +1,6 @@
 package com.noljanolja.core
 
+import co.touchlab.kermit.Logger
 import com.noljanolja.core.auth.domain.repository.AuthRepository
 import com.noljanolja.core.contacts.domain.model.Contact
 import com.noljanolja.core.contacts.domain.repository.ContactsRepository
@@ -8,16 +9,34 @@ import com.noljanolja.core.conversation.domain.model.Message
 import com.noljanolja.core.conversation.domain.repository.ConversationRepository
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.user.domain.repository.UserRepository
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class CoreManager(
-    private val contactsRepository: ContactsRepository,
-    private val userRepository: UserRepository,
-    private val conversationRepository: ConversationRepository,
-    private val authRepository: AuthRepository,
-) {
+class CoreManager : KoinComponent {
+    private val contactsRepository: ContactsRepository by inject()
+    private val userRepository: UserRepository by inject()
+    private val conversationRepository: ConversationRepository by inject()
+    private val authRepository: AuthRepository by inject()
 
-    var latestConversationId: Long = 0
+    private val scope = CoroutineScope(Dispatchers.Default)
+
+    init {
+        scope.launch {
+            authRepository.getAuthToken()
+                .catch {
+                    Logger.e(it) { "Collect token error ${it.message}" }
+                }
+                .collect {
+                    streamConversation()
+                }
+        }
+    }
+
     suspend fun syncUserContacts(contacts: List<Contact>): Result<List<User>> {
         return contactsRepository.syncUserContacts(contacts)
     }
@@ -58,6 +77,14 @@ class CoreManager(
         )
     }
 
+    private suspend fun streamConversation() {
+        conversationRepository.streamConversations()
+    }
+
+    suspend fun updateMessageStatus(conversationId: Long, messageId: Long) {
+        conversationRepository.updateMessageStatus(conversationId, messageId)
+    }
+
     suspend fun getCurrentUser(forceRefresh: Boolean = false): Result<User> {
         return userRepository.getCurrentUser(forceRefresh)
     }
@@ -76,15 +103,26 @@ class CoreManager(
     }
 
     suspend fun logout(): Result<Boolean> {
-        authRepository.delete()
         return userRepository.logout()
     }
 
-    suspend fun getAuthToken(): String? = authRepository.getAuthToken()
+    suspend fun getAuthToken(): String? = authRepository.getAuthToken().firstOrNull()
 
     suspend fun saveAuthToken(
         authToken: String,
-    ) = authRepository.saveAuthToken(authToken)
+    ) {
+        authRepository.saveAuthToken(authToken)
+    }
+
+    suspend fun pushToken() {
+        authRepository.getPushToken()?.let {
+            userRepository.pushTokens(it)
+        }
+    }
 
     suspend fun delete() = authRepository.delete()
+
+    fun onDestroy() {
+        scope.coroutineContext.cancel()
+    }
 }

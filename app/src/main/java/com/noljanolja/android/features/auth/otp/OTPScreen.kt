@@ -14,7 +14,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import org.koin.androidx.compose.getViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.d2brothers.firebase_auth.AuthSdk
 import com.noljanolja.android.R
@@ -23,6 +22,7 @@ import com.noljanolja.android.ui.composable.ErrorDialog
 import com.noljanolja.android.ui.composable.LoadingDialog
 import com.noljanolja.android.util.showToast
 import kotlinx.coroutines.delay
+import org.koin.androidx.compose.getViewModel
 
 private const val BLOCK_RESEND_TIME = 90_000
 private const val ONE_MILI_SECOND = 1_000

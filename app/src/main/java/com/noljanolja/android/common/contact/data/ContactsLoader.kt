@@ -5,6 +5,7 @@ import android.content.Context
 import android.provider.ContactsContract
 import com.noljanolja.android.services.PermissionChecker
 import com.noljanolja.android.util.formatPhoneNumber
+import com.noljanolja.android.util.orZero
 import com.noljanolja.core.contacts.domain.model.Contact
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -35,9 +36,9 @@ class ContactsLoader(
                 if (cursor.moveToFirst()) {
                     do {
                         val contactId = cursor.getColumnIndex(projections[0])
-                            .takeIf { it >= 0 }?.let { cursor.getLong(it) } ?: 0
+                            .takeIf { it >= 0 }?.let { cursor.getLong(it) }.orZero()
                         val name = cursor.getColumnIndex(projections[1])
-                            .takeIf { it >= 0 }?.let { cursor.getString(it) } ?: ""
+                            .takeIf { it >= 0 }?.let { cursor.getString(it) }.orEmpty()
                         val phones = retrievePhoneNumber(contactId)
                         val emails = retrieveEmail(contactId)
 

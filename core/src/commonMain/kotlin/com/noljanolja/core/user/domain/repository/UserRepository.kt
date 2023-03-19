@@ -2,7 +2,7 @@ package com.noljanolja.core.user.domain.repository
 
 import com.noljanolja.core.user.domain.model.User
 
-interface UserRepository {
+internal interface UserRepository {
     suspend fun getCurrentUser(forceRefresh: Boolean = false): Result<User>
 
     suspend fun pushTokens(token: String): Result<Boolean>

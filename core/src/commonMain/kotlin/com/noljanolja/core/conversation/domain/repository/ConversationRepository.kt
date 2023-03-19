@@ -4,7 +4,7 @@ import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.Message
 import kotlinx.coroutines.flow.Flow
 
-interface ConversationRepository {
+internal interface ConversationRepository {
     suspend fun findConversationWithUser(userId: String): Conversation?
 
     suspend fun getConversation(
@@ -24,4 +24,11 @@ interface ConversationRepository {
         messageBefore: Long? = null,
         messageAfter: Long? = null,
     ): List<Message>
+
+    suspend fun updateMessageStatus(
+        conversationId: Long,
+        messageId: Long,
+    )
+
+    suspend fun streamConversations()
 }

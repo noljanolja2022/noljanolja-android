@@ -7,7 +7,7 @@ import androidx.compose.runtime.*
 fun InfiniteListHandler(
     listState: LazyListState,
     buffer: Int = 3,
-    onLoadMore: () -> Unit
+    onLoadMore: () -> Unit,
 ) {
     val loadMore = remember {
         derivedStateOf {

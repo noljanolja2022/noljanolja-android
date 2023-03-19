@@ -48,6 +48,7 @@ class LocalConversationDataSource(
             attachments: String,
             type: String,
             status: String,
+            seenBy: String,
             created_at: Long,
             updated_at: Long,
         ->
@@ -59,6 +60,7 @@ class LocalConversationDataSource(
             stickerUrl = stickerUrl,
             type = MessageType.valueOf(type),
             status = MessageStatus.valueOf(status),
+            seenBy = seenBy.split(",").map { it },
             createdAt = Instant.fromEpochMilliseconds(created_at),
             updatedAt = Instant.fromEpochMilliseconds(updated_at),
         )
@@ -146,7 +148,7 @@ class LocalConversationDataSource(
             } else {
                 null
             }
-
+            val seenBy = message.seenBy.joinToString(",")
             messageQueries.upsert(
                 id = message.id,
                 localId = existing?.localId ?: message.localId,
@@ -157,6 +159,7 @@ class LocalConversationDataSource(
                 attachments = "",
                 type = message.type.name,
                 status = message.status.name,
+                seenBy = seenBy,
                 created_at = message.createdAt.toEpochMilliseconds(),
                 updated_at = message.updatedAt.toEpochMilliseconds(),
             )

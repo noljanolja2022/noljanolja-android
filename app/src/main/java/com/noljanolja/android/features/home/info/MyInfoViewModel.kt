@@ -27,8 +27,9 @@ class MyInfoViewModel : BaseViewModel() {
                     navigationManager.navigate(NavigationDirections.Back)
                 }
                 MyInfoEvent.Logout -> {
-                    coreManager.logout()
-                    navigationManager.navigate(NavigationDirections.Auth)
+                    if (coreManager.logout().getOrNull() == true) {
+                        navigationManager.navigate(NavigationDirections.Auth)
+                    }
                 }
                 MyInfoEvent.GoSetting -> {
                     navigationManager.navigate(NavigationDirections.Setting)

@@ -40,7 +40,7 @@ kotlin {
         val sqlDelightVersion = "1.5.5"
         val commonMain by getting {
             dependencies {
-                implementation(project(":socket"))
+                api(project(":socket"))
                 implementation("com.squareup.sqldelight:runtime:1.5.4")
                 implementation("com.squareup.sqldelight:coroutines-extensions:1.5.4")
 
@@ -86,5 +86,6 @@ kotlin {
 sqldelight {
     database("Noljanolja") {
         packageName = "com.noljanolja.core.db"
+        version = 2
     }
 }

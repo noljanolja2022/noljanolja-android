@@ -27,7 +27,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.koin.androidx.compose.getViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -46,6 +45,7 @@ import com.noljanolja.core.conversation.domain.model.Message
 import com.noljanolja.core.conversation.domain.model.MessageType
 import com.noljanolja.core.user.domain.model.User
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.getViewModel
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -286,10 +286,28 @@ private fun MessageRow(
             isFirstMessageByAuthorSameDay = isFirstMessageByAuthorSameDay,
             isLastMessageByAuthorSameDay = isLastMessageByAuthorSameDay,
             modifier = Modifier
-                .padding(end = 16.dp)
+                .padding(end = 4.dp)
                 .weight(1f),
             onMessageClick = onMessageClick,
         )
+        if (message.sender.isMe) {
+            val modifier = Modifier.padding(end = 16.dp).size(13.dp)
+            message.seenUsers.find { !it.isMe }?.let { userSeen ->
+                AsyncImage(
+                    ImageRequest.Builder(context = context)
+                        .data(userSeen.getAvatarUrl())
+                        .placeholder(R.drawable.placeholder_avatar)
+                        .error(R.drawable.placeholder_avatar)
+                        .fallback(R.drawable.placeholder_avatar)
+                        .build(),
+                    contentDescription = null,
+                    modifier = modifier
+                        .clip(RoundedCornerShape(13.dp))
+                        .align(Alignment.Bottom),
+                    contentScale = ContentScale.FillBounds,
+                )
+            } ?: Spacer(modifier = modifier)
+        }
     }
 }
 

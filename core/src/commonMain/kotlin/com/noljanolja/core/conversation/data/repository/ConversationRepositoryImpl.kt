@@ -3,10 +3,7 @@ package com.noljanolja.core.conversation.data.repository
 import co.touchlab.kermit.Logger
 import com.noljanolja.core.conversation.data.datasource.ConversationApi
 import com.noljanolja.core.conversation.data.datasource.LocalConversationDataSource
-import com.noljanolja.core.conversation.data.model.request.CreateConversationRequest
-import com.noljanolja.core.conversation.data.model.request.GetConversationMessagesRequest
-import com.noljanolja.core.conversation.data.model.request.GetConversationRequest
-import com.noljanolja.core.conversation.data.model.request.SendConversationMessageRequest
+import com.noljanolja.core.conversation.data.model.request.*
 import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.ConversationType
 import com.noljanolja.core.conversation.domain.model.Message
@@ -18,7 +15,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlin.random.Random
 
-class ConversationRepositoryImpl(
+internal class ConversationRepositoryImpl(
     private val conversationApi: ConversationApi,
     private val userRepository: UserRepository,
     private val localConversationDataSource: LocalConversationDataSource,
@@ -33,11 +30,13 @@ class ConversationRepositoryImpl(
 
     override suspend fun getConversation(conversationId: Long): Flow<Conversation> = flow {
         try {
+            scope.launch {
+                conversationApi.getConversation(GetConversationRequest(conversationId)).data?.let {
+                    updateLocalConversation(it)
+                }
+            }
             getLocalConversation(conversationId).collect {
                 emit(it)
-            }
-            conversationApi.getConversation(GetConversationRequest(conversationId)).data?.let {
-                updateLocalConversation(it)
             }
         } catch (e: Throwable) {
             // Logger
@@ -46,14 +45,13 @@ class ConversationRepositoryImpl(
 
     override suspend fun getConversations(): Flow<List<Conversation>> = flow {
         try {
-            streamConversations()
-            getLocalConversations().collect {
-                emit(it.sortedByDescending { it.messages.maxByOrNull { it.createdAt }?.createdAt })
-            }
             scope.launch {
                 conversationApi.getConversations().data?.forEach {
                     updateLocalConversation(it)
                 }
+            }
+            getLocalConversations().collect {
+                emit(it.sortedByDescending { it.messages.maxByOrNull { it.createdAt }?.createdAt })
             }
         } catch (e: Throwable) {
             emit(emptyList())
@@ -91,7 +89,7 @@ class ConversationRepositoryImpl(
                 )
             }
             localConversationDataSource.upsertConversationMessages(
-                conversationId,
+                sentConversationId,
                 listOf(sentMessage)
             )
             return sentConversationId
@@ -109,12 +107,21 @@ class ConversationRepositoryImpl(
         ).data?.id ?: 0L
     }
 
-    private fun streamConversations() {
+    override suspend fun streamConversations() {
         job?.cancel()
         job = scope.launch {
-            conversationApi.streamConversations().collect {
-                updateLocalConversation(it)
-            }
+            conversationApi.streamConversations()
+                .catch { error ->
+                    Logger.e(error) {
+                        "streamConversations"
+                    }
+                }
+                .collect {
+                    updateLocalConversation(
+                        conversation = it,
+                        saveParticipants = it.type == ConversationType.SINGLE,
+                    )
+                }
         }
     }
 
@@ -147,12 +154,22 @@ class ConversationRepositoryImpl(
         return localConversationDataSource.findById(conversationId)
             .combine(localConversationDataSource.findConversationMessages(conversationId)) { conversation, messages ->
                 localUserDataSource.let {
+                    val participants = it.findConversationParticipants(conversation.id)
                     conversation.copy(
                         creator = it.findById(conversation.creator.id)
                             ?: conversation.creator,
-                        participants = it.findConversationParticipants(conversation.id),
+                        participants = participants,
                         messages = messages.map { message ->
-                            message.copy(sender = it.findById(message.sender.id) ?: message.sender)
+                            val sender = it.findById(message.sender.id) ?: message.sender
+                            val myId = it.findMe()?.id ?: 0L
+                            message.copy(sender = sender)
+                                .apply {
+                                    if (seenBy.any { it.isNotBlank() }) {
+                                        seenUsers =
+                                            seenBy.mapNotNull { id -> participants.find { it.id == id } }
+                                    }
+                                    isSeenByMe = sender.isMe || seenBy.contains(myId)
+                                }
                         }
                     )
                 }
@@ -192,11 +209,14 @@ class ConversationRepositoryImpl(
     private suspend fun getLocalConversations(): Flow<List<Conversation>> {
         return localConversationDataSource.findAll().map { localConversations ->
             localConversations.mapNotNull { localConversation ->
+                // wait update message db
+                delay(50)
                 val messages = localConversationDataSource.findConversationMessages(
                     localConversation.id,
                     limit = 1
                 ).firstOrNull() ?: listOf()
                 if (messages.isNotEmpty()) {
+                    val myId = localUserDataSource.findMe()?.id ?: 0
                     Conversation(
                         id = localConversation.id,
                         title = localConversation.title,
@@ -210,7 +230,9 @@ class ConversationRepositoryImpl(
                         messages = messages.map {
                             it.copy(
                                 sender = localUserDataSource.findById(it.sender.id) ?: it.sender
-                            )
+                            ).apply {
+                                isSeenByMe = sender.isMe || seenBy.contains(myId)
+                            }
                         },
                         createdAt = localConversation.createdAt,
                         updatedAt = localConversation.updatedAt,
@@ -222,7 +244,14 @@ class ConversationRepositoryImpl(
         }
     }
 
+    override suspend fun updateMessageStatus(conversationId: Long, messageId: Long) {
+        conversationApi.updateMessageStatus(
+            UpdateMessageStatusRequest(conversationId = conversationId, messageId = messageId)
+        )
+    }
+
     fun onDestroy() {
+        job?.cancel()
         scope.coroutineContext.cancel()
     }
 }

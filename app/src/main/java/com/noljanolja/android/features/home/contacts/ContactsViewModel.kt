@@ -5,6 +5,7 @@ import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.contact.data.ContactsLoader
 import com.noljanolja.android.common.navigation.NavigationDirections
+import com.noljanolja.android.services.PermissionChecker
 import com.noljanolja.core.user.domain.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,8 +14,14 @@ import org.koin.core.component.inject
 
 class ContactsViewModel : BaseViewModel() {
     private val contactsLoader: ContactsLoader by inject()
+    private val permissionChecker: PermissionChecker by inject()
     private val _uiStateFlow = MutableStateFlow(UiState<List<User>>())
     val uiStateFlow = _uiStateFlow.asStateFlow()
+
+    init {
+        if (permissionChecker.canReadContacts()) handleEvent(ContactsEvent.SyncContacts)
+    }
+
     fun handleEvent(event: ContactsEvent) {
         launch {
             when (event) {

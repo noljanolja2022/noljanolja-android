@@ -4,7 +4,6 @@ import com.noljanolja.core.user.domain.model.User
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
-import kotlin.random.Random
 
 @Serializable
 data class Conversation(
@@ -31,31 +30,6 @@ data class Conversation(
                 .orEmpty()
         } else {
             ""
-        }
-    }
-
-    companion object {
-        fun mock(): Conversation {
-            val random = Random.nextInt(100_000_000)
-            return Conversation(
-                id = 0,
-                title = random.toString(),
-                type = ConversationType.SINGLE,
-                creator = User(
-                    name = random.toString()
-                ),
-                messages = listOf(
-                    Message(
-                        message = "Hello, I'm $random",
-                        type = MessageType.PLAINTEXT
-                    )
-                ),
-                participants = listOf(
-                    User(
-                        name = random.toString()
-                    )
-                )
-            )
         }
     }
 }
