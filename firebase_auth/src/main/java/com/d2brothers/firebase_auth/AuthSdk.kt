@@ -75,13 +75,13 @@ class AuthSdk private constructor(private val context: Context) {
             googleWebClientId: String,
             region: String?,
         ): AuthSdk {
-            KakaoSdk.init(context, kakaoApiKey)
-            NaverIdLoginSDK.initialize(
-                context,
-                naverClientId,
-                naverClientSecret,
-                naverClientName,
-            )
+//            KakaoSdk.init(context, kakaoApiKey)
+//            NaverIdLoginSDK.initialize(
+//                context,
+//                naverClientId,
+//                naverClientSecret,
+//                naverClientName,
+//            )
             Firebase.auth.setLanguageCode(Locale.getDefault().language)
             AuthConfig.init(region = region, googleClientId = googleWebClientId)
             return AuthSdk(context).also {
