@@ -3,11 +3,7 @@ package com.noljanolja.android.ui.composable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -112,12 +108,12 @@ fun WarningDialog(
             text = { Text(text = content) },
             dismissButton = {
                 TextButton(onClick = onDismiss) {
-                    Text(dismissText)
+                    Text(dismissText, color = MaterialTheme.colorScheme.onPrimary)
                 }
             },
             confirmButton = {
                 TextButton(onClick = onConfirm) {
-                    Text(confirmText)
+                    Text(confirmText, color = MaterialTheme.colorScheme.onPrimary)
                 }
             },
             onDismissRequest = {},

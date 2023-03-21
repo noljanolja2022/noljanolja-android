@@ -16,8 +16,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.TextField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -45,9 +43,10 @@ import com.noljanolja.android.features.auth.login.component.LoginButton
 import com.noljanolja.android.ui.composable.ErrorDialog
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.SecondaryButton
-import com.noljanolja.android.util.PrefixTransformation
+import com.noljanolja.android.ui.composable.WarningDialog
 import com.noljanolja.core.country.domain.model.Countries
 import com.noljanolja.core.country.domain.model.Country
+import com.noljanolja.core.country.domain.model.getFlagEmoji
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -196,32 +195,23 @@ private fun LoginContent(
     ) {
         showErrorPhoneNumber = false
     }
-    if (showConfirmPhoneNumber) {
-        val formattedPhoneNumber =
-            PhoneNumberUtils.formatNumberToE164(phone.trim(), country.nameCode.uppercase())
+    val formattedPhoneNumber =
+        PhoneNumberUtils.formatNumberToE164(phone.trim(), country.nameCode.uppercase())
 
-        AlertDialog(
-            title = { Text(formattedPhoneNumber) },
-            text = { Text(stringResource(R.string.login_confirm_phone_description)) },
-            dismissButton = {
-                TextButton(onClick = {
-                    showConfirmPhoneNumber = false
-                }) {
-                    Text(stringResource(R.string.common_cancel))
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    showConfirmPhoneNumber = false
-                    handleEvent(LoginEvent.SendOTP(formattedPhoneNumber))
-                }) {
-                    Text(stringResource(R.string.common_confirm))
-                }
-            },
-            onDismissRequest = {},
-            properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false),
-        )
-    }
+    WarningDialog(
+        title = formattedPhoneNumber,
+        content = stringResource(R.string.login_confirm_phone_description),
+        dismissText = stringResource(R.string.common_cancel),
+        confirmText = stringResource(R.string.common_confirm),
+        isWarning = showConfirmPhoneNumber,
+        onDismiss = {
+            showConfirmPhoneNumber = false
+        },
+        onConfirm = {
+            showConfirmPhoneNumber = false
+            handleEvent(LoginEvent.SendOTP(formattedPhoneNumber))
+        }
+    )
 }
 
 @Composable
@@ -289,37 +279,21 @@ private fun ColumnScope.LoginPhoneContent(
 
     Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
         TextField(
-            modifier = Modifier.width(130.dp).wrapContentHeight(),
-            label = {
-                Text(
-                    stringResource(R.string.login_country_input_label),
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                )
-            },
-            value = country.name,
+            modifier = Modifier.width(80.dp),
+            value = "${country.getFlagEmoji()} +${country.phoneCode}",
             onValueChange = { },
             singleLine = true,
             readOnly = true,
             textStyle = LocalTextStyle.current.copy(color = LocalContentColor.current),
-            trailingIcon = {
-                Icon(Icons.Default.ArrowDropDown, contentDescription = null)
-            },
             interactionSource = countryInteractionSource
         )
 
         TextField(
             modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
-            label = {
-                Text(
-                    stringResource(R.string.login_phone_input_label),
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                )
-            },
             value = phone,
             onValueChange = onChangePhone,
             textStyle = LocalTextStyle.current.copy(color = LocalContentColor.current),
             singleLine = true,
-            visualTransformation = PrefixTransformation("+${country.phoneCode} "),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Phone,
                 imeAction = ImeAction.Done

@@ -32,18 +32,19 @@ class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSou
         return try {
             if (userId.isBlank()) {
                 Result.failure<Boolean>(Exception("invalid arg: userId: $userId"))
-            }
-            val result = userApi.pushTokens(
-                PushTokensRequest(
-                    userId = userId,
-                    deviceToken = token,
-                    deviceType = DeviceType.MOBILE
-                )
-            )
-            if (result.isSuccessful()) {
-                Result.success(true)
             } else {
-                Result.failure(Throwable(result.message))
+                val result = userApi.pushTokens(
+                    PushTokensRequest(
+                        userId = userId,
+                        deviceToken = token,
+                        deviceType = DeviceType.MOBILE
+                    )
+                )
+                if (result.isSuccessful()) {
+                    Result.success(true)
+                } else {
+                    Result.failure(Throwable(result.message))
+                }
             }
         } catch (e: Exception) {
             Result.failure(e)
