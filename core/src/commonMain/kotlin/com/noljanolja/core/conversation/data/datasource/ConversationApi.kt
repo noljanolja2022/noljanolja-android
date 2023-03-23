@@ -4,6 +4,7 @@ import com.noljanolja.core.conversation.data.model.request.*
 import com.noljanolja.core.conversation.data.model.response.*
 import com.noljanolja.core.conversation.data.model.response.GetConversationMessagesResponse
 import com.noljanolja.core.conversation.domain.model.Conversation
+import com.noljanolja.core.conversation.domain.model.MessageType
 import com.noljanolja.core.utils.Const.BASE_URL
 import com.noljanolja.core.utils.default
 import com.noljanolja.socket.SocketManager
@@ -38,14 +39,33 @@ class ConversationApi(
         request: SendConversationMessageRequest,
     ): SendConversationMessageResponse {
         return client.post("$BASE_URL/conversations/${request.conversationId}/messages") {
-            if (!request.message.message.contains("fail")) {
-                header(HttpHeaders.Accept, ContentType.MultiPart.FormData)
-            }
+            header(HttpHeaders.Accept, ContentType.MultiPart.FormData)
             setBody(
                 MultiPartFormDataContent(
                     formData {
                         append("message", request.message.message)
                         append("type", request.message.type.name)
+                        when (request.message.type) {
+                            MessageType.PHOTO,
+                            MessageType.DOCUMENT,
+                            -> {
+                                request.message.attachments.forEach { attachment ->
+                                    append(
+                                        "attachments",
+                                        attachment.contents,
+                                        Headers.build {
+                                            append(HttpHeaders.ContentType, attachment.type)
+                                            append(HttpHeaders.ContentLength, attachment.size)
+                                            append(
+                                                HttpHeaders.ContentDisposition,
+                                                "filename=${attachment.originalName}"
+                                            )
+                                        }
+                                    )
+                                }
+                            }
+                            else -> {}
+                        }
                     },
                 )
             )

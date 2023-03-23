@@ -1,4 +1,4 @@
-package com.noljanolja.android.common.contact.data
+package com.noljanolja.android.common.mobiledata.data
 
 import android.content.ContentResolver
 import android.content.Context
@@ -11,7 +11,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import java.util.*
 
 class ContactsLoader(
     val context: Context,

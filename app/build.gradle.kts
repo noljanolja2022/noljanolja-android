@@ -111,6 +111,10 @@ dependencies {
     // Coil
     implementation("io.coil-kt:coil-compose:2.2.2")
     implementation("com.github.yalantis:ucrop:2.2.7")
+    implementation("io.coil-kt:coil-compose:2.2.2")
+    implementation( "io.coil-kt:coil-gif:2.2.2")
+    implementation("io.coil-kt:coil-video:2.2.2")
+    implementation("com.github.penfeizhou.android.animation:awebp:2.17.0")
 
     // ktor
     implementation("io.ktor:ktor-client-android:2.1.1")

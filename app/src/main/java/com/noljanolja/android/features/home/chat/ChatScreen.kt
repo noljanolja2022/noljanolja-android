@@ -1,6 +1,7 @@
 package com.noljanolja.android.features.home.chat
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,7 +10,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Error
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -40,10 +42,10 @@ import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.util.chatMessageBubbleTime
 import com.noljanolja.android.util.chatMessageHeaderDate
 import com.noljanolja.android.util.isSameDate
-import com.noljanolja.core.conversation.domain.model.Conversation
-import com.noljanolja.core.conversation.domain.model.Message
-import com.noljanolja.core.conversation.domain.model.MessageType
+import com.noljanolja.android.util.loadFileInfo
+import com.noljanolja.core.conversation.domain.model.*
 import com.noljanolja.core.user.domain.model.User
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
@@ -61,10 +63,14 @@ fun ChatScreen(
             userId = userId,
             userName = userName
         )
+        viewModel.handleEvent(ChatEvent.LoadMedia)
     }
     val chatUiState by viewModel.chatUiStateFlow.collectAsStateWithLifecycle()
+    val loadedMedia by viewModel.loadedMediaFlow.collectAsStateWithLifecycle()
     ChatScreenContent(
         chatUiState = chatUiState,
+        mediaList = loadedMedia,
+        scrollToNewMessageEvent = viewModel.scrollToNewMessageEvent,
         handleEvent = viewModel::handleEvent,
     )
 }
@@ -73,13 +79,21 @@ fun ChatScreen(
 @Composable
 fun ChatScreenContent(
     chatUiState: UiState<Conversation>,
+    mediaList: List<Pair<Uri, Long?>>,
+    scrollToNewMessageEvent: SharedFlow<Unit>,
     handleEvent: (ChatEvent) -> Unit,
 ) {
     val scrollState = rememberLazyListState()
+    LaunchedEffect(key1 = scrollToNewMessageEvent) {
+        scrollToNewMessageEvent.collect {
+            scrollState.animateScrollToItem(0)
+        }
+    }
+    val context = LocalContext.current
+
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val scope = rememberCoroutineScope()
     val conversation = chatUiState.data ?: return
-
     ScaffoldWithUiState(
         uiState = chatUiState,
         topBar = {
@@ -130,12 +144,32 @@ fun ChatScreenContent(
                                     null
                                 }
                             }
+                            MessageType.DOCUMENT, MessageType.PHOTO -> {
+                                Message(
+                                    message = message.trim(),
+                                    type = type,
+                                    attachments = attachments.map {
+                                        val fileInfo = context.loadFileInfo(it)
+                                        MessageAttachment(
+                                            name = "",
+                                            originalName = fileInfo.name,
+                                            type = fileInfo.contentType,
+                                            size = fileInfo.contents.size.toLong(),
+                                            contents = fileInfo.contents,
+                                            localPath = fileInfo.path.toString(),
+                                        )
+                                    },
+                                )
+                            }
                             else -> null
                         }
                         sendMessage?.let { handleEvent(ChatEvent.SendMessage(it)) }
                     },
                     modifier = Modifier.navigationBarsPadding().imePadding(),
                     resetScroll = { scope.launch { scrollState.scrollToItem(0) } },
+                    mediaList = mediaList,
+                    loadMedia = { handleEvent(ChatEvent.LoadMedia) },
+                    openPhoneSetting = { handleEvent(ChatEvent.OpenPhoneSettings) },
                 )
             }
         }
@@ -186,7 +220,7 @@ private fun MessageList(
                     }
                 }
 
-                item {
+                item(key = "${message.id} ${message.localId}") {
                     MessageRow(
                         conversationId = conversationId,
                         message = message,
@@ -290,23 +324,34 @@ private fun MessageRow(
                 .weight(1f),
             onMessageClick = onMessageClick,
         )
-        if (message.sender.isMe) {
-            val modifier = Modifier.padding(end = 16.dp).size(13.dp)
-            message.seenUsers.find { !it.isMe }?.let { userSeen ->
-                AsyncImage(
-                    ImageRequest.Builder(context = context)
-                        .data(userSeen.getAvatarUrl())
-                        .placeholder(R.drawable.placeholder_avatar)
-                        .error(R.drawable.placeholder_avatar)
-                        .fallback(R.drawable.placeholder_avatar)
-                        .build(),
+        val modifier = Modifier.padding(end = 16.dp)
+            .size(13.dp)
+            .clip(RoundedCornerShape(13.dp))
+            .align(Alignment.Bottom)
+        when (message.status) {
+            MessageStatus.FAILED -> {
+                Icon(
+                    Icons.Outlined.Error,
                     contentDescription = null,
-                    modifier = modifier
-                        .clip(RoundedCornerShape(13.dp))
-                        .align(Alignment.Bottom),
-                    contentScale = ContentScale.FillBounds,
+                    modifier = modifier,
+                    tint = MaterialTheme.colorScheme.errorContainer
                 )
-            } ?: Spacer(modifier = modifier)
+            }
+            else -> if (message.sender.isMe) {
+                message.seenUsers.find { !it.isMe }?.let { userSeen ->
+                    AsyncImage(
+                        ImageRequest.Builder(context = context)
+                            .data(userSeen.getAvatarUrl())
+                            .placeholder(R.drawable.placeholder_avatar)
+                            .error(R.drawable.placeholder_avatar)
+                            .fallback(R.drawable.placeholder_avatar)
+                            .build(),
+                        contentDescription = null,
+                        modifier = modifier,
+                        contentScale = ContentScale.FillBounds,
+                    )
+                } ?: Spacer(modifier = modifier)
+            }
         }
     }
 }

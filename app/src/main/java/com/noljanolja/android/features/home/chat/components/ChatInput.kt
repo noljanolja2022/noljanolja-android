@@ -1,6 +1,8 @@
 package com.noljanolja.android.features.home.chat.components
 
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.More
 import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -22,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.focusTarget
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
@@ -29,10 +33,10 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.BackPressHandler
+import com.noljanolja.android.util.getTmpFileUri
 import com.noljanolja.core.conversation.domain.model.MessageType
 
 private enum class InputSelector {
@@ -56,6 +60,10 @@ fun ChatInput(
     modifier: Modifier = Modifier,
     shouldShowSendButton: Boolean = false,
     resetScroll: () -> Unit = {},
+    mediaList: List<Pair<Uri, Long?>>,
+    loadMedia: () -> Unit,
+    openPhoneSetting: () -> Unit,
+    onHandleBottomSheetBackPress: () -> Unit = {},
 ) {
     var currentInputSelector by rememberSaveable { mutableStateOf(InputSelector.NONE) }
     // when gif BottomSheet is expanding, if back button is pressed, collapse bottom sheet instead of
@@ -65,6 +73,7 @@ fun ChatInput(
 
     val dismissKeyboard = {
         currentInputSelector = InputSelector.NONE
+        onHandleBottomSheetBackPress()
     }
     // Intercept back navigation if there's a InputSelector visible
     if (currentInputSelector != InputSelector.NONE) {
@@ -78,32 +87,111 @@ fun ChatInput(
     var message by remember { mutableStateOf(TextFieldValue()) }
     var attachments by remember { mutableStateOf<List<Uri>>(listOf()) }
     var showConfirmDialog by remember { mutableStateOf(false) }
+    val selectedMedia = remember { mutableStateListOf<Uri>() }
 
     Column(modifier = modifier) {
         Box {
-            ChatInputText(
-                textField = message,
-                onTextChanged = { message = it },
-                focusRequester = focusRequester,
-                onFocusChanged = { focused ->
-                    if (focused) {
-                        currentInputSelector = InputSelector.NONE
+            if (selectedMedia.isEmpty()) {
+                ChatInputText(
+                    textField = message,
+                    onTextChanged = { message = it },
+                    focusRequester = focusRequester,
+                    onFocusChanged = { focused ->
+                        if (focused) {
+                            currentInputSelector = InputSelector.NONE
+                            onHandleBottomSheetBackPress()
+                            resetScroll()
+                        }
+                    },
+                    selector = currentInputSelector,
+                    onSelectorChanged = { currentInputSelector = it },
+                    onMessageSent = {
+                        onMessageSent(message.text, MessageType.PLAINTEXT, listOf())
+                        // Reset text field and close keyboard
+                        message = TextFieldValue()
+                        // Move scroll to bottom
                         resetScroll()
+                        dismissKeyboard()
+                    },
+                    shouldShowSendButton = shouldShowSendButton,
+                )
+            } else {
+                SendMedia(
+                    numberSelected = selectedMedia.size,
+                    onSendMedia = {
+                        onMessageSent(
+                            message.text,
+                            MessageType.PHOTO,
+                            selectedMedia
+                        )
+                        currentInputSelector = InputSelector.NONE
+                        selectedMedia.clear()
                     }
-                },
-                selector = currentInputSelector,
-                onSelectorChanged = { currentInputSelector = it },
-                onMessageSent = {
-                    onMessageSent(message.text, MessageType.PLAINTEXT, listOf())
-                    // Reset text field and close keyboard
-                    message = TextFieldValue()
-                    // Move scroll to bottom
-                    resetScroll()
-                    dismissKeyboard()
-                },
-                shouldShowSendButton = shouldShowSendButton,
-            )
+                )
+            }
         }
+        SelectorExpanded(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(288.dp),
+            currentSelector = currentInputSelector,
+            onMediaSelect = { mediaSelect, isAdd ->
+                when (isAdd) {
+                    true -> selectedMedia.addAll(mediaSelect)
+                    false -> selectedMedia.removeAll(mediaSelect)
+                    else -> {
+                        mediaSelect.forEach { media ->
+                            if (!selectedMedia.contains(media)) {
+                                selectedMedia.add(media)
+                            }
+                        }
+                    }
+                }
+            },
+            onCall = {},
+            mediaList = mediaList,
+            selectedMedia = selectedMedia,
+            loadMedia = loadMedia,
+            openPhoneSetting = openPhoneSetting,
+        )
+    }
+    if (currentInputSelector == InputSelector.CAMERA) {
+        onHandleBottomSheetBackPress()
+
+        val selectedFile = remember { mutableStateOf<Uri?>(null) }
+        val photoLauncher =
+            rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
+                currentInputSelector = InputSelector.NONE
+                if (it) {
+                    selectedFile.value?.let {
+                        onMessageSent(message.text, MessageType.PHOTO, listOf(it))
+                    }
+                    selectedFile.value = null
+                }
+            }
+        val videoLauncher =
+            rememberLauncherForActivityResult(ActivityResultContracts.CaptureVideo()) {
+                currentInputSelector = InputSelector.NONE
+                if (it) {
+                    selectedFile.value?.let {
+                        onMessageSent(message.text, MessageType.PHOTO, listOf(it))
+                    }
+                    selectedFile.value = null
+                }
+            }
+        CameraSelector(
+            onTakePhoto = {
+                selectedFile.value = context.getTmpFileUri("temp_photo", ".png").also {
+                    photoLauncher.launch(it)
+                }
+            },
+            onTakeVideo = {
+                selectedFile.value = context.getTmpFileUri("temp_video", ".mp4").also {
+                    videoLauncher.launch(it)
+                }
+            },
+            onDismiss = { currentInputSelector = InputSelector.NONE },
+        )
     }
 }
 
@@ -297,10 +385,178 @@ private fun ChatInputText(
     }
 }
 
-@Preview
 @Composable
-fun ChatInputPreview() {
-    ChatInput(
-        onMessageSent = { _, _, _ -> },
+private fun SelectorExpanded(
+    modifier: Modifier,
+    currentSelector: InputSelector,
+    onMediaSelect: (List<Uri>, Boolean?) -> Unit,
+    onCall: () -> Unit,
+    mediaList: List<Pair<Uri, Long?>>,
+    selectedMedia: List<Uri>,
+    loadMedia: () -> Unit,
+    openPhoneSetting: () -> Unit,
+) {
+    if (currentSelector == InputSelector.NONE || currentSelector == InputSelector.CAMERA) return
+
+    // Initial value to check the status of emoji sticker to handle the textfield error
+    var emojiStickerSelected by remember { mutableStateOf(EmojiStickerSelector.STICKER) }
+
+    // Request focus to force the TextField to lose it
+    val focusRequester = FocusRequester()
+    // If the selector is shown, always request focus to trigger a TextField.onFocusChange.
+    // Add one more condition to handle the bad behavior of keyboard, because Gif tab is bottom sheet then
+    // there's no input selector, so it will force to close the keyboard
+    SideEffect {
+        when (currentSelector) {
+            InputSelector.EMOJI -> {
+                if (emojiStickerSelected != EmojiStickerSelector.GIF) {
+                    focusRequester.requestFocus()
+                }
+            }
+//            InputSelector.EXTRA,
+            InputSelector.GALLERY,
+            -> {
+                focusRequester.requestFocus()
+            }
+            else -> {}
+        }
+    }
+
+    Surface(tonalElevation = 8.dp, modifier = modifier) {
+        when (currentSelector) {
+            InputSelector.GALLERY -> GallerySelector(
+                focusRequester = focusRequester,
+                onMediaSelect = onMediaSelect,
+                mediaList = mediaList,
+                selectedMedia = selectedMedia,
+                loadMedia = loadMedia,
+                openPhoneSetting = openPhoneSetting
+            )
+            else -> {}
+        }
+    }
+}
+
+@Composable
+private fun GallerySelector(
+    focusRequester: FocusRequester,
+    onMediaSelect: (List<Uri>, Boolean?) -> Unit,
+    mediaList: List<Pair<Uri, Long?>>,
+    selectedMedia: List<Uri>,
+    loadMedia: () -> Unit,
+    openPhoneSetting: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .focusRequester(focusRequester)
+            .focusTarget()
+            .background(MaterialTheme.colorScheme.onPrimary),
+    ) {
+        PhotoTable(
+            mediaList = mediaList,
+            selectedMedia = selectedMedia,
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            onMediaSelect = onMediaSelect,
+            loadMedia = loadMedia,
+            openPhoneSetting = openPhoneSetting
+        )
+    }
+}
+
+@Composable
+private fun CameraSelector(
+    onTakePhoto: () -> Unit,
+    onTakeVideo: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        text = {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                CameraSelectorRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    label = stringResource(R.string.chat_camera_take_photo),
+                    onClick = onTakePhoto,
+                )
+//                CameraSelectorRow(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    label = stringResource(R.string.chat_camera_record_video),
+//                    onClick = onTakeVideo,
+//                )
+            }
+        },
+        dismissButton = {},
+        confirmButton = {},
+        onDismissRequest = { onDismiss() },
     )
+}
+
+@Composable
+private fun CameraSelectorRow(
+    modifier: Modifier,
+    label: String,
+    onClick: () -> Unit,
+) {
+    TextButton(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(2.dp),
+        contentPadding = PaddingValues(vertical = 8.dp),
+        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)
+    ) {
+        Text(
+            label,
+            modifier = Modifier.fillMaxWidth(),
+            style = MaterialTheme.typography.bodyLarge,
+        )
+    }
+}
+
+@Composable
+private fun SendMedia(
+    numberSelected: Int,
+    onSendMedia: () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .height(48.dp)
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.primaryContainer),
+        contentAlignment = Alignment.CenterEnd,
+    ) {
+        Text(
+            stringResource(id = R.string.args_chat_selected, numberSelected),
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurface.copy(.87F),
+            modifier = Modifier
+                .align(Alignment.Center)
+
+        )
+        IconButton(
+            onClick = onSendMedia,
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(end = 12.dp)
+                .then(Modifier.size(32.dp))
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer.copy(.12F),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .background(
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .padding(4.dp)
+
+        ) {
+            Icon(
+                Icons.Default.Send,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+    }
 }

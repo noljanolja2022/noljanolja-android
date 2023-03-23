@@ -3,7 +3,7 @@ package com.noljanolja.android.features.home.contacts
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
-import com.noljanolja.android.common.contact.data.ContactsLoader
+import com.noljanolja.android.common.mobiledata.data.ContactsLoader
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.services.PermissionChecker
 import com.noljanolja.core.user.domain.model.User

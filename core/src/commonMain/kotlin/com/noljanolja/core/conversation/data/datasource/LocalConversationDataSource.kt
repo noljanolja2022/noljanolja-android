@@ -4,6 +4,7 @@ import com.noljanolija.core.db.ConversationQueries
 import com.noljanolija.core.db.MessageQueries
 import com.noljanolja.core.conversation.domain.model.*
 import com.noljanolja.core.user.domain.model.User
+import com.noljanolja.core.utils.default
 import com.noljanolja.core.utils.transactionWithContext
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
@@ -14,12 +15,16 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.datetime.Instant
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class LocalConversationDataSource(
     private val conversationQueries: ConversationQueries,
     private val messageQueries: MessageQueries,
     private val backgroundDispatcher: CoroutineDispatcher,
 ) {
+    private val json = Json.default()
     private val conversationMapper = {
             id: Long,
             title: String,
@@ -60,6 +65,7 @@ class LocalConversationDataSource(
             stickerUrl = stickerUrl,
             type = MessageType.valueOf(type),
             status = MessageStatus.valueOf(status),
+            attachments = Json.decodeFromString(attachments),
             seenBy = seenBy.split(",").map { it },
             createdAt = Instant.fromEpochMilliseconds(created_at),
             updatedAt = Instant.fromEpochMilliseconds(updated_at),
@@ -156,7 +162,7 @@ class LocalConversationDataSource(
                 sender = message.sender.id,
                 message = message.message,
                 stickerUrl = message.stickerUrl,
-                attachments = "",
+                attachments = json.encodeToString(message.attachments),
                 type = message.type.name,
                 status = message.status.name,
                 seenBy = seenBy,

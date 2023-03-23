@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.util.showToast
 import com.noljanolja.core.CoreManager
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -55,4 +56,8 @@ fun BaseViewModel.handleError() {
             context.showToast(it.message)
         }
     }
+}
+
+fun launchInMain(block: suspend () -> Unit) = MainScope().launch {
+    block.invoke()
 }

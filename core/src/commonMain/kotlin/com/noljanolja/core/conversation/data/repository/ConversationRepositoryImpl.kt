@@ -13,7 +13,6 @@ import com.noljanolja.core.user.data.datasource.LocalUserDataSource
 import com.noljanolja.core.user.domain.repository.UserRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlin.random.Random
 
 internal class ConversationRepositoryImpl(
     private val conversationApi: ConversationApi,
@@ -71,6 +70,11 @@ internal class ConversationRepositoryImpl(
                 sender = userRepository.getCurrentUser().getOrNull()!!,
                 status = MessageStatus.SENDING,
             )
+            localConversationDataSource.upsertConversationMessages(
+                sentConversationId,
+                listOf(sendingMessage)
+            )
+
             val response = conversationApi.sendConversationMessage(
                 SendConversationMessageRequest(
                     conversationId = sentConversationId,
@@ -84,7 +88,6 @@ internal class ConversationRepositoryImpl(
                 )
             } else {
                 sendingMessage.copy(
-                    id = Random.nextLong(1_000_000_000, 999_999_999_999),
                     status = MessageStatus.FAILED,
                 )
             }
@@ -159,17 +162,21 @@ internal class ConversationRepositoryImpl(
                         creator = it.findById(conversation.creator.id)
                             ?: conversation.creator,
                         participants = participants,
-                        messages = messages.map { message ->
-                            val sender = it.findById(message.sender.id) ?: message.sender
-                            val myId = it.findMe()?.id ?: 0L
-                            message.copy(sender = sender)
-                                .apply {
-                                    if (seenBy.any { it.isNotBlank() }) {
-                                        seenUsers =
-                                            seenBy.mapNotNull { id -> participants.find { it.id == id } }
+                        messages = messages.mapNotNull { message ->
+                            if (message.message.isEmpty() && message.attachments.isEmpty()) {
+                                null
+                            } else {
+                                val sender = it.findById(message.sender.id) ?: message.sender
+                                val myId = it.findMe()?.id ?: 0L
+                                message.copy(sender = sender)
+                                    .apply {
+                                        if (seenBy.any { it.isNotBlank() }) {
+                                            seenUsers =
+                                                seenBy.mapNotNull { id -> participants.find { it.id == id } }
+                                        }
+                                        isSeenByMe = sender.isMe || seenBy.contains(myId)
                                     }
-                                    isSeenByMe = sender.isMe || seenBy.contains(myId)
-                                }
+                            }
                         }
                     )
                 }
@@ -244,13 +251,20 @@ internal class ConversationRepositoryImpl(
         }
     }
 
+    override suspend fun upsertConversationMessages(conversationId: Long, messages: List<Message>) {
+        localConversationDataSource.upsertConversationMessages(
+            conversationId = conversationId,
+            messages = messages
+        )
+    }
+
     override suspend fun updateMessageStatus(conversationId: Long, messageId: Long) {
         conversationApi.updateMessageStatus(
             UpdateMessageStatusRequest(conversationId = conversationId, messageId = messageId)
         )
     }
 
-    fun onDestroy() {
+    override fun onDestroy() {
         job?.cancel()
         scope.coroutineContext.cancel()
     }

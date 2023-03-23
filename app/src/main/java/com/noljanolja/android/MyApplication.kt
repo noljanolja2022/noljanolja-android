@@ -7,11 +7,18 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import co.touchlab.kermit.Logger
+import coil.Coil
+import coil.ImageLoader
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
+import coil.decode.VideoFrameDecoder
+import coil.util.DebugLogger
 import com.d2brothers.firebase_auth.AuthSdk
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
-import com.noljanolja.android.common.contact.data.ContactsLoader
+import com.noljanolja.android.common.mobiledata.data.ContactsLoader
+import com.noljanolja.android.common.mobiledata.data.MediaLoader
 import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.common.user.data.AuthDataSourceImpl
 import com.noljanolja.android.common.user.data.TokenRepoImpl
@@ -37,15 +44,24 @@ import com.noljanolja.android.services.PermissionChecker
 import com.noljanolja.android.services.analytics.AppAnalytics
 import com.noljanolja.android.services.analytics.firebase.FirebaseLogger
 import com.noljanolja.android.services.analytics.firebase.FirebaseTracker
+import com.noljanolja.android.util.AnimatedWebPDecoder
+import com.noljanolja.core.CoreManager
 import com.noljanolja.core.di.initKoin
 import com.noljanolja.core.service.ktor.KtorClient
 import com.noljanolja.core.service.ktor.KtorConfig
 import com.noljanolja.core.user.data.datasource.AuthDataSource
 import com.noljanolja.socket.TokenRepo
+import okhttp3.OkHttpClient
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 class MyApplication : Application() {
+
+    private val okHttpClient: OkHttpClient by inject(named("Coil"))
+    private val coreManager: CoreManager by inject()
+
     companion object {
         var isAppInForeground: Boolean = false
         var latestConversationId: Long = 0L
@@ -54,6 +70,7 @@ class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         initKoin()
+        initCoil()
         ProcessLifecycleOwner.get().lifecycle.apply {
             addObserver(object : DefaultLifecycleObserver {
                 override fun onStart(owner: LifecycleOwner) {
@@ -64,6 +81,11 @@ class MyApplication : Application() {
                 override fun onStop(owner: LifecycleOwner) {
                     isAppInForeground = false
                     Logger.d("Noljanolja: backgrounded: ${ProcessLifecycleOwner.get().lifecycle.currentState.name}")
+                }
+
+                override fun onDestroy(owner: LifecycleOwner) {
+                    super.onDestroy(owner)
+                    coreManager.onDestroy()
                 }
             })
         }
@@ -117,6 +139,9 @@ class MyApplication : Application() {
                 }
                 single {
                     ContactsLoader(get())
+                }
+                single {
+                    MediaLoader(get())
                 }
                 single {
                     KtorConfig(
@@ -189,6 +214,25 @@ class MyApplication : Application() {
                     UpdateProfileViewModel()
                 }
             }
+        )
+    }
+
+    private fun initCoil() {
+        Coil.setImageLoader(
+            ImageLoader.Builder(this)
+                .okHttpClient(okHttpClient)
+                .components {
+                    add(VideoFrameDecoder.Factory())
+                    if (Build.VERSION.SDK_INT >= 28) {
+                        add(ImageDecoderDecoder.Factory())
+                    } else {
+                        add(GifDecoder.Factory())
+                        add(AnimatedWebPDecoder.Factory())
+                    }
+                }
+                .logger(DebugLogger())
+                .respectCacheHeaders(false)
+                .build()
         )
     }
 }

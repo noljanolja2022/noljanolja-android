@@ -30,6 +30,7 @@
     <string name="common_today">Today</string>
     <string name="common_yesterday">Yesterday</string>
     <string name="common_id">Id</string>
+    <string name="args_chat_selected">%d selected</string>
 
     <string name="welcome_noljanolja">Welcome to Noja Noja. Follow these steps to be our member.</string>
 
@@ -168,6 +169,8 @@
     <string name="chats_message_unknown">You received a message</string>
     <string name="chats_message_my_unknown">You sent a message</string>
     <string name="chat_input_hint">Aa</string>
+    <string name="chat_camera_take_photo">Take a photo</string>
+    <string name="chat_camera_record_video">Record a video</string>
     <!--    Failure-->
     <string name="invalid_email_format">Email is not valid</string>
 

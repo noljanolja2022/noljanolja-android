@@ -23,4 +23,8 @@ sealed interface ChatEvent {
     data class ReloadConversation(
         val conversationId: Long,
     ) : ChatEvent
+
+    object LoadMedia : ChatEvent
+
+    object OpenPhoneSettings : ChatEvent
 }

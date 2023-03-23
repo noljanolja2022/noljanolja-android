@@ -1,29 +1,42 @@
 package com.noljanolja.android.features.home.chat
 
+import android.net.Uri
 import com.noljanolja.android.MyApplication
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
+import com.noljanolja.android.common.base.launchInMain
+import com.noljanolja.android.common.mobiledata.data.MediaLoader
 import com.noljanolja.android.common.navigation.NavigationDirections
+import com.noljanolja.android.util.orZero
 import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.ConversationType
 import com.noljanolja.core.conversation.domain.model.Message
 import com.noljanolja.core.user.domain.model.User
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
+import org.koin.core.component.inject
 
 class ChatViewModel : BaseViewModel() {
+    private val mediaLoader: MediaLoader by inject()
+
     private var conversationId: Long = 0L
     private var userId: String = ""
     private var userName: String = ""
     private var noMoreMessages: Boolean = false
-
+    private var forceUpdateConversation: Boolean = true
+    private var lastMessageId: Long = 0L
     private var job: Job? = null
     private var seenJob: Job? = null
 
     private val _chatUiStateFlow = MutableStateFlow(UiState<Conversation>())
     val chatUiStateFlow = _chatUiStateFlow.asStateFlow()
+
+    private val _loadedMediaFlow = MutableStateFlow<List<Pair<Uri, Long?>>>(emptyList())
+    val loadedMediaFlow = _loadedMediaFlow.asStateFlow()
+
+    private val _scrollToNewMessageEvent = MutableSharedFlow<Unit>()
+    val scrollToNewMessageEvent = _scrollToNewMessageEvent.asSharedFlow()
 
     fun handleEvent(event: ChatEvent) {
         launch {
@@ -49,6 +62,8 @@ class ChatViewModel : BaseViewModel() {
                 is ChatEvent.SendMessage -> {
                     sendMessage(event.message)
                 }
+                ChatEvent.LoadMedia -> loadMedia()
+                ChatEvent.OpenPhoneSettings -> {}
             }
         }
     }
@@ -68,10 +83,13 @@ class ChatViewModel : BaseViewModel() {
     }
 
     private suspend fun sendMessage(message: Message) {
-        coreManager.sendConversationMessage(conversationId, userId, message)
-            .takeIf { it > 0L && conversationId == 0L }?.let {
-            conversationId = it
-            fetchConversation(onlyLocalData = true)
+        // call with main scope to avoid cancel when back
+        launchInMain {
+            coreManager.sendConversationMessage(conversationId, userId, message)
+                .takeIf { it > 0L && conversationId == 0L }?.let {
+                conversationId = it
+                fetchConversation(onlyLocalData = true)
+            }
         }
     }
 
@@ -91,6 +109,7 @@ class ChatViewModel : BaseViewModel() {
             if (conversationId != 0L) {
                 MyApplication.latestConversationId = conversationId
                 coreManager.getConversation(conversationId).collect { conversation ->
+                    forceUpdateConversation(conversation)
                     updateUiState(conversation)
                 }
             } else {
@@ -110,6 +129,10 @@ class ChatViewModel : BaseViewModel() {
     }
 
     private suspend fun updateUiState(conversation: Conversation) {
+        if (conversation.messages.firstOrNull()?.id.orZero() != lastMessageId) {
+            lastMessageId =conversation.messages.firstOrNull()?.id.orZero()
+            _scrollToNewMessageEvent.emit(Unit)
+        }
         _chatUiStateFlow.emit(
             UiState(
                 data = conversation
@@ -123,6 +146,20 @@ class ChatViewModel : BaseViewModel() {
                 }
             }
         }
+    }
+
+    private fun loadMedia() {
+        launch {
+            val localImages =
+                mediaLoader.loadMedia().toList()
+            _loadedMediaFlow.emit(localImages)
+        }
+    }
+
+    private suspend fun forceUpdateConversation(conversation: Conversation) {
+        if (!forceUpdateConversation) return
+        coreManager.forceUpdateConversation(conversation)
+        forceUpdateConversation = false
     }
 
     override fun onCleared() {

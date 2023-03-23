@@ -6,6 +6,7 @@ import com.noljanolja.core.contacts.domain.model.Contact
 import com.noljanolja.core.contacts.domain.repository.ContactsRepository
 import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.Message
+import com.noljanolja.core.conversation.domain.model.MessageStatus
 import com.noljanolja.core.conversation.domain.repository.ConversationRepository
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.user.domain.repository.UserRepository
@@ -14,8 +15,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import kotlin.time.Duration.Companion.minutes
 
 class CoreManager : KoinComponent {
     private val contactsRepository: ContactsRepository by inject()
@@ -85,6 +88,19 @@ class CoreManager : KoinComponent {
         conversationRepository.updateMessageStatus(conversationId, messageId)
     }
 
+    suspend fun forceUpdateConversation(conversation: Conversation) {
+        conversation.messages.filterIndexed { _, message ->
+            message.status == MessageStatus.SENDING && message.createdAt.minus(Clock.System.now()) > 5.minutes
+        }.let { messages ->
+            conversationRepository.upsertConversationMessages(
+                conversationId = conversation.id,
+                messages = messages.map {
+                    it.copy(status = MessageStatus.FAILED)
+                }
+            )
+        }
+    }
+
     suspend fun getCurrentUser(forceRefresh: Boolean = false): Result<User> {
         return userRepository.getCurrentUser(forceRefresh)
     }
@@ -123,6 +139,7 @@ class CoreManager : KoinComponent {
     suspend fun delete() = authRepository.delete()
 
     fun onDestroy() {
+        conversationRepository.onDestroy()
         scope.coroutineContext.cancel()
     }
 }

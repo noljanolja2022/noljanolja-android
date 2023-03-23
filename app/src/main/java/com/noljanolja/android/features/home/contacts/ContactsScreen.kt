@@ -19,11 +19,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
+import com.noljanolja.android.services.PermissionChecker
 import com.noljanolja.android.ui.composable.*
 import com.noljanolja.core.user.domain.model.User
 import org.koin.androidx.compose.getViewModel
@@ -41,24 +39,13 @@ fun ContactsScreen(
     )
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun ContactsScreenContent(
     uiState: UiState<List<User>>,
     handleEvent: (ContactsEvent) -> Unit,
 ) {
-    var openDialog by remember { mutableStateOf(false) }
     var searchText by remember { mutableStateOf("") }
 
-    val contactsPermissionState = rememberPermissionState(
-        android.Manifest.permission.READ_CONTACTS
-    ) { result ->
-        if (result) {
-            handleEvent(ContactsEvent.SyncContacts)
-        } else {
-            openDialog = true
-        }
-    }
     Surface(modifier = Modifier.fillMaxSize()) {
         ScaffoldWithUiState(
             modifier = Modifier.fillMaxSize(),
@@ -73,7 +60,7 @@ fun ContactsScreenContent(
             },
             content = {
                 when {
-                    !contactsPermissionState.status.isGranted -> {
+                    !PermissionChecker(LocalContext.current).canReadContacts() -> {
                         Rationale(
                             modifier = Modifier.fillMaxSize(),
                             permissions = mapOf(
@@ -81,7 +68,12 @@ fun ContactsScreenContent(
                                     id = R.string.permission_contacts_description
                                 )
                             ),
-                            onRequestPermission = { contactsPermissionState.launchPermissionRequest() }
+                            onSuccess = {
+                                handleEvent(ContactsEvent.SyncContacts)
+                            },
+                            openPhoneSettings = {
+                                handleEvent(ContactsEvent.OpenPhoneSettings)
+                            }
                         )
                     }
                     !uiState.loading -> {
@@ -118,21 +110,6 @@ fun ContactsScreenContent(
                         }
                     }
                 }
-            }
-        )
-
-        WarningDialog(
-            title = null,
-            content = stringResource(R.string.permission_required_description),
-            isWarning = openDialog,
-            dismissText = stringResource(R.string.common_cancel),
-            confirmText = stringResource(R.string.permission_go_to_settings),
-            onDismiss = {
-                openDialog = false
-            },
-            onConfirm = {
-                openDialog = false
-                handleEvent(ContactsEvent.OpenPhoneSettings)
             }
         )
     }

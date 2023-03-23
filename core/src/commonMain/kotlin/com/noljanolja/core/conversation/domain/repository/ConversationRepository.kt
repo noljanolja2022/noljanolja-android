@@ -30,5 +30,12 @@ internal interface ConversationRepository {
         messageId: Long,
     )
 
+    suspend fun upsertConversationMessages(
+        conversationId: Long,
+        messages: List<Message>,
+    )
+
     suspend fun streamConversations()
+
+    fun onDestroy()
 }
