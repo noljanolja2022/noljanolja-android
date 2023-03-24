@@ -4,10 +4,7 @@ import co.touchlab.kermit.Logger
 import com.noljanolja.core.conversation.data.datasource.ConversationApi
 import com.noljanolja.core.conversation.data.datasource.LocalConversationDataSource
 import com.noljanolja.core.conversation.data.model.request.*
-import com.noljanolja.core.conversation.domain.model.Conversation
-import com.noljanolja.core.conversation.domain.model.ConversationType
-import com.noljanolja.core.conversation.domain.model.Message
-import com.noljanolja.core.conversation.domain.model.MessageStatus
+import com.noljanolja.core.conversation.domain.model.*
 import com.noljanolja.core.conversation.domain.repository.ConversationRepository
 import com.noljanolja.core.user.data.datasource.LocalUserDataSource
 import com.noljanolja.core.user.domain.repository.UserRepository
@@ -23,6 +20,9 @@ internal class ConversationRepositoryImpl(
 
     private val scope = CoroutineScope(Dispatchers.Default)
     private var job: Job? = null
+
+    // Temp: Handle error stream fast
+    private var sendLocalId: String? = null
     override suspend fun findConversationWithUser(userId: String): Conversation? {
         return localConversationDataSource.findSingleConversationWithUser(userId)
     }
@@ -74,7 +74,7 @@ internal class ConversationRepositoryImpl(
                 sentConversationId,
                 listOf(sendingMessage)
             )
-
+            sendLocalId = sendingMessage.localId
             val response = conversationApi.sendConversationMessage(
                 SendConversationMessageRequest(
                     conversationId = sentConversationId,
@@ -95,6 +95,7 @@ internal class ConversationRepositoryImpl(
                 sentConversationId,
                 listOf(sentMessage)
             )
+            sendLocalId = null
             return sentConversationId
         }
         return 0L
@@ -121,7 +122,15 @@ internal class ConversationRepositoryImpl(
                 }
                 .collect {
                     updateLocalConversation(
-                        conversation = it,
+                        conversation = it.copy(
+                            messages = it.messages.mapIndexed { index, message ->
+                                if (index == 0 && sendLocalId != null) {
+                                    message.copy(localId = sendLocalId!!)
+                                } else {
+                                    message
+                                }
+                            }
+                        ),
                         saveParticipants = it.type == ConversationType.SINGLE,
                     )
                 }

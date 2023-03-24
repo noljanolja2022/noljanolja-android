@@ -8,6 +8,7 @@ import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.Message
 import com.noljanolja.core.conversation.domain.model.MessageStatus
 import com.noljanolja.core.conversation.domain.repository.ConversationRepository
+import com.noljanolja.core.media.domain.repository.MediaRepository
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.user.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineScope
@@ -25,6 +26,7 @@ class CoreManager : KoinComponent {
     private val userRepository: UserRepository by inject()
     private val conversationRepository: ConversationRepository by inject()
     private val authRepository: AuthRepository by inject()
+    private val mediaRepository: MediaRepository by inject()
 
     private val scope = CoroutineScope(Dispatchers.Default)
 
@@ -137,6 +139,10 @@ class CoreManager : KoinComponent {
     }
 
     suspend fun delete() = authRepository.delete()
+
+    suspend fun loadAllStickerPacks() = mediaRepository.loadAllStickerPacks()
+
+    suspend fun downloadStickerPack(id: Long) = mediaRepository.downloadStickerPack(id)
 
     fun onDestroy() {
         conversationRepository.onDestroy()

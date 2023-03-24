@@ -6,15 +6,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.More
-import androidx.compose.material.icons.filled.PhotoLibrary
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -22,12 +20,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusTarget
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -36,8 +36,10 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.BackPressHandler
+import com.noljanolja.android.util.getFileName
 import com.noljanolja.android.util.getTmpFileUri
 import com.noljanolja.core.conversation.domain.model.MessageType
+import com.noljanolja.core.media.domain.model.Sticker
 
 private enum class InputSelector {
     NONE,
@@ -64,6 +66,7 @@ fun ChatInput(
     loadMedia: () -> Unit,
     openPhoneSetting: () -> Unit,
     onHandleBottomSheetBackPress: () -> Unit = {},
+    onShowSticker: (Sticker?) -> Unit,
 ) {
     var currentInputSelector by rememberSaveable { mutableStateOf(InputSelector.NONE) }
     // when gif BottomSheet is expanding, if back button is pressed, collapse bottom sheet instead of
@@ -148,6 +151,14 @@ fun ChatInput(
                     }
                 }
             },
+            onStickerClicked = { id, sticker ->
+                onMessageSent(
+                    "$id/${sticker.imageFile.getFileName()}",
+                    MessageType.STICKER,
+                    listOf()
+                )
+            },
+            onShowSticker = onShowSticker,
             onCall = {},
             mediaList = mediaList,
             selectedMedia = selectedMedia,
@@ -390,6 +401,8 @@ private fun SelectorExpanded(
     modifier: Modifier,
     currentSelector: InputSelector,
     onMediaSelect: (List<Uri>, Boolean?) -> Unit,
+    onStickerClicked: (Long, Sticker) -> Unit,
+    onShowSticker: (Sticker?) -> Unit,
     onCall: () -> Unit,
     mediaList: List<Pair<Uri, Long?>>,
     selectedMedia: List<Uri>,
@@ -431,6 +444,12 @@ private fun SelectorExpanded(
                 selectedMedia = selectedMedia,
                 loadMedia = loadMedia,
                 openPhoneSetting = openPhoneSetting
+            )
+            InputSelector.EMOJI -> EmojiSelector(
+                onStickerClicked = onStickerClicked,
+                onShowSticker = onShowSticker,
+                focusRequester = focusRequester,
+                onEmojiChange = { emojiStickerSelected = it }
             )
             else -> {}
         }
@@ -491,6 +510,123 @@ private fun CameraSelector(
         confirmButton = {},
         onDismissRequest = { onDismiss() },
     )
+}
+
+@Composable
+private fun EmojiSelector(
+    onStickerClicked: (Long, Sticker) -> Unit,
+    onShowSticker: (Sticker?) -> Unit,
+    focusRequester: FocusRequester,
+    onGifTabSelected: (Boolean) -> Unit = {},
+    onEmojiChange: (EmojiStickerSelector) -> Unit,
+) {
+    var selected by remember { mutableStateOf(EmojiStickerSelector.STICKER) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .focusRequester(focusRequester)
+            .focusTarget()
+            .background(MaterialTheme.colorScheme.background),
+    ) {
+        EmojiSelectorTabs(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            selectedTab = selected,
+            onTabSelected = {
+                selected = it
+                onGifTabSelected(it == EmojiStickerSelector.GIF)
+                onEmojiChange(it)
+            }
+        )
+
+        when (selected) {
+            EmojiStickerSelector.STICKER -> {
+                StickerTable(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    onStickerClicked = onStickerClicked,
+                    onShowSticker = onShowSticker,
+                )
+            }
+            else -> {}
+        }
+    }
+}
+
+@Composable
+private fun EmojiSelectorTabs(
+    modifier: Modifier,
+    selectedTab: EmojiStickerSelector,
+    onTabSelected: (EmojiStickerSelector) -> Unit,
+) {
+    Surface(tonalElevation = 2.dp) {
+        Row(
+            modifier = modifier
+                .background(MaterialTheme.colorScheme.background),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            EmojiSelectorItem(
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable {
+                        onTabSelected(EmojiStickerSelector.STICKER)
+                    },
+                isSelected = selectedTab == EmojiStickerSelector.STICKER,
+                iconSelected = Icons.Filled.EmojiEmotions,
+                icon = Icons.Outlined.EmojiEmotions
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            EmojiSelectorItem(
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable {
+                        onTabSelected(EmojiStickerSelector.GIF)
+                    },
+                isSelected = selectedTab == EmojiStickerSelector.GIF,
+                iconSelected = Icons.Filled.Gif,
+                icon = Icons.Outlined.Gif
+            )
+        }
+    }
+}
+
+@Composable
+private fun EmojiSelectorItem(
+    modifier: Modifier,
+    isSelected: Boolean,
+    iconSelected: ImageVector,
+    icon: ImageVector,
+) {
+    val iconSelectedColor = MaterialTheme.colorScheme.onBackground
+    val iconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+    Box(
+        modifier = modifier
+            .height(40.dp),
+    ) {
+        Icon(
+            if (isSelected) iconSelected else icon,
+            contentDescription = null,
+            modifier = Modifier
+                .size(24.dp)
+                .align(Alignment.Center),
+            tint = if (isSelected) iconSelectedColor else iconColor,
+        )
+        Divider(
+            modifier = Modifier
+                .width(64.dp)
+                .height(2.dp)
+                .align(Alignment.BottomCenter)
+                .alpha(if (isSelected) 1f else 0f)
+                .background(
+                    color = MaterialTheme.colorScheme.outline,
+                    shape = RoundedCornerShape(100.dp)
+                )
+        )
+    }
 }
 
 @Composable

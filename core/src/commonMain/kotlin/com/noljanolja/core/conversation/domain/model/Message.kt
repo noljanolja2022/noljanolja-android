@@ -5,7 +5,6 @@ import com.noljanolja.core.utils.Const.BASE_URL
 import com.noljanolja.core.utils.randomUUID
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
@@ -46,27 +45,6 @@ data class MessageAttachment(
         localPath.takeIf { it.isNotBlank() } ?: getAttachmentUrl(
             conversationId
         )
-}
-
-@Serializable
-data class StickerPack(
-    val id: Long,
-    val name: String,
-    val publisher: String,
-    @SerialName("tray_image_file")
-    val trayImageFile: String,
-    @SerialName("animated_sticker_pack")
-    val animatedStickerPack: Boolean = false,
-    val stickers: List<Sticker> = listOf(),
-)
-
-@Serializable
-data class Sticker(
-    @SerialName("image_file")
-    val imageFile: String,
-    val emojis: List<String>,
-) {
-    var message: String = ""
 }
 
 @Serializable

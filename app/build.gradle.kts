@@ -99,7 +99,7 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.5.3")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0-rc01")
     implementation("androidx.compose.material:material-icons-extended:1.4.0-beta02")
-
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.0")
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:31.2.0"))
     implementation("com.google.firebase:firebase-analytics-ktx")
@@ -112,9 +112,11 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.2.2")
     implementation("com.github.yalantis:ucrop:2.2.7")
     implementation("io.coil-kt:coil-compose:2.2.2")
-    implementation( "io.coil-kt:coil-gif:2.2.2")
+    implementation("io.coil-kt:coil-gif:2.2.2")
     implementation("io.coil-kt:coil-video:2.2.2")
     implementation("com.github.penfeizhou.android.animation:awebp:2.17.0")
+
+    implementation("com.google.accompanist:accompanist-pager:0.22.0-rc")
 
     // ktor
     implementation("io.ktor:ktor-client-android:2.1.1")

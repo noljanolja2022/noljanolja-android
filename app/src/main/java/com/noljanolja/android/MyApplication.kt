@@ -19,6 +19,7 @@ import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.noljanolja.android.common.mobiledata.data.ContactsLoader
 import com.noljanolja.android.common.mobiledata.data.MediaLoader
+import com.noljanolja.android.common.mobiledata.data.StickersLoader
 import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.common.user.data.AuthDataSourceImpl
 import com.noljanolja.android.common.user.data.TokenRepoImpl
@@ -51,6 +52,7 @@ import com.noljanolja.core.service.ktor.KtorClient
 import com.noljanolja.core.service.ktor.KtorConfig
 import com.noljanolja.core.user.data.datasource.AuthDataSource
 import com.noljanolja.socket.TokenRepo
+import kotlinx.coroutines.MainScope
 import okhttp3.OkHttpClient
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -61,6 +63,8 @@ class MyApplication : Application() {
 
     private val okHttpClient: OkHttpClient by inject(named("Coil"))
     private val coreManager: CoreManager by inject()
+    private val scope = MainScope()
+    private val stickersLoader: StickersLoader by inject()
 
     companion object {
         var isAppInForeground: Boolean = false
@@ -89,6 +93,10 @@ class MyApplication : Application() {
                 }
             })
         }
+//        scope.launch {
+//            stickersLoader.initStickerPacks()
+//            stickersLoader.loadStickerPacks()
+//        }
     }
 
     private fun initKoin() {
@@ -142,6 +150,9 @@ class MyApplication : Application() {
                 }
                 single {
                     MediaLoader(get())
+                }
+                single {
+                    StickersLoader(get(), get())
                 }
                 single {
                     KtorConfig(

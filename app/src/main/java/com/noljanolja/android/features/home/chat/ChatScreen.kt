@@ -2,6 +2,7 @@ package com.noljanolja.android.features.home.chat
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -31,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
@@ -44,6 +46,7 @@ import com.noljanolja.android.util.chatMessageHeaderDate
 import com.noljanolja.android.util.isSameDate
 import com.noljanolja.android.util.loadFileInfo
 import com.noljanolja.core.conversation.domain.model.*
+import com.noljanolja.core.media.domain.model.Sticker
 import com.noljanolja.core.user.domain.model.User
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
@@ -84,6 +87,9 @@ fun ChatScreenContent(
     handleEvent: (ChatEvent) -> Unit,
 ) {
     val scrollState = rememberLazyListState()
+    var stickerSelected by remember {
+        mutableStateOf<Sticker?>(null)
+    }
     LaunchedEffect(key1 = scrollToNewMessageEvent) {
         scrollToNewMessageEvent.collect {
             scrollState.animateScrollToItem(0)
@@ -130,7 +136,6 @@ fun ChatScreenContent(
                 }
                 ChatInput(
                     onMessageSent = { message, type, attachments ->
-
                         val sendMessage = when (type) {
                             MessageType.GIF,
                             MessageType.PLAINTEXT,
@@ -161,6 +166,13 @@ fun ChatScreenContent(
                                     },
                                 )
                             }
+                            MessageType.STICKER -> {
+                                Message(
+                                    message = message,
+                                    stickerUrl = message,
+                                    type = MessageType.STICKER,
+                                )
+                            }
                             else -> null
                         }
                         sendMessage?.let { handleEvent(ChatEvent.SendMessage(it)) }
@@ -170,7 +182,24 @@ fun ChatScreenContent(
                     mediaList = mediaList,
                     loadMedia = { handleEvent(ChatEvent.LoadMedia) },
                     openPhoneSetting = { handleEvent(ChatEvent.OpenPhoneSettings) },
+                    onShowSticker = {
+                        stickerSelected = it
+                    }
                 )
+            }
+            stickerSelected?.let {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.7F)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = rememberAsyncImagePainter(it.imageFile),
+                        contentDescription = null,
+                        modifier = Modifier.size(150.dp)
+                    )
+                }
             }
         }
     )

@@ -10,6 +10,9 @@ import com.noljanolja.core.conversation.data.datasource.LocalConversationDataSou
 import com.noljanolja.core.conversation.data.repository.ConversationRepositoryImpl
 import com.noljanolja.core.conversation.domain.repository.ConversationRepository
 import com.noljanolja.core.db.Noljanolja
+import com.noljanolja.core.media.data.datasource.MediaApi
+import com.noljanolja.core.media.data.repository.MediaRepositoryImpl
+import com.noljanolja.core.media.domain.repository.MediaRepository
 import com.noljanolja.core.user.data.datasource.LocalUserDataSource
 import com.noljanolja.core.user.data.datasource.UserApi
 import com.noljanolja.core.user.data.datasource.UserRemoteDataSource
@@ -70,6 +73,12 @@ private val coreModule = module {
     }
     single<ConversationRepository> {
         ConversationRepositoryImpl(get(), get(), get(), get())
+    }
+    single {
+        MediaApi(get())
+    }
+    single<MediaRepository> {
+        MediaRepositoryImpl(get())
     }
     single {
         Noljanolja(get())

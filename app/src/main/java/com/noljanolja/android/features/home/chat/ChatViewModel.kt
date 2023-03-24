@@ -13,8 +13,10 @@ import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.ConversationType
 import com.noljanolja.core.conversation.domain.model.Message
 import com.noljanolja.core.user.domain.model.User
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.withContext
 import org.koin.core.component.inject
 
 class ChatViewModel : BaseViewModel() {
@@ -85,10 +87,12 @@ class ChatViewModel : BaseViewModel() {
     private suspend fun sendMessage(message: Message) {
         // call with main scope to avoid cancel when back
         launchInMain {
-            coreManager.sendConversationMessage(conversationId, userId, message)
-                .takeIf { it > 0L && conversationId == 0L }?.let {
-                conversationId = it
-                fetchConversation(onlyLocalData = true)
+            withContext(Dispatchers.IO) {
+                coreManager.sendConversationMessage(conversationId, userId, message)
+                    .takeIf { it > 0L && conversationId == 0L }?.let {
+                    conversationId = it
+                    fetchConversation(onlyLocalData = true)
+                }
             }
         }
     }
@@ -130,7 +134,7 @@ class ChatViewModel : BaseViewModel() {
 
     private suspend fun updateUiState(conversation: Conversation) {
         if (conversation.messages.firstOrNull()?.id.orZero() != lastMessageId) {
-            lastMessageId =conversation.messages.firstOrNull()?.id.orZero()
+            lastMessageId = conversation.messages.firstOrNull()?.id.orZero()
             _scrollToNewMessageEvent.emit(Unit)
         }
         _chatUiStateFlow.emit(

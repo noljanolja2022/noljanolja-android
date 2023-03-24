@@ -2,13 +2,24 @@ package com.noljanolja.android.features.home.root
 
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
+import com.noljanolja.android.common.base.launchInMain
+import com.noljanolja.android.common.mobiledata.data.StickersLoader
 import com.noljanolja.android.common.navigation.NavigationDirections
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import org.koin.core.component.inject
 
 class HomeViewModel : BaseViewModel() {
     private val _showRequireLoginPopupEvent = MutableSharedFlow<Boolean>()
     val showRequireLoginPopupEvent = _showRequireLoginPopupEvent.asSharedFlow()
+
+    private val stickersLoader: StickersLoader by inject()
+
+    init {
+        launchInMain {
+            stickersLoader.loadAllRemoteStickerPackages()
+        }
+    }
 
     fun handleEvent(event: HomeEvent) {
         when (event) {

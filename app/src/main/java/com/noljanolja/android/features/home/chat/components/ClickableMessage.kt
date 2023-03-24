@@ -6,10 +6,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Error
 import androidx.compose.material.icons.outlined.SyncProblem
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
@@ -34,6 +35,7 @@ import com.noljanolja.core.conversation.domain.model.Message
 import com.noljanolja.core.conversation.domain.model.MessageAttachment
 import com.noljanolja.core.conversation.domain.model.MessageStatus
 import com.noljanolja.core.conversation.domain.model.MessageType
+import com.noljanolja.core.utils.Const
 
 @Composable
 fun ClickableMessage(
@@ -56,6 +58,12 @@ fun ClickableMessage(
                 conversationId = conversationId,
                 modifier = Modifier,
                 onMessageClick = onMessageClick
+            )
+        }
+        MessageType.STICKER -> {
+            ClickableStickerMessage(
+                message = message,
+                modifier = Modifier.clickable { onMessageClick(message) },
             )
         }
         else -> {
@@ -96,6 +104,22 @@ private fun ClickableTextMessage(
                     // TODO
                 }
         }
+    )
+}
+
+@Composable
+private fun ClickableStickerMessage(
+    message: Message,
+    modifier: Modifier,
+) {
+    AsyncImage(
+        ImageRequest.Builder(context = LocalContext.current)
+            .data("${Const.BASE_URL}/media/sticker-packs/${message.message}")
+            .memoryCacheKey(message.message)
+            .diskCacheKey(message.message)
+            .build(),
+        contentDescription = null,
+        modifier = modifier.size(128.dp),
     )
 }
 
@@ -205,13 +229,12 @@ private fun PhotoPreview(
             contentDescription = null,
             contentScale = contentScale,
         ) {
-            val state = painter.state
-            when (state) {
+            when (painter.state) {
                 is AsyncImagePainter.State.Loading -> {
                     Box(
                         modifier = Modifier.fillMaxWidth()
                             .aspectRatio(1f)
-                            .background(MaterialTheme.colorScheme.primaryContainer),
+                            .background(MaterialTheme.colorScheme.surface),
                         contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator(
@@ -224,7 +247,7 @@ private fun PhotoPreview(
                     Box(
                         modifier = Modifier.fillMaxWidth()
                             .aspectRatio(1f)
-                            .background(MaterialTheme.colorScheme.primaryContainer),
+                            .background(MaterialTheme.colorScheme.surface),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
