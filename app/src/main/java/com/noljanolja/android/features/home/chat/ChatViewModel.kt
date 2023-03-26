@@ -8,7 +8,6 @@ import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.base.launchInMain
 import com.noljanolja.android.common.mobiledata.data.MediaLoader
 import com.noljanolja.android.common.navigation.NavigationDirections
-import com.noljanolja.android.util.orZero
 import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.ConversationType
 import com.noljanolja.core.conversation.domain.model.Message
@@ -27,7 +26,7 @@ class ChatViewModel : BaseViewModel() {
     private var userName: String = ""
     private var noMoreMessages: Boolean = false
     private var forceUpdateConversation: Boolean = true
-    private var lastMessageId: Long = 0L
+    private var lastMessageId: String = ""
     private var job: Job? = null
     private var seenJob: Job? = null
 
@@ -133,22 +132,24 @@ class ChatViewModel : BaseViewModel() {
     }
 
     private suspend fun updateUiState(conversation: Conversation) {
-        if (conversation.messages.firstOrNull()?.id.orZero() != lastMessageId) {
-            lastMessageId = conversation.messages.firstOrNull()?.id.orZero()
-            _scrollToNewMessageEvent.emit(Unit)
-        }
         _chatUiStateFlow.emit(
             UiState(
                 data = conversation
             )
         )
         seenJob?.cancel()
-        seenJob = launch {
-            conversation.messages.firstOrNull()?.let { message ->
-                if (!message.isSeenByMe) {
-                    coreManager.updateMessageStatus(conversationId, message.id)
+        seenJob = launchInMain {
+            withContext(Dispatchers.IO) {
+                conversation.messages.firstOrNull()?.let { message ->
+                    if (!message.isSeenByMe) {
+                        coreManager.updateMessageStatus(conversationId, message.id)
+                    }
                 }
             }
+        }
+        if (conversation.messages.firstOrNull()?.localId.orEmpty() != lastMessageId) {
+            lastMessageId = conversation.messages.firstOrNull()?.localId.orEmpty()
+            _scrollToNewMessageEvent.emit(Unit)
         }
     }
 

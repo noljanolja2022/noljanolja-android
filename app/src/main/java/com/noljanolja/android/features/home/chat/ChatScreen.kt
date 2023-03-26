@@ -31,7 +31,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import co.touchlab.kermit.Logger
 import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.noljanolja.android.R
@@ -41,13 +43,12 @@ import com.noljanolja.android.features.home.chat.components.ClickableMessage
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.InfiniteListHandler
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
-import com.noljanolja.android.util.chatMessageBubbleTime
-import com.noljanolja.android.util.chatMessageHeaderDate
-import com.noljanolja.android.util.isSameDate
-import com.noljanolja.android.util.loadFileInfo
+import com.noljanolja.android.util.*
 import com.noljanolja.core.conversation.domain.model.*
 import com.noljanolja.core.media.domain.model.Sticker
 import com.noljanolja.core.user.domain.model.User
+import com.noljanolja.core.utils.Const
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
@@ -90,8 +91,11 @@ fun ChatScreenContent(
     var stickerSelected by remember {
         mutableStateOf<Sticker?>(null)
     }
-    LaunchedEffect(key1 = scrollToNewMessageEvent) {
+
+    LaunchedEffect(true) {
         scrollToNewMessageEvent.collect {
+            Logger.e("Scroll cái coi")
+            delay(50)
             scrollState.animateScrollToItem(0)
         }
     }
@@ -194,8 +198,11 @@ fun ChatScreenContent(
                         .background(Color.Black.copy(alpha = 0.7F)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Image(
-                        painter = rememberAsyncImagePainter(it.imageFile),
+                    SubcomposeAsyncImage(
+                        ImageRequest.Builder(context = LocalContext.current)
+                            .setAnimated(true)
+                            .data(it.imageFile)
+                            .build(),
                         contentDescription = null,
                         modifier = Modifier.size(150.dp)
                     )
@@ -216,7 +223,6 @@ private fun MessageList(
     onMessageClick: (Message) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-
     Box(modifier = modifier) {
         LazyColumn(
             reverseLayout = true,
@@ -400,7 +406,7 @@ private fun AuthorAndTextMessage(
     ) {
         val configuration = LocalConfiguration.current
         val maxChatItemWidth = (configuration.screenWidthDp * 0.7).dp
-        val maxChatItemHeight = (configuration.screenHeightDp * 0.5).dp
+        val maxChatItemHeight = (configuration.screenHeightDp * 0.4).dp
         if (isLastMessageByAuthorSameDay && !message.sender.isMe) {
             Spacer(modifier = Modifier.height(12.dp))
         }

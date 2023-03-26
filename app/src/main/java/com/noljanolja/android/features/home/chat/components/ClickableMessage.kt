@@ -24,12 +24,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImagePainter
-import coil.compose.SubcomposeAsyncImage
-import coil.compose.SubcomposeAsyncImageContent
-import coil.compose.SubcomposeAsyncImageScope
+import coil.compose.*
 import coil.request.ImageRequest
 import com.noljanolja.android.util.orZero
+import com.noljanolja.android.util.setAnimated
 import com.noljanolja.android.util.toUri
 import com.noljanolja.core.conversation.domain.model.Message
 import com.noljanolja.core.conversation.domain.model.MessageAttachment
@@ -114,6 +112,7 @@ private fun ClickableStickerMessage(
 ) {
     SubcomposeAsyncImage(
         ImageRequest.Builder(context = LocalContext.current)
+            .setAnimated(true)
             .data("${Const.BASE_URL}/media/sticker-packs/${message.message}")
             .memoryCacheKey(message.message)
             .diskCacheKey(message.message)
@@ -121,7 +120,7 @@ private fun ClickableStickerMessage(
         contentDescription = null,
         modifier = modifier.size(128.dp),
     ) {
-        AsyncImageState(modifier = Modifier.size(128.dp))
+        AsyncImageState(modifier = Modifier.size(128.dp), contentScale = ContentScale.FillBounds)
     }
 }
 
@@ -136,20 +135,16 @@ fun ClickablePhotoMessage(
         1 -> {
             val attachment = message.attachments.first()
             Column(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
                 horizontalAlignment = if (message.sender.isMe) Alignment.End else Alignment.Start
             ) {
                 PhotoPreview(
                     modifier = modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
                         .clip(RoundedCornerShape(6.dp))
                         .clickable { onMessageClick(message.copy(attachments = listOf(attachment))) },
                     uri = attachment.getPhotoUri(conversationId).toUri(),
                     key = "${message.localId}/${attachment.originalName}",
                     contentScale = ContentScale.FillWidth,
+                    isMe = message.sender.isMe
                 )
             }
         }
@@ -158,7 +153,9 @@ fun ClickablePhotoMessage(
             val attachmentRows =
                 size / maxAttachmentPerRow + 1.takeIf { size % maxAttachmentPerRow > 0 }.orZero()
             Column(
-                modifier = modifier.fillMaxWidth().wrapContentHeight(),
+                modifier = modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
                 horizontalAlignment = if (message.sender.isMe) Alignment.End else Alignment.Start
             ) {
                 repeat(attachmentRows) { row ->
@@ -188,7 +185,9 @@ fun AttachmentRow(
 ) {
     CompositionLocalProvider(LocalLayoutDirection provides if (message.sender.isMe) LayoutDirection.Rtl else LayoutDirection.Ltr) {
         Row(
-            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
             horizontalArrangement = if (message.sender.isMe) Arrangement.End else Arrangement.Start,
         ) {
             repeat(maxAttachmentPerRow) { index ->
@@ -198,12 +197,14 @@ fun AttachmentRow(
                 val attachment = attachments.getOrNull(index)
                 attachment?.let {
                     PhotoPreview(
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier
+                            .weight(1f)
                             .aspectRatio(1f)
                             .clip(RoundedCornerShape(6.dp))
                             .clickable { onMessageClick(message.copy(attachments = listOf(attachment))) },
                         uri = attachment.getPhotoUri(conversationId).toUri(),
                         key = "${message.localId}/${attachment.originalName}",
+                        isMe = message.sender.isMe,
                     )
                 } ?: Spacer(modifier = Modifier.weight(1F))
             }
@@ -216,11 +217,12 @@ private fun PhotoPreview(
     modifier: Modifier,
     uri: Uri,
     key: String,
+    isMe: Boolean,
     contentScale: ContentScale = ContentScale.Crop,
 ) {
     Box(
         modifier = modifier,
-        contentAlignment = Alignment.Center,
+        contentAlignment = if (isMe) Alignment.BottomEnd else Alignment.BottomStart,
     ) {
         SubcomposeAsyncImage(
             ImageRequest.Builder(context = LocalContext.current)
@@ -229,15 +231,23 @@ private fun PhotoPreview(
                 .diskCacheKey(key)
                 .build(),
             contentDescription = null,
-            contentScale = contentScale,
+            contentScale = contentScale
         ) {
-            AsyncImageState(modifier = Modifier.fillMaxWidth().aspectRatio(1F))
+            AsyncImageState(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1F),
+                contentScale = contentScale,
+            )
         }
     }
 }
 
 @Composable
-private fun SubcomposeAsyncImageScope.AsyncImageState(modifier: Modifier) {
+private fun SubcomposeAsyncImageScope.AsyncImageState(
+    modifier: Modifier,
+    contentScale: ContentScale,
+) {
     when (painter.state) {
         is AsyncImagePainter.State.Loading -> {
             Box(
@@ -266,7 +276,21 @@ private fun SubcomposeAsyncImageScope.AsyncImageState(modifier: Modifier) {
             }
         }
         else -> {
-            SubcomposeAsyncImageContent()
+            val aspectRatio = (painter.state as? AsyncImagePainter.State.Success)
+                ?.painter
+                ?.intrinsicSize
+                ?.let { it.width / it.height }
+                .takeIf { contentScale != ContentScale.Crop }
+            SubcomposeAsyncImageContent(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(6.dp))
+                    .then(
+                        aspectRatio?.let {
+                            Modifier.aspectRatio(it)
+                        } ?: Modifier
+                    ),
+                contentScale = contentScale
+            )
         }
     }
 }

@@ -29,6 +29,9 @@ object KtorClient {
                 KJson.default()
             )
         }
+        install(HttpTimeout) {
+            socketTimeoutMillis = 30_000L
+        }
         install(Auth) {
             bearer {
                 loadTokens {

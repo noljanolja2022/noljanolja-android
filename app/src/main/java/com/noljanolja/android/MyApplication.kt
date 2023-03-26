@@ -9,8 +9,6 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import co.touchlab.kermit.Logger
 import coil.Coil
 import coil.ImageLoader
-import coil.decode.GifDecoder
-import coil.decode.ImageDecoderDecoder
 import coil.decode.VideoFrameDecoder
 import coil.util.DebugLogger
 import com.d2brothers.firebase_auth.AuthSdk
@@ -45,7 +43,6 @@ import com.noljanolja.android.services.PermissionChecker
 import com.noljanolja.android.services.analytics.AppAnalytics
 import com.noljanolja.android.services.analytics.firebase.FirebaseLogger
 import com.noljanolja.android.services.analytics.firebase.FirebaseTracker
-import com.noljanolja.android.util.AnimatedWebPDecoder
 import com.noljanolja.core.CoreManager
 import com.noljanolja.core.di.initKoin
 import com.noljanolja.core.service.ktor.KtorClient
@@ -234,12 +231,6 @@ class MyApplication : Application() {
                 .okHttpClient(okHttpClient)
                 .components {
                     add(VideoFrameDecoder.Factory())
-                    if (Build.VERSION.SDK_INT >= 28) {
-                        add(ImageDecoderDecoder.Factory())
-                    } else {
-                        add(GifDecoder.Factory())
-                        add(AnimatedWebPDecoder.Factory())
-                    }
                 }
                 .logger(DebugLogger())
                 .respectCacheHeaders(false)

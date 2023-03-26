@@ -18,8 +18,8 @@ android {
         applicationId = "com.noljanolja.app.android"
         minSdk = 21
         targetSdk = 33
-        versionCode = 11
-        versionName = "1.0.4"
+        versionCode = 12
+        versionName = "1.0.5"
         testInstrumentationRunner = "com.noljanolja.android.InstrumentationTestRunner"
         multiDexEnabled = true
     }
@@ -59,15 +59,17 @@ android {
                 artifactType = "APK"
                 serviceCredentialsFile = "key/key_distributor.json"
                 releaseNotes = "Version release test app distributor and full flow auth"
-                testers = "doduchieu.kstn@gmail.com"
+                testers =
+                    "doduchieu.kstn@gmail.com, itanchi.dev@gmail.com, sangjin.d.han@gmail.com, sangjin.han@ppnyy.com, tiaddeeps@gmail.com"
             }
         }
         debug {
             firebaseAppDistribution {
                 artifactType = "APK"
                 serviceCredentialsFile = "key/key_distributor.json"
-                releaseNotes = ""
-                testers = "doduchieu.kstn@gmail.com"
+                releaseNotes = "Release send images and stickers"
+                testers =
+                    "doduchieu.kstn@gmail.com, itanchi.dev@gmail.com, sangjin.d.han@gmail.com, sangjin.han@ppnyy.com, tiaddeeps@gmail.com"
             }
         }
     }

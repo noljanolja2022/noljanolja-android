@@ -89,6 +89,16 @@ internal class ConversationRepositoryImpl(
                         )
                     )
                 )
+            } else {
+                localConversationDataSource.upsertConversationMessages(
+                    sentConversationId,
+                    listOf(
+                        response.data.copy(
+                            status = MessageStatus.SENT,
+                            _localId = sendingMessage.localId
+                        )
+                    )
+                )
             }
 
             return sentConversationId
