@@ -21,8 +21,6 @@ internal class ConversationRepositoryImpl(
     private val scope = CoroutineScope(Dispatchers.Default)
     private var job: Job? = null
 
-    // Temp: Handle error stream fast
-    private var sendLocalId: String? = null
     override suspend fun findConversationWithUser(userId: String): Conversation? {
         return localConversationDataSource.findSingleConversationWithUser(userId)
     }
@@ -74,28 +72,25 @@ internal class ConversationRepositoryImpl(
                 sentConversationId,
                 listOf(sendingMessage)
             )
-            sendLocalId = sendingMessage.localId
             val response = conversationApi.sendConversationMessage(
                 SendConversationMessageRequest(
                     conversationId = sentConversationId,
                     message = sendingMessage,
                 )
             )
-            val sentMessage = if (response.isSuccessful() && response.data != null) {
-                response.data.copy(
-                    localId = sendingMessage.localId,
-                    status = MessageStatus.SENT,
-                )
-            } else {
-                sendingMessage.copy(
-                    status = MessageStatus.FAILED,
+            Logger.e("Receive: send response ${response.data}")
+
+            if (!response.isSuccessful() || response.data == null) {
+                localConversationDataSource.upsertConversationMessages(
+                    sentConversationId,
+                    listOf(
+                        sendingMessage.copy(
+                            status = MessageStatus.FAILED,
+                        )
+                    )
                 )
             }
-            localConversationDataSource.upsertConversationMessages(
-                sentConversationId,
-                listOf(sentMessage)
-            )
-            sendLocalId = null
+
             return sentConversationId
         }
         return 0L
@@ -121,16 +116,9 @@ internal class ConversationRepositoryImpl(
                     }
                 }
                 .collect {
+                    Logger.e("Receive: Stream $it")
                     updateLocalConversation(
-                        conversation = it.copy(
-                            messages = it.messages.mapIndexed { index, message ->
-                                if (index == 0 && sendLocalId != null) {
-                                    message.copy(localId = sendLocalId!!)
-                                } else {
-                                    message
-                                }
-                            }
-                        ),
+                        it,
                         saveParticipants = it.type == ConversationType.SINGLE,
                     )
                 }

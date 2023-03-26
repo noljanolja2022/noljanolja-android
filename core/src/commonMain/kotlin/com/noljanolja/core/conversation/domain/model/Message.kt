@@ -5,13 +5,15 @@ import com.noljanolja.core.utils.Const.BASE_URL
 import com.noljanolja.core.utils.randomUUID
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
 @Serializable
 data class Message(
     val id: Long = 0,
-    val localId: String = randomUUID(),
+    @SerialName("localId")
+    private val _localId: String = randomUUID(),
     val sender: User = User(),
     val message: String,
     var stickerUrl: String = "",
@@ -22,6 +24,7 @@ data class Message(
     val createdAt: Instant = Clock.System.now(),
     val updatedAt: Instant = Clock.System.now(),
 ) {
+    val localId: String get() = _localId.takeIf { it.isNotBlank() } ?: randomUUID()
     var seenUsers: List<User> = emptyList()
     var isSeenByMe: Boolean = false
 }

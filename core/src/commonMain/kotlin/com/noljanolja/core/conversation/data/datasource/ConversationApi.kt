@@ -45,6 +45,7 @@ class ConversationApi(
                     formData {
                         append("message", request.message.message)
                         append("type", request.message.type.name)
+                        append("localId", request.message.localId)
                         when (request.message.type) {
                             MessageType.PHOTO,
                             MessageType.DOCUMENT,

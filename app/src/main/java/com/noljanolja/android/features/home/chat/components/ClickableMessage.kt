@@ -24,10 +24,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
+import coil.compose.SubcomposeAsyncImageScope
 import coil.request.ImageRequest
 import com.noljanolja.android.util.orZero
 import com.noljanolja.android.util.toUri
@@ -112,7 +112,7 @@ private fun ClickableStickerMessage(
     message: Message,
     modifier: Modifier,
 ) {
-    AsyncImage(
+    SubcomposeAsyncImage(
         ImageRequest.Builder(context = LocalContext.current)
             .data("${Const.BASE_URL}/media/sticker-packs/${message.message}")
             .memoryCacheKey(message.message)
@@ -120,7 +120,9 @@ private fun ClickableStickerMessage(
             .build(),
         contentDescription = null,
         modifier = modifier.size(128.dp),
-    )
+    ) {
+        AsyncImageState(modifier = Modifier.size(128.dp))
+    }
 }
 
 @Composable
@@ -229,39 +231,42 @@ private fun PhotoPreview(
             contentDescription = null,
             contentScale = contentScale,
         ) {
-            when (painter.state) {
-                is AsyncImagePainter.State.Loading -> {
-                    Box(
-                        modifier = Modifier.fillMaxWidth()
-                            .aspectRatio(1f)
-                            .background(MaterialTheme.colorScheme.surface),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(40.dp),
-                            color = MaterialTheme.colorScheme.tertiary
-                        )
-                    }
-                }
-                is AsyncImagePainter.State.Error -> {
-                    Box(
-                        modifier = Modifier.fillMaxWidth()
-                            .aspectRatio(1f)
-                            .background(MaterialTheme.colorScheme.surface),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            Icons.Outlined.SyncProblem,
-                            contentDescription = null,
-                            modifier = Modifier.size(40.dp),
-                            tint = MaterialTheme.colorScheme.errorContainer
-                        )
-                    }
-                }
-                else -> {
-                    SubcomposeAsyncImageContent()
-                }
+            AsyncImageState(modifier = Modifier.fillMaxWidth().aspectRatio(1F))
+        }
+    }
+}
+
+@Composable
+private fun SubcomposeAsyncImageScope.AsyncImageState(modifier: Modifier) {
+    when (painter.state) {
+        is AsyncImagePainter.State.Loading -> {
+            Box(
+                modifier = modifier
+                    .background(MaterialTheme.colorScheme.surface),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(40.dp),
+                    color = MaterialTheme.colorScheme.tertiary
+                )
             }
+        }
+        is AsyncImagePainter.State.Error -> {
+            Box(
+                modifier = modifier
+                    .background(MaterialTheme.colorScheme.surface),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    Icons.Outlined.SyncProblem,
+                    contentDescription = null,
+                    modifier = Modifier.size(40.dp),
+                    tint = MaterialTheme.colorScheme.errorContainer
+                )
+            }
+        }
+        else -> {
+            SubcomposeAsyncImageContent()
         }
     }
 }
