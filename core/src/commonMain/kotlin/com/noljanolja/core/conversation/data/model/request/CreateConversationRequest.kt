@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CreateConversationRequest(
     val title: String,
-    val type: ConversationType,
+    val type: ConversationType? = null,
     val participantIds: List<String> = listOf(),
 )

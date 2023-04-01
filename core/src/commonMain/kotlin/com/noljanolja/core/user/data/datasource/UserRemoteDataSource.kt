@@ -16,6 +16,8 @@ interface UserRemoteDataSource {
     suspend fun updateUser(name: String?, email: String?): Result<Boolean>
 
     suspend fun syncUserContacts(contacts: List<Contact>): Result<List<User>>
+
+    suspend fun getFriends(): Result<List<User>>
 }
 
 class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSource {
@@ -74,6 +76,19 @@ class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSou
             )
             if (response.isSuccessful()) {
                 Result.success(true)
+            } else {
+                Result.failure(Throwable(response.message))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getFriends(): Result<List<User>> {
+        return try {
+            val response = userApi.getFriends()
+            if (response.isSuccessful()) {
+                Result.success(response.data.map { it.toDomainUser() })
             } else {
                 Result.failure(Throwable(response.message))
             }

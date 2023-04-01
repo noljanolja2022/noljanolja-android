@@ -21,8 +21,12 @@ internal class ConversationRepositoryImpl(
     private val scope = CoroutineScope(Dispatchers.Default)
     private var job: Job? = null
 
-    override suspend fun findConversationWithUser(userId: String): Conversation? {
-        return localConversationDataSource.findSingleConversationWithUser(userId)
+    override suspend fun findConversationWithUsers(userIds: List<String>): Conversation? {
+        return if (userIds.size == 1) {
+            localConversationDataSource.findSingleConversationWithUser(userIds.first())
+        } else {
+            null
+        }
     }
 
     override suspend fun getConversation(conversationId: Long): Flow<Conversation> = flow {
@@ -56,12 +60,13 @@ internal class ConversationRepositoryImpl(
     }
 
     override suspend fun sendConversationMessage(
+        title: String,
         conversationId: Long,
-        userId: String,
+        userIds: List<String>,
         message: Message,
     ): Long {
         val sentConversationId =
-            if (conversationId == 0L) createConversation(userId) else conversationId
+            if (conversationId == 0L) createConversation(title, userIds) else conversationId
 
         if (sentConversationId != 0L) {
             val sendingMessage = message.copy(
@@ -106,17 +111,17 @@ internal class ConversationRepositoryImpl(
         return 0L
     }
 
-    private suspend fun createConversation(userId: String): Long {
+    private suspend fun createConversation(title: String, userIds: List<String>): Long {
         return conversationApi.createConversation(
             CreateConversationRequest(
-                title = "",
-                type = ConversationType.SINGLE,
-                participantIds = listOf(userId)
+                title = title,
+                participantIds = userIds
             )
         ).data?.id ?: 0L
     }
 
     override suspend fun streamConversations() {
+        Logger.e("Stream start")
         job?.cancel()
         job = scope.launch {
             conversationApi.streamConversations()
@@ -126,10 +131,9 @@ internal class ConversationRepositoryImpl(
                     }
                 }
                 .collect {
-                    Logger.e("Receive: Stream $it")
+                    Logger.e("Receive: Stream ${it.messages}")
                     updateLocalConversation(
                         it,
-                        saveParticipants = it.type == ConversationType.SINGLE,
                     )
                 }
         }
@@ -199,7 +203,6 @@ internal class ConversationRepositoryImpl(
         saveSender: Boolean = true,
     ) {
         val me = localUserDataSource.findMe() ?: return
-        localConversationDataSource.upsert(conversation)
         if (saveCreator) localUserDataSource.upsert(conversation.creator)
         if (saveParticipants) {
             localUserDataSource.upsertConversationParticipants(
@@ -218,13 +221,13 @@ internal class ConversationRepositoryImpl(
             conversation.messages.map { it.sender }.distinctBy { it.id }
                 .forEach { localUserDataSource.upsert(it) }
         }
+        localConversationDataSource.upsert(conversation)
     }
 
     private suspend fun getLocalConversations(): Flow<List<Conversation>> {
         return localConversationDataSource.findAll().map { localConversations ->
             localConversations.mapNotNull { localConversation ->
                 // wait update message db
-                delay(50)
                 val messages = localConversationDataSource.findConversationMessages(
                     localConversation.id,
                     limit = 1

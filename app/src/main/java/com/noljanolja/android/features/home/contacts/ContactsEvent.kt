@@ -9,5 +9,7 @@ sealed interface ContactsEvent {
 
     object Back : ContactsEvent
 
-    data class Chat(val contact: User) : ContactsEvent
+    data class SelectContact(val contact: User) : ContactsEvent
+
+    object Chat : ContactsEvent
 }

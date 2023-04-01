@@ -24,13 +24,11 @@ class ConversationsViewModel : BaseViewModel() {
                     navigationManager.navigate(
                         NavigationDirections.Chat(
                             conversationId = event.conversationId,
-                            userId = event.userId,
-                            userName = event.userName
                         )
                     )
                 }
                 is ConversationsEvent.OpenContactPicker -> {
-                    navigationManager.navigate(NavigationDirections.SelectContact)
+                    navigationManager.navigate(NavigationDirections.SelectContact(event.type))
                 }
             }
         }

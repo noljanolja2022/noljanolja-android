@@ -15,6 +15,7 @@ import com.d2brothers.firebase_auth.AuthSdk
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
+import com.noljanolja.android.common.base.launchInMain
 import com.noljanolja.android.common.mobiledata.data.ContactsLoader
 import com.noljanolja.android.common.mobiledata.data.MediaLoader
 import com.noljanolja.android.common.mobiledata.data.StickersLoader
@@ -48,20 +49,27 @@ import com.noljanolja.core.di.initKoin
 import com.noljanolja.core.service.ktor.KtorClient
 import com.noljanolja.core.service.ktor.KtorConfig
 import com.noljanolja.core.user.data.datasource.AuthDataSource
+import com.noljanolja.core.utils.minOfNullable
 import com.noljanolja.socket.TokenRepo
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import okhttp3.OkHttpClient
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
+import kotlin.time.Duration.Companion.minutes
 
 class MyApplication : Application() {
 
     private val okHttpClient: OkHttpClient by inject(named("Coil"))
     private val coreManager: CoreManager by inject()
-    private val scope = MainScope()
-    private val stickersLoader: StickersLoader by inject()
+    private val authSdk: AuthSdk by inject()
+    private var job: Job? = null
 
     companion object {
         var isAppInForeground: Boolean = false
@@ -77,6 +85,30 @@ class MyApplication : Application() {
                 override fun onStart(owner: LifecycleOwner) {
                     isAppInForeground = true
                     Logger.d("Noljanolja: foregrounded: ${ProcessLifecycleOwner.get().lifecycle.currentState.name}")
+                    launchInMain {
+                        withContext(Dispatchers.IO) {
+                            coreManager.streamConversation()
+                        }
+                    }
+                    job?.cancel()
+                    job = launchInMain {
+                        withContext(Dispatchers.IO) {
+                            while (true) {
+                                val now = Clock.System.now()
+                                val expirationTime = authSdk.getExpiration()
+                                    ?.let { Instant.fromEpochSeconds(it) }
+                                val delayTime = minOfNullable(
+                                    expirationTime?.takeIf { it > now }?.minus(now),
+                                    15.minutes
+                                )
+                                authSdk.getIdToken(true)?.let { token ->
+                                    Logger.d("Refresh Token $token")
+                                    coreManager.saveAuthToken(token)
+                                }
+                                delay(delayTime!!)
+                            }
+                        }
+                    }
                 }
 
                 override fun onStop(owner: LifecycleOwner) {
@@ -90,10 +122,6 @@ class MyApplication : Application() {
                 }
             })
         }
-//        scope.launch {
-//            stickersLoader.initStickerPacks()
-//            stickersLoader.loadStickerPacks()
-//        }
     }
 
     private fun initKoin() {
@@ -171,7 +199,7 @@ class MyApplication : Application() {
                     ChatViewModel()
                 }
                 viewModel {
-                    ContactsViewModel()
+                    ContactsViewModel(get())
                 }
                 viewModel {
                     ConversationsViewModel()

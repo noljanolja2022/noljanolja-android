@@ -14,6 +14,7 @@ import com.noljanolja.core.conversation.domain.model.Message
 import com.noljanolja.core.user.domain.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import org.koin.core.component.inject
@@ -22,8 +23,8 @@ class ChatViewModel : BaseViewModel() {
     private val mediaLoader: MediaLoader by inject()
 
     private var conversationId: Long = 0L
-    private var userId: String = ""
-    private var userName: String = ""
+    private var userIds: List<String> = emptyList()
+    private var title: String = ""
     private var noMoreMessages: Boolean = false
     private var forceUpdateConversation: Boolean = true
     private var lastMessageId: String = ""
@@ -69,11 +70,15 @@ class ChatViewModel : BaseViewModel() {
         }
     }
 
-    fun setupConversation(conversationId: Long, userId: String, userName: String) {
+    fun setupConversation(
+        conversationId: Long,
+        userIds: List<String>,
+        title: String,
+    ) {
         launch {
             this.conversationId = conversationId
-            this.userId = userId
-            this.userName = userName
+            this.userIds = userIds
+            this.title = title
             _chatUiStateFlow.emit(
                 UiState(
                     data = createEmptyConversation()
@@ -87,7 +92,12 @@ class ChatViewModel : BaseViewModel() {
         // call with main scope to avoid cancel when back
         launchInMain {
             withContext(Dispatchers.IO) {
-                coreManager.sendConversationMessage(conversationId, userId, message)
+                coreManager.sendConversationMessage(
+                    title = title,
+                    conversationId = conversationId,
+                    userIds = userIds,
+                    message = message
+                )
                     .takeIf { it > 0L && conversationId == 0L }?.let {
                     conversationId = it
                     fetchConversation(onlyLocalData = true)
@@ -104,7 +114,7 @@ class ChatViewModel : BaseViewModel() {
                 _chatUiStateFlow.emit(value.copy(loading = true))
             }
             if (conversationId == 0L) {
-                coreManager.findConversationWithUser(userId)?.let {
+                coreManager.findConversationWithUsers(userIds)?.let {
                     conversationId = it.id
                     updateUiState(it)
                 }
@@ -124,10 +134,10 @@ class ChatViewModel : BaseViewModel() {
     private fun createEmptyConversation(): Conversation {
         return Conversation(
             id = 0,
-            title = "",
-            type = ConversationType.SINGLE,
+            title = title,
+            type = if (userIds.size > 1) ConversationType.GROUP else ConversationType.SINGLE,
             creator = User(),
-            participants = listOf(User(name = userName)),
+            participants = title.split(", ").map { User(name = it) },
         )
     }
 
@@ -147,9 +157,12 @@ class ChatViewModel : BaseViewModel() {
                 }
             }
         }
-        if (conversation.messages.firstOrNull()?.localId.orEmpty() != lastMessageId) {
-            lastMessageId = conversation.messages.firstOrNull()?.localId.orEmpty()
-            _scrollToNewMessageEvent.emit(Unit)
+        conversation.messages.firstOrNull()?.let {
+            if (it.localId != lastMessageId) {
+                lastMessageId = it.localId
+                delay(10L)
+                _scrollToNewMessageEvent.emit(Unit)
+            }
         }
     }
 

@@ -8,12 +8,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Chat
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,6 +26,7 @@ import com.noljanolja.android.MainActivity.Companion.getConversationId
 import com.noljanolja.android.MainActivity.Companion.removeConversationId
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
+import com.noljanolja.android.features.home.chat.components.NewChatDialog
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.EmptyPage
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
@@ -63,16 +61,23 @@ fun ConversationsScreenContent(
     uiState: UiState<List<Conversation>>,
     handleEvent: (ConversationsEvent) -> Unit,
 ) {
+    var showNewChatDialog by remember {
+        mutableStateOf(false)
+    }
+
     ScaffoldWithUiState(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            CommonTopAppBar(title = stringResource(R.string.chats_title))
-        },
-        floatingActionButton = {
-            NewChatButton(
-                hasConversation = !uiState.data.isNullOrEmpty(),
-                onItemClick = {
-                    handleEvent(ConversationsEvent.OpenContactPicker)
+            CommonTopAppBar(
+                title = stringResource(R.string.chats_title),
+                actions = {
+                    IconButton(onClick = { showNewChatDialog = true }) {
+                        Icon(
+                            Icons.Outlined.Chat,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
                 }
             )
         },
@@ -92,44 +97,14 @@ fun ConversationsScreenContent(
             }
         }
     }
-}
 
-@Composable
-fun NewChatButton(
-    hasConversation: Boolean,
-    onItemClick: () -> Unit,
-) {
-    if (hasConversation) {
-        FloatingActionButton(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
-            content = {
-                Icon(
-                    Icons.Outlined.Add,
-                    contentDescription = null,
-                )
-            },
-            onClick = onItemClick
-        )
-    } else {
-        ExtendedFloatingActionButton(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
-            icon = {
-                Icon(
-                    Icons.Outlined.Chat,
-                    contentDescription = null,
-                )
-            },
-            text = {
-                Text(
-                    stringResource(R.string.chats_new_chat),
-                    style = MaterialTheme.typography.labelLarge,
-                )
-            },
-            onClick = onItemClick,
-        )
-    }
+    NewChatDialog(
+        visible = showNewChatDialog,
+        onDismissRequest = { showNewChatDialog = false },
+        onNewSingleChat = { handleEvent(ConversationsEvent.OpenContactPicker(it)) },
+        onNewSecretChat = { handleEvent(ConversationsEvent.OpenContactPicker(it)) },
+        onNewGroupChat = { handleEvent(ConversationsEvent.OpenContactPicker(it)) },
+    )
 }
 
 @Composable
@@ -209,22 +184,22 @@ fun ConversationRow(
                         stringResource(R.string.chats_message_file)
                     }
                 }
-//                MessageType.Photo -> {
-//                    val attachment = message.attachments.last()
-//                    if (message.sender.isMe) {
-//                        if (attachment.type.startsWith("video")) {
-//                            stringResource(R.string.chats_message_my_video)
-//                        } else {
-//                            stringResource(R.string.chats_message_my_photo)
-//                        }
-//                    } else {
-//                        if (attachment.type.startsWith("video")) {
-//                            stringResource(R.string.chats_message_video)
-//                        } else {
-//                            stringResource(R.string.chats_message_photo)
-//                        }
-//                    }
-//                }
+                MessageType.PHOTO -> {
+                    val attachment = message.attachments.last()
+                    if (message.sender.isMe) {
+                        if (attachment.type.startsWith("video")) {
+                            stringResource(R.string.chats_message_my_video)
+                        } else {
+                            stringResource(R.string.chats_message_my_photo)
+                        }
+                    } else {
+                        if (attachment.type.startsWith("video")) {
+                            stringResource(R.string.chats_message_video)
+                        } else {
+                            stringResource(R.string.chats_message_photo)
+                        }
+                    }
+                }
                 else -> {
                     if (message.sender.isMe) {
                         stringResource(R.string.chats_message_my_unknown)

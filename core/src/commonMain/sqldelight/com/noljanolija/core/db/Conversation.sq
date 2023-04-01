@@ -25,6 +25,22 @@ FROM conversation
 JOIN participant ON conversation.id = participant.conversation
 WHERE participant.user = :userId AND conversation.type = :type LIMIT 1;
 
+findConversationWithUsers:
+SELECT c.*
+FROM conversation c
+JOIN participant p ON c.id = p.conversation
+WHERE p.user IN :userIds AND c.type =:type
+GROUP BY c.id
+HAVING COUNT(DISTINCT p.user) = :size
+AND COUNT(DISTINCT p.conversation) = 1
+AND NOT EXISTS (
+    SELECT *
+    FROM participant p2
+    WHERE p2.conversation = c.id
+    AND p2.user NOT IN :userIds
+)
+LIMIT 1;
+
 upsert {
   UPDATE `conversation`
   SET title = :title,

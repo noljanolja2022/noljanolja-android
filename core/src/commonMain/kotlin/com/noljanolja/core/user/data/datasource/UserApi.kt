@@ -35,4 +35,8 @@ class UserApi(private val client: HttpClient) {
             setBody(request)
         }.body()
     }
+
+    suspend fun getFriends(): SyncUserContactsResponse {
+        return client.get("$BASE_URL/users/me/contacts").body()
+    }
 }

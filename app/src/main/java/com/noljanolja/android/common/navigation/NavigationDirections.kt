@@ -162,19 +162,19 @@ object NavigationDirections {
     // Chat
     data class Chat(
         val conversationId: Long = 0,
-        val userId: String = "",
-        val userName: String = "",
+        val userIds: String = "[]",
+        val title: String = "",
     ) : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf(
             navArgument("conversationId") {
                 defaultValue = 0
                 type = NavType.LongType
             },
-            navArgument("userId") {
+            navArgument("userIds") {
                 defaultValue = ""
                 type = NavType.StringType
             },
-            navArgument("userName") {
+            navArgument("title") {
                 defaultValue = ""
                 type = NavType.StringType
             },
@@ -183,19 +183,27 @@ object NavigationDirections {
             launchSingleTop = true
         }
         override val destination: String =
-            "chat?conversationId={conversationId}&userId={userId}&userName={userName}"
+            "chat?conversationId={conversationId}&userIds={userIds}&title={title}"
 
         override fun createDestination(): String {
-            return "chat?conversationId=$conversationId&userId=$userId&userName=$userName"
+            return "chat?conversationId=$conversationId&userIds=$userIds&title=$title"
         }
     }
 
-    object SelectContact : NavigationCommand {
-        override val arguments: List<NamedNavArgument> = listOf()
+    data class SelectContact(val type: String = "") : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf(
+            navArgument("type") {
+                defaultValue = "SINGLE"
+                type = NavType.StringType
+            }
+        )
         override val options: NavOptions = navOptions {
             launchSingleTop = true
         }
-        override val destination: String = "select_contact"
+        override val destination: String = "select_contact?type={type}"
+        override fun createDestination(): String {
+            return "select_contact?type=$type"
+        }
     }
 
     // Back

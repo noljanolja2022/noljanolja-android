@@ -5,4 +5,5 @@ import com.noljanolja.core.user.domain.model.User
 
 internal interface ContactsRepository {
     suspend fun syncUserContacts(contacts: List<Contact>): Result<List<User>>
+    suspend fun getFriends(): Result<List<User>>
 }

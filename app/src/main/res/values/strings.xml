@@ -31,6 +31,8 @@
     <string name="common_yesterday">Yesterday</string>
     <string name="common_id">Id</string>
     <string name="args_chat_selected">%d selected</string>
+    <string name="common_agree">Agree</string>
+    <string name="common_friends">Friends</string>
 
     <string name="welcome_noljanolja">Welcome to Noja Noja. Follow these steps to be our member.</string>
 
@@ -145,7 +147,11 @@
     <string name="update_profile_gender_other">Other</string>
 
     <!--    Contact-->
-    <string name="contacts_title">Select Contacts</string>
+    <string name="contacts_start_chat">Start Chatting</string>
+    <string name="contacts_title_normal">Normal chat</string>
+    <string name="contacts_title_group">Group chat</string>
+    <string name="contacts_title_secret">Secret chat</string>
+
     <string name="contacts_not_found">No contacts found</string>
 
     <string name="permission">Permission</string>

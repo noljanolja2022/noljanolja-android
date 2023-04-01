@@ -23,6 +23,7 @@ import com.noljanolja.android.features.home.info.MyInfoScreen
 import com.noljanolja.android.features.home.root.HomeScreen
 import com.noljanolja.android.features.setting.SettingScreen
 import com.noljanolja.android.features.splash.SplashScreen
+import com.noljanolja.core.conversation.domain.model.ConversationType
 
 @Composable
 fun MainScreen(
@@ -118,8 +119,13 @@ private fun NavGraphBuilder.addAuthGraph() {
 }
 
 private fun NavGraphBuilder.addContactsGraph() {
-    composable(NavigationDirections.SelectContact.destination) {
-        ContactsScreen()
+    val direction = NavigationDirections.SelectContact()
+    composable(
+        direction.destination,
+        direction.arguments
+    ) { backStack ->
+        val type = backStack.arguments?.getString("type") ?: "SINGLE"
+        ContactsScreen(ConversationType.valueOf(type))
     }
 }
 
@@ -131,9 +137,14 @@ private fun NavGraphBuilder.addChatGraph() {
     ) { backStack ->
         with(backStack.arguments) {
             val conversationId = (this?.getLong("conversationId") ?: 0)
-            val userId = (this?.getString("userId")).orEmpty()
-            val userName = (this?.getString("userName").orEmpty())
-            ChatScreen(conversationId = conversationId, userId = userId, userName = userName)
+            val userIds =
+                (this?.getString("userIds"))?.split(",").orEmpty()
+            val title = (this?.getString("title").orEmpty())
+            ChatScreen(
+                conversationId = conversationId,
+                userIds = userIds,
+                title = title
+            )
         }
     }
 }

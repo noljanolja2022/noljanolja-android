@@ -11,4 +11,9 @@ internal class ContactsRepositoryImpl(
     override suspend fun syncUserContacts(contacts: List<Contact>): Result<List<User>> {
         return userRemoteDataSource.syncUserContacts(contacts)
     }
+
+    override suspend fun getFriends(): Result<List<User>> {
+        return userRemoteDataSource.getFriends()
+
+    }
 }

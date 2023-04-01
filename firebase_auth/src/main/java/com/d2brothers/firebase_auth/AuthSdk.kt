@@ -7,8 +7,6 @@ import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.kakao.sdk.common.KakaoSdk
-import com.navercorp.nid.NaverIdLoginSDK
 import java.util.*
 
 class AuthSdk private constructor(private val context: Context) {
@@ -52,6 +50,10 @@ class AuthSdk private constructor(private val context: Context) {
 
     suspend fun getIdToken(forceRefresh: Boolean): String? {
         return auth.getIdToken(forceRefresh)
+    }
+
+    suspend fun getExpiration(): Long? {
+        return auth.getExpirationToken()
     }
 
     // update

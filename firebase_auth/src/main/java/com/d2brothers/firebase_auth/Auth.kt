@@ -220,6 +220,14 @@ internal class Auth(
         }
     }
 
+    suspend fun getExpirationToken(): Long? {
+        return try {
+            firebaseAuth.currentUser?.getIdToken(false)?.await()?.expirationTimestamp
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     suspend fun updateUser(
         name: String,
         photo: String?,

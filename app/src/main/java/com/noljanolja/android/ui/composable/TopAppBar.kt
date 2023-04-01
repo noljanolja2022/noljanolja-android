@@ -1,47 +1,78 @@
 package com.noljanolja.android.ui.composable
 
+import android.graphics.drawable.Icon
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.noljanolja.android.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommonTopAppBar(
     title: String = "",
     actions: @Composable (RowScope.() -> Unit) = {},
+    centeredTitle: Boolean = false,
+    navigationIcon: ImageVector = Icons.Default.ArrowBack,
     onBack: (() -> Unit)? = null,
 ) {
-    CenterAlignedTopAppBar(
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = MaterialTheme.colorScheme.onPrimary,
-            actionIconContentColor = MaterialTheme.colorScheme.primary,
-            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-        ),
-        title = {
-            Text(
-                text = title,
-                style = TextStyle(
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                ),
-            )
-        },
-        actions = actions,
-        navigationIcon = {
-            if (onBack != null) {
-                IconButton(onClick = onBack) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_back),
-                        contentDescription = null,
-                    )
+    val colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+        containerColor = MaterialTheme.colorScheme.background,
+        titleContentColor = MaterialTheme.colorScheme.onPrimary,
+        actionIconContentColor = MaterialTheme.colorScheme.onPrimary,
+        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+    )
+    if (centeredTitle) {
+        CenterAlignedTopAppBar(
+            colors = colors,
+            title = {
+                CommonAppBarTitle(title = title)
+            },
+            actions = actions,
+            navigationIcon = {
+                if (onBack != null) {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            navigationIcon,
+                            contentDescription = null,
+                        )
+                    }
                 }
-            }
-        },
+            },
+        )
+    } else {
+        TopAppBar(
+            colors = colors,
+            title = {
+                CommonAppBarTitle(title = title)
+            },
+            actions = actions,
+            navigationIcon = {
+                if (onBack != null) {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = null,
+                        )
+                    }
+                }
+            },
+        )
+    }
+}
+
+@Composable
+fun CommonAppBarTitle(title: String) {
+    Text(
+        text = title,
+        style = TextStyle(
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold,
+            lineHeight = 24.sp,
+        ),
     )
 }

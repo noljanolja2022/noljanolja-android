@@ -100,6 +100,20 @@ class LocalConversationDataSource(
             .firstOrNull()
     }
 
+    suspend fun findGroupConversationWithUsers(
+        userIds: List<String>,
+    ): Conversation? {
+        return conversationQueries.findConversationWithUsers(
+            userIds,
+            ConversationType.GROUP.name,
+            userIds.size.toLong(),
+            conversationMapper
+        )
+            .asFlow()
+            .mapToOneOrNull(backgroundDispatcher)
+            .firstOrNull()
+    }
+
     suspend fun upsert(
         conversation: Conversation,
     ) = conversationQueries.transactionWithContext(backgroundDispatcher) {

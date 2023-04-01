@@ -17,6 +17,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.time.Duration.Companion.minutes
@@ -29,6 +30,8 @@ class CoreManager : KoinComponent {
     private val mediaRepository: MediaRepository by inject()
 
     private val scope = CoroutineScope(Dispatchers.Default)
+
+    var timeSaveToken: Instant? = null
 
     init {
         scope.launch {
@@ -46,8 +49,14 @@ class CoreManager : KoinComponent {
         return contactsRepository.syncUserContacts(contacts)
     }
 
-    suspend fun findConversationWithUser(userId: String): Conversation? {
-        return conversationRepository.findConversationWithUser(userId)
+    suspend fun getFriends(): Result<List<User>> {
+        return contactsRepository.getFriends()
+    }
+
+    suspend fun findConversationWithUsers(userIds: List<String>): Conversation? {
+        return userIds.let {
+            conversationRepository.findConversationWithUsers(it)
+        }
     }
 
     suspend fun getConversation(conversationId: Long): Flow<Conversation> {
@@ -59,13 +68,15 @@ class CoreManager : KoinComponent {
     }
 
     suspend fun sendConversationMessage(
+        title: String = "",
         conversationId: Long,
-        userId: String,
+        userIds: List<String>,
         message: Message,
     ): Long {
         return conversationRepository.sendConversationMessage(
+            title = title,
             conversationId = conversationId,
-            userId = userId,
+            userIds = userIds,
             message = message
         )
     }
@@ -82,7 +93,7 @@ class CoreManager : KoinComponent {
         )
     }
 
-    private suspend fun streamConversation() {
+    suspend fun streamConversation() {
         conversationRepository.streamConversations()
     }
 
@@ -129,6 +140,7 @@ class CoreManager : KoinComponent {
     suspend fun saveAuthToken(
         authToken: String,
     ) {
+        timeSaveToken = Clock.System.now()
         authRepository.saveAuthToken(authToken)
     }
 

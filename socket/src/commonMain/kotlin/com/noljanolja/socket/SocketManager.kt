@@ -26,6 +26,7 @@ import io.rsocket.kotlin.payload.buildPayload
 import io.rsocket.kotlin.payload.data
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
 class SocketManager(private val engine: HttpClientEngine, private val tokenRepo: TokenRepo) {
@@ -33,28 +34,30 @@ class SocketManager(private val engine: HttpClientEngine, private val tokenRepo:
     suspend fun streamConversations(): Flow<String> {
         val rSocket: RSocket = getDefaultSocket(engine, tokenRepo).rSocket(BASE_SOCKET_URL)
         // request stream
-        val stream: Flow<Payload> = rSocket.requestStream(
-            buildPayload {
-                data("""{ "data": "hello world" }""")
-                metadata(
-                    CompositeMetadata(
-                        RoutingMetadata("v1/conversations"),
-                        BearerAuthMetadata("Bearer ${tokenRepo.getToken()}")
+        return tokenRepo.getToken().takeIf { !it.isNullOrBlank() }?.let { token ->
+            val stream: Flow<Payload> = rSocket.requestStream(
+                buildPayload {
+                    data("""{ "data": "hello world" }""")
+                    metadata(
+                        CompositeMetadata(
+                            RoutingMetadata("v1/conversations"),
+                            BearerAuthMetadata("Bearer $token")
+                        )
                     )
-                )
-            }
-        ).catch {
-            if (it.message == "Unauthorized") {
+                }
+            ).catch {
                 Logger.e(it) {
                     "Stream catch error $it"
                 }
-                tokenRepo.refreshToken()
+                if (it.message?.contains("Unauthorized") == true) {
+                    tokenRepo.refreshToken()
+                }
             }
-        }
-        return stream.map {
-            Logger.d("Stream success}")
-            it.data.readText()
-        }
+            stream.map {
+                Logger.d("Stream success}")
+                it.data.readText()
+            }
+        } ?: flow { }
     }
 
     companion object {
@@ -79,10 +82,11 @@ private fun getDefaultSocket(engine: HttpClientEngine, tokenRepo: TokenRepo) = H
                 }
             }
             reconnectable { error, attempt ->
+                Logger.d("Stream reconnect")
                 Logger.e(error) {
                     "Stream error reconnect $error"
                 }
-                if (error.message == "Unauthorized") {
+                if (error.message?.contains("Unauthorized") == true) {
                     tokenRepo.refreshToken()
                 }
                 attempt <= 3

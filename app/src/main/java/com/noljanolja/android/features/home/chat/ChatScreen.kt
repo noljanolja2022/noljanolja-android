@@ -2,7 +2,6 @@ package com.noljanolja.android.features.home.chat
 
 import android.annotation.SuppressLint
 import android.net.Uri
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -21,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
@@ -31,10 +31,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.touchlab.kermit.Logger
 import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
-import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
@@ -43,12 +41,11 @@ import com.noljanolja.android.features.home.chat.components.ClickableMessage
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.InfiniteListHandler
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
+import com.noljanolja.android.ui.composable.UserAvatar
 import com.noljanolja.android.util.*
 import com.noljanolja.core.conversation.domain.model.*
 import com.noljanolja.core.media.domain.model.Sticker
 import com.noljanolja.core.user.domain.model.User
-import com.noljanolja.core.utils.Const
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
@@ -57,15 +54,15 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun ChatScreen(
     conversationId: Long,
-    userId: String,
-    userName: String,
+    userIds: List<String>,
+    title: String,
     viewModel: ChatViewModel = getViewModel(),
 ) {
     LaunchedEffect(key1 = conversationId) {
         viewModel.setupConversation(
             conversationId = conversationId,
-            userId = userId,
-            userName = userName
+            userIds = userIds,
+            title = title
         )
         viewModel.handleEvent(ChatEvent.LoadMedia)
     }
@@ -91,11 +88,8 @@ fun ChatScreenContent(
     var stickerSelected by remember {
         mutableStateOf<Sticker?>(null)
     }
-
     LaunchedEffect(true) {
         scrollToNewMessageEvent.collect {
-            Logger.e("Scroll cái coi")
-            delay(50)
             scrollState.animateScrollToItem(0)
         }
     }
@@ -109,7 +103,8 @@ fun ChatScreenContent(
         topBar = {
             CommonTopAppBar(
                 title = conversation.getDisplayTitle(),
-                onBack = { handleEvent(ChatEvent.GoBack) }
+                centeredTitle = true,
+                onBack = { handleEvent(ChatEvent.GoBack) },
             )
         },
         content = {
@@ -181,7 +176,9 @@ fun ChatScreenContent(
                         }
                         sendMessage?.let { handleEvent(ChatEvent.SendMessage(it)) }
                     },
-                    modifier = Modifier.navigationBarsPadding().imePadding(),
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .imePadding(),
                     resetScroll = { scope.launch { scrollState.scrollToItem(0) } },
                     mediaList = mediaList,
                     loadMedia = { handleEvent(ChatEvent.LoadMedia) },
@@ -324,27 +321,13 @@ private fun MessageRow(
     Row(modifier = spaceBetweenAuthors) {
         if (isLastMessageByAuthorSameDay && !message.sender.isMe) {
             // Avatar
-            Box(
+            UserAvatar(
+                user = message.sender,
                 modifier = Modifier
-                    .padding(start = 8.dp, end = 4.dp)
-                    .size(32.dp),
-                contentAlignment = Alignment.BottomEnd,
-            ) {
-                AsyncImage(
-                    ImageRequest.Builder(context = context)
-                        .data(message.sender.getAvatarUrl())
-                        .placeholder(R.drawable.placeholder_avatar)
-                        .error(R.drawable.placeholder_avatar)
-                        .fallback(R.drawable.placeholder_avatar)
-                        .build(),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(13.dp))
-                        .clickable { onSenderClick(message.sender) },
-                    contentScale = ContentScale.Crop,
-                )
-            }
+                    .scale(0.8F)
+                    .clip(RoundedCornerShape(12.dp))
+                    .clickable { onSenderClick(message.sender) }
+            )
         } else {
             // Space under avatar
             Spacer(modifier = Modifier.width(44.dp))
@@ -359,7 +342,8 @@ private fun MessageRow(
                 .weight(1f),
             onMessageClick = onMessageClick,
         )
-        val modifier = Modifier.padding(end = 16.dp)
+        val modifier = Modifier
+            .padding(end = 16.dp)
             .size(13.dp)
             .clip(RoundedCornerShape(13.dp))
             .align(Alignment.Bottom)

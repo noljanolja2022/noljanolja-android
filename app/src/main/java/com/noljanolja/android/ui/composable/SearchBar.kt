@@ -2,10 +2,7 @@ package com.noljanolja.android.ui.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -37,7 +34,8 @@ fun SearchBar(
 ) {
     Row(
         modifier = modifier.fillMaxWidth()
-            .clip(RoundedCornerShape(4.dp))
+            .widthIn(36.dp, 50.dp)
+            .clip(RoundedCornerShape(10.dp))
             .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.04f))
             .padding(horizontal = 12.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -45,7 +43,7 @@ fun SearchBar(
         Icon(
             Icons.Default.Search,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurface,
+            tint = MaterialTheme.colorScheme.outline,
         )
         Box(
             modifier = Modifier.weight(1f).padding(start = 12.dp),

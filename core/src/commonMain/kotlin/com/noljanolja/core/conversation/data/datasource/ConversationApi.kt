@@ -4,6 +4,7 @@ import com.noljanolja.core.conversation.data.model.request.*
 import com.noljanolja.core.conversation.data.model.response.*
 import com.noljanolja.core.conversation.data.model.response.GetConversationMessagesResponse
 import com.noljanolja.core.conversation.domain.model.Conversation
+import com.noljanolja.core.conversation.domain.model.ConversationType
 import com.noljanolja.core.conversation.domain.model.MessageType
 import com.noljanolja.core.utils.Const.BASE_URL
 import com.noljanolja.core.utils.default
@@ -76,8 +77,19 @@ class ConversationApi(
     suspend fun createConversation(
         request: CreateConversationRequest,
     ): CreateConversationResponse {
-        return client.post("$BASE_URL/conversations") {
-            setBody(request)
+        return client.submitFormWithBinaryData(
+            "$BASE_URL/conversations",
+            formData {
+                append("title", request.title)
+                val type = request.type
+                    ?: if (request.participantIds.size > 1) ConversationType.GROUP else ConversationType.SINGLE
+                append("type", type.name)
+                request.participantIds.forEach {
+                    append("participantIds", it)
+                }
+            }
+        ) {
+            header(HttpHeaders.Accept, ContentType.MultiPart.FormData)
         }.body()
     }
 

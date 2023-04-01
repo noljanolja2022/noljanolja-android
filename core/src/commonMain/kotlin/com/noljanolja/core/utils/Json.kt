@@ -9,3 +9,5 @@ fun Json.default() = Json {
     encodeDefaults = true
     coerceInputValues = true
 }
+
+fun defaultJson() = Json.default()

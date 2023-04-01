@@ -5,7 +5,7 @@ import com.noljanolja.core.conversation.domain.model.Message
 import kotlinx.coroutines.flow.Flow
 
 internal interface ConversationRepository {
-    suspend fun findConversationWithUser(userId: String): Conversation?
+    suspend fun findConversationWithUsers(userIds: List<String>): Conversation?
 
     suspend fun getConversation(
         conversationId: Long,
@@ -14,8 +14,9 @@ internal interface ConversationRepository {
     suspend fun getConversations(): Flow<List<Conversation>>
 
     suspend fun sendConversationMessage(
+        title: String = "",
         conversationId: Long,
-        userId: String,
+        userIds: List<String>,
         message: Message,
     ): Long
 
