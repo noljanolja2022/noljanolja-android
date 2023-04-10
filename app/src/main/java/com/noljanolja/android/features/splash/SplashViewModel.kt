@@ -14,36 +14,48 @@ class SplashViewModel : BaseViewModel() {
     val uiStateFlow = _uiStateFlow.asStateFlow()
 
     init {
-        launch {
-            authSdk.getIdToken(true)?.let {
-                coreManager.saveAuthToken(it)
-                val user = coreManager.getCurrentUser(true).getOrNull() ?: return@let
-                coreManager.pushToken()
-                if (user.name.isBlank()) {
-                    navigationManager.navigate(
-                        NavigationDirections.UpdateProfile
-                    )
-                } else {
-                    navigationManager.navigate(
-                        NavigationDirections.Home
-                    )
-                }
-            }
-            _uiStateFlow.emit(SplashUiState(loading = false))
-        }
+        reload()
     }
 
     fun handleEvent(event: SplashEvent) {
         launch {
             when (event) {
-                is SplashEvent.Continue -> navigationManager.navigate(
-                    NavigationDirections.TermsOfService
-                )
+                is SplashEvent.Continue -> {
+                    if (_uiStateFlow.value.needReload) {
+                        reload()
+                    } else {
+                        navigationManager.navigate(
+                            NavigationDirections.TermsOfService
+                        )
+                    }
+                }
             }
+        }
+    }
+
+    private fun reload() {
+        launch {
+            _uiStateFlow.emit(SplashUiState(loading = true))
+            authSdk.getIdToken(true)?.let {
+                coreManager.saveAuthToken(it)
+                coreManager.getCurrentUser(true).getOrNull()?.let { user ->
+                    coreManager.pushToken()
+                    if (user.name.isBlank()) {
+                        navigationManager.navigate(
+                            NavigationDirections.UpdateProfile
+                        )
+                    } else {
+                        navigationManager.navigate(
+                            NavigationDirections.Home
+                        )
+                    }
+                } ?: _uiStateFlow.emit(SplashUiState(needReload = true))
+            } ?: _uiStateFlow.emit(SplashUiState(loading = false))
         }
     }
 }
 
 data class SplashUiState(
     val loading: Boolean = false,
+    val needReload: Boolean = false,
 )

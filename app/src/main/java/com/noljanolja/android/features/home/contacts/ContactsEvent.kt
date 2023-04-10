@@ -3,7 +3,11 @@ package com.noljanolja.android.features.home.contacts
 import com.noljanolja.core.user.domain.model.User
 
 sealed interface ContactsEvent {
+    object GetContacts : ContactsEvent
+
     object SyncContacts : ContactsEvent
+
+    data class SearchContact(val searchText: String) : ContactsEvent
 
     object OpenPhoneSettings : ContactsEvent
 
@@ -11,5 +15,7 @@ sealed interface ContactsEvent {
 
     data class SelectContact(val contact: User) : ContactsEvent
 
-    object Chat : ContactsEvent
+    object ConfirmContacts : ContactsEvent
+
+    object LoadMore : ContactsEvent
 }

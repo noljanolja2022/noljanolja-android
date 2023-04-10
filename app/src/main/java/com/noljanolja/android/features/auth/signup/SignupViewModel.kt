@@ -118,7 +118,7 @@ class SignupViewModel : BaseAuthViewModel() {
             } catch (e: ValidEmailFailed) {
                 _uiStateFlow.emit(SignupUIState.SignupForm())
                 sendEmailError(e)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 _uiStateFlow.emit(SignupUIState.SignupForm())
                 sendError(e)
             }

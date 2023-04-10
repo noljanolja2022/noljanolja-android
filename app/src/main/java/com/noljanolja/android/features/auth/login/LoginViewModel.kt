@@ -107,7 +107,7 @@ class LoginViewModel : BaseAuthViewModel() {
 //            } catch (e: ValidEmailFailed) {
 //                _uiStateFlow.emit(LoginUIState.Login)
 //                sendEmailError(e)
-//            } catch (e: Exception) {
+//            } catch (e: Throwable) {
 //                _uiStateFlow.emit(LoginUIState.Login)
 //                sendError(e)
 //            }

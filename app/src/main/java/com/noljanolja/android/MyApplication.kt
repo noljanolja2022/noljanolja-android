@@ -15,7 +15,7 @@ import com.d2brothers.firebase_auth.AuthSdk
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
-import com.noljanolja.android.common.base.launchInMain
+import com.noljanolja.android.common.base.launchInMainIO
 import com.noljanolja.android.common.mobiledata.data.ContactsLoader
 import com.noljanolja.android.common.mobiledata.data.MediaLoader
 import com.noljanolja.android.common.mobiledata.data.StickersLoader
@@ -30,7 +30,9 @@ import com.noljanolja.android.features.auth.otp.OTPViewModel
 import com.noljanolja.android.features.auth.signup.SignupViewModel
 import com.noljanolja.android.features.auth.terms_of_service.TermsOfServiceViewModel
 import com.noljanolja.android.features.auth.updateprofile.UpdateProfileViewModel
+import com.noljanolja.android.features.edit_chat_title.EditChatTitleViewModel
 import com.noljanolja.android.features.home.chat.ChatViewModel
+import com.noljanolja.android.features.home.chat_options.ChatOptionsViewModel
 import com.noljanolja.android.features.home.contacts.ContactsViewModel
 import com.noljanolja.android.features.home.conversations.ConversationsViewModel
 import com.noljanolja.android.features.home.info.MyInfoViewModel
@@ -49,12 +51,9 @@ import com.noljanolja.core.di.initKoin
 import com.noljanolja.core.service.ktor.KtorClient
 import com.noljanolja.core.service.ktor.KtorConfig
 import com.noljanolja.core.user.data.datasource.AuthDataSource
-import com.noljanolja.core.utils.minOfNullable
 import com.noljanolja.socket.TokenRepo
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import okhttp3.OkHttpClient
@@ -85,27 +84,27 @@ class MyApplication : Application() {
                 override fun onStart(owner: LifecycleOwner) {
                     isAppInForeground = true
                     Logger.d("Noljanolja: foregrounded: ${ProcessLifecycleOwner.get().lifecycle.currentState.name}")
-                    launchInMain {
-                        withContext(Dispatchers.IO) {
-                            coreManager.streamConversation()
-                        }
+                    launchIfLogin {
+                        coreManager.forceRefreshConversations()
+                        coreManager.streamConversation()
                     }
                     job?.cancel()
-                    job = launchInMain {
-                        withContext(Dispatchers.IO) {
-                            while (true) {
-                                val now = Clock.System.now()
-                                val expirationTime = authSdk.getExpiration()
-                                    ?.let { Instant.fromEpochSeconds(it) }
-                                val delayTime = minOfNullable(
-                                    expirationTime?.takeIf { it > now }?.minus(now),
-                                    15.minutes
+                    job = launchInMainIO {
+                        while (true) {
+                            val now = Clock.System.now()
+                            val expirationTime =
+                                authSdk.getExpiration()?.let { Instant.fromEpochSeconds(it) }
+                            if (coreManager.timeSaveToken != null && expirationTime != null) {
+                                val delayTime = minOf(
+                                    expirationTime.takeIf { it > now }?.minus(now) ?: 0.minutes,
+                                    (15.minutes - now.minus(coreManager.timeSaveToken!!)).takeIf { it > 0.minutes }
+                                        ?: 0.minutes,
                                 )
-                                authSdk.getIdToken(true)?.let { token ->
-                                    Logger.d("Refresh Token $token")
-                                    coreManager.saveAuthToken(token)
-                                }
-                                delay(delayTime!!)
+                                delay(delayTime)
+                            }
+                            authSdk.getIdToken(true)?.let { token ->
+                                Logger.d("Refresh Token $token")
+                                coreManager.saveAuthToken(token)
                             }
                         }
                     }
@@ -113,15 +112,24 @@ class MyApplication : Application() {
 
                 override fun onStop(owner: LifecycleOwner) {
                     isAppInForeground = false
+                    job?.cancel()
+                    job = null
                     Logger.d("Noljanolja: backgrounded: ${ProcessLifecycleOwner.get().lifecycle.currentState.name}")
                 }
 
                 override fun onDestroy(owner: LifecycleOwner) {
                     super.onDestroy(owner)
+                    job?.cancel()
+                    job = null
                     coreManager.onDestroy()
                 }
             })
         }
+    }
+
+    private fun launchIfLogin(block: suspend () -> Unit) = launchInMainIO {
+        authSdk.getIdToken(false)?.takeIf { it.isNotBlank() } ?: return@launchInMainIO
+        block.invoke()
     }
 
     private fun initKoin() {
@@ -196,10 +204,10 @@ class MyApplication : Application() {
                     AuthDataSourceImpl(get())
                 }
                 viewModel {
-                    ChatViewModel()
+                    ChatViewModel(get(), get(), get(), get())
                 }
                 viewModel {
-                    ContactsViewModel(get())
+                    ContactsViewModel(get(), get())
                 }
                 viewModel {
                     ConversationsViewModel()
@@ -249,20 +257,21 @@ class MyApplication : Application() {
                 viewModel {
                     UpdateProfileViewModel()
                 }
+                viewModel {
+                    ChatOptionsViewModel(get())
+                }
+                viewModel {
+                    EditChatTitleViewModel(get())
+                }
             }
         )
     }
 
     private fun initCoil() {
         Coil.setImageLoader(
-            ImageLoader.Builder(this)
-                .okHttpClient(okHttpClient)
-                .components {
-                    add(VideoFrameDecoder.Factory())
-                }
-                .logger(DebugLogger())
-                .respectCacheHeaders(false)
-                .build()
+            ImageLoader.Builder(this).okHttpClient(okHttpClient).components {
+                add(VideoFrameDecoder.Factory())
+            }.logger(DebugLogger()).respectCacheHeaders(false).build()
         )
     }
 }

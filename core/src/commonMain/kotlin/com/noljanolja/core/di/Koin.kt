@@ -49,7 +49,12 @@ private val coreModule = module {
     }
     single {
         with(get<Noljanolja>()) {
-            LocalConversationDataSource(conversationQueries, messageQueries, Dispatchers.Default)
+            LocalConversationDataSource(
+                conversationQueries,
+                messageQueries,
+                participantQueries,
+                Dispatchers.Default
+            )
         }
     }
 

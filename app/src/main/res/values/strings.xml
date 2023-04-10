@@ -31,9 +31,15 @@
     <string name="common_yesterday">Yesterday</string>
     <string name="common_id">Id</string>
     <string name="args_chat_selected">%d selected</string>
-    <string name="common_agree">Agree</string>
     <string name="common_friends">Friends</string>
-
+    <string name="common_save">Save</string>
+    <string name="common_agree">Agree</string>
+    <string name="common_disagree">Disagree</string>
+    <string name="common_members">Members</string>
+    <string name="common_you">You</string>
+    <string name="common_chat">Chat</string>
+    <string name="common_admin">Admin</string>
+    <string name="common_reload">Reload</string>
     <string name="welcome_noljanolja">Welcome to Noja Noja. Follow these steps to be our member.</string>
 
     <string name="splash_explore">EXPLORE NOW</string>
@@ -73,7 +79,7 @@
     <string name="home_person">Person</string>
 
     <!--    Login-->
-    <string name="login_title">What\'s the phone number for this device?</string>
+    <string name="login_phone_description">Welcome to Nolja Nolja.\nPlease enter your Phone number to join continue.</string>
     <string name="login_country_input_label">Country</string>
     <string name="login_phone_input_label">Phone Number</string>
     <string name="login_invalid_phone_title">Incorrect Number</string>
@@ -151,6 +157,7 @@
     <string name="contacts_title_normal">Normal chat</string>
     <string name="contacts_title_group">Group chat</string>
     <string name="contacts_title_secret">Secret chat</string>
+    <string name="contacts_title_add_memmber">Add members</string>
 
     <string name="contacts_not_found">No contacts found</string>
 
@@ -162,6 +169,10 @@
     <string name="permission_go_to_settings">Settings</string>
 
     <!--    Chats-->
+    <string name="conversation_empty">Add friends to chat now.</string>
+    <string name="conversation_create">%s created conversation</string>
+    <string name="conversation_has_changed">Conversation has changed</string>
+
     <string name="chats_title">Chats</string>
     <string name="chats_new_chat">New Chat</string>
     <string name="chats_message_sticker">You received a sticker</string>
@@ -177,7 +188,26 @@
     <string name="chat_input_hint">Aa</string>
     <string name="chat_camera_take_photo">Take a photo</string>
     <string name="chat_camera_record_video">Record a video</string>
+    <string name="chat_message_event_updated">%s has updated conversation %s</string>
+    <string name="chat_message_event_left">%s has left the conversation</string>
+    <string name="chat_message_event_joined">%s has invited %s</string>
+    <string name="chat_removed_conversation">You has removed from conversation %s</string>
     <!--    Failure-->
     <string name="invalid_email_format">Email is not valid</string>
 
+    <!--    Edit chat-->
+    <string name="edit_chat_warning_leave_title">Are you sure to leave this chat?</string>
+    <string name="edit_chat_warning_leave_description">If you leave, all the chat and chat history will be deleted.</string>
+    <string name="edit_chat_warning_block_title">Are you sure to block this user?</string>
+    <string name="edit_chat_warning_block_description">This user will be enable to send or receive message with you.</string>
+    <string name="edit_chat_warning_remove_title">Are you sure to remove this user?</string>
+    <string name="edit_chat_warning_remove_description">This user will be enable removed from this chat.</string>
+    <string name="edit_chat_warning_admin_title">Are you sure to assign admin this user?</string>
+    <string name="edit_chat_warning_admin_description">This user will be assigned to admin for this chat.</string>
+    <string name="edit_chat_add_members">Add members</string>
+    <string name="edit_chat_leave_chat">Leave chat room</string>
+    <string name="edit_chat_change_room_name">Change Chat room’s name</string>
+    <string name="edit_chat_make_admin">Make admin</string>
+    <string name="edit_chat_remove_user">Remove user</string>
+    <string name="edit_chat_block_user">Block user</string>
 </resources>

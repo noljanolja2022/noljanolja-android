@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil.compose.*
@@ -84,6 +85,7 @@ private fun ClickableTextMessage(
         primary = message.sender.isMe
     )
 
+    val uriHandler = LocalUriHandler.current
     ClickableText(
         text = styledMessage,
         style = MaterialTheme.typography.bodyMedium.copy(
@@ -99,7 +101,7 @@ private fun ClickableTextMessage(
         onClick = {
             styledMessage.getStringAnnotations(start = it, end = it).firstOrNull()
                 ?.let { annotation ->
-                    // TODO
+                    uriHandler.openUri(annotation.item)
                 }
         }
     )

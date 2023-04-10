@@ -3,6 +3,7 @@ CREATE TABLE `conversation` (
   title TEXT NOT NULL,
   type TEXT NOT NULL,
   creator TEXT NOT NULL,
+  admin TEXT NOT NULL,
   created_at INTEGER NOT NULL DEFAULT 0,
   updated_at INTEGER NOT NULL DEFAULT 0,
 
@@ -44,7 +45,8 @@ LIMIT 1;
 upsert {
   UPDATE `conversation`
   SET title = :title,
-      updated_at = :updated_at
+      updated_at = :updated_at,
+      admin = :admin
   WHERE id = :id;
 
   INSERT OR IGNORE INTO `conversation`(
@@ -52,6 +54,7 @@ upsert {
     title,
     type,
     creator,
+    admin,
     created_at,
     updated_at
   )
@@ -60,6 +63,7 @@ upsert {
     :title,
     :type,
     :creator,
+    :admin,
     :created_at,
     :updated_at
   );
@@ -68,6 +72,10 @@ upsert {
 deleteById:
 DELETE FROM `conversation`
 WHERE id = :id;
+
+deleteNotInIds:
+DELETE FROM `conversation`
+WHERE id NOT IN :ids;
 
 deleteAll:
 DELETE FROM `conversation`;

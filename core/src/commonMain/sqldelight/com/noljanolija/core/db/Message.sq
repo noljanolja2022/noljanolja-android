@@ -9,6 +9,8 @@ CREATE TABLE `message` (
   type TEXT NOT NULL,
   status TEXT NOT NULL,
   seenBy TEXT NOT NULL,
+  leftParticipants TEXT NOT NULL,
+  joinParticipants TEXT NOT NULL,
   created_at INTEGER NOT NULL DEFAULT 0,
   updated_at INTEGER NOT NULL DEFAULT 0,
 
@@ -42,6 +44,8 @@ upsert {
       attachments = :attachments,
       status = :status,
       seenBy= :seenBy,
+      leftParticipants=: leftParticipants,
+      joinParticipants=:joinParticipants,
       updated_at = :updated_at
   WHERE (id != 0 AND id = :id) OR (id = 0 AND localId = :localId);
 
@@ -56,6 +60,8 @@ upsert {
     type,
     status,
     seenBy,
+    leftParticipants,
+    joinParticipants,
     created_at,
     updated_at
   )
@@ -70,6 +76,8 @@ upsert {
     :type,
     :status,
     :seenBy,
+    :leftParticipants,
+    :joinParticipants,
     :created_at,
     :updated_at
   );

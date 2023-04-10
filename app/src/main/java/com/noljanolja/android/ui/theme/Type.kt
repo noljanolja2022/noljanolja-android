@@ -11,8 +11,8 @@ val Typography = Typography(
     // body2
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 14.sp,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.16.sp,
     ),
@@ -35,17 +35,17 @@ val Typography = Typography(
     // subheading
     labelLarge = TextStyle(
         fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
+        fontWeight = FontWeight.Medium,
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
         letterSpacing = 0.16.sp,
     ),
     // title
     titleMedium = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
-        fontSize = 20.sp,
-        lineHeight = 32.sp,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
         letterSpacing = 0.5.sp,
     ),
     // headline
@@ -70,8 +70,8 @@ val Typography = Typography(
     ),
     displaySmall = TextStyle(
         fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 34.sp,
+        fontWeight = FontWeight.Bold,
+        fontSize = 32.sp,
         lineHeight = 40.sp,
     ),
 )

@@ -2,6 +2,7 @@ package com.noljanolja.core.conversation.data.datasource
 
 import com.noljanolija.core.db.ConversationQueries
 import com.noljanolija.core.db.MessageQueries
+import com.noljanolija.core.db.ParticipantQueries
 import com.noljanolja.core.conversation.domain.model.*
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.utils.default
@@ -22,6 +23,7 @@ import kotlinx.serialization.json.Json
 class LocalConversationDataSource(
     private val conversationQueries: ConversationQueries,
     private val messageQueries: MessageQueries,
+    private val participantQueries: ParticipantQueries,
     private val backgroundDispatcher: CoroutineDispatcher,
 ) {
     private val json = Json.default()
@@ -30,6 +32,7 @@ class LocalConversationDataSource(
             title: String,
             type: String,
             creator: String,
+            admin: String,
             created_at: Long,
             updated_at: Long,
         ->
@@ -38,6 +41,7 @@ class LocalConversationDataSource(
             title = title,
             type = ConversationType.valueOf(type),
             creator = User(id = creator),
+            admin = User(id = admin),
             createdAt = Instant.fromEpochMilliseconds(created_at),
             updatedAt = Instant.fromEpochMilliseconds(updated_at),
         )
@@ -54,6 +58,8 @@ class LocalConversationDataSource(
             type: String,
             status: String,
             seenBy: String,
+            leftParticipants: String,
+            joinParticipants: String,
             created_at: Long,
             updated_at: Long,
         ->
@@ -66,6 +72,10 @@ class LocalConversationDataSource(
             type = MessageType.valueOf(type),
             status = MessageStatus.valueOf(status),
             attachments = Json.decodeFromString(attachments),
+            leftParticipants = Json.decodeFromString<List<String>>(leftParticipants)
+                .map { User(name = it) },
+            joinParticipants = Json.decodeFromString<List<String>>(joinParticipants)
+                .map { User(name = it) },
             seenBy = Json.decodeFromString(seenBy),
             createdAt = Instant.fromEpochMilliseconds(created_at),
             updatedAt = Instant.fromEpochMilliseconds(updated_at),
@@ -75,17 +85,14 @@ class LocalConversationDataSource(
     // Conversation
 
     suspend fun findAll(): Flow<List<Conversation>> =
-        conversationQueries.findAll(conversationMapper)
-            .asFlow()
-            .mapToList()
+        conversationQueries.findAll(conversationMapper).asFlow().mapToList()
             .flowOn(backgroundDispatcher)
 
     suspend fun findById(
         conversationId: Long,
-    ): Flow<Conversation> = conversationQueries.findById(conversationId, conversationMapper)
-        .asFlow()
-        .mapToOne()
-        .flowOn(backgroundDispatcher)
+    ): Flow<Conversation> =
+        conversationQueries.findById(conversationId, conversationMapper).asFlow().mapToOne()
+            .flowOn(backgroundDispatcher)
 
     suspend fun findSingleConversationWithUser(
         userId: String,
@@ -94,10 +101,7 @@ class LocalConversationDataSource(
             userId,
             ConversationType.SINGLE.name,
             conversationMapper
-        )
-            .asFlow()
-            .mapToOneOrNull(backgroundDispatcher)
-            .firstOrNull()
+        ).asFlow().mapToOneOrNull(backgroundDispatcher).firstOrNull()
     }
 
     suspend fun findGroupConversationWithUsers(
@@ -108,10 +112,7 @@ class LocalConversationDataSource(
             ConversationType.GROUP.name,
             userIds.size.toLong(),
             conversationMapper
-        )
-            .asFlow()
-            .mapToOneOrNull(backgroundDispatcher)
-            .firstOrNull()
+        ).asFlow().mapToOneOrNull(backgroundDispatcher).firstOrNull()
     }
 
     suspend fun upsert(
@@ -122,6 +123,7 @@ class LocalConversationDataSource(
             title = conversation.title,
             type = conversation.type.name,
             creator = conversation.creator.id,
+            admin = conversation.admin.id,
             created_at = conversation.createdAt.toEpochMilliseconds(),
             updated_at = conversation.updatedAt.toEpochMilliseconds(),
         )
@@ -146,16 +148,11 @@ class LocalConversationDataSource(
         messageQueries.findByConversation(conversationId, limit, messageMapper)
     } else {
         messageQueries.findAllByConversation(conversationId, messageMapper)
-    }
-        .asFlow()
-        .mapToList()
-        .flowOn(backgroundDispatcher)
+    }.asFlow().mapToList().flowOn(backgroundDispatcher)
 
     suspend fun findConversationMessageById(
         messageId: Long,
-    ): Flow<Message> = messageQueries.findById(messageId, messageMapper)
-        .asFlow()
-        .mapToOne()
+    ): Flow<Message> = messageQueries.findById(messageId, messageMapper).asFlow().mapToOne()
         .flowOn(backgroundDispatcher)
 
     suspend fun upsertConversationMessages(
@@ -179,6 +176,8 @@ class LocalConversationDataSource(
                 type = message.type.name,
                 status = message.status.name,
                 seenBy = json.encodeToString(message.seenBy),
+                leftParticipants = json.encodeToString(message.leftParticipants.map { it.name }),
+                joinParticipants = json.encodeToString(message.joinParticipants.map { it.name }),
                 created_at = message.createdAt.toEpochMilliseconds(),
                 updated_at = message.updatedAt.toEpochMilliseconds(),
             )
@@ -193,5 +192,26 @@ class LocalConversationDataSource(
 
     suspend fun deleteAllMessages() = messageQueries.transactionWithContext(backgroundDispatcher) {
         messageQueries.deleteAll()
+    }
+
+    suspend fun deleteAllConversationParticipants(
+        conversationId: Long,
+    ) = participantQueries.transactionWithContext(backgroundDispatcher) {
+        participantQueries.deleteAllByConversation(conversationId)
+    }
+
+    suspend fun deleteConversationParticipants(
+        conversationId: Long,
+        userIds: List<String>,
+    ) = participantQueries.transactionWithContext(backgroundDispatcher) {
+        userIds.forEach {
+            participantQueries.deleteByConversationUser(conversationId, it)
+        }
+    }
+
+    suspend fun deleteConversationNotInIds(
+        conversationIds: List<Long>,
+    ) = participantQueries.transactionWithContext(backgroundDispatcher) {
+        conversationQueries.deleteNotInIds(conversationIds)
     }
 }

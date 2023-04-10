@@ -27,4 +27,6 @@ sealed interface ChatEvent {
     object LoadMedia : ChatEvent
 
     object OpenPhoneSettings : ChatEvent
+
+    object ChatOptions : ChatEvent
 }

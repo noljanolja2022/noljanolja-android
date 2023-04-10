@@ -84,7 +84,7 @@ class StickersLoader(
                     )
                     loadStickerPacks(true)
                 }
-            } catch (error: Exception) {
+            } catch (error: Throwable) {
                 error.printStackTrace()
                 updateStickerPack(pack.copy(downloading = false))
             }
@@ -166,7 +166,7 @@ class StickersLoader(
                             }
                         }
                     }
-                } catch (error: Exception) {
+                } catch (error: Throwable) {
                     error.printStackTrace()
                 }
             }

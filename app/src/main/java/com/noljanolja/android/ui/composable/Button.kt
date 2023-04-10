@@ -134,6 +134,8 @@ fun PrimaryButton(
     isEnable: Boolean = true,
     containerColor: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
+    disabledContainerColor: Color = MaterialTheme.colorScheme.surface,
+    disabledContentColor: Color = MaterialTheme.colorScheme.outline,
     shape: Shape? = null,
     onClick: () -> Unit,
 ) {
@@ -144,9 +146,9 @@ fun PrimaryButton(
         shape = shape,
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
-            disabledContainerColor = MaterialTheme.colorScheme.background,
+            disabledContainerColor = disabledContainerColor,
             contentColor = contentColor,
-            disabledContentColor = MaterialTheme.colorScheme.onBackground,
+            disabledContentColor = disabledContentColor,
         ),
         onClick = onClick,
     )

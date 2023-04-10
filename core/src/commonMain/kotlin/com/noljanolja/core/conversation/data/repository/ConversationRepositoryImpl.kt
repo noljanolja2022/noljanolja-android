@@ -7,7 +7,9 @@ import com.noljanolja.core.conversation.data.model.request.*
 import com.noljanolja.core.conversation.domain.model.*
 import com.noljanolja.core.conversation.domain.repository.ConversationRepository
 import com.noljanolja.core.user.data.datasource.LocalUserDataSource
+import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.user.domain.repository.UserRepository
+import com.noljanolja.core.utils.isRemoveFromConversation
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
@@ -21,6 +23,10 @@ internal class ConversationRepositoryImpl(
     private val scope = CoroutineScope(Dispatchers.Default)
     private var job: Job? = null
 
+    private val _removedConversationEvent = MutableSharedFlow<Conversation>()
+    override val removedConversationEvent: SharedFlow<Conversation>
+        get() = _removedConversationEvent.asSharedFlow()
+
     override suspend fun findConversationWithUsers(userIds: List<String>): Conversation? {
         return if (userIds.size == 1) {
             localConversationDataSource.findSingleConversationWithUser(userIds.first())
@@ -32,8 +38,12 @@ internal class ConversationRepositoryImpl(
     override suspend fun getConversation(conversationId: Long): Flow<Conversation> = flow {
         try {
             scope.launch {
-                conversationApi.getConversation(GetConversationRequest(conversationId)).data?.let {
-                    updateLocalConversation(it)
+                try {
+                    conversationApi.getConversation(GetConversationRequest(conversationId)).data?.let {
+                        updateLocalConversation(it)
+                    }
+                } catch (e: Throwable) {
+                    e.printStackTrace()
                 }
             }
             getLocalConversation(conversationId).collect {
@@ -46,16 +56,31 @@ internal class ConversationRepositoryImpl(
 
     override suspend fun getConversations(): Flow<List<Conversation>> = flow {
         try {
-            scope.launch {
-                conversationApi.getConversations().data?.forEach {
-                    updateLocalConversation(it)
-                }
-            }
+            forceRefreshConversations()
             getLocalConversations().collect {
-                emit(it.sortedByDescending { it.messages.maxByOrNull { it.createdAt }?.createdAt })
+                emit(
+                    it.sortedByDescending {
+                        it.messages.maxByOrNull { it.createdAt }?.createdAt ?: it.createdAt
+                    }
+                )
             }
         } catch (e: Throwable) {
             emit(emptyList())
+        }
+    }
+
+    override suspend fun forceRefreshConversations() {
+        scope.launch {
+            try {
+                conversationApi.getConversations().data?.let { conversations ->
+                    localConversationDataSource.deleteConversationNotInIds(conversations.map { it.id })
+                    conversations.forEach {
+                        updateLocalConversation(it)
+                    }
+                }
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -77,33 +102,39 @@ internal class ConversationRepositoryImpl(
                 sentConversationId,
                 listOf(sendingMessage)
             )
-            val response = conversationApi.sendConversationMessage(
-                SendConversationMessageRequest(
-                    conversationId = sentConversationId,
-                    message = sendingMessage,
-                )
-            )
-            Logger.e("Receive: send response ${response.data}")
+            try {
+                val response =
+                    conversationApi.sendConversationMessage(
+                        SendConversationMessageRequest(
+                            conversationId = sentConversationId,
+                            message = sendingMessage,
+                        )
+                    )
 
-            if (!response.isSuccessful() || response.data == null) {
-                localConversationDataSource.upsertConversationMessages(
-                    sentConversationId,
-                    listOf(
-                        sendingMessage.copy(
-                            status = MessageStatus.FAILED,
+                Logger.e("Receive: send response ${response.data}")
+
+                if (!response.isSuccessful() || response.data == null) {
+                    localConversationDataSource.upsertConversationMessages(
+                        sentConversationId,
+                        listOf(
+                            sendingMessage.copy(
+                                status = MessageStatus.FAILED,
+                            )
                         )
                     )
-                )
-            } else {
-                localConversationDataSource.upsertConversationMessages(
-                    sentConversationId,
-                    listOf(
-                        response.data.copy(
-                            status = MessageStatus.SENT,
-                            _localId = sendingMessage.localId
+                } else {
+                    localConversationDataSource.upsertConversationMessages(
+                        sentConversationId,
+                        listOf(
+                            response.data.copy(
+                                status = MessageStatus.SENT,
+                                _localId = sendingMessage.localId
+                            )
                         )
                     )
-                )
+                }
+            } catch (e: Throwable) {
+                e.printStackTrace()
             }
 
             return sentConversationId
@@ -111,31 +142,144 @@ internal class ConversationRepositoryImpl(
         return 0L
     }
 
-    private suspend fun createConversation(title: String, userIds: List<String>): Long {
-        return conversationApi.createConversation(
-            CreateConversationRequest(
-                title = title,
-                participantIds = userIds
-            )
-        ).data?.id ?: 0L
+    override suspend fun createConversation(title: String, userIds: List<String>): Long {
+        return try {
+            conversationApi.createConversation(
+                CreateConversationRequest(
+                    title = title,
+                    participantIds = userIds
+                )
+            ).also {
+                it.data?.let { updateLocalConversation(it) }
+            }.data?.id ?: 0L
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            0L
+        }
     }
 
     override suspend fun streamConversations() {
         Logger.e("Stream start")
         job?.cancel()
         job = scope.launch {
+            val me = userRepository.getCurrentUser().getOrNull() ?: return@launch
             conversationApi.streamConversations()
-                .catch { error ->
-                    Logger.e(error) {
-                        "streamConversations"
+                .collect {
+                    if (me.isRemoveFromConversation(it)) {
+                        Logger.e("Receive: Stream and remove${it.participants.map { it.name }}")
+                        Logger.e("Receive: Stream and remove ${it.messages.firstOrNull()?.leftParticipants?.map { it.name }}")
+                        localConversationDataSource.deleteById(it.id)
+                        _removedConversationEvent.emit(it)
+                    } else {
+                        Logger.e("Receive: Stream ${it.participants.map { it.name }}")
+                        Logger.e("Receive: Stream ${it.messages.firstOrNull()?.leftParticipants?.map { it.name }}")
+
+                        updateLocalConversation(
+                            it,
+                        )
                     }
                 }
-                .collect {
-                    Logger.e("Receive: Stream ${it.messages}")
-                    updateLocalConversation(
-                        it,
+        }
+    }
+
+    override suspend fun leaveConversation(conversationId: Long): Result<Boolean> {
+        return try {
+            val user = localUserDataSource.findMe()!!
+            val response = conversationApi.removeConversationParticipants(
+                conversationId,
+                UpdateParticipantsRequest(listOf(user.id))
+            )
+            if (response.isSuccessful()) {
+                Result.success(true).also {
+                    localConversationDataSource.deleteConversationMessages(conversationId)
+                    localConversationDataSource.deleteAllConversationParticipants(conversationId)
+                    localConversationDataSource.deleteById(conversationId)
+                }
+            } else {
+                throw Error(response.message)
+            }
+        } catch (e: Throwable) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun addParticipants(
+        conversationId: Long,
+        userIds: List<String>,
+    ): Result<Boolean> {
+        return try {
+            val response = conversationApi.addConversationParticipants(
+                conversationId,
+                UpdateParticipantsRequest(userIds)
+            )
+            return if (response.isSuccessful()) {
+                Result.success(true)
+            } else {
+                throw Error(response.message)
+            }
+        } catch (e: Throwable) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun removeParticipants(
+        conversationId: Long,
+        userIds: List<String>,
+    ): Result<Boolean> {
+        return try {
+            val response = conversationApi.removeConversationParticipants(
+                conversationId,
+                UpdateParticipantsRequest(userIds)
+            )
+            if (response.isSuccessful()) {
+                Result.success(true).also {
+                    localConversationDataSource.deleteConversationParticipants(
+                        conversationId,
+                        userIds
                     )
                 }
+            } else {
+                throw Error(response.message)
+            }
+        } catch (e: Throwable) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun makeConversationAdmin(
+        conversationId: Long,
+        userId: String,
+    ): Result<Boolean> {
+        return try {
+            val response = conversationApi.makeConversationAdmin(
+                conversationId,
+                AssignAdminRequest(userId)
+            )
+            return if (response.isSuccessful()) {
+                Result.success(true)
+            } else {
+                throw Error(response.message)
+            }
+        } catch (e: Throwable) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun updateConversation(
+        conversationId: Long,
+        title: String,
+    ): Result<Conversation> {
+        return try {
+            val response = conversationApi.updateConversation(
+                conversationId,
+                UpdateConversationRequest(title = title)
+            )
+            return response.data?.let {
+                updateLocalConversation(it)
+                Result.success(it)
+            } ?: throw Error(response.message)
+        } catch (e: Throwable) {
+            Result.failure(e)
         }
     }
 
@@ -174,19 +318,29 @@ internal class ConversationRepositoryImpl(
                             ?: conversation.creator,
                         participants = participants,
                         messages = messages.mapNotNull { message ->
-                            if (message.message.isEmpty() && message.attachments.isEmpty()) {
+                            if (message.message.isEmpty() && message.type == MessageType.PLAINTEXT) {
                                 null
                             } else {
                                 val sender = it.findById(message.sender.id) ?: message.sender
                                 val myId = it.findMe()?.id ?: 0L
-                                message.copy(sender = sender)
-                                    .apply {
-                                        if (seenBy.any { it.isNotBlank() }) {
-                                            seenUsers =
-                                                seenBy.mapNotNull { id -> participants.find { it.id == id } }
-                                        }
-                                        isSeenByMe = sender.isMe || seenBy.contains(myId)
+                                val textMessage =
+                                    if (message.type == MessageType.EVENT_JOINED) {
+                                        message.message.convertIdsToNames(
+                                            participants
+                                        )
+                                    } else {
+                                        message.message
                                     }
+                                message.copy(
+                                    sender = sender,
+                                    message = textMessage
+                                ).apply {
+                                    if (seenBy.any { it.isNotBlank() }) {
+                                        seenUsers =
+                                            seenBy.mapNotNull { id -> participants.find { it.id == id } }
+                                    }
+                                    isSeenByMe = sender.isMe || seenBy.contains(myId)
+                                }
                             }
                         }
                     )
@@ -205,6 +359,10 @@ internal class ConversationRepositoryImpl(
         val me = localUserDataSource.findMe() ?: return
         if (saveCreator) localUserDataSource.upsert(conversation.creator)
         if (saveParticipants) {
+            localUserDataSource.deleteByNotInUsers(
+                conversation.id,
+                userIds = conversation.participants.map { it.id }
+            )
             localUserDataSource.upsertConversationParticipants(
                 conversation.id,
                 conversation.participants
@@ -226,37 +384,35 @@ internal class ConversationRepositoryImpl(
 
     private suspend fun getLocalConversations(): Flow<List<Conversation>> {
         return localConversationDataSource.findAll().map { localConversations ->
-            localConversations.mapNotNull { localConversation ->
+            localConversations.map { localConversation ->
                 // wait update message db
                 val messages = localConversationDataSource.findConversationMessages(
                     localConversation.id,
                     limit = 1
                 ).firstOrNull() ?: listOf()
-                if (messages.isNotEmpty()) {
-                    val myId = localUserDataSource.findMe()?.id ?: 0
-                    Conversation(
-                        id = localConversation.id,
-                        title = localConversation.title,
-                        type = localConversation.type,
-                        creator = localUserDataSource.findById(localConversation.creator.id)
-                            ?: localConversation.creator,
-                        participants = localUserDataSource.findConversationParticipants(
-                            localConversation.id,
-                            limit = 4
-                        ),
-                        messages = messages.map {
-                            it.copy(
-                                sender = localUserDataSource.findById(it.sender.id) ?: it.sender
-                            ).apply {
-                                isSeenByMe = sender.isMe || seenBy.contains(myId)
-                            }
-                        },
-                        createdAt = localConversation.createdAt,
-                        updatedAt = localConversation.updatedAt,
-                    )
-                } else {
-                    null
-                }
+
+                val myId = localUserDataSource.findMe()?.id ?: 0
+                Conversation(
+                    id = localConversation.id,
+                    title = localConversation.title,
+                    type = localConversation.type,
+                    creator = localUserDataSource.findById(localConversation.creator.id)
+                        ?: localConversation.creator,
+                    admin = localConversation.admin,
+                    participants = localUserDataSource.findConversationParticipants(
+                        localConversation.id,
+                        limit = 4
+                    ),
+                    messages = messages.map {
+                        it.copy(
+                            sender = localUserDataSource.findById(it.sender.id) ?: it.sender
+                        ).apply {
+                            isSeenByMe = sender.isMe || seenBy.contains(myId)
+                        }
+                    },
+                    createdAt = localConversation.createdAt,
+                    updatedAt = localConversation.updatedAt,
+                )
             }
         }
     }
@@ -269,13 +425,23 @@ internal class ConversationRepositoryImpl(
     }
 
     override suspend fun updateMessageStatus(conversationId: Long, messageId: Long) {
-        conversationApi.updateMessageStatus(
-            UpdateMessageStatusRequest(conversationId = conversationId, messageId = messageId)
-        )
+        try {
+            conversationApi.updateMessageStatus(
+                UpdateMessageStatusRequest(conversationId = conversationId, messageId = messageId)
+            )
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
     }
 
     override fun onDestroy() {
         job?.cancel()
         scope.coroutineContext.cancel()
+    }
+
+    private fun String.convertIdsToNames(participants: List<User>): String {
+        return this.split(",").mapNotNull { id ->
+            participants.find { it.id == id }?.name
+        }.joinToString(", ")
     }
 }

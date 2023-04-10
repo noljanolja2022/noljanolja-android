@@ -25,9 +25,7 @@ fun SettingScreen(
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     SettingContent(
         uiState = uiState,
-        handleEvent = {
-            viewModel.handleEvent(it)
-        },
+        handleEvent = viewModel::handleEvent,
     )
 }
 

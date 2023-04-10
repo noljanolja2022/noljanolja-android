@@ -20,7 +20,8 @@ class LocalUserDataSource(
     private val participantQueries: ParticipantQueries,
     private val backgroundDispatcher: CoroutineDispatcher,
 ) {
-    private val userMapper = { id: String,
+    private val userMapper = {
+            id: String,
             name: String,
             phone: String,
             email: String,
@@ -28,7 +29,8 @@ class LocalUserDataSource(
             dob: String?,
             isMe: Boolean,
             created_at: Long,
-            updated_at: Long, ->
+            updated_at: Long,
+        ->
         User(
             id = id,
             name = name,
@@ -123,5 +125,13 @@ class LocalUserDataSource(
     suspend fun deleteAllParticipants() =
         participantQueries.transactionWithContext(backgroundDispatcher) {
             participantQueries.deleteAll()
+        }
+
+    suspend fun deleteByNotInUsers(
+        conversationId: Long,
+        userIds: List<String>,
+    ) =
+        participantQueries.transactionWithContext(backgroundDispatcher) {
+            participantQueries.deleteByNotInUsers(conversation = conversationId, users = userIds)
         }
 }

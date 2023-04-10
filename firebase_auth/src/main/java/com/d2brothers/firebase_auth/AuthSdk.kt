@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
+import co.touchlab.kermit.Logger
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import java.util.*
@@ -49,7 +50,14 @@ class AuthSdk private constructor(private val context: Context) {
     ): Result<String> = auth.getAccountFromNaverIntent(data)
 
     suspend fun getIdToken(forceRefresh: Boolean): String? {
-        return auth.getIdToken(forceRefresh)
+        var time = 0
+        var token: String? = ""
+        while (time < 3 && token.isNullOrBlank()) {
+            Logger.e("TimeToken: $time")
+            token = auth.getIdToken(forceRefresh)
+            time++
+        }
+        return token
     }
 
     suspend fun getExpiration(): Long? {

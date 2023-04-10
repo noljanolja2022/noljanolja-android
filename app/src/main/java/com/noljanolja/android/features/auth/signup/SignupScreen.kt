@@ -54,9 +54,7 @@ fun SignupScreen(
             is SignupUIState.Agreement -> {
                 SignupAgreement(
                     uiState = uiState as SignupUIState.Agreement,
-                    handleEvent = {
-                        signupViewModel.handleEvent(it)
-                    },
+                    handleEvent = signupViewModel::handleEvent,
                 )
             }
             is SignupUIState.SignupForm -> {
@@ -66,9 +64,8 @@ fun SignupScreen(
                     emailError,
                     passwordError,
                     confirmPassword,
-                ) {
-                    signupViewModel.handleEvent(it)
-                }
+                    handleEvent = signupViewModel::handleEvent
+                )
             }
             is SignupUIState.VerificationEmail -> {
                 SignupVerification()
@@ -80,9 +77,7 @@ fun SignupScreen(
             email = email,
             password = password,
             confirmPassword = confirmPassword,
-            handleEvent = {
-                signupViewModel.handleEvent(it)
-            },
+            handleEvent = signupViewModel::handleEvent,
         )
     }
 }

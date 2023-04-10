@@ -58,7 +58,7 @@ android {
             firebaseAppDistribution {
                 artifactType = "APK"
                 serviceCredentialsFile = "key/key_distributor.json"
-                releaseNotes =  "Release group conversation"
+                releaseNotes = "Release group conversation"
                 testers =
                     "doduchieu.kstn@gmail.com, itanchi.dev@gmail.com, sangjin.d.han@gmail.com, sangjin.han@ppnyy.com, tiaddeeps@gmail.com"
             }
@@ -87,7 +87,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
     implementation("androidx.activity:activity-compose:1.6.1")
-    implementation(platform("androidx.compose:compose-bom:2023.01.00"))
+    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")

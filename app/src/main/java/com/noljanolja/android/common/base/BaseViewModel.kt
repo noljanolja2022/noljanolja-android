@@ -9,10 +9,12 @@ import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.util.showToast
 import com.noljanolja.core.CoreManager
 import com.noljanolja.core.utils.defaultJson
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -62,4 +64,10 @@ fun BaseViewModel.handleError() {
 
 fun launchInMain(block: suspend () -> Unit) = MainScope().launch {
     block.invoke()
+}
+
+fun launchInMainIO(block: suspend () -> Unit) = MainScope().launch {
+    withContext(Dispatchers.IO) {
+        block.invoke()
+    }
 }

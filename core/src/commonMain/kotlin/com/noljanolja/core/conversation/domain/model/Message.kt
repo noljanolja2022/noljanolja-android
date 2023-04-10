@@ -18,6 +18,8 @@ data class Message(
     val message: String,
     var stickerUrl: String = "",
     val attachments: List<MessageAttachment> = listOf(),
+    val leftParticipants: List<User> = listOf(),
+    val joinParticipants: List<User> = listOf(),
     val type: MessageType = MessageType.UNDEFINED,
     val status: MessageStatus = MessageStatus.SENDING,
     val seenBy: List<String> = emptyList(),
@@ -65,5 +67,8 @@ enum class MessageType {
     GIF,
     PHOTO,
     DOCUMENT,
+    EVENT_UPDATED,
+    EVENT_LEFT,
+    EVENT_JOINED,
     UNDEFINED,
 }

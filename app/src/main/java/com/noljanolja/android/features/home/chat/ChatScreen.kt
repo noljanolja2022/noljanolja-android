@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Error
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme
@@ -28,8 +29,12 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
@@ -49,21 +54,25 @@ import com.noljanolja.core.user.domain.model.User
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
+import org.koin.core.parameter.parametersOf
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun ChatScreen(
+    savedStateHandle: SavedStateHandle,
     conversationId: Long,
     userIds: List<String>,
     title: String,
-    viewModel: ChatViewModel = getViewModel(),
+    viewModel: ChatViewModel = getViewModel { parametersOf(conversationId, userIds, title) },
 ) {
+    val isLeave = savedStateHandle.get<Boolean>("leave") ?: false
+    LaunchedEffect(key1 = isLeave) {
+        if (isLeave) {
+            savedStateHandle.remove<Boolean>("leave")
+            viewModel.handleEvent(ChatEvent.GoBack)
+        }
+    }
     LaunchedEffect(key1 = conversationId) {
-        viewModel.setupConversation(
-            conversationId = conversationId,
-            userIds = userIds,
-            title = title
-        )
         viewModel.handleEvent(ChatEvent.LoadMedia)
     }
     val chatUiState by viewModel.chatUiStateFlow.collectAsStateWithLifecycle()
@@ -105,6 +114,11 @@ fun ChatScreenContent(
                 title = conversation.getDisplayTitle(),
                 centeredTitle = true,
                 onBack = { handleEvent(ChatEvent.GoBack) },
+                actions = {
+                    ChatBarActions(onChatOption = {
+                        handleEvent(ChatEvent.ChatOptions)
+                    })
+                }
             )
         },
         content = {
@@ -207,6 +221,13 @@ fun ChatScreenContent(
             }
         }
     )
+}
+
+@Composable
+fun ChatBarActions(onChatOption: () -> Unit) {
+    IconButton(onClick = onChatOption) {
+        Icon(Icons.Default.Menu, contentDescription = null)
+    }
 }
 
 @Composable
@@ -318,58 +339,119 @@ private fun MessageRow(
     val spaceBetweenAuthors =
         if (isLastMessageByAuthorSameDay) Modifier.padding(top = 8.dp) else Modifier
 
-    Row(modifier = spaceBetweenAuthors) {
-        if (isLastMessageByAuthorSameDay && !message.sender.isMe) {
-            // Avatar
-            UserAvatar(
-                user = message.sender,
-                modifier = Modifier
-                    .scale(0.8F)
-                    .clip(RoundedCornerShape(12.dp))
-                    .clickable { onSenderClick(message.sender) }
-            )
-        } else {
-            // Space under avatar
-            Spacer(modifier = Modifier.width(44.dp))
-        }
-        AuthorAndTextMessage(
-            conversationId = conversationId,
-            message = message,
-            isFirstMessageByAuthorSameDay = isFirstMessageByAuthorSameDay,
-            isLastMessageByAuthorSameDay = isLastMessageByAuthorSameDay,
-            modifier = Modifier
-                .padding(end = 4.dp)
-                .weight(1f),
-            onMessageClick = onMessageClick,
+    val eventModifier = Modifier
+        .fillMaxWidth()
+        .padding(
+            start = 50.dp,
+            end = 50.dp,
+            bottom = 4.dp
         )
-        val modifier = Modifier
-            .padding(end = 16.dp)
-            .size(13.dp)
-            .clip(RoundedCornerShape(13.dp))
-            .align(Alignment.Bottom)
-        when (message.status) {
-            MessageStatus.FAILED -> {
-                Icon(
-                    Icons.Outlined.Error,
-                    contentDescription = null,
-                    modifier = modifier,
-                    tint = MaterialTheme.colorScheme.errorContainer
-                )
-            }
-            else -> if (message.sender.isMe) {
-                message.seenUsers.find { !it.isMe }?.let { userSeen ->
-                    AsyncImage(
-                        ImageRequest.Builder(context = context)
-                            .data(userSeen.getAvatarUrl())
-                            .placeholder(R.drawable.placeholder_avatar)
-                            .error(R.drawable.placeholder_avatar)
-                            .fallback(R.drawable.placeholder_avatar)
-                            .build(),
-                        contentDescription = null,
-                        modifier = modifier,
-                        contentScale = ContentScale.FillBounds,
+        .clip(RoundedCornerShape(30.dp))
+        .background(MaterialTheme.colorScheme.outline)
+        .padding(vertical = 5.dp, horizontal = 10.dp)
+    val eventStyle =
+        MaterialTheme.typography.labelSmall.copy(color = MaterialTheme.colorScheme.background)
+    when (message.type) {
+        MessageType.EVENT_JOINED -> {
+            Text(
+                stringResource(
+                    id = R.string.chat_message_event_joined,
+                    message.sender.name,
+                    message.joinParticipants.joinToString(", ") { it.name }
+                ),
+                modifier = eventModifier,
+                style = eventStyle,
+                maxLines = 1,
+                textAlign = TextAlign.Center,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        MessageType.EVENT_LEFT -> {
+            Text(
+                stringResource(
+                    id = R.string.chat_message_event_left,
+                    message.leftParticipants.joinToString(", ") { it.name }
+                ),
+                modifier = eventModifier,
+                style = eventStyle,
+                maxLines = 1,
+                textAlign = TextAlign.Center,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        MessageType.EVENT_UPDATED -> {
+            Text(
+                stringResource(
+                    id = R.string.chat_message_event_updated,
+                    message.sender.name,
+                    message.message
+                ),
+                modifier = eventModifier,
+                style = eventStyle,
+                maxLines = 1,
+                textAlign = TextAlign.Center,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        else -> {
+            Row(modifier = spaceBetweenAuthors) {
+                if (isLastMessageByAuthorSameDay && !message.sender.isMe) {
+                    // Avatar
+                    UserAvatar(
+                        user = message.sender,
+                        modifier = Modifier
+                            .scale(0.8F)
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable { onSenderClick(message.sender) }
                     )
-                } ?: Spacer(modifier = modifier)
+                } else {
+                    // Space under avatar
+                    Spacer(modifier = Modifier.width(44.dp))
+                }
+                AuthorAndTextMessage(
+                    conversationId = conversationId,
+                    message = message,
+                    isFirstMessageByAuthorSameDay = isFirstMessageByAuthorSameDay,
+                    isLastMessageByAuthorSameDay = isLastMessageByAuthorSameDay,
+                    modifier = Modifier
+                        .padding(end = 4.dp)
+                        .weight(1f),
+                    onMessageClick = onMessageClick,
+                )
+                val modifier = Modifier
+                    .width(20.dp)
+                    .align(Alignment.Bottom)
+                when (message.status) {
+                    MessageStatus.FAILED -> {
+                        Icon(
+                            Icons.Outlined.Error,
+                            contentDescription = null,
+                            modifier = modifier,
+                            tint = MaterialTheme.colorScheme.errorContainer
+                        )
+                    }
+                    else -> if (message.sender.isMe) {
+                        Box(modifier = modifier) {
+                            message.seenUsers.filter { !it.isMe }.takeIf { it.isNotEmpty() }
+                                ?.forEachIndexed { index, userSeen ->
+                                    AsyncImage(
+                                        ImageRequest.Builder(context = context)
+                                            .data(userSeen.getAvatarUrl())
+                                            .placeholder(R.drawable.placeholder_avatar)
+                                            .error(R.drawable.placeholder_avatar)
+                                            .fallback(R.drawable.placeholder_avatar)
+                                            .build(),
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .padding(start = (6 * index).dp)
+                                            .size(13.dp)
+                                            .clip(RoundedCornerShape(13.dp)),
+                                        contentScale = ContentScale.FillBounds,
+                                    )
+                                }
+                        }
+                    }
+                }
             }
         }
     }

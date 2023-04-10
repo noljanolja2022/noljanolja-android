@@ -14,7 +14,7 @@ fun formatPhoneNumber(phoneNumber: String?, context: Context): String {
         } else {
             phoneNumber
         }
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         phoneNumber
     }.orEmpty()
 }

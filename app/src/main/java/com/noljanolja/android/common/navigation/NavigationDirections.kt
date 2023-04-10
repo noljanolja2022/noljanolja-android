@@ -37,9 +37,6 @@ object NavigationDirections {
     object Auth : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options: NavOptions = navOptions {
-            popUpTo(Root.destination) {
-                inclusive = true
-            }
             launchSingleTop = true
         }
 
@@ -190,19 +187,68 @@ object NavigationDirections {
         }
     }
 
-    data class SelectContact(val type: String = "") : NavigationCommand {
+    data class ChatOptions(
+        val conversationId: Long = 0L,
+    ) : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf(
-            navArgument("type") {
-                defaultValue = "SINGLE"
-                type = NavType.StringType
-            }
+            navArgument("conversationId") {
+                defaultValue = 0
+                type = NavType.LongType
+            },
         )
         override val options: NavOptions = navOptions {
             launchSingleTop = true
         }
-        override val destination: String = "select_contact?type={type}"
+        override val destination: String =
+            "chat_options?conversationId={conversationId}"
+
         override fun createDestination(): String {
-            return "select_contact?type=$type"
+            return "chat_options?conversationId=$conversationId"
+        }
+    }
+
+    data class EditChatTitle(
+        val conversationId: Long = 0L,
+    ) : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf(
+            navArgument("conversationId") {
+                defaultValue = 0
+                type = NavType.LongType
+            },
+        )
+        override val options: NavOptions = navOptions {
+            launchSingleTop = true
+        }
+        override val destination: String =
+            "edit_chat_title?conversationId={conversationId}"
+
+        override fun createDestination(): String {
+            return "edit_chat_title?conversationId=$conversationId"
+        }
+    }
+
+    data class SelectContact(
+        val type: String = "",
+        val conversationId: Long = 0L,
+    ) : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf(
+            navArgument("type") {
+                defaultValue = "SINGLE"
+                type = NavType.StringType
+            },
+            navArgument("conversationId") {
+                defaultValue = 0
+                type = NavType.LongType
+            },
+        )
+        override val options: NavOptions = navOptions {
+            launchSingleTop = true
+        }
+        override val destination: String =
+            "select_contact?type={type}&conversationId={conversationId}"
+
+        override fun createDestination(): String {
+            return "select_contact?type=$type&conversationId=$conversationId"
         }
     }
 

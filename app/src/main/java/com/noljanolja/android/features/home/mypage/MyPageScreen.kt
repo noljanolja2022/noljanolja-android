@@ -28,9 +28,7 @@ fun MyPageScreen(
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     MyPageContent(
         uiState,
-        handleEvent = {
-            viewModel.handleEvent(it)
-        },
+        handleEvent = viewModel::handleEvent,
     )
 }
 

@@ -30,3 +30,15 @@ upsert {
 
 deleteAll:
 DELETE FROM `participant`;
+
+deleteAllByConversation:
+DELETE FROM `participant`
+WHERE conversation = :conversation_id;
+
+deleteByConversationUser:
+DELETE FROM `participant`
+WHERE conversation = :conversation_id AND user=:user;
+
+deleteByNotInUsers:
+DELETE FROM `participant`
+WHERE conversation = :conversation AND user NOT IN :users;

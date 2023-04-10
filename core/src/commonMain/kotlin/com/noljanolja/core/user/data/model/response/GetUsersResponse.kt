@@ -4,7 +4,7 @@ import com.noljanolja.core.base.BaseResponse
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SyncUserContactsResponse(
+data class GetUsersResponse(
     override val code: Int,
     override val message: String,
     override val data: List<UserRemoteModel> = listOf(),

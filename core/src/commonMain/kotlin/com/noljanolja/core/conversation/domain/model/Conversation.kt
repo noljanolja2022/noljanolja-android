@@ -11,6 +11,7 @@ data class Conversation(
     val title: String = "",
     val type: ConversationType = ConversationType.SINGLE,
     val creator: User = User(),
+    val admin: User = User(),
     val participants: List<User> = listOf(),
     val messages: List<Message> = listOf(),
     val createdAt: Instant = Clock.System.now(),
@@ -20,7 +21,7 @@ data class Conversation(
         return if (type == ConversationType.SINGLE) {
             (participants.find { !it.isMe } ?: participants.firstOrNull())?.name.orEmpty()
         } else {
-            title
+            title.takeIf { it.isNotBlank() } ?: participants.joinToString(", ") { it.name }
         }
     }
 

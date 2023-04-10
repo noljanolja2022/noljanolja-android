@@ -2,10 +2,10 @@ package com.noljanolja.android.features.auth.terms_of_service
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckBox
+import androidx.compose.material.icons.filled.CheckBoxOutlineBlank
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Help
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateMapOf
@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.InfoDialog
+import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.ScaffoldWithRoundedContent
 import com.noljanolja.android.util.secondaryTextColor
 import org.koin.androidx.compose.getViewModel
@@ -35,7 +36,6 @@ fun TermsOfServiceScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TermsOfServiceScreenContent(
     event: (TermsOfServiceEvent) -> Unit,
@@ -45,13 +45,11 @@ fun TermsOfServiceScreenContent(
             1 to false,
             2 to false,
             3 to false,
-            4 to false,
         )
     }
     val optionalTerms = remember {
         mutableStateMapOf(
             1 to false,
-            2 to false,
         )
     }
     val showHelperDialog = remember { mutableStateOf(false) }
@@ -67,39 +65,20 @@ fun TermsOfServiceScreenContent(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Box(
-                    modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                    contentAlignment = Alignment.TopEnd,
-                ) {
-                    Text(
-                        stringResource(R.string.tos_title),
-                        modifier = Modifier.fillMaxWidth().padding(
-                            start = 16.dp,
-                            end = 16.dp,
-                            top = 32.dp,
-                            bottom = 8.dp,
-                        ),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-
-                    IconButton(
-                        onClick = { showHelperDialog.value = true },
-                        modifier = Modifier.padding(4.dp),
-                    ) {
-                        Icon(Icons.Default.Help, contentDescription = null)
-                    }
-                }
-
                 Column(
                     modifier = Modifier.fillMaxWidth().weight(1f)
                         .verticalScroll(rememberScrollState()),
                 ) {
+                    Spacer(modifier = Modifier.weight(1F))
                     Text(
-                        stringResource(R.string.tos_compulsory),
-                        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                        stringResource(R.string.tos_compulsory).uppercase(),
+                        modifier = Modifier.padding(
+                            start = 16.dp,
+                            end = 16.dp,
+                            bottom = 5.dp
+                        ),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onPrimary,
                     )
 
                     TermRow(
@@ -107,6 +86,7 @@ fun TermsOfServiceScreenContent(
                         termTitle = stringResource(R.string.tos_compulsory_item_title_1),
                         checked = compulsoryTerms.getOrDefault(1, false),
                         onChecked = { compulsoryTerms[1] = it },
+                        onClicked = {}
                     )
 
                     TermRow(
@@ -125,19 +105,17 @@ fun TermsOfServiceScreenContent(
                         onClicked = {},
                     )
 
-                    TermRow(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                        termTitle = stringResource(R.string.tos_compulsory_item_title_4),
-                        checked = compulsoryTerms.getOrDefault(4, false),
-                        onChecked = { compulsoryTerms[4] = it },
-                        onClicked = {},
-                    )
+                    Spacer(modifier = Modifier.weight(1F))
 
                     Text(
-                        stringResource(R.string.tos_optional),
-                        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                        stringResource(R.string.tos_optional).uppercase(),
+                        modifier = Modifier.padding(
+                            start = 16.dp,
+                            end = 16.dp,
+                            bottom = 5.dp
+                        ),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onPrimary,
                     )
 
                     TermRow(
@@ -147,55 +125,16 @@ fun TermsOfServiceScreenContent(
                         onChecked = { optionalTerms[1] = it },
                         onClicked = {},
                     )
-
-                    TermRow(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                        termTitle = stringResource(R.string.tos_optional_item_title_2),
-                        checked = optionalTerms.getOrDefault(2, false),
-                        onChecked = { optionalTerms[2] = it },
-                        onClicked = {},
-                    )
+                    Spacer(modifier = Modifier.weight(1F))
                 }
 
-                Column(
-                    modifier = Modifier.fillMaxWidth().wrapContentHeight()
-                        .background(MaterialTheme.colorScheme.surface),
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().wrapContentHeight()
-                            .padding(vertical = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Start,
-                    ) {
-                        TermCheckBox(
-                            modifier = Modifier.padding(start = 16.dp),
-                            checked = compulsoryTerms.all { it.value } && optionalTerms.all { it.value },
-                            onChecked = {
-                                val checked =
-                                    compulsoryTerms.all { it.value } && optionalTerms.all { it.value }
-                                compulsoryTerms.keys.forEach {
-                                    compulsoryTerms[it] = !checked
-                                }
-                                optionalTerms.keys.forEach {
-                                    optionalTerms[it] = !checked
-                                }
-                            },
-                        )
-                        Text(
-                            stringResource(R.string.tos_read_and_agree),
-                            modifier = Modifier.padding(start = 8.dp, end = 24.dp),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                    Button(
-                        onClick = { event(TermsOfServiceEvent.Continue) },
-                        modifier = Modifier.fillMaxWidth()
-                            .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
-                        enabled = compulsoryTerms.all { it.value },
-                    ) {
-                        Text(text = stringResource(R.string.tos_agree_and_continue))
-                    }
-                }
+                PrimaryButton(
+                    onClick = { event(TermsOfServiceEvent.Continue) },
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp, bottom = 42.dp),
+                    isEnable = compulsoryTerms.all { it.value },
+                    text = stringResource(id = R.string.common_next).uppercase()
+                )
             }
         }
     }
@@ -218,7 +157,7 @@ private fun TermRow(
 ) {
     Column(modifier = modifier) {
         Row(
-            modifier = Modifier.fillMaxWidth().wrapContentHeight().padding(vertical = 16.dp),
+            modifier = Modifier.fillMaxWidth().wrapContentHeight().padding(vertical = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
         ) {
@@ -243,8 +182,6 @@ private fun TermRow(
                 )
             }
         }
-
-        Divider(modifier = Modifier.fillMaxWidth())
     }
 }
 
@@ -254,11 +191,12 @@ private fun TermCheckBox(
     checked: Boolean = false,
     onChecked: ((Boolean) -> Unit) = {},
 ) {
-    val checkboxId = if (checked) R.drawable.ic_checked else R.drawable.ic_uncheck
-    Image(
-        painter = painterResource(id = checkboxId),
+    val checkBoxIcon = if (checked) Icons.Filled.CheckBox else Icons.Filled.CheckBoxOutlineBlank
+    Icon(
+        checkBoxIcon,
         contentDescription = null,
         modifier = modifier.size(24.dp).clickable { onChecked(!checked) },
+        tint = with(MaterialTheme.colorScheme) { if (checked) secondary else outline }
     )
 }
 

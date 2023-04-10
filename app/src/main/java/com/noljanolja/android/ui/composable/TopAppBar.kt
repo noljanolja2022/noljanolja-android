@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -18,10 +19,12 @@ fun CommonTopAppBar(
     actions: @Composable (RowScope.() -> Unit) = {},
     centeredTitle: Boolean = false,
     navigationIcon: ImageVector = Icons.Default.ArrowBack,
+    containerColor: Color = MaterialTheme.colorScheme.background,
     onBack: (() -> Unit)? = null,
+
 ) {
     val colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = containerColor,
         titleContentColor = MaterialTheme.colorScheme.onPrimary,
         actionIconContentColor = MaterialTheme.colorScheme.onPrimary,
         navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,

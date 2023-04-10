@@ -53,9 +53,7 @@ fun ForgotScreen(viewModel: ForgotViewModel = getViewModel()) {
     ) {
         ForgotContent(
             uiState = uiState,
-            handleEvent = {
-                viewModel.handleEvent(it)
-            },
+            handleEvent = viewModel::handleEvent,
         )
     }
 }

@@ -3,9 +3,7 @@ package com.noljanolja.android.features.home.contacts
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.*
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
@@ -36,13 +34,15 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun ContactsScreen(
     type: ConversationType,
-    viewModel: ContactsViewModel = getViewModel { parametersOf(type) },
+    conversationId: Long,
+    viewModel: ContactsViewModel = getViewModel { parametersOf(type, conversationId) },
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     val selectedContacts by viewModel.selectedUserFlow.collectAsStateWithLifecycle()
 
     ContactsScreenContent(
         type = type,
+        conversationId = conversationId,
         uiState = uiState,
         selectedContacts = selectedContacts,
         handleEvent = viewModel::handleEvent,
@@ -52,11 +52,13 @@ fun ContactsScreen(
 @Composable
 fun ContactsScreenContent(
     type: ConversationType,
+    conversationId: Long,
     uiState: UiState<List<User>>,
     selectedContacts: List<User>,
     handleEvent: (ContactsEvent) -> Unit,
 ) {
     var searchText by remember { mutableStateOf("") }
+    val scrollState = rememberLazyListState()
 
     Surface(modifier = Modifier.fillMaxSize()) {
         ScaffoldWithUiState(
@@ -67,14 +69,20 @@ fun ContactsScreenContent(
                     title = stringResource(
                         id = when (type) {
                             ConversationType.SINGLE -> R.string.contacts_title_normal
-                            ConversationType.GROUP -> R.string.contacts_title_group
+                            ConversationType.GROUP -> {
+                                if (conversationId > 0L) {
+                                    R.string.contacts_title_add_memmber
+                                } else {
+                                    R.string.contacts_title_group
+                                }
+                            }
                             else -> R.string.contacts_title_secret
                         }
                     ),
                     actions = {
                         if (type == ConversationType.GROUP) {
                             TextButton(
-                                onClick = { handleEvent(ContactsEvent.Chat) },
+                                onClick = { handleEvent(ContactsEvent.ConfirmContacts) },
                                 enabled = selectedContacts.isNotEmpty(),
                                 colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onPrimary)
                             ) {
@@ -116,7 +124,10 @@ fun ContactsScreenContent(
                                     .fillMaxWidth(),
                                 searchText = searchText,
                                 hint = stringResource(R.string.common_search),
-                                onSearch = { text -> searchText = text }
+                                onSearch = {
+                                    searchText = it
+                                    handleEvent(ContactsEvent.SearchContact(it))
+                                }
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             val visibleContacts = uiState.data.orEmpty().filter { user ->
@@ -158,11 +169,16 @@ fun ContactsScreenContent(
                                 Spacer(modifier = Modifier.height(10.dp))
                                 ContactList(
                                     type = type,
+                                    scrollState = scrollState,
                                     contacts = visibleContacts,
-                                    selectedContacts = selectedContacts
-                                ) {
-                                    handleEvent(ContactsEvent.SelectContact(it))
-                                }
+                                    selectedContacts = selectedContacts,
+                                    onItemClick = {
+                                        handleEvent(ContactsEvent.SelectContact(it))
+                                    },
+                                    loadMoreContacts = {
+                                        handleEvent(ContactsEvent.LoadMore)
+                                    }
+                                )
                             }
                         }
                     }
@@ -176,10 +192,14 @@ fun ContactsScreenContent(
 fun ContactList(
     type: ConversationType,
     contacts: List<User>,
+    scrollState: LazyListState,
     selectedContacts: List<User>,
     onItemClick: (User) -> Unit,
+    loadMoreContacts: () -> Unit,
 ) {
-    LazyColumn {
+    LazyColumn(
+        state = scrollState
+    ) {
         items(contacts, key = { it.id }) { contact ->
             ContactRow(
                 type = type,
@@ -188,6 +208,7 @@ fun ContactList(
             ) { onItemClick(it) }
         }
     }
+    InfiniteListHandler(scrollState, onLoadMore = loadMoreContacts)
 }
 
 @Composable
@@ -238,7 +259,8 @@ private fun SelectedContact(contact: User, onRemove: () -> Unit) {
         UserAvatar(user = contact, modifier = Modifier.padding(top = 5.dp, end = 5.dp))
         IconButton(
             onClick = onRemove,
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier
+                .size(20.dp)
                 .align(Alignment.TopEnd)
         ) {
             Icon(

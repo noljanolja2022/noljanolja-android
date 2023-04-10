@@ -31,9 +31,7 @@ fun MyInfoScreen(
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     MyInfoContent(
         uiState,
-        handleEvent = {
-            viewModel.handleEvent(it)
-        },
+        handleEvent = viewModel::handleEvent,
     )
 }
 

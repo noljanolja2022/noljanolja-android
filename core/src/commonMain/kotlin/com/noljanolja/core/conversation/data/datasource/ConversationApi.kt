@@ -1,5 +1,6 @@
 package com.noljanolja.core.conversation.data.datasource
 
+import com.noljanolja.core.base.ResponseWithoutData
 import com.noljanolja.core.conversation.data.model.request.*
 import com.noljanolja.core.conversation.data.model.response.*
 import com.noljanolja.core.conversation.data.model.response.GetConversationMessagesResponse
@@ -14,8 +15,6 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
-import io.ktor.util.*
-import io.rsocket.kotlin.payload.data
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.decodeFromString
@@ -114,5 +113,48 @@ class ConversationApi(
         return client.post(
             "$BASE_URL/conversations/${request.conversationId}/messages/${request.messageId}/seen"
         ).body()
+    }
+
+    suspend fun addConversationParticipants(
+        conversationId: Long,
+        request: UpdateParticipantsRequest,
+    ): ResponseWithoutData {
+        return client.put("$BASE_URL/conversations/$conversationId/participants") {
+            setBody(request)
+        }.body()
+    }
+
+    suspend fun removeConversationParticipants(
+        conversationId: Long,
+        request: UpdateParticipantsRequest,
+    ): ResponseWithoutData {
+        val participantIds = request.participantIds.joinToString(",")
+        return client.delete("$BASE_URL/conversations/$conversationId/participants?participantIds=$participantIds") {
+        }.body()
+    }
+
+    suspend fun makeConversationAdmin(
+        conversationId: Long,
+        request: AssignAdminRequest,
+    ): ResponseWithoutData {
+        return client.put("$BASE_URL/conversations/$conversationId/admin") {
+            setBody(request)
+        }.body()
+    }
+
+    suspend fun updateConversation(
+        conversationId: Long,
+        request: UpdateConversationRequest,
+    ): GetConversationResponse {
+        return client.put("$BASE_URL/conversations/$conversationId") {
+            header(HttpHeaders.Accept, ContentType.MultiPart.FormData)
+            setBody(
+                MultiPartFormDataContent(
+                    formData {
+                        append("title", request.title)
+                    }
+                )
+            )
+        }.body()
     }
 }

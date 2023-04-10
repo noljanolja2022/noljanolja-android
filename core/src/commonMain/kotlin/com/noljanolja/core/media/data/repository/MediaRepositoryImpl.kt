@@ -12,7 +12,7 @@ internal class MediaRepositoryImpl(
     override suspend fun loadAllStickerPacks(): List<StickerPack> {
         return try {
             mediaApi.loadAllStickerPacks().data.orEmpty()
-        } catch (error: Exception) {
+        } catch (error: Throwable) {
             error.printStackTrace()
             emptyList()
         }
@@ -21,7 +21,7 @@ internal class MediaRepositoryImpl(
     override suspend fun downloadStickerPack(id: Long): Flow<ByteArray> {
         return try {
             mediaApi.downloadStickerPack(id)
-        } catch (error: Exception) {
+        } catch (error: Throwable) {
             error.printStackTrace()
             flow { }
         }

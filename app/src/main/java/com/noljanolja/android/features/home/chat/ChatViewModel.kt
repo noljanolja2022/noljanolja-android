@@ -1,6 +1,7 @@
 package com.noljanolja.android.features.home.chat
 
 import android.net.Uri
+import androidx.lifecycle.SavedStateHandle
 import com.noljanolja.android.MyApplication
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
@@ -12,6 +13,7 @@ import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.ConversationType
 import com.noljanolja.core.conversation.domain.model.Message
 import com.noljanolja.core.user.domain.model.User
+import com.noljanolja.core.utils.isNormalType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -19,12 +21,13 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import org.koin.core.component.inject
 
-class ChatViewModel : BaseViewModel() {
+class ChatViewModel(
+    savedStateHandle: SavedStateHandle,
+    private var conversationId: Long = 0L,
+    private var userIds: List<String> = emptyList(),
+    private var title: String = "",
+) : BaseViewModel() {
     private val mediaLoader: MediaLoader by inject()
-
-    private var conversationId: Long = 0L
-    private var userIds: List<String> = emptyList()
-    private var title: String = ""
     private var noMoreMessages: Boolean = false
     private var forceUpdateConversation: Boolean = true
     private var lastMessageId: String = ""
@@ -39,6 +42,19 @@ class ChatViewModel : BaseViewModel() {
 
     private val _scrollToNewMessageEvent = MutableSharedFlow<Unit>()
     val scrollToNewMessageEvent = _scrollToNewMessageEvent.asSharedFlow()
+
+    init {
+        launch {
+            fetchConversation()
+        }
+        launch {
+            coreManager.getRemovedConversationEvent().collect {
+                if (it.id == conversationId) {
+                    navigationManager.navigate(NavigationDirections.Home)
+                }
+            }
+        }
+    }
 
     fun handleEvent(event: ChatEvent) {
         launch {
@@ -66,25 +82,10 @@ class ChatViewModel : BaseViewModel() {
                 }
                 ChatEvent.LoadMedia -> loadMedia()
                 ChatEvent.OpenPhoneSettings -> {}
+                ChatEvent.ChatOptions -> {
+                    navigationManager.navigate(NavigationDirections.ChatOptions(conversationId))
+                }
             }
-        }
-    }
-
-    fun setupConversation(
-        conversationId: Long,
-        userIds: List<String>,
-        title: String,
-    ) {
-        launch {
-            this.conversationId = conversationId
-            this.userIds = userIds
-            this.title = title
-            _chatUiStateFlow.emit(
-                UiState(
-                    data = createEmptyConversation()
-                )
-            )
-            fetchConversation()
         }
     }
 
@@ -119,10 +120,15 @@ class ChatViewModel : BaseViewModel() {
                     updateUiState(it)
                 }
             }
+            if (conversationId == 0L && userIds.size > 1) {
+                coreManager.createConversation(title, userIds).let {
+                    conversationId = it
+                }
+            }
             if (conversationId != 0L) {
                 MyApplication.latestConversationId = conversationId
                 coreManager.getConversation(conversationId).collect { conversation ->
-                    forceUpdateConversation(conversation)
+                    forceUpdateConversationMessage(conversation)
                     updateUiState(conversation)
                 }
             } else {
@@ -137,6 +143,7 @@ class ChatViewModel : BaseViewModel() {
             title = title,
             type = if (userIds.size > 1) ConversationType.GROUP else ConversationType.SINGLE,
             creator = User(),
+            admin = User(),
             participants = title.split(", ").map { User(name = it) },
         )
     }
@@ -150,11 +157,12 @@ class ChatViewModel : BaseViewModel() {
         seenJob?.cancel()
         seenJob = launchInMain {
             withContext(Dispatchers.IO) {
-                conversation.messages.firstOrNull()?.let { message ->
-                    if (!message.isSeenByMe) {
-                        coreManager.updateMessageStatus(conversationId, message.id)
+                conversation.messages.firstOrNull { !it.sender.isMe && it.isNormalType() }
+                    ?.let { message ->
+                        if (!message.isSeenByMe) {
+                            coreManager.updateMessageStatus(conversationId, message.id)
+                        }
                     }
-                }
             }
         }
         conversation.messages.firstOrNull()?.let {
@@ -174,14 +182,15 @@ class ChatViewModel : BaseViewModel() {
         }
     }
 
-    private suspend fun forceUpdateConversation(conversation: Conversation) {
+    private suspend fun forceUpdateConversationMessage(conversation: Conversation) {
         if (!forceUpdateConversation) return
-        coreManager.forceUpdateConversation(conversation)
+        coreManager.forceUpdateConversationMessage(conversation)
         forceUpdateConversation = false
     }
 
     override fun onCleared() {
         super.onCleared()
+        job?.cancel()
         MyApplication.latestConversationId = 0L
     }
 }

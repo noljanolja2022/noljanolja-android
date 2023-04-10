@@ -17,20 +17,36 @@ import com.noljanolja.android.features.auth.login_or_signup.LoginOrSignupScreen
 import com.noljanolja.android.features.auth.otp.OTPScreen
 import com.noljanolja.android.features.auth.terms_of_service.TermsOfServiceScreen
 import com.noljanolja.android.features.auth.updateprofile.UpdateProfileScreen
+import com.noljanolja.android.features.edit_chat_title.EditChatTitleScreen
 import com.noljanolja.android.features.home.chat.ChatScreen
+import com.noljanolja.android.features.home.chat_options.ChatOptionsScreen
 import com.noljanolja.android.features.home.contacts.ContactsScreen
 import com.noljanolja.android.features.home.info.MyInfoScreen
 import com.noljanolja.android.features.home.root.HomeScreen
 import com.noljanolja.android.features.setting.SettingScreen
 import com.noljanolja.android.features.splash.SplashScreen
+import com.noljanolja.android.util.showToast
+import com.noljanolja.core.CoreManager
 import com.noljanolja.core.conversation.domain.model.ConversationType
+import org.koin.androidx.compose.get
 
 @Composable
 fun MainScreen(
     navigationManager: NavigationManager,
 ) {
     val context = LocalContext.current
+    val coreManager: CoreManager = get()
     val navController = rememberNavController()
+    LaunchedEffect(key1 = coreManager.getRemovedConversationEvent()) {
+        coreManager.getRemovedConversationEvent().collect {
+            context.showToast(
+                context.getString(
+                    R.string.chat_removed_conversation,
+                    it.getDisplayTitle()
+                )
+            )
+        }
+    }
     LaunchedEffect(navigationManager.commands) {
         navigationManager.commands.collect { commands ->
             val destination = commands.createDestination()
@@ -125,7 +141,8 @@ private fun NavGraphBuilder.addContactsGraph() {
         direction.arguments
     ) { backStack ->
         val type = backStack.arguments?.getString("type") ?: "SINGLE"
-        ContactsScreen(ConversationType.valueOf(type))
+        val conversationId = backStack.arguments?.getLong("conversationId") ?: 0L
+        ContactsScreen(ConversationType.valueOf(type), conversationId)
     }
 }
 
@@ -141,10 +158,31 @@ private fun NavGraphBuilder.addChatGraph() {
                 (this?.getString("userIds"))?.split(",").orEmpty()
             val title = (this?.getString("title").orEmpty())
             ChatScreen(
+                savedStateHandle = backStack.savedStateHandle,
                 conversationId = conversationId,
                 userIds = userIds,
                 title = title
             )
+        }
+    }
+    with(NavigationDirections.ChatOptions()) {
+        composable(
+            destination,
+            arguments
+        ) {
+            val conversationId = (it.arguments?.getLong("conversationId") ?: 0)
+            ChatOptionsScreen(
+                conversationId = conversationId
+            )
+        }
+    }
+    with(NavigationDirections.EditChatTitle()) {
+        composable(
+            destination,
+            arguments
+        ) {
+            val conversationId = (it.arguments?.getLong("conversationId") ?: 0)
+            EditChatTitleScreen(conversationId = conversationId)
         }
     }
 }

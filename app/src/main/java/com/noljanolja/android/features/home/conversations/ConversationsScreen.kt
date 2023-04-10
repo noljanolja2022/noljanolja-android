@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Chat
+import androidx.compose.material.icons.outlined.Error
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -33,6 +34,8 @@ import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.util.findActivity
 import com.noljanolja.android.util.humanReadableDate
 import com.noljanolja.core.conversation.domain.model.Conversation
+import com.noljanolja.core.conversation.domain.model.ConversationType
+import com.noljanolja.core.conversation.domain.model.Message
 import com.noljanolja.core.conversation.domain.model.MessageType
 import org.koin.androidx.compose.getViewModel
 
@@ -86,7 +89,17 @@ fun ConversationsScreenContent(
         error = {}
     ) {
         if (uiState.data.isNullOrEmpty()) {
-            EmptyPage("No conversations found")
+            EmptyPage(
+                stringResource(id = R.string.conversation_empty),
+                icon = {
+                    Icon(
+                        Icons.Outlined.Error,
+                        contentDescription = null,
+                        modifier = Modifier.size(38.dp),
+                        tint = MaterialTheme.colorScheme.outline
+                    )
+                }
+            )
         } else {
             ConversationList(uiState.data) { conversation ->
                 handleEvent(
@@ -131,7 +144,13 @@ fun ConversationRow(
             .clickable { onClick(conversation) }
             .padding(vertical = 10.dp, horizontal = 16.dp),
     ) {
-        val message = conversation.messages.firstOrNull() ?: return
+        val message = conversation.messages.firstOrNull() ?: Message(
+            message = stringResource(
+                id = R.string.conversation_create,
+                conversation.creator.takeIf { !it.isMe }?.name ?: "You"
+            ),
+            type = MessageType.PLAINTEXT
+        ).takeIf { conversation.type == ConversationType.GROUP } ?: return
         Box(
             modifier = Modifier
                 .padding(top = 6.dp)
@@ -199,6 +218,9 @@ fun ConversationRow(
                             stringResource(R.string.chats_message_photo)
                         }
                     }
+                }
+                MessageType.EVENT_UPDATED, MessageType.EVENT_LEFT, MessageType.EVENT_JOINED -> {
+                    stringResource(id = R.string.conversation_has_changed)
                 }
                 else -> {
                     if (message.sender.isMe) {

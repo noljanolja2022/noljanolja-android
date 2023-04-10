@@ -86,6 +86,9 @@ private fun getDefaultSocket(engine: HttpClientEngine, tokenRepo: TokenRepo) = H
                 Logger.e(error) {
                     "Stream error reconnect $error"
                 }
+                Logger.e(error) {
+                    "Stream error reconnect message: ${error.message}"
+                }
                 if (error.message?.contains("Unauthorized") == true) {
                     tokenRepo.refreshToken()
                 }

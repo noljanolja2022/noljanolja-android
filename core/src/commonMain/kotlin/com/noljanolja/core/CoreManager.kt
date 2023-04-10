@@ -45,12 +45,18 @@ class CoreManager : KoinComponent {
         }
     }
 
+    fun getRemovedConversationEvent() = conversationRepository.removedConversationEvent
+
     suspend fun syncUserContacts(contacts: List<Contact>): Result<List<User>> {
         return contactsRepository.syncUserContacts(contacts)
     }
 
-    suspend fun getFriends(): Result<List<User>> {
-        return contactsRepository.getFriends()
+    suspend fun getContacts(page: Int): Result<List<User>> {
+        return contactsRepository.getContacts(page)
+    }
+
+    suspend fun findContacts(phoneNumber: String): Result<List<User>> {
+        return contactsRepository.findContacts(phoneNumber)
     }
 
     suspend fun findConversationWithUsers(userIds: List<String>): Conversation? {
@@ -67,6 +73,8 @@ class CoreManager : KoinComponent {
         return conversationRepository.getConversations()
     }
 
+    suspend fun forceRefreshConversations() = conversationRepository.forceRefreshConversations()
+
     suspend fun sendConversationMessage(
         title: String = "",
         conversationId: Long,
@@ -79,6 +87,10 @@ class CoreManager : KoinComponent {
             userIds = userIds,
             message = message
         )
+    }
+
+    suspend fun createConversation(title: String, userIds: List<String>): Long {
+        return conversationRepository.createConversation(title, userIds)
     }
 
     suspend fun getConversationMessages(
@@ -97,11 +109,43 @@ class CoreManager : KoinComponent {
         conversationRepository.streamConversations()
     }
 
+    suspend fun leaveConversation(conversationId: Long): Result<Boolean> {
+        return conversationRepository.leaveConversation(conversationId)
+    }
+
+    suspend fun removeConversationParticipants(
+        conversationId: Long,
+        userIds: List<String>,
+    ): Result<Boolean> {
+        return conversationRepository.removeParticipants(conversationId, userIds)
+    }
+
+    suspend fun addConversationParticipants(
+        conversationId: Long,
+        userIds: List<String>,
+    ): Result<Boolean> {
+        return conversationRepository.addParticipants(conversationId, userIds)
+    }
+
+    suspend fun makeConversationAdmin(
+        conversationId: Long,
+        userId: String,
+    ): Result<Boolean> {
+        return conversationRepository.makeConversationAdmin(conversationId, userId)
+    }
+
+    suspend fun updateConversation(
+        conversationId: Long,
+        title: String,
+    ): Result<Conversation> {
+        return conversationRepository.updateConversation(conversationId, title)
+    }
+
     suspend fun updateMessageStatus(conversationId: Long, messageId: Long) {
         conversationRepository.updateMessageStatus(conversationId, messageId)
     }
 
-    suspend fun forceUpdateConversation(conversation: Conversation) {
+    suspend fun forceUpdateConversationMessage(conversation: Conversation) {
         conversation.messages.filterIndexed { _, message ->
             message.status == MessageStatus.SENDING && message.createdAt.minus(Clock.System.now()) > 5.minutes
         }.let { messages ->

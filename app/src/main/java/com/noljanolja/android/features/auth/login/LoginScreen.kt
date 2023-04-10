@@ -6,23 +6,20 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.TextField
 import androidx.compose.material3.*
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -33,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.d2brothers.firebase_auth.AuthSdk
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.handleError
 import com.noljanolja.android.features.auth.common.component.EmailAndPassword
@@ -56,16 +52,10 @@ fun LoginScreen(
     val countryCode = savedStateHandle.get<String>("countryCode")
     val context = LocalContext.current
     viewModel.handleError()
-    val email by viewModel.emailFlow.collectAsStateWithLifecycle()
-    val password by viewModel.passwordFlow.collectAsStateWithLifecycle()
-    val emailError by viewModel.emailError.collectAsStateWithLifecycle()
-    val passwordError by viewModel.passwordError.collectAsStateWithLifecycle()
-    val googleLauncher = rememberAuthLauncher {
-//        viewModel.handleLoginWithGoogleFromIntent(it)
-    }
-    val naverLauncher = rememberAuthLauncher {
-//        viewModel.handleLoginWithNaverFromIntent(it)
-    }
+//    val email by viewModel.emailFlow.collectAsStateWithLifecycle()
+//    val password by viewModel.passwordFlow.collectAsStateWithLifecycle()
+//    val emailError by viewModel.emailError.collectAsStateWithLifecycle()
+//    val passwordError by viewModel.passwordError.collectAsStateWithLifecycle()
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
 
     when (uiState) {
@@ -82,17 +72,7 @@ fun LoginScreen(
         else -> {
             LoginContent(
                 countryCode = countryCode,
-                email = email,
-                password = password,
-                emailError = emailError,
-                passwordError = passwordError,
                 handleEvent = viewModel::handleEvent,
-                onLoginGoogle = {
-                    AuthSdk.authenticateGoogle(context, googleLauncher)
-                },
-                onLoginNaver = {
-                    AuthSdk.authenticateNaver(context, naverLauncher)
-                },
             )
         }
     }
@@ -101,13 +81,7 @@ fun LoginScreen(
 @Composable
 private fun LoginContent(
     countryCode: String?,
-    email: String,
-    password: String,
-    emailError: Throwable?,
-    passwordError: Throwable?,
     handleEvent: (LoginEvent) -> Unit,
-    onLoginGoogle: () -> Unit,
-    onLoginNaver: () -> Unit,
 ) {
     val country by remember {
         mutableStateOf(
@@ -122,7 +96,7 @@ private fun LoginContent(
 
     Column(
         modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.Start,
     ) {
         LoginPhoneContent(
             country = country,
@@ -143,47 +117,6 @@ private fun LoginContent(
                 }
             }
         )
-//    LoginEmailContent(
-//        email = email,
-//        password = password,
-//        emailError = emailError,
-//        passwordError = passwordError,
-//        handleEvent = handleEvent
-//    )
-
-//        Row(verticalAlignment = Alignment.CenterVertically) {
-//            Divider(
-//                color = MaterialTheme.colorScheme.onBackground,
-//                thickness = 1.dp,
-//                modifier = Modifier.weight(1F),
-//            )
-//            Text(
-//                stringResource(id = R.string.auth_login_with_SNS),
-//                modifier = Modifier.padding(24.dp),
-//                style = TextStyle(
-//                    fontSize = 12.sp,
-//                    color = MaterialTheme.colorScheme.outline,
-//                ),
-//            )
-//            Divider(
-//                color = MaterialTheme.colorScheme.onBackground,
-//                thickness = 1.dp,
-//                modifier = Modifier.weight(1F),
-//            )
-//        }
-
-//        Row {
-//        LoginSNSButton(painter = painterResource(id = R.drawable.kakao), onClick = {
-//            handleEvent(LoginEvent.LoginKakao)
-//        })
-//        Spacer(modifier = Modifier.width(24.dp))
-//        LoginSNSButton(painter = painterResource(id = R.drawable.naver), onClick = onLoginNaver)
-//        Spacer(modifier = Modifier.width(24.dp))
-//            LoginSNSButton(
-//                painter = painterResource(id = R.drawable.google),
-//                onClick = onLoginGoogle,
-//            )
-//        }
         Spacer(modifier = Modifier.weight(1F))
     }
 
@@ -254,6 +187,7 @@ private fun ColumnScope.LoginEmailContent(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ColumnScope.LoginPhoneContent(
     country: Country,
@@ -270,41 +204,53 @@ private fun ColumnScope.LoginPhoneContent(
         openCountryList.invoke()
     }
     Text(
-        stringResource(R.string.login_title),
-        modifier = Modifier.fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, top = 32.dp, bottom = 24.dp),
-        style = MaterialTheme.typography.titleLarge
+        stringResource(id = R.string.common_login),
+        style = MaterialTheme.typography.displaySmall
     )
+    Text(
+        stringResource(R.string.login_phone_description),
+        modifier = Modifier.fillMaxWidth(),
+        style = MaterialTheme.typography.bodyMedium
+    )
+    Spacer(modifier = Modifier.height(15.dp))
 
-    Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+    Row(modifier = Modifier.fillMaxWidth()) {
         TextField(
             modifier = Modifier.width(80.dp),
             value = "${country.getFlagEmoji()} +${country.phoneCode}",
             onValueChange = { },
             singleLine = true,
             readOnly = true,
-            textStyle = LocalTextStyle.current.copy(color = LocalContentColor.current),
-            interactionSource = countryInteractionSource
+            textStyle = MaterialTheme.typography.bodyMedium,
+            interactionSource = countryInteractionSource,
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color.Transparent
+            )
         )
 
         TextField(
             modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
             value = phone,
             onValueChange = onChangePhone,
-            textStyle = LocalTextStyle.current.copy(color = LocalContentColor.current),
+            textStyle = MaterialTheme.typography.bodyMedium,
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Phone,
                 imeAction = ImeAction.Done
             ),
-            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus(true) })
+            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus(true) }),
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color.Transparent
+            )
         )
     }
+    Spacer(modifier = Modifier.weight(1F))
     LoginButton(
         modifier = Modifier.padding(top = 28.dp),
         isEnable = phone.isNotBlank(),
         onClick = onSubmit
     )
+    Spacer(modifier = Modifier.weight(1F))
 }
 
 @Composable
@@ -340,25 +286,5 @@ private fun rememberAuthLauncher(
 ): ManagedActivityResultLauncher<Intent, ActivityResult> {
     return rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         handleAuthResult(result.data)
-    }
-}
-
-@Composable
-private fun LoginSNSButton(
-    painter: Painter,
-    onClick: () -> Unit,
-) {
-    OutlinedButton(
-        onClick = onClick,
-        modifier = Modifier.size(42.dp),
-        shape = CircleShape,
-        contentPadding = PaddingValues(0.dp),
-        border = BorderStroke(0.dp, Color.Transparent),
-    ) {
-        Image(
-            painter = painter,
-            modifier = Modifier.size(42.dp),
-            contentDescription = null,
-        )
     }
 }

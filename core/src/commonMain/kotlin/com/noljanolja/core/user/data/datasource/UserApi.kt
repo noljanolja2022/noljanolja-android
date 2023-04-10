@@ -5,7 +5,7 @@ import com.noljanolja.core.user.data.model.request.PushTokensRequest
 import com.noljanolja.core.user.data.model.request.SyncUserContactsRequest
 import com.noljanolja.core.user.data.model.request.UpdateUserRequest
 import com.noljanolja.core.user.data.model.response.GetMeResponse
-import com.noljanolja.core.user.data.model.response.SyncUserContactsResponse
+import com.noljanolja.core.user.data.model.response.GetUsersResponse
 import com.noljanolja.core.user.data.model.response.UpdateUserResponse
 import com.noljanolja.core.utils.Const.BASE_URL
 import io.ktor.client.*
@@ -24,7 +24,7 @@ class UserApi(private val client: HttpClient) {
         }.body()
     }
 
-    suspend fun syncUserContacts(request: SyncUserContactsRequest): SyncUserContactsResponse {
+    suspend fun syncUserContacts(request: SyncUserContactsRequest): GetUsersResponse {
         return client.post("$BASE_URL/users/me/contacts") {
             setBody(request)
         }.body()
@@ -36,7 +36,11 @@ class UserApi(private val client: HttpClient) {
         }.body()
     }
 
-    suspend fun getFriends(): SyncUserContactsResponse {
-        return client.get("$BASE_URL/users/me/contacts").body()
+    suspend fun getContacts(page: Int): GetUsersResponse {
+        return client.get("$BASE_URL/users/me/contacts?page=$page").body()
+    }
+
+    suspend fun findContacts(text: String): GetUsersResponse {
+        return client.get("$BASE_URL/users?phoneNumber=$text").body()
     }
 }

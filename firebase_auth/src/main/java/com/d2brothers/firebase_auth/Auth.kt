@@ -90,7 +90,7 @@ internal class Auth(
             getIdToken().let {
                 Result.success(it!!)
             }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             Result.failure(e)
         }
     }
@@ -105,7 +105,7 @@ internal class Auth(
             getIdToken().let {
                 Result.success(it!!)
             }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             Result.failure(e)
         }
     }
@@ -116,7 +116,7 @@ internal class Auth(
             getIdToken().let {
                 Result.success(it!!)
             }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             Result.failure(e)
         }
     }
@@ -181,7 +181,7 @@ internal class Auth(
             getIdToken().let {
                 Result.success(it!!)
             }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             Result.failure(e)
         }
     }
@@ -215,7 +215,7 @@ internal class Auth(
         return try {
             if (forceRefresh) firebaseAuth.currentUser?.reload()?.await()
             firebaseAuth.currentUser?.getIdToken(forceRefresh)?.await()?.token
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             null
         }
     }
@@ -223,7 +223,7 @@ internal class Auth(
     suspend fun getExpirationToken(): Long? {
         return try {
             firebaseAuth.currentUser?.getIdToken(false)?.await()?.expirationTimestamp
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             null
         }
     }
@@ -269,7 +269,7 @@ internal class Auth(
         getIdToken().let {
             Result.success(it!!)
         }
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         Result.failure(e)
     }
 

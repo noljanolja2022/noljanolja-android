@@ -17,7 +17,9 @@ interface UserRemoteDataSource {
 
     suspend fun syncUserContacts(contacts: List<Contact>): Result<List<User>>
 
-    suspend fun getFriends(): Result<List<User>>
+    suspend fun getContacts(page: Int): Result<List<User>>
+
+    suspend fun findContacts(phoneNumber: String): Result<List<User>>
 }
 
 class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSource {
@@ -25,7 +27,7 @@ class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSou
         return try {
             val user = userApi.getMe().data.toDomainUser()
             Result.success(user)
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             Result.failure(e)
         }
     }
@@ -48,7 +50,7 @@ class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSou
                     Result.failure(Throwable(result.message))
                 }
             }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             Result.failure(e)
         }
     }
@@ -61,7 +63,7 @@ class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSou
             } else {
                 Result.failure(Throwable(response.message))
             }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             Result.failure(e)
         }
     }
@@ -79,20 +81,33 @@ class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSou
             } else {
                 Result.failure(Throwable(response.message))
             }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             Result.failure(e)
         }
     }
 
-    override suspend fun getFriends(): Result<List<User>> {
+    override suspend fun getContacts(page: Int): Result<List<User>> {
         return try {
-            val response = userApi.getFriends()
+            val response = userApi.getContacts(page)
             if (response.isSuccessful()) {
                 Result.success(response.data.map { it.toDomainUser() })
             } else {
                 Result.failure(Throwable(response.message))
             }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun findContacts(phoneNumber: String): Result<List<User>> {
+        return try {
+            val response = userApi.findContacts(phoneNumber)
+            if (response.isSuccessful()) {
+                Result.success(response.data.map { it.toDomainUser() })
+            } else {
+                Result.failure(Throwable(response.message))
+            }
+        } catch (e: Throwable) {
             Result.failure(e)
         }
     }

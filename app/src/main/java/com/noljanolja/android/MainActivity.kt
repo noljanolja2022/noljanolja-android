@@ -17,23 +17,33 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.noljanolja.android.common.base.launchInMain
+import com.noljanolja.android.common.mobiledata.data.ContactsLoader
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.ui.theme.NoljanoljaTheme
 import com.noljanolja.core.CoreManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
     private val navigationManager: NavigationManager by inject()
 
     private val coreManager: CoreManager by inject()
-
+    private val contactsLoader: ContactsLoader by inject()
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+        syncContacts()
         setContent {
-            RequestPermissions()
+            RequestPermissions() {
+                if (it[android.Manifest.permission.READ_CONTACTS] == true) {
+                    syncContacts()
+                }
+            }
             NoljanoljaTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -42,6 +52,15 @@ class MainActivity : ComponentActivity() {
                 ) {
                     MainScreen(navigationManager)
                 }
+            }
+        }
+    }
+
+    private fun syncContacts() {
+        launchInMain {
+            withContext(Dispatchers.IO) {
+                val loadedContacts = contactsLoader.loadContacts().toList()
+                coreManager.syncUserContacts(loadedContacts)
             }
         }
     }
@@ -92,7 +111,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-private fun RequestPermissions() {
+private fun RequestPermissions(onPermissionsResult: (Map<String, Boolean>) -> Unit = {}) {
     val multiplePermissionsState = rememberMultiplePermissionsState(
         listOfNotNull(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -100,7 +119,9 @@ private fun RequestPermissions() {
             } else {
                 null
             },
-        )
+            android.Manifest.permission.READ_CONTACTS,
+        ),
+        onPermissionsResult = onPermissionsResult
     )
     LaunchedEffect(key1 = true) {
         if (!multiplePermissionsState.allPermissionsGranted) {

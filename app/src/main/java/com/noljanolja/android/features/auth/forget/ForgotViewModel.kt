@@ -37,7 +37,7 @@ class ForgotViewModel : BaseViewModel() {
                         _uiStateFlow.emit(uiState.copy(isLoading = true))
                         authSdk.sendPasswordResetEmail(uiState.email)
                         _uiStateFlow.emit(ForgotUIState.VerifyCompleted)
-                    } catch (e: Exception) {
+                    } catch (e: Throwable) {
                         _uiStateFlow.emit(uiState.copy(isLoading = false))
                         sendError(e)
                     }
