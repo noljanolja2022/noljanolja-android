@@ -95,7 +95,7 @@ internal class ConversationRepositoryImpl(
 
         if (sentConversationId != 0L) {
             val sendingMessage = message.copy(
-                sender = userRepository.getCurrentUser().getOrNull()!!,
+                sender = localUserDataSource.findMe()!!,
                 status = MessageStatus.SENDING,
             )
             localConversationDataSource.upsertConversationMessages(

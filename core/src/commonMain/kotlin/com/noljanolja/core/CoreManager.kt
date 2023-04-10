@@ -158,8 +158,11 @@ class CoreManager : KoinComponent {
         }
     }
 
-    suspend fun getCurrentUser(forceRefresh: Boolean = false): Result<User> {
-        return userRepository.getCurrentUser(forceRefresh)
+    suspend fun getCurrentUser(
+        forceRefresh: Boolean = false,
+        onlyLocal: Boolean = false,
+    ): Result<User> {
+        return userRepository.getCurrentUser(forceRefresh, onlyLocal)
     }
 
     suspend fun pushTokens(token: String): Result<Boolean> {

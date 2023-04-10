@@ -22,19 +22,24 @@ internal class UserRepositoryImpl(
 ) : UserRepository {
 
     // Remote
-    override suspend fun getCurrentUser(forceRefresh: Boolean): Result<User> {
+    override suspend fun getCurrentUser(
+        forceRefresh: Boolean,
+        onlyLocal: Boolean,
+    ): Result<User> {
         val currentUser = localUserDataSource.findMe()
-        return if (currentUser != null && !forceRefresh) {
-            Result.success(currentUser)
-        } else {
-            userRemoteDataSource.getMe().also {
-                it.getOrNull()?.let {
-                    localUserDataSource.upsert(it.apply { isMe = true })
-                    authRepository.getPushToken()?.let {
-                        pushTokens(it)
+        return when {
+            currentUser != null -> Result.success(currentUser)
+            forceRefresh || !onlyLocal -> {
+                userRemoteDataSource.getMe().also {
+                    it.getOrNull()?.let {
+                        localUserDataSource.upsert(it.apply { isMe = true })
+                        authRepository.getPushToken()?.let {
+                            pushTokens(it)
+                        }
                     }
                 }
             }
+            else -> Result.failure(Throwable("Cannot get user"))
         }
     }
 
