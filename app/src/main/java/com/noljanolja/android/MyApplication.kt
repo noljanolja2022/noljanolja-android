@@ -91,6 +91,9 @@ class MyApplication : Application() {
                     job?.cancel()
                     job = launchInMainIO {
                         while (true) {
+                            if (coreManager.getCurrentUser().getOrNull() == null) {
+                                delay(15.minutes)
+                            }
                             val now = Clock.System.now()
                             val expirationTime =
                                 authSdk.getExpiration()?.let { Instant.fromEpochSeconds(it) }

@@ -8,7 +8,7 @@ internal interface UserRepository {
     suspend fun pushTokens(token: String): Result<Boolean>
 
     // Phone
-    suspend fun verifyOTPCode(verificationId: String, otp: String): Result<User>
+    suspend fun verifyOTPCode(verificationId: String, otp: String): Result<String>
 
 //    // Google
 //    suspend fun getAccountFromGoogleIntent(data: Intent?): Result<User>

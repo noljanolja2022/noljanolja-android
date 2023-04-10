@@ -167,7 +167,7 @@ class CoreManager : KoinComponent {
         return userRepository.pushTokens(token)
     }
 
-    suspend fun verifyOTPCode(verificationId: String, otp: String): Result<User> {
+    suspend fun verifyOTPCode(verificationId: String, otp: String): Result<String> {
         return userRepository.verifyOTPCode(verificationId, otp)
     }
 

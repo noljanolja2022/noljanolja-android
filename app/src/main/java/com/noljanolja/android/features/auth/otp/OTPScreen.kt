@@ -32,6 +32,12 @@ fun OTPScreen(
     phone: String,
     viewModel: OTPViewModel = getViewModel(),
 ) {
+    val context = LocalContext.current
+    LaunchedEffect(key1 = viewModel.errorFlow, block = {
+        viewModel.errorFlow.collect {
+            context.showToast(it.message)
+        }
+    })
     val otpUIState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     OTPScreenContent(
         otpUIState = otpUIState,

@@ -162,7 +162,7 @@ internal class ConversationRepositoryImpl(
         Logger.e("Stream start")
         job?.cancel()
         job = scope.launch {
-            val me = userRepository.getCurrentUser().getOrNull() ?: return@launch
+            val me = localUserDataSource.findMe() ?: return@launch
             conversationApi.streamConversations()
                 .collect {
                     if (me.isRemoveFromConversation(it)) {

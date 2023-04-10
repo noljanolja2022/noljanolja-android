@@ -67,7 +67,7 @@ android {
             firebaseAppDistribution {
                 artifactType = "APK"
                 serviceCredentialsFile = "key/key_distributor.json"
-                releaseNotes = "Release group conversation"
+                releaseNotes =  "Release edit group chat"
                 testers =
                     "doduchieu.kstn@gmail.com, itanchi.dev@gmail.com, sangjin.d.han@gmail.com, sangjin.han@ppnyy.com, tiaddeeps@gmail.com"
             }

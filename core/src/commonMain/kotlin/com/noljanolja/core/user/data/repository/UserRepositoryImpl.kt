@@ -47,9 +47,8 @@ internal class UserRepositoryImpl(
 
     // Firebase
 
-    override suspend fun verifyOTPCode(verificationId: String, otp: String): Result<User> {
-        val result = authDataSource.verifyOTPCode(verificationId, otp)
-        return handleResult(result)
+    override suspend fun verifyOTPCode(verificationId: String, otp: String): Result<String> {
+        return authDataSource.verifyOTPCode(verificationId, otp)
     }
 
     // Google
