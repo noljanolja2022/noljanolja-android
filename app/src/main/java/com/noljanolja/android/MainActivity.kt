@@ -15,9 +15,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
+import com.d2brothers.firebase_auth.AuthSdk
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.noljanolja.android.common.base.launchInMain
+import com.noljanolja.android.common.base.launchInMainIO
 import com.noljanolja.android.common.mobiledata.data.ContactsLoader
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
@@ -34,6 +35,8 @@ class MainActivity : ComponentActivity() {
 
     private val coreManager: CoreManager by inject()
     private val contactsLoader: ContactsLoader by inject()
+    private val authSdk: AuthSdk by inject()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -57,7 +60,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun syncContacts() {
-        launchInMain {
+        launchIfLogin {
             withContext(Dispatchers.IO) {
                 val loadedContacts = contactsLoader.loadContacts().toList()
                 coreManager.syncUserContacts(loadedContacts)
@@ -74,6 +77,11 @@ class MainActivity : ComponentActivity() {
                 )
             )
         }
+    }
+
+    fun launchIfLogin(block: suspend () -> Unit) = launchInMainIO {
+        authSdk.getIdToken(false)?.takeIf { it.isNotBlank() } ?: return@launchInMainIO
+        block.invoke()
     }
 
     companion object {

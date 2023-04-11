@@ -3,12 +3,15 @@ package com.noljanolja.core.user.domain.repository
 import com.noljanolja.core.user.domain.model.User
 
 internal interface UserRepository {
-    suspend fun getCurrentUser(forceRefresh: Boolean = false): Result<User>
+    suspend fun getCurrentUser(
+        forceRefresh: Boolean = false,
+        onlyLocal: Boolean = false,
+    ): Result<User>
 
     suspend fun pushTokens(token: String): Result<Boolean>
 
     // Phone
-    suspend fun verifyOTPCode(verificationId: String, otp: String): Result<User>
+    suspend fun verifyOTPCode(verificationId: String, otp: String): Result<String>
 
 //    // Google
 //    suspend fun getAccountFromGoogleIntent(data: Intent?): Result<User>

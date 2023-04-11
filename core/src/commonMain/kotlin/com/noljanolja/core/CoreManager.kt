@@ -158,8 +158,11 @@ class CoreManager : KoinComponent {
         }
     }
 
-    suspend fun getCurrentUser(forceRefresh: Boolean = false): Result<User> {
-        return userRepository.getCurrentUser(forceRefresh)
+    suspend fun getCurrentUser(
+        forceRefresh: Boolean = false,
+        onlyLocal: Boolean = false,
+    ): Result<User> {
+        return userRepository.getCurrentUser(forceRefresh, onlyLocal)
     }
 
     suspend fun pushTokens(token: String): Result<Boolean> {
@@ -167,7 +170,7 @@ class CoreManager : KoinComponent {
         return userRepository.pushTokens(token)
     }
 
-    suspend fun verifyOTPCode(verificationId: String, otp: String): Result<User> {
+    suspend fun verifyOTPCode(verificationId: String, otp: String): Result<String> {
         return userRepository.verifyOTPCode(verificationId, otp)
     }
 

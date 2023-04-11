@@ -95,7 +95,7 @@ internal class ConversationRepositoryImpl(
 
         if (sentConversationId != 0L) {
             val sendingMessage = message.copy(
-                sender = userRepository.getCurrentUser().getOrNull()!!,
+                sender = localUserDataSource.findMe()!!,
                 status = MessageStatus.SENDING,
             )
             localConversationDataSource.upsertConversationMessages(
@@ -162,7 +162,7 @@ internal class ConversationRepositoryImpl(
         Logger.e("Stream start")
         job?.cancel()
         job = scope.launch {
-            val me = userRepository.getCurrentUser().getOrNull() ?: return@launch
+            val me = localUserDataSource.findMe() ?: return@launch
             conversationApi.streamConversations()
                 .collect {
                     if (me.isRemoveFromConversation(it)) {

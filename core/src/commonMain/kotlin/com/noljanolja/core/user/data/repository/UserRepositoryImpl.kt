@@ -22,19 +22,24 @@ internal class UserRepositoryImpl(
 ) : UserRepository {
 
     // Remote
-    override suspend fun getCurrentUser(forceRefresh: Boolean): Result<User> {
+    override suspend fun getCurrentUser(
+        forceRefresh: Boolean,
+        onlyLocal: Boolean,
+    ): Result<User> {
         val currentUser = localUserDataSource.findMe()
-        return if (currentUser != null && !forceRefresh) {
-            Result.success(currentUser)
-        } else {
-            userRemoteDataSource.getMe().also {
-                it.getOrNull()?.let {
-                    localUserDataSource.upsert(it.apply { isMe = true })
-                    authRepository.getPushToken()?.let {
-                        pushTokens(it)
+        return when {
+            currentUser != null -> Result.success(currentUser)
+            forceRefresh || !onlyLocal -> {
+                userRemoteDataSource.getMe().also {
+                    it.getOrNull()?.let {
+                        localUserDataSource.upsert(it.apply { isMe = true })
+                        authRepository.getPushToken()?.let {
+                            pushTokens(it)
+                        }
                     }
                 }
             }
+            else -> Result.failure(Throwable("Cannot get user"))
         }
     }
 
@@ -47,9 +52,8 @@ internal class UserRepositoryImpl(
 
     // Firebase
 
-    override suspend fun verifyOTPCode(verificationId: String, otp: String): Result<User> {
-        val result = authDataSource.verifyOTPCode(verificationId, otp)
-        return handleResult(result)
+    override suspend fun verifyOTPCode(verificationId: String, otp: String): Result<String> {
+        return authDataSource.verifyOTPCode(verificationId, otp)
     }
 
     // Google

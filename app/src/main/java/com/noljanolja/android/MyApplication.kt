@@ -91,6 +91,9 @@ class MyApplication : Application() {
                     job?.cancel()
                     job = launchInMainIO {
                         while (true) {
+                            if (coreManager.getCurrentUser(onlyLocal = true).getOrNull() == null) {
+                                delay(15.minutes)
+                            }
                             val now = Clock.System.now()
                             val expirationTime =
                                 authSdk.getExpiration()?.let { Instant.fromEpochSeconds(it) }
@@ -127,7 +130,7 @@ class MyApplication : Application() {
         }
     }
 
-    private fun launchIfLogin(block: suspend () -> Unit) = launchInMainIO {
+    fun launchIfLogin(block: suspend () -> Unit) = launchInMainIO {
         authSdk.getIdToken(false)?.takeIf { it.isNotBlank() } ?: return@launchInMainIO
         block.invoke()
     }

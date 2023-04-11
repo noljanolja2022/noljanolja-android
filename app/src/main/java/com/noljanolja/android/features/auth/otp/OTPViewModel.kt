@@ -1,10 +1,10 @@
 package com.noljanolja.android.features.auth.otp
 
+import co.touchlab.kermit.Logger
 import com.d2brothers.firebase_auth.AuthSdk
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
-import com.noljanolja.core.user.domain.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,25 +25,28 @@ class OTPViewModel : BaseViewModel() {
                 }
                 is OTPEvent.VerifyOTP -> {
                     val result = coreManager.verifyOTPCode(event.verificationId, event.otp)
+                    Logger.e("VerifyOTP $result")
+
                     authSdk.getIdToken(true)?.let {
                         coreManager.saveAuthToken(it)
-                        handleAuthResult(result)
+                        handleAuthResult()
                     }
                 }
             }
         }
     }
 
-    private fun handleAuthResult(result: Result<User>?) {
+    private fun handleAuthResult() {
         launch {
-            result?.getOrNull()?.let { user ->
+            val result = coreManager.getCurrentUser(true)
+            result.getOrNull()?.let { user ->
                 if (user.name.isNullOrBlank()) {
                     navigationManager.navigate(NavigationDirections.UpdateProfile)
                 } else {
                     navigationManager.navigate(NavigationDirections.Home)
                 }
                 coreManager.pushToken()
-            } ?: result?.exceptionOrNull()?.let {
+            } ?: result.exceptionOrNull()?.let {
                 sendError(it)
                 _uiStateFlow.emit(OTPUIState(error = it))
             }
