@@ -42,7 +42,10 @@ internal interface ConversationRepository {
         messages: List<Message>,
     )
 
-    suspend fun streamConversations()
+    suspend fun streamConversations(
+        token: String? = null,
+        onError: suspend (Throwable, String?) -> Unit,
+    )
 
     suspend fun leaveConversation(conversationId: Long): Result<Boolean>
 

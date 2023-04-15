@@ -1,6 +1,5 @@
 package com.noljanolja.core
 
-import co.touchlab.kermit.Logger
 import com.noljanolja.core.auth.domain.repository.AuthRepository
 import com.noljanolja.core.contacts.domain.model.Contact
 import com.noljanolja.core.contacts.domain.repository.ContactsRepository
@@ -13,6 +12,7 @@ import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.user.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -30,20 +30,9 @@ class CoreManager : KoinComponent {
     private val mediaRepository: MediaRepository by inject()
 
     private val scope = CoroutineScope(Dispatchers.Default)
+    private var streamJob: Job? = null
 
     var timeSaveToken: Instant? = null
-
-    init {
-        scope.launch {
-            authRepository.getAuthToken()
-                .catch {
-                    Logger.e(it) { "Collect token error ${it.message}" }
-                }
-                .collect {
-                    it?.let { streamConversation() }
-                }
-        }
-    }
 
     fun getRemovedConversationEvent() = conversationRepository.removedConversationEvent
 
@@ -70,7 +59,12 @@ class CoreManager : KoinComponent {
     }
 
     suspend fun getConversations(): Flow<List<Conversation>> {
-        return conversationRepository.getConversations()
+        val conversationsFlow = conversationRepository.getConversations()
+        streamJob?.cancel()
+        streamJob = scope.launch {
+            streamConversations(null, ::onStreamError)
+        }
+        return conversationsFlow
     }
 
     suspend fun forceRefreshConversations() = conversationRepository.forceRefreshConversations()
@@ -105,8 +99,18 @@ class CoreManager : KoinComponent {
         )
     }
 
-    suspend fun streamConversation() {
-        conversationRepository.streamConversations()
+    private suspend fun streamConversations(
+        token: String? = null,
+        onError: suspend (Throwable, String?) -> Unit,
+    ) {
+        conversationRepository.streamConversations(token, onError)
+    }
+
+    private suspend fun onStreamError(error: Throwable, newToken: String?) {
+        streamJob?.cancel()
+        streamJob = scope.launch {
+            streamConversations(newToken, ::onStreamError)
+        }
     }
 
     suspend fun leaveConversation(conversationId: Long): Result<Boolean> {

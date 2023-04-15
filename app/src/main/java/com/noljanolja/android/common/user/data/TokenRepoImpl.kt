@@ -12,9 +12,9 @@ class TokenRepoImpl(
         return coreManager.getAuthToken()
     }
 
-    override suspend fun refreshToken() {
-        coreManager.saveAuthToken(
-            authSdk.getIdToken(true).orEmpty()
-        )
+    override suspend fun refreshToken(): String? {
+        return authSdk.getIdToken(true).also {
+            coreManager.saveAuthToken(it.orEmpty())
+        }
     }
 }

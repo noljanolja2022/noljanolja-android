@@ -31,27 +31,34 @@ import kotlinx.coroutines.flow.map
 
 class SocketManager(private val engine: HttpClientEngine, private val tokenRepo: TokenRepo) {
     @OptIn(ExperimentalMetadataApi::class)
-    suspend fun streamConversations(): Flow<String> {
+    suspend fun streamConversations(
+        token: String? = null,
+        onError: suspend (error: Throwable, newToken: String?) -> Unit,
+    ): Flow<String> {
         val rSocket: RSocket = getDefaultSocket(engine, tokenRepo).rSocket(BASE_SOCKET_URL)
         // request stream
-        return tokenRepo.getToken().takeIf { !it.isNullOrBlank() }?.let { token ->
+        val streamToken = token ?: tokenRepo.getToken().takeIf { !it.isNullOrBlank() }
+        return streamToken?.let { streamToken ->
             val stream: Flow<Payload> = rSocket.requestStream(
                 buildPayload {
                     data("""{ "data": "hello world" }""")
                     metadata(
                         CompositeMetadata(
                             RoutingMetadata("v1/conversations"),
-                            BearerAuthMetadata("Bearer $token")
+                            BearerAuthMetadata("Bearer $streamToken")
                         )
                     )
                 }
-            ).catch {
-                Logger.e(it) {
-                    "Stream catch error $it"
+            ).catch { error ->
+                Logger.e(error) {
+                    "Stream error catch $error"
                 }
-                if (it.message?.contains("Unauthorized") == true) {
+                val newToken = if (error.message?.contains("Unauthorized") == true) {
                     tokenRepo.refreshToken()
+                } else {
+                    null
                 }
+                onError.invoke(error, newToken)
             }
             stream.map {
                 Logger.d("Stream success}")
@@ -82,15 +89,8 @@ private fun getDefaultSocket(engine: HttpClientEngine, tokenRepo: TokenRepo) = H
                 }
             }
             reconnectable { error, attempt ->
-                Logger.d("Stream reconnect")
                 Logger.e(error) {
                     "Stream error reconnect $error"
-                }
-                Logger.e(error) {
-                    "Stream error reconnect message: ${error.message}"
-                }
-                if (error.message?.contains("Unauthorized") == true) {
-                    tokenRepo.refreshToken()
                 }
                 attempt <= 3
             }

@@ -38,11 +38,11 @@ android {
     }
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.0"
@@ -67,7 +67,7 @@ android {
             firebaseAppDistribution {
                 artifactType = "APK"
                 serviceCredentialsFile = "key/key_distributor.json"
-                releaseNotes =  "Release edit group chat"
+                releaseNotes = "Release edit group chat"
                 testers =
                     "doduchieu.kstn@gmail.com, itanchi.dev@gmail.com, sangjin.d.han@gmail.com, sangjin.han@ppnyy.com, tiaddeeps@gmail.com"
             }

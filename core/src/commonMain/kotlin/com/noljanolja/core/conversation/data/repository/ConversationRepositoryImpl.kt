@@ -158,12 +158,15 @@ internal class ConversationRepositoryImpl(
         }
     }
 
-    override suspend fun streamConversations() {
+    override suspend fun streamConversations(
+        token: String?,
+        onError: suspend (Throwable, String?) -> Unit,
+    ) {
         Logger.e("Stream start")
         job?.cancel()
         job = scope.launch {
             val me = localUserDataSource.findMe() ?: return@launch
-            conversationApi.streamConversations()
+            conversationApi.streamConversations(token, onError)
                 .collect {
                     if (me.isRemoveFromConversation(it)) {
                         Logger.e("Receive: Stream and remove${it.participants.map { it.name }}")

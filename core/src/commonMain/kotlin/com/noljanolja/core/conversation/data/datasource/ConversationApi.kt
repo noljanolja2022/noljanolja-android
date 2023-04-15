@@ -65,6 +65,7 @@ class ConversationApi(
                                     )
                                 }
                             }
+
                             else -> {}
                         }
                     },
@@ -92,8 +93,11 @@ class ConversationApi(
         }.body()
     }
 
-    suspend fun streamConversations(): Flow<Conversation> {
-        return socketManager.streamConversations().map {
+    suspend fun streamConversations(
+        token: String? = null,
+        onError: suspend (Throwable, String?) -> Unit,
+    ): Flow<Conversation> {
+        return socketManager.streamConversations(token, onError).map {
             Json.default().decodeFromString(it)
         }
     }

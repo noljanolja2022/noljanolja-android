@@ -52,23 +52,17 @@ import com.noljanolja.core.service.ktor.KtorClient
 import com.noljanolja.core.service.ktor.KtorConfig
 import com.noljanolja.core.user.data.datasource.AuthDataSource
 import com.noljanolja.socket.TokenRepo
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import okhttp3.OkHttpClient
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
-import kotlin.time.Duration.Companion.minutes
 
 class MyApplication : Application() {
 
     private val okHttpClient: OkHttpClient by inject(named("Coil"))
     private val coreManager: CoreManager by inject()
     private val authSdk: AuthSdk by inject()
-    private var job: Job? = null
 
     companion object {
         var isAppInForeground: Boolean = false
@@ -86,44 +80,16 @@ class MyApplication : Application() {
                     Logger.d("Noljanolja: foregrounded: ${ProcessLifecycleOwner.get().lifecycle.currentState.name}")
                     launchIfLogin {
                         coreManager.forceRefreshConversations()
-                        coreManager.streamConversation()
-                    }
-                    job?.cancel()
-                    job = launchInMainIO {
-                        while (true) {
-                            if (coreManager.getCurrentUser(onlyLocal = true).getOrNull() == null) {
-                                delay(15.minutes)
-                            }
-                            val now = Clock.System.now()
-                            val expirationTime =
-                                authSdk.getExpiration()?.let { Instant.fromEpochSeconds(it) }
-                            if (coreManager.timeSaveToken != null && expirationTime != null) {
-                                val delayTime = minOf(
-                                    expirationTime.takeIf { it > now }?.minus(now) ?: 0.minutes,
-                                    (15.minutes - now.minus(coreManager.timeSaveToken!!)).takeIf { it > 0.minutes }
-                                        ?: 0.minutes,
-                                )
-                                delay(delayTime)
-                            }
-                            authSdk.getIdToken(true)?.let { token ->
-                                Logger.d("Refresh Token $token")
-                                coreManager.saveAuthToken(token)
-                            }
-                        }
                     }
                 }
 
                 override fun onStop(owner: LifecycleOwner) {
                     isAppInForeground = false
-                    job?.cancel()
-                    job = null
                     Logger.d("Noljanolja: backgrounded: ${ProcessLifecycleOwner.get().lifecycle.currentState.name}")
                 }
 
                 override fun onDestroy(owner: LifecycleOwner) {
                     super.onDestroy(owner)
-                    job?.cancel()
-                    job = null
                     coreManager.onDestroy()
                 }
             })
