@@ -1,16 +1,20 @@
 package com.noljanolja.android.features.splash
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
@@ -34,7 +38,7 @@ fun SplashScreen(
             stringResource(id = R.string.welcome_noljanolja),
             modifier = Modifier.padding(horizontal = 47.dp),
             style = with(MaterialTheme) {
-                typography.bodyLarge.copy(colorScheme.onPrimary)
+                typography.titleMedium.copy(colorScheme.onPrimary)
             },
             textAlign = TextAlign.Center,
         )
@@ -51,7 +55,26 @@ fun SplashScreen(
                 viewModel.handleEvent(SplashEvent.Continue)
             }
         } else {
-            Spacer(modifier = Modifier.height(50.dp))
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .padding(horizontal = 63.dp)
+                    .fillMaxWidth()
+                    .height(4.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                color = MaterialTheme.colorScheme.onBackground,
+                trackColor = MaterialTheme.colorScheme.background,
+            )
+            Spacer(modifier = Modifier.height(7.dp))
+            Text(
+                stringResource(id = R.string.splash_wait),
+                style = MaterialTheme.typography.labelMedium
+            )
         }
     }
+}
+
+@Preview
+@Composable
+fun SplashScreenPreview() {
+    SplashScreen()
 }

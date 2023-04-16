@@ -28,11 +28,11 @@ sealed class HomeNavigationItem(
         R.string.home_events,
     )
 
-    object PlayItem : HomeNavigationItem(
+    object WalletItem : HomeNavigationItem(
         NavigationDirections.PlayItem.destination,
         Icons.Filled.AccountBalanceWallet,
         Icons.Outlined.AccountBalanceWallet,
-        R.string.home_contents,
+        R.string.home_wallet,
     )
 
     object StoreItem : HomeNavigationItem(
@@ -42,10 +42,10 @@ sealed class HomeNavigationItem(
         R.string.home_shop,
     )
 
-    object UserItem : HomeNavigationItem(
+    object NewsItem : HomeNavigationItem(
         NavigationDirections.UserItem.destination,
         Icons.Filled.Event,
         Icons.Outlined.Event,
-        R.string.home_person,
+        R.string.home_news,
     )
 }

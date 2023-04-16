@@ -15,9 +15,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.noljanolja.android.features.home.conversations.ConversationsScreen
-import com.noljanolja.android.features.home.mypage.MyPageScreen
 import com.noljanolja.android.features.home.utils.click
 import com.noljanolja.android.features.home.utils.isNavItemSelect
+import com.noljanolja.android.features.home.wallet.WalletScreen
 import com.noljanolja.android.ui.composable.FullSizeUnderConstruction
 import com.noljanolja.android.util.getErrorMessage
 import com.noljanolja.android.util.showToast
@@ -62,14 +62,14 @@ private fun NavGraphBuilder.addNavigationGraph() {
     composable(HomeNavigationItem.CelebrationItem.route) {
         FullSizeUnderConstruction()
     }
-    composable(HomeNavigationItem.PlayItem.route) {
-        FullSizeUnderConstruction()
+    composable(HomeNavigationItem.WalletItem.route) {
+        WalletScreen()
     }
     composable(HomeNavigationItem.StoreItem.route) {
         FullSizeUnderConstruction()
     }
-    composable(HomeNavigationItem.UserItem.route) {
-        MyPageScreen()
+    composable(HomeNavigationItem.NewsItem.route) {
+        FullSizeUnderConstruction()
     }
 }
 
@@ -80,9 +80,9 @@ fun HomeBottomBar(
     val items = listOf(
         HomeNavigationItem.ChatItem,
         HomeNavigationItem.CelebrationItem,
-        HomeNavigationItem.PlayItem,
+        HomeNavigationItem.WalletItem,
         HomeNavigationItem.StoreItem,
-        HomeNavigationItem.UserItem,
+        HomeNavigationItem.NewsItem,
     )
     NavigationBar(
         tonalElevation = 0.dp,

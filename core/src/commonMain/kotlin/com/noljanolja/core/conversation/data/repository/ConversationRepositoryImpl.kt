@@ -169,14 +169,9 @@ internal class ConversationRepositoryImpl(
             conversationApi.streamConversations(token, onError)
                 .collect {
                     if (me.isRemoveFromConversation(it)) {
-                        Logger.e("Receive: Stream and remove${it.participants.map { it.name }}")
-                        Logger.e("Receive: Stream and remove ${it.messages.firstOrNull()?.leftParticipants?.map { it.name }}")
                         localConversationDataSource.deleteById(it.id)
                         _removedConversationEvent.emit(it)
                     } else {
-                        Logger.e("Receive: Stream ${it.participants.map { it.name }}")
-                        Logger.e("Receive: Stream ${it.messages.firstOrNull()?.leftParticipants?.map { it.name }}")
-
                         updateLocalConversation(
                             it,
                         )

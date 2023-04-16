@@ -4,22 +4,19 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.TextField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.noljanolja.android.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NameInput(
     modifier: Modifier,
@@ -39,14 +36,17 @@ fun NameInput(
                 color = LocalContentColor.current,
             ),
             singleLine = true,
-            leadingIcon = {
-                Icon(Icons.Outlined.Person, contentDescription = null)
-            },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next,
             ),
             keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Next) }),
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color.Transparent,
+                focusedIndicatorColor = MaterialTheme.colorScheme.secondary,
+                focusedLabelColor = MaterialTheme.colorScheme.secondary,
+                cursorColor = MaterialTheme.colorScheme.secondary
+            )
         )
 
         Row(
@@ -55,10 +55,8 @@ fun NameInput(
             Text(
                 stringResource(R.string.update_profile_name_required),
                 modifier = Modifier.padding(start = 16.dp),
-                style = MaterialTheme.typography.bodySmall.copy(
-                    color = MaterialTheme.colorScheme.onSurface.copy(
-                        alpha = 0.6f
-                    )
+                style = MaterialTheme.typography.labelMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 ),
             )
 
@@ -67,10 +65,8 @@ fun NameInput(
             Text(
                 "${name.trim().length} / $maxNameLength",
                 modifier = Modifier.padding(end = 12.dp),
-                style = MaterialTheme.typography.bodySmall.copy(
-                    color = MaterialTheme.colorScheme.onSurface.copy(
-                        alpha = 0.6f
-                    )
+                style = MaterialTheme.typography.labelMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 ),
             )
         }

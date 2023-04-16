@@ -88,7 +88,7 @@ fun RoundedListTile(
             leadingDrawable?.let {
                 Icon(
                     painter = painterResource(id = it),
-                    contentDescription = "start icon",
+                    contentDescription = null,
                     modifier = Modifier.size(24.dp),
                     tint = Color.Black,
                 )
@@ -102,7 +102,7 @@ fun RoundedListTile(
             trailingDrawable?.let {
                 Icon(
                     painter = painterResource(id = it),
-                    contentDescription = "start icon",
+                    contentDescription = null,
                     modifier = Modifier.size(24.dp),
                     tint = MaterialTheme.colorScheme.onBackground,
                 )

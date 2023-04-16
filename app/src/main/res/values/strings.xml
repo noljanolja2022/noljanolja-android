@@ -40,9 +40,10 @@
     <string name="common_chat">Chat</string>
     <string name="common_admin">Admin</string>
     <string name="common_reload">Reload</string>
-    <string name="welcome_noljanolja">Welcome to Noja Noja. Follow these steps to be our member.</string>
+    <string name="welcome_noljanolja">Welcome to Noja Noja. Watch videos,play and earn.</string>
 
     <string name="splash_explore">EXPLORE NOW</string>
+    <string name="splash_wait">Just a moment ...</string>
 
     <string name="signup">Join the membership</string>
     <string name="forgot_password">Forgot your password?</string>
@@ -74,12 +75,12 @@
     <!--    home-->
     <string name="home_chats">Chats</string>
     <string name="home_events">Events</string>
-    <string name="home_contents">Contents</string>
+    <string name="home_wallet">Wallet</string>
     <string name="home_shop">Shop</string>
-    <string name="home_person">Person</string>
+    <string name="home_news">News</string>
 
     <!--    Login-->
-    <string name="login_phone_description">Welcome to Nolja Nolja.\nPlease enter your Phone number to join continue.</string>
+    <string name="login_phone_description">Welcome to Nolja Nolja. Please enter your Phone number to join continue.</string>
     <string name="login_country_input_label">Country</string>
     <string name="login_phone_input_label">Phone Number</string>
     <string name="login_invalid_phone_title">Incorrect Number</string>
@@ -87,7 +88,7 @@
     <string name="login_confirm_phone_description">You will receive a code to verify to this phone number via text message.</string>
 
     <!--    Countries-->
-    <string name="countries_title">Select country</string>
+    <string name="countries_title">Select countries/regions</string>
     <string name="countries_search">Search</string>
 
     <!--    OTP-->
@@ -192,6 +193,16 @@
     <string name="chat_message_event_left">%s has left the conversation</string>
     <string name="chat_message_event_joined">%s has invited %s</string>
     <string name="chat_removed_conversation">You has removed from conversation %s</string>
+
+    <string name="chat_action_album">Album</string>
+    <string name="chat_action_camera">Camera</string>
+    <string name="chat_action_events">Events</string>
+    <string name="chat_action_wallet">Wallet</string>
+    <string name="chat_action_location">Location</string>
+    <string name="chat_action_contacts">Contacts</string>
+    <string name="chat_action_file">File</string>
+    <string name="chat_action_voice_chat">Voice chat</string>
+
     <!--    Failure-->
     <string name="invalid_email_format">Email is not valid</string>
 
@@ -210,4 +221,9 @@
     <string name="edit_chat_make_admin">Make admin</string>
     <string name="edit_chat_remove_user">Remove user</string>
     <string name="edit_chat_block_user">Block user</string>
+
+    <!--    Wallet-->
+    <string name="wallet_number_friends">Friend: %d</string>
+    <string name="wallet_my_point">My point</string>
+    <string name="wallet_gold_member_ship">Gold member ship</string>
 </resources>

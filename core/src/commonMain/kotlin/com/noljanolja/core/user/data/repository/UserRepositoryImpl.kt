@@ -28,8 +28,11 @@ internal class UserRepositoryImpl(
     ): Result<User> {
         val currentUser = localUserDataSource.findMe()
         return when {
-            currentUser != null -> Result.success(currentUser)
-            forceRefresh || !onlyLocal -> {
+            onlyLocal -> {
+                currentUser?.let { Result.success(it) }
+                    ?: Result.failure(Throwable("Cannot get user"))
+            }
+            forceRefresh || currentUser == null -> {
                 userRemoteDataSource.getMe().also {
                     it.getOrNull()?.let {
                         localUserDataSource.upsert(it.apply { isMe = true })
@@ -39,7 +42,7 @@ internal class UserRepositoryImpl(
                     }
                 }
             }
-            else -> Result.failure(Throwable("Cannot get user"))
+            else -> Result.success(currentUser)
         }
     }
 

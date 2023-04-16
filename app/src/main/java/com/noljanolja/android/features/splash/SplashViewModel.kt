@@ -57,5 +57,6 @@ class SplashViewModel : BaseViewModel() {
 
 data class SplashUiState(
     val loading: Boolean = false,
+    val progress: Int = 0,
     val needReload: Boolean = false,
 )

@@ -1,6 +1,5 @@
 package com.noljanolja.android.features.auth.otp
 
-import co.touchlab.kermit.Logger
 import com.d2brothers.firebase_auth.AuthSdk
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
@@ -24,9 +23,7 @@ class OTPViewModel : BaseViewModel() {
                     }
                 }
                 is OTPEvent.VerifyOTP -> {
-                    val result = coreManager.verifyOTPCode(event.verificationId, event.otp)
-                    Logger.e("VerifyOTP $result")
-
+                    coreManager.verifyOTPCode(event.verificationId, event.otp)
                     authSdk.getIdToken(true)?.let {
                         coreManager.saveAuthToken(it)
                         handleAuthResult()

@@ -162,6 +162,7 @@ fun ChatScreenContent(
                                     null
                                 }
                             }
+
                             MessageType.DOCUMENT, MessageType.PHOTO -> {
                                 Message(
                                     message = message.trim(),
@@ -179,6 +180,7 @@ fun ChatScreenContent(
                                     },
                                 )
                             }
+
                             MessageType.STICKER -> {
                                 Message(
                                     message = message,
@@ -186,6 +188,7 @@ fun ChatScreenContent(
                                     type = MessageType.STICKER,
                                 )
                             }
+
                             else -> null
                         }
                         sendMessage?.let { handleEvent(ChatEvent.SendMessage(it)) }
@@ -305,15 +308,15 @@ private fun DayHeader(dayString: String) {
             modifier = Modifier
                 .padding(vertical = 16.dp)
                 .background(
-                    MaterialTheme.colorScheme.surface.copy(alpha = 0.38F),
+                    MaterialTheme.colorScheme.outline,
                     shape = CircleShape
                 )
         ) {
             Text(
                 text = dayString,
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
                 style = MaterialTheme.typography.labelSmall.copy(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.87f),
+                    color = MaterialTheme.colorScheme.background
                 )
             )
         }
@@ -366,6 +369,7 @@ private fun MessageRow(
                 overflow = TextOverflow.Ellipsis
             )
         }
+
         MessageType.EVENT_LEFT -> {
             Text(
                 stringResource(
@@ -379,6 +383,7 @@ private fun MessageRow(
                 overflow = TextOverflow.Ellipsis
             )
         }
+
         MessageType.EVENT_UPDATED -> {
             Text(
                 stringResource(
@@ -393,6 +398,7 @@ private fun MessageRow(
                 overflow = TextOverflow.Ellipsis
             )
         }
+
         else -> {
             Row(modifier = spaceBetweenAuthors) {
                 if (isLastMessageByAuthorSameDay && !message.sender.isMe) {
@@ -430,6 +436,7 @@ private fun MessageRow(
                             tint = MaterialTheme.colorScheme.errorContainer
                         )
                     }
+
                     else -> if (message.sender.isMe) {
                         Box(modifier = modifier) {
                             message.seenUsers.filter { !it.isMe }.takeIf { it.isNotEmpty() }
@@ -471,8 +478,8 @@ private fun AuthorAndTextMessage(
         horizontalAlignment = if (message.sender.isMe) Alignment.End else Alignment.Start
     ) {
         val configuration = LocalConfiguration.current
-        val maxChatItemWidth = (configuration.screenWidthDp * 0.7).dp
-        val maxChatItemHeight = (configuration.screenHeightDp * 0.4).dp
+        val maxChatItemWidth = (configuration.screenWidthDp * 0.66).dp
+        val maxChatItemHeight = (configuration.screenHeightDp * 0.33).dp
         if (isLastMessageByAuthorSameDay && !message.sender.isMe) {
             Spacer(modifier = Modifier.height(12.dp))
         }
@@ -581,9 +588,9 @@ private fun ChatItemBubble(
         isLastMessageByAuthorSameDay,
         message.sender.isMe
     )
-    var backgroundBubbleColor: Color = MaterialTheme.colorScheme.primaryContainer
+    var backgroundBubbleColor: Color = MaterialTheme.colorScheme.surface
     if (message.sender.isMe) {
-        backgroundBubbleColor = MaterialTheme.colorScheme.onPrimary
+        backgroundBubbleColor = MaterialTheme.colorScheme.primary
     }
     when (message.type) {
         MessageType.DOCUMENT -> {
@@ -592,6 +599,7 @@ private fun ChatItemBubble(
                 backgroundBubbleColor = MaterialTheme.colorScheme.primaryContainer
             }
         }
+
         MessageType.GIF,
         MessageType.STICKER,
         MessageType.PHOTO,
@@ -599,6 +607,7 @@ private fun ChatItemBubble(
             backgroundBubbleShape = RectangleShape
             backgroundBubbleColor = Color.Transparent
         }
+
         else -> {}
     }
 

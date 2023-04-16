@@ -5,7 +5,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Divider
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,7 +26,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun OTPRow(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     focusManager: FocusManager,
     otp: CharArray,
     onOTPChange: (Int, Char) -> Unit,
@@ -40,57 +39,73 @@ fun OTPRow(
     val focusRequester6 = remember { FocusRequester() }
     Row(modifier = modifier) {
         OTPChar(
-            modifier = Modifier.padding(end = 12.dp).width(24.dp),
+            modifier = Modifier
+                .padding(end = 12.dp)
+                .width(24.dp),
             focusManager = focusManager,
             focusRequester = focusRequester1,
             leftFocusRequester = null,
             rightFocusRequester = focusRequester2,
             char = otp[0],
+            isFillAll = otp.all { it.isDigit() },
             onCharChange = { onOTPChange(0, it) },
         )
         OTPChar(
-            modifier = Modifier.padding(end = 12.dp).width(24.dp),
+            modifier = Modifier
+                .padding(end = 12.dp)
+                .width(24.dp),
             focusManager = focusManager,
             focusRequester = focusRequester2,
             leftFocusRequester = focusRequester1,
             rightFocusRequester = focusRequester3,
             char = otp[1],
+            isFillAll = otp.all { it.isDigit() },
             onCharChange = { onOTPChange(1, it) },
         )
         OTPChar(
-            modifier = Modifier.padding(end = 12.dp).width(24.dp),
+            modifier = Modifier
+                .padding(end = 12.dp)
+                .width(24.dp),
             focusManager = focusManager,
             focusRequester = focusRequester3,
             leftFocusRequester = focusRequester2,
             rightFocusRequester = focusRequester4,
             char = otp[2],
+            isFillAll = otp.all { it.isDigit() },
             onCharChange = { onOTPChange(2, it) },
         )
         OTPChar(
-            modifier = Modifier.padding(end = 12.dp).width(24.dp),
+            modifier = Modifier
+                .padding(end = 12.dp)
+                .width(24.dp),
             focusManager = focusManager,
             focusRequester = focusRequester4,
             leftFocusRequester = focusRequester3,
             rightFocusRequester = focusRequester5,
             char = otp[3],
+            isFillAll = otp.all { it.isDigit() },
             onCharChange = { onOTPChange(3, it) },
         )
         OTPChar(
-            modifier = Modifier.padding(end = 12.dp).width(24.dp),
+            modifier = Modifier
+                .padding(end = 12.dp)
+                .width(24.dp),
             focusManager = focusManager,
             focusRequester = focusRequester5,
             leftFocusRequester = focusRequester4,
             rightFocusRequester = focusRequester6,
             char = otp[4],
+            isFillAll = otp.all { it.isDigit() },
             onCharChange = { onOTPChange(4, it) },
         )
         OTPChar(
-            modifier = Modifier.padding(end = 12.dp).width(24.dp),
+            modifier = Modifier.width(24.dp),
             focusManager = focusManager,
             focusRequester = focusRequester6,
             leftFocusRequester = focusRequester5,
             rightFocusRequester = null,
             char = otp[5],
+            isFillAll = otp.all { it.isDigit() },
             onCharChange = { onOTPChange(5, it) },
         )
     }
@@ -105,12 +120,14 @@ private fun OTPChar(
     leftFocusRequester: FocusRequester?,
     rightFocusRequester: FocusRequester?,
     char: Char,
+    isFillAll: Boolean = false,
     onCharChange: (Char) -> Unit,
 ) {
     var isFocused by remember { mutableStateOf(false) }
     val maxChar = 1
     val code = if (char != Char.MIN_VALUE) char.toString() else ""
-
+    val textColor =
+        if (isFillAll) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onBackground
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -129,7 +146,8 @@ private fun OTPChar(
                     rightFocusRequester?.requestFocus()
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .focusRequester(focusRequester)
                 .onFocusChanged { isFocused = it.isFocused }
                 .onKeyEvent {
@@ -141,7 +159,7 @@ private fun OTPChar(
                     }
                 },
             textStyle = MaterialTheme.typography.titleLarge.copy(
-                color = LocalContentColor.current,
+                color = textColor,
                 textAlign = TextAlign.Center,
             ),
             cursorBrush = SolidColor(Color.Transparent),
@@ -152,10 +170,16 @@ private fun OTPChar(
             keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus(true) })
         )
 
-        val underlineColor = if (!isFocused) {
-            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
-        } else {
-            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.87f)
+        val underlineColor = when {
+            isFillAll -> {
+                MaterialTheme.colorScheme.secondary
+            }
+            !isFocused -> {
+                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+            }
+            else -> {
+                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.87f)
+            }
         }
         Divider(
             modifier = Modifier.fillMaxWidth(),

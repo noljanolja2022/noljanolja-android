@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -13,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.d2brothers.firebase_auth.AuthSdk
@@ -100,13 +102,17 @@ fun OTPScreenContent(
             modifier = Modifier.fillMaxSize(),
         ) {
             Column(
-                modifier = Modifier.fillMaxSize().padding(it)
+                modifier = Modifier.fillMaxSize().padding(it),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     stringResource(R.string.otp_title),
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, top = 32.dp, bottom = 24.dp),
-                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(
+                        end = 16.dp,
+                        top = 100.dp,
+                        bottom = 14.dp
+                    ),
+                    style = MaterialTheme.typography.headlineSmall,
                 )
 
                 Text(
@@ -124,14 +130,13 @@ fun OTPScreenContent(
                             append(" $phone")
                         }
                     },
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(horizontal = 30.dp),
                     style = MaterialTheme.typography.bodyMedium,
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(35.dp))
 
                 OTPRow(
-                    modifier = Modifier.padding(horizontal = 16.dp),
                     focusManager = focusManager,
                     otp = otp,
                     onOTPChange = { position, char ->
@@ -141,20 +146,18 @@ fun OTPScreenContent(
                     }
                 )
 
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.height(24.dp))
 
                 if (currentTime > 0) {
                     Text(
                         stringResource(R.string.otp_resend_code_waiting, currentTime / 1000),
-                        modifier = Modifier.padding(start = 16.dp, bottom = 24.dp),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                 } else {
                     Text(
                         stringResource(R.string.otp_resend_code),
-                        modifier = Modifier.padding(start = 16.dp, bottom = 24.dp)
-                            .clickable { currentTime = BLOCK_RESEND_TIME },
+                        modifier = Modifier.clickable { currentTime = BLOCK_RESEND_TIME },
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.primary,
                     )
@@ -174,4 +177,10 @@ fun OTPScreenContent(
         description = error?.message ?: stringResource(R.string.common_error_description),
         onDismiss = { handleEvent(OTPEvent.DismissError) }
     )
+}
+
+@Preview
+@Composable
+private fun OTPScreenPreview() {
+    OTPScreen(phone = "+84392222170")
 }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -26,11 +27,14 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusTarget
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -86,7 +90,7 @@ fun ChatInput(
             focusRequester.requestFocus()
         }
     }
-
+    var extendActionState by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf(TextFieldValue()) }
     var attachments by remember { mutableStateOf<List<Uri>>(listOf()) }
     var showConfirmDialog by remember { mutableStateOf(false) }
@@ -107,7 +111,9 @@ fun ChatInput(
                         }
                     },
                     selector = currentInputSelector,
-                    onSelectorChanged = { currentInputSelector = it },
+                    onSelectorChanged = {
+                        currentInputSelector = it
+                    },
                     onMessageSent = {
                         onMessageSent(message.text, MessageType.PLAINTEXT, listOf())
                         // Reset text field and close keyboard
@@ -117,6 +123,13 @@ fun ChatInput(
                         dismissKeyboard()
                     },
                     shouldShowSendButton = shouldShowSendButton,
+                    extendActionState = extendActionState,
+                    toggleActionState = {
+                        extendActionState = it
+                        if (!extendActionState) {
+                            currentInputSelector = InputSelector.NONE
+                        }
+                    }
                 )
             } else {
                 SendMedia(
@@ -136,7 +149,7 @@ fun ChatInput(
         SelectorExpanded(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(288.dp),
+                .height(232.dp),
             currentSelector = currentInputSelector,
             onMediaSelect = { mediaSelect, isAdd ->
                 when (isAdd) {
@@ -165,6 +178,14 @@ fun ChatInput(
             loadMedia = loadMedia,
             openPhoneSetting = openPhoneSetting,
         )
+        if (extendActionState && (currentInputSelector == InputSelector.NONE || currentInputSelector == InputSelector.CAMERA)) {
+            ExtraActions(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(205.dp),
+                onSelectorChanged = { currentInputSelector = it }
+            )
+        }
     }
     if (currentInputSelector == InputSelector.CAMERA) {
         onHandleBottomSheetBackPress()
@@ -209,6 +230,8 @@ fun ChatInput(
 @Composable
 private fun ChatInputText(
     textField: TextFieldValue,
+    extendActionState: Boolean,
+    toggleActionState: (Boolean) -> Unit,
     onTextChanged: (TextFieldValue) -> Unit,
     focusRequester: FocusRequester,
     onFocusChanged: (Boolean) -> Unit,
@@ -221,76 +244,26 @@ private fun ChatInputText(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(MaterialTheme.colorScheme.primaryContainer)
-            .padding(4.dp),
+            .padding(horizontal = 16.dp, vertical = 7.dp),
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.Bottom,
     ) {
-        var extendActionState by remember { mutableStateOf(true) }
-        AnimatedVisibility(extendActionState) {
-            Row(
-                modifier = Modifier.padding(start = 2.dp, end = 2.dp, bottom = 2.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                IconButton(
-                    onClick = { onSelectorChanged(InputSelector.EXTRA) },
-                    modifier = Modifier
-                        .then(Modifier.size(36.dp))
-                ) {
-                    Icon(
-                        if (selector == InputSelector.EXTRA) {
-                            Icons.Default.More
-                        } else {
-                            Icons.Outlined.More
-                        },
-                        contentDescription = null,
-                        tint = if (selector == InputSelector.EXTRA) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.secondary,
-                    )
-                }
+        val focusManager = LocalFocusManager.current
+        IconButton(
+            onClick = {
+                focusManager.clearFocus()
+                toggleActionState.invoke(!extendActionState)
+            },
+            modifier = Modifier
+                .padding(bottom = 8.dp, end = 11.dp)
+                .size(24.dp)
+        ) {
+            Icon(
+                if (extendActionState) Icons.Default.Close else Icons.Default.Add,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurface,
 
-                IconButton(
-                    onClick = { onSelectorChanged(InputSelector.CAMERA) },
-                    modifier = Modifier
-                        .then(Modifier.size(36.dp))
-                ) {
-                    Icon(
-                        Icons.Outlined.Camera,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.secondary,
-                    )
-                }
-                IconButton(
-                    onClick = { onSelectorChanged(InputSelector.GALLERY) },
-                    modifier = Modifier
-                        .then(Modifier.size(36.dp))
-                ) {
-                    Icon(
-                        if (selector == InputSelector.GALLERY) {
-                            Icons.Filled.PhotoLibrary
-                        } else {
-                            Icons.Outlined.PhotoLibrary
-                        },
-                        contentDescription = null,
-                        tint = if (selector == InputSelector.GALLERY) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.secondary,
-                    )
-                }
-            }
-        }
-        if (!extendActionState) {
-            IconButton(
-                onClick = {
-                    extendActionState = true
-                },
-                modifier = Modifier
-                    .padding(bottom = 2.dp)
-                    .then(Modifier.size(36.dp))
-            ) {
-                Icon(
-                    Icons.Default.ChevronRight,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurface,
-                )
-            }
+            )
         }
         Row(
             modifier = Modifier
@@ -315,7 +288,7 @@ private fun ChatInputText(
                 BasicTextField(
                     value = textField,
                     onValueChange = {
-                        extendActionState = false
+                        toggleActionState.invoke(false)
                         onTextChanged(it)
                     },
                     modifier = Modifier
@@ -327,7 +300,9 @@ private fun ChatInputText(
                             if (lastFocusState != state.isFocused) {
                                 onFocusChanged(state.isFocused)
                             }
-                            extendActionState = !state.isFocused
+                            if (state.isFocused) {
+                                toggleActionState.invoke(false)
+                            }
                             lastFocusState = state.isFocused
                         },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.None),
@@ -350,6 +325,9 @@ private fun ChatInputText(
             }
             IconButton(
                 onClick = {
+                    if (selector != InputSelector.EMOJI) {
+                        toggleActionState.invoke(true)
+                    }
                     onSelectorChanged(
                         if (selector == InputSelector.EMOJI) InputSelector.KEYBOARD else InputSelector.EMOJI
                     )
@@ -365,7 +343,7 @@ private fun ChatInputText(
                         Icons.Outlined.EmojiEmotions
                     },
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.secondary,
+                    tint = MaterialTheme.colorScheme.outline,
                 )
             }
             AnimatedVisibility(visible = textField.text.isNotEmpty() || shouldShowSendButton) {
@@ -374,11 +352,7 @@ private fun ChatInputText(
                     modifier = Modifier
                         .padding(end = 4.dp, bottom = 4.dp)
                         .then(Modifier.size(32.dp))
-                        .border(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.onTertiaryContainer.copy(.12F),
-                            shape = RoundedCornerShape(12.dp)
-                        )
+                        .clip(CircleShape)
                         .background(
                             color = MaterialTheme.colorScheme.primary,
                             shape = RoundedCornerShape(12.dp)
@@ -386,7 +360,7 @@ private fun ChatInputText(
                         .padding(4.dp)
                 ) {
                     Icon(
-                        Icons.Outlined.Send,
+                        Icons.Filled.Send,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
@@ -431,6 +405,7 @@ private fun SelectorExpanded(
             -> {
                 focusRequester.requestFocus()
             }
+
             else -> {}
         }
     }
@@ -445,14 +420,120 @@ private fun SelectorExpanded(
                 loadMedia = loadMedia,
                 openPhoneSetting = openPhoneSetting
             )
+
             InputSelector.EMOJI -> EmojiSelector(
                 onStickerClicked = onStickerClicked,
                 onShowSticker = onShowSticker,
                 focusRequester = focusRequester,
                 onEmojiChange = { emojiStickerSelected = it }
             )
+
             else -> {}
         }
+    }
+}
+
+@Composable
+private fun ExtraActions(
+    modifier: Modifier = Modifier,
+    onSelectorChanged: (InputSelector) -> Unit,
+) {
+    val actions = listOf(
+        ExtraAction(
+            stringResource(id = R.string.chat_action_album),
+            Icons.Outlined.Collections,
+            Color(0xFF86D558)
+        ) {
+            onSelectorChanged(InputSelector.GALLERY)
+        },
+        ExtraAction(
+            stringResource(id = R.string.chat_action_camera),
+            Icons.Outlined.PhotoCamera,
+            Color(0xFF6892DE)
+        ) {
+            onSelectorChanged(InputSelector.CAMERA)
+        },
+        ExtraAction(
+            stringResource(id = R.string.chat_action_events),
+            Icons.Outlined.EventNote,
+            Color(0xFF39C65A)
+        ) {
+        },
+        ExtraAction(
+            stringResource(id = R.string.chat_action_wallet),
+            Icons.Outlined.AccountBalanceWallet,
+            Color(0xFFF8DF00)
+        ) {
+        },
+        ExtraAction(
+            stringResource(id = R.string.chat_action_location),
+            Icons.Outlined.Place,
+            Color(0xFF52B49D)
+        ) {
+        },
+        ExtraAction(
+            stringResource(id = R.string.chat_action_voice_chat),
+            ImageVector.vectorResource(id = R.drawable.ic_voice_chat),
+            Color(0xFFFB9E65)
+        ) {
+        },
+        ExtraAction(
+            stringResource(id = R.string.chat_action_contacts),
+            Icons.Outlined.PermContactCalendar,
+            Color(0xFF6595F5)
+        ) {
+        },
+        ExtraAction(
+            stringResource(id = R.string.chat_action_file),
+            Icons.Outlined.AttachFile,
+            Color(0xFFD47DE6)
+        ) {
+        },
+    )
+    Column(
+        modifier = modifier.padding(
+            start = 44.dp,
+            end = 16.dp,
+            top = 18.dp,
+            bottom = 18.dp
+        ),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        val row: @Composable (List<ExtraAction>) -> Unit = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                it.take(4).forEach { action ->
+                    Column(
+                        modifier = Modifier.weight(1F),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        IconButton(
+                            onClick = action.onClick,
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(RoundedCornerShape(18.dp))
+                                .background(action.color)
+                        ) {
+                            Icon(
+                                action.icon,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.background
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            action.title,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+        }
+        row.invoke(actions.take(4))
+        row.invoke(actions.takeLast(4))
     }
 }
 
@@ -551,6 +632,7 @@ private fun EmojiSelector(
                     onShowSticker = onShowSticker,
                 )
             }
+
             else -> {}
         }
     }
@@ -696,3 +778,10 @@ private fun SendMedia(
         }
     }
 }
+
+data class ExtraAction(
+    val title: String,
+    val icon: ImageVector,
+    val color: Color,
+    val onClick: () -> Unit,
+)

@@ -6,9 +6,9 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Camera
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -22,7 +22,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import com.noljanolja.android.R
 import com.noljanolja.android.features.auth.updateprofile.components.AvatarInput
 import com.noljanolja.android.features.auth.updateprofile.components.DoBInput
@@ -30,6 +30,7 @@ import com.noljanolja.android.features.auth.updateprofile.components.GenderInput
 import com.noljanolja.android.features.auth.updateprofile.components.NameInput
 import com.noljanolja.android.ui.composable.ErrorDialog
 import com.noljanolja.android.ui.composable.LoadingDialog
+import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.core.user.domain.model.Gender
 import kotlinx.datetime.toKotlinLocalDate
 import org.koin.androidx.compose.getViewModel
@@ -111,35 +112,44 @@ fun UpdateProfileContent(
                     .padding(it)
                     .verticalScroll(rememberScrollState())
             ) {
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(100.dp))
 
                 Box(
-                    modifier = Modifier.size(96.dp),
+                    modifier = Modifier.size(106.dp),
                     contentAlignment = Alignment.BottomEnd,
                 ) {
-                    AsyncImage(
-                        avatar ?: R.drawable.placeholder_avatar,
+                    val imageModifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape)
+                        .clickable { showAvatarInputDialog = true }
+                    avatar?.let {
+                        SubcomposeAsyncImage(
+                            avatar,
+                            contentDescription = null,
+                            modifier = imageModifier,
+                            contentScale = ContentScale.Crop,
+                        )
+                    } ?: Image(
+                        Icons.Filled.AccountCircle,
                         contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(32.dp))
-                            .clickable { showAvatarInputDialog = true },
-                        contentScale = ContentScale.Crop,
+                        modifier = imageModifier,
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.outline),
                     )
                     Image(
-                        Icons.Outlined.Camera,
+                        Icons.Filled.PhotoCamera,
                         contentDescription = null,
                         modifier = Modifier
-                            .size(36.dp)
+                            .size(32.dp)
                             .clip(CircleShape)
-                            .clickable { showAvatarInputDialog = true }
-                            .background(MaterialTheme.colorScheme.secondary, CircleShape),
+                            .background(MaterialTheme.colorScheme.surface)
+                            .clickable { showAvatarInputDialog = true },
+
                         contentScale = ContentScale.Inside,
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSecondary),
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
                     )
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(36.dp))
 
                 NameInput(
                     modifier = Modifier
@@ -152,7 +162,7 @@ fun UpdateProfileContent(
                     onNameChange = { if (it.trim().length <= maxNameLength) name = it }
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 Row(
                     modifier = Modifier
@@ -178,9 +188,8 @@ fun UpdateProfileContent(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(32.dp))
-
-                Button(
+                Spacer(modifier = Modifier.height(54.dp))
+                PrimaryButton(
                     onClick = {
                         handleEvent(
                             UpdateProfileEvent.Update(
@@ -192,11 +201,10 @@ fun UpdateProfileContent(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
-                    enabled = isRegisterEnable
-                ) {
-                    Text(text = stringResource(R.string.common_ok))
-                }
+                        .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
+                    isEnable = name.isNotBlank(),
+                    text = stringResource(id = R.string.common_ok).uppercase()
+                )
             }
         }
     }

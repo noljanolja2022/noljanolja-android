@@ -12,9 +12,12 @@ fun Instant.humanReadableDate(): String {
         val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
         return when {
-            this.date == now.date -> "Today"
+            this.date == now.date -> {
+                this@humanReadableDate.customFormatTime("hh:mm a")
+            }
+
             this.date.plus(DatePeriod(days = 1)) == now.date -> "Yesterday"
-            else -> "$month, $dayOfMonth"
+            else -> "$dayOfMonth/$monthNumber/$year"
         }
     }
 }
@@ -24,6 +27,7 @@ fun Instant.chatMessageHeaderDate(context: Context): String {
         val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         val formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM, yyyy")
             .withLocale(Locale.ENGLISH)
+
         return when {
             this.date == now.date -> context.getString(R.string.common_today)
             this.date.plus(DatePeriod(days = 1)) == now.date -> context.getString(R.string.common_yesterday)
@@ -39,9 +43,7 @@ fun Instant.humanReadableTime(): String {
 }
 
 fun Instant.chatMessageBubbleTime(): String {
-    with(this.toLocalDateTime(TimeZone.currentSystemDefault())) {
-        return "$hour:$minute"
-    }
+    return this.customFormatTime("hh:mm")
 }
 
 fun Instant.isSameDate(other: Instant): Boolean {
@@ -50,4 +52,9 @@ fun Instant.isSameDate(other: Instant): Boolean {
 
         return this.date == otherLocalDateTime.date
     }
+}
+
+fun Instant.customFormatTime(format: String): String {
+    return DateTimeFormatter.ofPattern(format)
+        .format(this.toLocalDateTime(TimeZone.currentSystemDefault()).toJavaLocalDateTime())
 }

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Error
 import androidx.compose.material.icons.outlined.SyncProblem
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -51,6 +50,7 @@ fun ClickableMessage(
                     .padding(vertical = 16.dp, horizontal = 12.dp),
             )
         }
+
         MessageType.DOCUMENT, MessageType.PHOTO -> {
             ClickablePhotoMessage(
                 message = message,
@@ -59,12 +59,14 @@ fun ClickableMessage(
                 onMessageClick = onMessageClick
             )
         }
+
         MessageType.STICKER -> {
             ClickableStickerMessage(
                 message = message,
                 modifier = Modifier.clickable { onMessageClick(message) },
             )
         }
+
         else -> {
             Text(
                 text = "Unsupported message type",
@@ -91,8 +93,6 @@ private fun ClickableTextMessage(
         style = MaterialTheme.typography.bodyMedium.copy(
             color = if (message.status == MessageStatus.FAILED) {
                 MaterialTheme.colorScheme.error
-            } else if (message.sender.isMe) {
-                MaterialTheme.colorScheme.background
             } else {
                 MaterialTheme.colorScheme.onPrimary
             },
@@ -150,6 +150,7 @@ fun ClickablePhotoMessage(
                 )
             }
         }
+
         else -> {
             val maxAttachmentPerRow = if (size == 2 || size == 4) 2 else 3
             val attachmentRows =
@@ -263,6 +264,7 @@ private fun SubcomposeAsyncImageScope.AsyncImageState(
                 )
             }
         }
+
         is AsyncImagePainter.State.Error -> {
             Box(
                 modifier = modifier
@@ -277,6 +279,7 @@ private fun SubcomposeAsyncImageScope.AsyncImageState(
                 )
             }
         }
+
         else -> {
             val aspectRatio = (painter.state as? AsyncImagePainter.State.Success)
                 ?.painter
