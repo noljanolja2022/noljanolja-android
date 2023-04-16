@@ -18,8 +18,8 @@ android {
         applicationId = "com.noljanolja.app.android"
         minSdk = 21
         targetSdk = 33
-        versionCode = 13
-        versionName = "1.0.7"
+        versionCode = 14
+        versionName = "1.0.8"
         testInstrumentationRunner = "com.noljanolja.android.InstrumentationTestRunner"
         multiDexEnabled = true
     }
@@ -58,7 +58,7 @@ android {
             firebaseAppDistribution {
                 artifactType = "APK"
                 serviceCredentialsFile = "key/key_distributor.json"
-                releaseNotes = "Release edit group chat"
+                releaseNotes = "Update some UI"
                 testers =
                     "doduchieu.kstn@gmail.com, itanchi.dev@gmail.com, sangjin.d.han@gmail.com, sangjin.han@ppnyy.com, tiaddeeps@gmail.com"
             }
