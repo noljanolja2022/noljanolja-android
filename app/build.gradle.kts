@@ -53,8 +53,8 @@ android {
         }
     }
     buildTypes {
+        val notes = file("release_notes.txt").readText()
         release {
-            val notes = file("release_notes.txt").readText()
             isMinifyEnabled = true
             firebaseAppDistribution {
                 artifactType = "APK"
@@ -68,7 +68,7 @@ android {
             firebaseAppDistribution {
                 artifactType = "APK"
                 serviceCredentialsFile = "key/key_distributor.json"
-                releaseNotes = "Release edit group chat"
+                releaseNotes = notes
                 testers =
                     "doduchieu.kstn@gmail.com, itanchi.dev@gmail.com, sangjin.d.han@gmail.com, sangjin.han@ppnyy.com, tiaddeeps@gmail.com"
             }
