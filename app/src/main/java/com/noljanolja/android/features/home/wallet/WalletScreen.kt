@@ -81,8 +81,8 @@ private fun WalletContent(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth(),
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
+                containerColor = MaterialTheme.colorScheme.background,
+                contentColor = MaterialTheme.colorScheme.onBackground,
                 onClick = {
                     handleEvent(WalletEvent.Logout)
                 }
@@ -163,7 +163,7 @@ private fun UserPoint() {
                 .height(116.dp)
                 .dashedBorder(
                     strokeWidth = 1.dp,
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.secondary,
                     cornerRadiusDp = 16.dp
                 ),
             horizontalAlignment = Alignment.CenterHorizontally,

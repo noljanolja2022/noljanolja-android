@@ -49,8 +49,6 @@ fun SplashScreen(
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth(),
                 text = stringResource(id = if (uiState.needReload) R.string.common_reload else R.string.splash_explore),
-                containerColor = MaterialTheme.colorScheme.onPrimary,
-                contentColor = MaterialTheme.colorScheme.primary,
             ) {
                 viewModel.handleEvent(SplashEvent.Continue)
             }

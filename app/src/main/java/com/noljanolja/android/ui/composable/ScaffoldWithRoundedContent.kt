@@ -23,7 +23,7 @@ fun ScaffoldWithRoundedContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.primary)
+                .background(MaterialTheme.colorScheme.primaryContainer)
                 .padding(padding)
         ) {
             heading.invoke()

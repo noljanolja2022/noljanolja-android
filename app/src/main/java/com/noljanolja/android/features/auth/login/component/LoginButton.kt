@@ -17,7 +17,6 @@ fun LoginButton(
     PrimaryButton(
         text = stringResource(id = R.string.common_continue),
         isEnable = isEnable,
-        disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
         modifier = modifier.fillMaxWidth(),
         onClick = onClick,
     )

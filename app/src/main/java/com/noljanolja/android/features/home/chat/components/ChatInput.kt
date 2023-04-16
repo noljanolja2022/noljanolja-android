@@ -343,7 +343,7 @@ private fun ChatInputText(
                         Icons.Outlined.EmojiEmotions
                     },
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.outline,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
             AnimatedVisibility(visible = textField.text.isNotEmpty() || shouldShowSendButton) {
@@ -351,18 +351,18 @@ private fun ChatInputText(
                     onClick = onMessageSent,
                     modifier = Modifier
                         .padding(end = 4.dp, bottom = 4.dp)
-                        .then(Modifier.size(32.dp))
+                        .then(Modifier.size(30.dp))
                         .clip(CircleShape)
                         .background(
                             color = MaterialTheme.colorScheme.primary,
                             shape = RoundedCornerShape(12.dp)
                         )
-                        .padding(4.dp)
+                        .padding(6.dp)
                 ) {
                     Icon(
                         Icons.Filled.Send,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimary
+                        tint = MaterialTheme.colorScheme.background
                     )
                 }
             }

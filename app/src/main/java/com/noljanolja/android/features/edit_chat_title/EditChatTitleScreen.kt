@@ -42,7 +42,7 @@ private fun EditChatTitleContent(
     ScaffoldWithUiState(uiState = UiState<Unit>(), topBar = {
         CommonTopAppBar(
             title = "Change nickname",
-            containerColor = MaterialTheme.colorScheme.primary,
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
             onBack = {
                 handleEvent(EditChatTitleEvent.Back)
             }
