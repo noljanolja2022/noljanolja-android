@@ -38,6 +38,9 @@ object NavigationDirections {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options: NavOptions = navOptions {
             launchSingleTop = true
+            popUpTo(Root.destination) {
+                inclusive = true
+            }
         }
 
         override val destination: String = "auth"

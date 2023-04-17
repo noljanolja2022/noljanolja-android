@@ -1,12 +1,6 @@
 package com.noljanolja.android.features.auth.login
 
-import android.content.Intent
 import android.telephony.PhoneNumberUtils
-import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
@@ -23,16 +17,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.handleError
-import com.noljanolja.android.features.auth.common.component.EmailAndPassword
 import com.noljanolja.android.features.auth.common.component.VerifyEmail
 import com.noljanolja.android.features.auth.login.component.LoginButton
 import com.noljanolja.android.ui.composable.ErrorDialog
@@ -52,10 +43,6 @@ fun LoginScreen(
     val countryCode = savedStateHandle.get<String>("countryCode")
     val context = LocalContext.current
     viewModel.handleError()
-//    val email by viewModel.emailFlow.collectAsStateWithLifecycle()
-//    val password by viewModel.passwordFlow.collectAsStateWithLifecycle()
-//    val emailError by viewModel.emailError.collectAsStateWithLifecycle()
-//    val passwordError by viewModel.passwordError.collectAsStateWithLifecycle()
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
 
     when (uiState) {
@@ -69,6 +56,7 @@ fun LoginScreen(
                 },
             )
         }
+
         else -> {
             LoginContent(
                 countryCode = countryCode,
@@ -144,47 +132,6 @@ private fun LoginContent(
             handleEvent(LoginEvent.SendOTP(formattedPhoneNumber))
         }
     )
-}
-
-@Composable
-private fun ColumnScope.LoginEmailContent(
-    email: String,
-    password: String,
-    emailError: Throwable?,
-    passwordError: Throwable?,
-    handleEvent: (LoginEvent) -> Unit,
-) {
-    EmailAndPassword(
-        email = email,
-        password = password,
-        emailError = emailError,
-        passwordError = passwordError,
-        onEmailChange = {
-            handleEvent(LoginEvent.ChangeEmail(it))
-        },
-        onPasswordChange = {
-            handleEvent(LoginEvent.ChangePassword(it))
-        },
-    )
-    Text(
-        text = stringResource(id = R.string.forgot_password),
-        style = TextStyle(
-            fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.outline,
-        ),
-        modifier = Modifier
-            .padding(top = 28.dp)
-            .align(Alignment.End)
-            .clickable {
-                handleEvent(LoginEvent.GoForgotEmailAndPassword)
-            },
-    )
-    LoginButton(
-        modifier = Modifier.padding(top = 28.dp),
-        isEnable = email.isNotBlank() && password.isNotBlank(),
-    ) {
-        handleEvent(LoginEvent.LoginEmail)
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -277,14 +224,5 @@ fun LoginVerifyEmail(
             )
         }
         Spacer(modifier = Modifier.height(24.dp))
-    }
-}
-
-@Composable
-private fun rememberAuthLauncher(
-    handleAuthResult: (Intent?) -> Unit,
-): ManagedActivityResultLauncher<Intent, ActivityResult> {
-    return rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        handleAuthResult(result.data)
     }
 }

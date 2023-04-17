@@ -100,8 +100,8 @@ fun HomeBottomBar(
                 },
                 colors = with(MaterialTheme.colorScheme) {
                     NavigationBarItemDefaults.colors(
-                        selectedIconColor = secondary,
-                        selectedTextColor = secondary,
+                        selectedIconColor = primary,
+                        selectedTextColor = primary,
                         unselectedIconColor = outline,
                         unselectedTextColor = outline,
                         indicatorColor = Color.White

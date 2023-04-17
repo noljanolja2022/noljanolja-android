@@ -47,6 +47,7 @@ import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.InfiniteListHandler
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.UserAvatar
+import com.noljanolja.android.ui.theme.BgChat02
 import com.noljanolja.android.util.*
 import com.noljanolja.core.conversation.domain.model.*
 import com.noljanolja.core.media.domain.model.Sticker
@@ -308,7 +309,7 @@ private fun DayHeader(dayString: String) {
             modifier = Modifier
                 .padding(vertical = 16.dp)
                 .background(
-                    MaterialTheme.colorScheme.outline,
+                    BgChat02,
                     shape = CircleShape
                 )
         ) {
@@ -350,7 +351,7 @@ private fun MessageRow(
             bottom = 4.dp
         )
         .clip(RoundedCornerShape(30.dp))
-        .background(MaterialTheme.colorScheme.outline)
+        .background(BgChat02)
         .padding(vertical = 5.dp, horizontal = 10.dp)
     val eventStyle =
         MaterialTheme.typography.labelSmall.copy(color = MaterialTheme.colorScheme.background)
@@ -528,16 +529,25 @@ private fun MessageTimestamp(timestamp: String) {
 }
 
 object MessageChatBubbleShape {
-    private val TOP_MESSAGE = RoundedCornerShape(18.dp, 18.dp, 18.dp, 6.dp)
-    private val CENTER_MESSAGE = RoundedCornerShape(6.dp, 18.dp, 18.dp, 6.dp)
-    private val BOTTOM_MESSAGE = RoundedCornerShape(6.dp, 18.dp, 18.dp, 18.dp)
+//    private val TOP_MESSAGE = RoundedCornerShape(18.dp, 18.dp, 18.dp, 6.dp)
+//    private val CENTER_MESSAGE = RoundedCornerShape(6.dp, 18.dp, 18.dp, 6.dp)
+//    private val BOTTOM_MESSAGE = RoundedCornerShape(6.dp, 18.dp, 18.dp, 18.dp)
+//
+//    private val SINGLE_MESSAGE = RoundedCornerShape(18.dp)
+//
+//    private val TOP_MY_MESSAGE = RoundedCornerShape(18.dp, 18.dp, 6.dp, 18.dp)
+//    private val CENTER_MY_MESSAGE = RoundedCornerShape(18.dp, 6.dp, 6.dp, 18.dp)
+//    private val BOTTOM_MY_MESSAGE = RoundedCornerShape(18.dp, 6.dp, 18.dp, 18.dp)
 
-    private val SINGLE_MESSAGE = RoundedCornerShape(18.dp)
+    private val TOP_MESSAGE = RoundedCornerShape(10.dp)
+    private val CENTER_MESSAGE = RoundedCornerShape(10.dp)
+    private val BOTTOM_MESSAGE = RoundedCornerShape(10.dp)
 
-    private val TOP_MY_MESSAGE = RoundedCornerShape(18.dp, 18.dp, 6.dp, 18.dp)
-    private val CENTER_MY_MESSAGE = RoundedCornerShape(18.dp, 6.dp, 6.dp, 18.dp)
-    private val BOTTOM_MY_MESSAGE = RoundedCornerShape(18.dp, 6.dp, 18.dp, 18.dp)
+    private val SINGLE_MESSAGE = RoundedCornerShape(10.dp)
 
+    private val TOP_MY_MESSAGE = RoundedCornerShape(10.dp)
+    private val CENTER_MY_MESSAGE = RoundedCornerShape(10.dp)
+    private val BOTTOM_MY_MESSAGE = RoundedCornerShape(10.dp)
     fun getChatBubbleShape(
         isFirstMessage: Boolean,
         isLastMessage: Boolean,

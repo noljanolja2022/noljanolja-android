@@ -196,7 +196,7 @@ private fun TermCheckBox(
         checkBoxIcon,
         contentDescription = null,
         modifier = modifier.size(24.dp).clickable { onChecked(!checked) },
-        tint = with(MaterialTheme.colorScheme) { if (checked) secondary else outline }
+        tint = with(MaterialTheme.colorScheme) { if (checked) primary else outline }
     )
 }
 

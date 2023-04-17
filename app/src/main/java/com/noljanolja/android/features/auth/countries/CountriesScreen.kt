@@ -45,7 +45,7 @@ fun CountriesScreenContent(
     ) {
         Scaffold(
             modifier = Modifier
-                .background(MaterialTheme.colorScheme.primary)
+                .background(MaterialTheme.colorScheme.primaryContainer)
                 .clip(
                     RoundedCornerShape(
                         topEnd = 15.dp,
