@@ -10,4 +10,8 @@ class NavigationManager {
     ) {
         commands.emit(direction)
     }
+
+    suspend fun back() {
+        commands.emit(NavigationDirections.Back)
+    }
 }

@@ -134,6 +134,9 @@ dependencies {
     // koin
     implementation("io.insert-koin:koin-android:3.3.3")
     implementation("io.insert-koin:koin-androidx-compose:3.4.1")
+
+    // Youtube
+    implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.0.0")
 }
 
 kapt {

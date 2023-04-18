@@ -19,6 +19,9 @@ import com.noljanolja.core.user.data.datasource.UserRemoteDataSource
 import com.noljanolja.core.user.data.datasource.UserRemoteDataSourceImpl
 import com.noljanolja.core.user.data.repository.UserRepositoryImpl
 import com.noljanolja.core.user.domain.repository.UserRepository
+import com.noljanolja.core.video.data.datasource.VideoApi
+import com.noljanolja.core.video.data.repository.VideoRepositoryImpl
+import com.noljanolja.core.video.domain.repository.VideoRepository
 import com.noljanolja.socket.di.socketModule
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.KoinApplication
@@ -84,6 +87,12 @@ private val coreModule = module {
     }
     single<MediaRepository> {
         MediaRepositoryImpl(get())
+    }
+    single {
+        VideoApi(get())
+    }
+    single<VideoRepository> {
+        VideoRepositoryImpl(get())
     }
     single {
         Noljanolja(get())

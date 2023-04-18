@@ -38,6 +38,8 @@ import com.noljanolja.android.features.home.conversations.ConversationsViewModel
 import com.noljanolja.android.features.home.info.MyInfoViewModel
 import com.noljanolja.android.features.home.menu.MenuViewModel
 import com.noljanolja.android.features.home.mypage.MyPageViewModel
+import com.noljanolja.android.features.home.play.playlist.PlayListViewModel
+import com.noljanolja.android.features.home.play.playscreen.VideoDetailViewModel
 import com.noljanolja.android.features.home.require_login.RequireLoginViewModel
 import com.noljanolja.android.features.home.root.HomeViewModel
 import com.noljanolja.android.features.home.wallet.WalletViewModel
@@ -235,6 +237,12 @@ class MyApplication : Application() {
                 }
                 viewModel {
                     WalletViewModel()
+                }
+                viewModel {
+                    VideoDetailViewModel(get())
+                }
+                viewModel {
+                    PlayListViewModel()
                 }
             }
         )

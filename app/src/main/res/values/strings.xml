@@ -226,4 +226,13 @@
     <string name="wallet_number_friends">Friend: %d</string>
     <string name="wallet_my_point">My point</string>
     <string name="wallet_gold_member_ship">Gold member ship</string>
+
+    <!--    video-->
+    <string name="video_title">Let’s get points by watching</string>
+    <string name="video_list_today">Today features</string>
+    <string name="video_list_watching_to_get_point">Complete watching to reward Points</string>
+
+    <string name="video_detail_views">Views</string>
+    <string name="video_detail_comment">Comments</string>
+    <string name="video_detail_reward">Reward</string>
 </resources>

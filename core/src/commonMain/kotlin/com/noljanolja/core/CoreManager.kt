@@ -10,6 +10,8 @@ import com.noljanolja.core.conversation.domain.repository.ConversationRepository
 import com.noljanolja.core.media.domain.repository.MediaRepository
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.user.domain.repository.UserRepository
+import com.noljanolja.core.video.domain.model.TrendingVideoDuration
+import com.noljanolja.core.video.domain.repository.VideoRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -28,6 +30,7 @@ class CoreManager : KoinComponent {
     private val conversationRepository: ConversationRepository by inject()
     private val authRepository: AuthRepository by inject()
     private val mediaRepository: MediaRepository by inject()
+    private val videoRepository: VideoRepository by inject()
 
     private val scope = CoroutineScope(Dispatchers.Default)
     private var streamJob: Job? = null
@@ -206,6 +209,16 @@ class CoreManager : KoinComponent {
     suspend fun loadAllStickerPacks() = mediaRepository.loadAllStickerPacks()
 
     suspend fun downloadStickerPack(id: Long) = mediaRepository.downloadStickerPack(id)
+
+    suspend fun getTrendingVideos(
+        duration: TrendingVideoDuration,
+    ) = videoRepository.getTrendingVideo(duration)
+
+    suspend fun getVideos(isHighlight: Boolean) = videoRepository.getVideos(isHighlight)
+
+    suspend fun getWatchingVideos() = videoRepository.getWatchingVideos()
+
+    suspend fun getVideoDetail(id: String) = videoRepository.getVideoDetail(id)
 
     fun onDestroy() {
         conversationRepository.onDestroy()

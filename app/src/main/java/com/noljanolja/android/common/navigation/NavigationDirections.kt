@@ -255,6 +255,20 @@ object NavigationDirections {
         }
     }
 
+    data class PlayScreen(val videoId: String = "") : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf(
+            navArgument("videoId") {
+                defaultValue = ""
+                type = NavType.StringType
+            },
+        )
+        override val options = null
+        override val destination: String = "play_screen?videoId={videoId}"
+        override fun createDestination(): String {
+            return "play_screen?videoId=$videoId"
+        }
+    }
+
     // Back
     data class FinishWithResults(
         val data: Map<String, Any>,

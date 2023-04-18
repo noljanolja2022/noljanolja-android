@@ -22,6 +22,7 @@ import com.noljanolja.android.features.home.chat.ChatScreen
 import com.noljanolja.android.features.home.chat_options.ChatOptionsScreen
 import com.noljanolja.android.features.home.contacts.ContactsScreen
 import com.noljanolja.android.features.home.info.MyInfoScreen
+import com.noljanolja.android.features.home.play.playscreen.VideoDetailScreen
 import com.noljanolja.android.features.home.root.HomeScreen
 import com.noljanolja.android.features.setting.SettingScreen
 import com.noljanolja.android.features.splash.SplashScreen
@@ -59,6 +60,7 @@ fun MainScreen(
                             }
                         )
                     }
+
                     is NavigationDirections.Back -> {
                         navController.popBackStack()
                     }
@@ -87,6 +89,7 @@ fun MainScreen(
         addAuthGraph()
         addContactsGraph()
         addChatGraph()
+        addVideoGraph()
     }
 }
 
@@ -183,6 +186,15 @@ private fun NavGraphBuilder.addChatGraph() {
         ) {
             val conversationId = (it.arguments?.getLong("conversationId") ?: 0)
             EditChatTitleScreen(conversationId = conversationId)
+        }
+    }
+}
+
+private fun NavGraphBuilder.addVideoGraph() {
+    with(NavigationDirections.PlayScreen()) {
+        composable(destination, arguments) {
+            val videoId = (it.arguments?.getString("videoId").orEmpty())
+            VideoDetailScreen(videoId)
         }
     }
 }
