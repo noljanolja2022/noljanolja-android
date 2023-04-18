@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil.compose.*
 import coil.request.ImageRequest
+import com.noljanolja.android.util.openImageFromCache
 import com.noljanolja.android.util.orZero
 import com.noljanolja.android.util.setAnimated
 import com.noljanolja.android.util.toUri
@@ -223,8 +224,12 @@ private fun PhotoPreview(
     isMe: Boolean,
     contentScale: ContentScale = ContentScale.Crop,
 ) {
+    val context = LocalContext.current
+
     Box(
-        modifier = modifier,
+        modifier = modifier.clickable {
+            context.openImageFromCache(key)
+        },
         contentAlignment = if (isMe) Alignment.BottomEnd else Alignment.BottomStart,
     ) {
         SubcomposeAsyncImage(

@@ -3,16 +3,21 @@ package com.noljanolja.android.util
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.widget.Toast
 import androidx.core.content.FileProvider
+import coil.Coil
+import coil.memory.MemoryCache
 import com.noljanolja.android.BuildConfig
 import com.noljanolja.android.R
 import com.noljanolja.android.common.error.ValidEmailFailed
 import com.noljanolja.core.file.model.FileInfo
 import okio.Path.Companion.toPath
 import java.io.File
+import java.io.FileOutputStream
 
 fun Context.showToast(
     text: String?,
@@ -68,4 +73,26 @@ fun Context.getName(uri: Uri): String {
         }
     }
     return result!!
+}
+
+fun Context.openImageFromCache(key: String) {
+    val tmpFile = File.createTempFile("temp_photo", ".png", cacheDir).apply {
+        createNewFile()
+        deleteOnExit()
+    }
+    val cache = Coil.imageLoader(this).memoryCache
+    val bitmap = cache?.get(MemoryCache.Key(key))?.bitmap ?: return
+    val out = FileOutputStream(tmpFile)
+    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+    out.flush()
+    out.close()
+    val imageUri = FileProvider.getUriForFile(
+        this,
+        "${BuildConfig.APPLICATION_ID}.provider",
+        tmpFile
+    )
+    val intent = Intent(Intent.ACTION_VIEW)
+    intent.setDataAndType(imageUri, "image/*")
+    intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+    startActivity(intent)
 }
