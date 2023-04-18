@@ -1,3 +1,4 @@
+- 1.0.9: Open image and url message
 - 1.0.8: Update App UI
 - 1.0.7: Release edit group chat
 - 1.0.6: Release group conversation
