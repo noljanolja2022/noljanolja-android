@@ -158,6 +158,7 @@ private fun LazyListScope.trendingVideos(
     videos: List<Video>,
     onClick: (Video) -> Unit,
 ) {
+    if (videos.isEmpty()) return
     item {
         Text(
             stringResource(id = R.string.video_list_today),
@@ -201,6 +202,7 @@ private fun WatchingVideos(
     videos: List<Video>,
     onClick: (Video) -> Unit,
 ) {
+    if (videos.isEmpty()) return
     Column(
         modifier = Modifier
             .fillMaxWidth()

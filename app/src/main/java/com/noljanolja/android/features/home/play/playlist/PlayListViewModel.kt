@@ -15,7 +15,7 @@ class PlayListViewModel : BaseViewModel() {
 
     init {
         launch {
-            coreManager.getTrendingVideos(TrendingVideoDuration.Day).collect {
+            coreManager.getTrendingVideos(TrendingVideoDuration.Month).collect {
                 val data = _uiStateFlow.value.data ?: PlayListUIData()
                 _uiStateFlow.emit(
                     UiState(

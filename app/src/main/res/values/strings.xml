@@ -40,6 +40,9 @@
     <string name="common_chat">Chat</string>
     <string name="common_admin">Admin</string>
     <string name="common_reload">Reload</string>
+    <string name="common_copy">Copy</string>
+    <string name="common_copy_success">Copied in clipboard</string>
+
     <string name="welcome_noljanolja">Welcome to Noja Noja. Watch videos,play and earn.</string>
 
     <string name="splash_explore">EXPLORE NOW</string>

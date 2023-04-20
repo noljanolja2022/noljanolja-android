@@ -96,3 +96,14 @@ fun Context.openImageFromCache(key: String) {
     intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
     startActivity(intent)
 }
+
+fun Context.openUrl(url: String) {
+    val uri = Uri.parse(url)
+    if (!uri.scheme.isNullOrEmpty()) {
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        startActivity(intent)
+    } else {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://$url"))
+        startActivity(intent)
+    }
+}

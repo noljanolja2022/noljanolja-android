@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.sp
 
 // Regex containing the syntax tokens
 val symbolPattern by lazy {
-    Regex("""(https?://[^\s\t\n]+)|(`[^`]+`)|(@\w+)|(\*[\w]+\*)|(_[\w]+_)|(~[\w]+~)""")
+    Regex("""(https?://[^\s\t\n]+)|(`[^`]+`)|(@\w+)|(\*[\w]+\*)|(_[\w]+_)|(~[\w]+~)|(\b[\w-]+\.[^\s\t\n]+($|(?=\s)|(?=[.,?!])))""")
 }
 
 // Accepted annotations for the ClickableTextWrapper
@@ -96,56 +96,8 @@ private fun getSymbolAnnotation(
     primary: Boolean,
     codeSnippetBackground: Color,
 ): SymbolAnnotation {
-    return when (matchResult.value.first()) {
-        '@' -> SymbolAnnotation(
-            AnnotatedString(
-                text = matchResult.value,
-                spanStyle = SpanStyle(
-                    color = if (primary) colorScheme.inversePrimary else colorScheme.primary,
-                    fontWeight = FontWeight.Bold
-                )
-            ),
-            StringAnnotation(
-                item = matchResult.value.substring(1),
-                start = matchResult.range.first,
-                end = matchResult.range.last,
-                tag = SymbolAnnotationType.PERSON.name
-            )
-        )
-        '*' -> SymbolAnnotation(
-            AnnotatedString(
-                text = matchResult.value.trim('*'),
-                spanStyle = SpanStyle(fontWeight = FontWeight.Bold)
-            ),
-            null
-        )
-        '_' -> SymbolAnnotation(
-            AnnotatedString(
-                text = matchResult.value.trim('_'),
-                spanStyle = SpanStyle(fontStyle = FontStyle.Italic)
-            ),
-            null
-        )
-        '~' -> SymbolAnnotation(
-            AnnotatedString(
-                text = matchResult.value.trim('~'),
-                spanStyle = SpanStyle(textDecoration = TextDecoration.LineThrough)
-            ),
-            null
-        )
-        '`' -> SymbolAnnotation(
-            AnnotatedString(
-                text = matchResult.value.trim('`'),
-                spanStyle = SpanStyle(
-                    fontFamily = FontFamily.Monospace,
-                    fontSize = 12.sp,
-                    background = codeSnippetBackground,
-                    baselineShift = BaselineShift(0.2f)
-                )
-            ),
-            null
-        )
-        'h' -> SymbolAnnotation(
+    return if (matchResult.value.contains('.')) {
+        SymbolAnnotation(
             AnnotatedString(
                 text = matchResult.value,
                 spanStyle = SpanStyle(
@@ -159,6 +111,77 @@ private fun getSymbolAnnotation(
                 tag = SymbolAnnotationType.LINK.name
             )
         )
-        else -> SymbolAnnotation(AnnotatedString(matchResult.value), null)
+    } else {
+        when (matchResult.value.first()) {
+            '@' -> SymbolAnnotation(
+                AnnotatedString(
+                    text = matchResult.value,
+                    spanStyle = SpanStyle(
+                        color = if (primary) colorScheme.inversePrimary else colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                ),
+                StringAnnotation(
+                    item = matchResult.value.substring(1),
+                    start = matchResult.range.first,
+                    end = matchResult.range.last,
+                    tag = SymbolAnnotationType.PERSON.name
+                )
+            )
+
+            '*' -> SymbolAnnotation(
+                AnnotatedString(
+                    text = matchResult.value.trim('*'),
+                    spanStyle = SpanStyle(fontWeight = FontWeight.Bold)
+                ),
+                null
+            )
+
+            '_' -> SymbolAnnotation(
+                AnnotatedString(
+                    text = matchResult.value.trim('_'),
+                    spanStyle = SpanStyle(fontStyle = FontStyle.Italic)
+                ),
+                null
+            )
+
+            '~' -> SymbolAnnotation(
+                AnnotatedString(
+                    text = matchResult.value.trim('~'),
+                    spanStyle = SpanStyle(textDecoration = TextDecoration.LineThrough)
+                ),
+                null
+            )
+
+            '`' -> SymbolAnnotation(
+                AnnotatedString(
+                    text = matchResult.value.trim('`'),
+                    spanStyle = SpanStyle(
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 12.sp,
+                        background = codeSnippetBackground,
+                        baselineShift = BaselineShift(0.2f)
+                    )
+                ),
+                null
+            )
+
+            'h' -> SymbolAnnotation(
+                AnnotatedString(
+                    text = matchResult.value,
+                    spanStyle = SpanStyle(
+                        color = if (primary) colorScheme.inversePrimary else colorScheme.primary
+                    )
+                ),
+                StringAnnotation(
+                    item = matchResult.value,
+                    start = matchResult.range.first,
+                    end = matchResult.range.last,
+                    tag = SymbolAnnotationType.LINK.name
+                )
+            )
+
+            else -> SymbolAnnotation(AnnotatedString(matchResult.value), null)
+        }
     }
 }
