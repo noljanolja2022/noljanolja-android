@@ -359,7 +359,7 @@ private fun ParticipantRow(
         val titleStyle = MaterialTheme.typography.titleMedium
         val descriptionStyle =
             MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.outline)
-        UserAvatar(user = participant)
+        OvalAvatar(user = participant)
         Spacer(modifier = Modifier.width(16.dp))
         Column() {
             if (participant.isMe) {
@@ -433,7 +433,7 @@ private fun EditParticipantSheet(
             .padding(28.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        UserAvatar(user = participant)
+        OvalAvatar(user = participant)
         Spacer(modifier = Modifier.height(5.dp))
 
         Text(participant.name, style = style.titleMedium)

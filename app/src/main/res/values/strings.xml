@@ -238,4 +238,7 @@
     <string name="video_detail_views">Views</string>
     <string name="video_detail_comment">Comments</string>
     <string name="video_detail_reward">Reward</string>
+    <string name="video_detail_comment_popular">Popular</string>
+    <string name="video_detail_comment_newest">Newest</string>
+    <string name="video_detail_enter_comment">Enter a comment</string>
 </resources>

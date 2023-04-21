@@ -21,7 +21,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
@@ -45,8 +44,8 @@ import com.noljanolja.android.features.home.chat.components.ChatInput
 import com.noljanolja.android.features.home.chat.components.ClickableMessage
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.InfiniteListHandler
+import com.noljanolja.android.ui.composable.OvalAvatar
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
-import com.noljanolja.android.ui.composable.UserAvatar
 import com.noljanolja.android.ui.theme.BgChat02
 import com.noljanolja.android.util.*
 import com.noljanolja.core.conversation.domain.model.*
@@ -404,12 +403,12 @@ private fun MessageRow(
             Row(modifier = spaceBetweenAuthors) {
                 if (isLastMessageByAuthorSameDay && !message.sender.isMe) {
                     // Avatar
-                    UserAvatar(
+                    OvalAvatar(
+                        size = 32.dp,
                         user = message.sender,
                         modifier = Modifier
-                            .scale(0.8F)
-                            .clip(RoundedCornerShape(12.dp))
                             .clickable { onSenderClick(message.sender) }
+                            .padding(end = 5.dp)
                     )
                 } else {
                     // Space under avatar

@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -29,8 +28,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -39,10 +36,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.SubcomposeAsyncImage
-import coil.request.ImageRequest
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
+import com.noljanolja.android.ui.composable.CircleAvatar
 import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
@@ -106,7 +102,7 @@ private fun UserInformation(user: User, friendNumber: Int) {
             .background(MaterialTheme.colorScheme.background)
             .padding(start = 16.dp, end = 16.dp, top = 50.dp, bottom = 24.dp)
     ) {
-        Avatar(user = user)
+        CircleAvatar(user = user, size = 64.dp)
         SizeBox(width = 16.dp)
         Column(
             verticalArrangement = Arrangement.SpaceBetween
@@ -261,22 +257,4 @@ private fun RowScope.WalletInfoItem(
             Text(textButton.uppercase(), style = MaterialTheme.typography.bodyMedium)
         }
     }
-}
-
-@Composable
-private fun Avatar(user: User) {
-    val context = LocalContext.current
-    SubcomposeAsyncImage(
-        ImageRequest.Builder(context = context)
-            .data(user.getAvatarUrl())
-            .placeholder(R.drawable.placeholder_avatar)
-            .error(R.drawable.placeholder_avatar)
-            .fallback(R.drawable.placeholder_avatar)
-            .build(),
-        contentDescription = null,
-        modifier = Modifier
-            .size(64.dp)
-            .clip(CircleShape),
-        contentScale = ContentScale.Crop
-    )
 }

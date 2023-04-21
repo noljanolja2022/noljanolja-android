@@ -224,7 +224,7 @@ fun ContactRow(
             .padding(vertical = 15.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        UserAvatar(user = contact)
+        OvalAvatar(user = contact)
         Text(
             text = contact.name,
             modifier = Modifier
@@ -256,7 +256,7 @@ fun ContactRow(
 @Composable
 private fun SelectedContact(contact: User, onRemove: () -> Unit) {
     Box() {
-        UserAvatar(user = contact, modifier = Modifier.padding(top = 5.dp, end = 5.dp))
+        OvalAvatar(user = contact, modifier = Modifier.padding(top = 5.dp, end = 5.dp))
         IconButton(
             onClick = onRemove,
             modifier = Modifier

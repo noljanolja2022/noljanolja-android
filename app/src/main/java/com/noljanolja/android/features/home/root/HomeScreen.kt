@@ -15,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.noljanolja.android.features.home.conversations.ConversationsScreen
+import com.noljanolja.android.features.home.play.playlist.PlayListScreen
 import com.noljanolja.android.features.home.utils.click
 import com.noljanolja.android.features.home.utils.isNavItemSelect
 import com.noljanolja.android.features.home.wallet.WalletScreen
@@ -60,7 +61,7 @@ private fun NavGraphBuilder.addNavigationGraph() {
         ConversationsScreen()
     }
     composable(HomeNavigationItem.CelebrationItem.route) {
-        FullSizeUnderConstruction()
+        PlayListScreen()
     }
     composable(HomeNavigationItem.WalletItem.route) {
         WalletScreen()
