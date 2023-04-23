@@ -1,0 +1,54 @@
+CREATE TABLE `comment` (
+  id INTEGER NOT NULL,
+  localId TEXT NOT NULL PRIMARY KEY,
+  video_id TEXT NOT NULL,
+  comment TEXT NOT NULL,
+  commenter_avatar TEXT NOT NULL,
+  commenter_name TEXT NOT NULL,
+  created_at INTEGER NOT NULL DEFAULT 0,
+  updated_at INTEGER NOT NULL DEFAULT 0,
+
+  FOREIGN KEY (video_id) REFERENCES video(id)
+);
+
+findById:
+SELECT *
+FROM `comment`
+WHERE id = :id;
+
+findAllByVideo:
+SELECT *
+FROM `comment`
+WHERE video_id = :videoId
+ORDER BY created_at DESC;
+
+upsert {
+  UPDATE `comment`
+  SET id = :id,
+      updated_at = :updated_at
+  WHERE (id != 0 AND id = :id) OR (id = 0 AND localId = :localId);
+
+  INSERT OR IGNORE INTO `comment`(
+    id,
+    localId,
+    video_id,
+    comment,
+    commenter_avatar,
+    commenter_name,
+    created_at,
+    updated_at
+  )
+  VALUES (
+    :id,
+    :localId,
+    :video_id,
+    :comment,
+    :commenter_avatar,
+    :commenter_name,
+    :created_at,
+    :updated_at
+  );
+}
+
+deleteAll:
+DELETE FROM `comment`;

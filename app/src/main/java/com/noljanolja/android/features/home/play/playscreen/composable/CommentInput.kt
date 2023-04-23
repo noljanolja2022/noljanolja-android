@@ -35,7 +35,6 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.BackPressHandler
@@ -48,9 +47,6 @@ fun CommentInput(me: User, onSend: (String) -> Unit) {
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     var comment by remember { mutableStateOf("") }
-    var commentValue by remember {
-        mutableStateOf(TextFieldValue())
-    }
     var lastFocusState by remember { mutableStateOf(false) }
     BackPressHandler(lastFocusState) {
         focusManager.clearFocus()
@@ -81,7 +77,11 @@ fun CommentInput(me: User, onSend: (String) -> Unit) {
                 onValueChange = { comment = it },
                 maxLines = 1,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                keyboardActions = KeyboardActions(onSend = { onSend(comment) }),
+                keyboardActions = KeyboardActions(onSend = {
+                    onSend(comment)
+                    focusManager.clearFocus()
+                    comment = ""
+                }),
                 cursorBrush = SolidColor(LocalContentColor.current),
                 textStyle = MaterialTheme.typography.bodyLarge.copy(
                     color = MaterialTheme.colorScheme.onSurface
@@ -99,7 +99,11 @@ fun CommentInput(me: User, onSend: (String) -> Unit) {
         AnimatedVisibility(visible = lastFocusState) {
             val enable = comment.isNotBlank()
             IconButton(
-                onClick = { onSend(comment) },
+                onClick = {
+                    onSend(comment)
+                    focusManager.clearFocus()
+                    comment = ""
+                },
                 modifier = Modifier
                     .padding(start = 12.dp)
                     .then(Modifier.size(27.dp))

@@ -220,6 +220,11 @@ class CoreManager : KoinComponent {
 
     suspend fun getVideoDetail(id: String) = videoRepository.getVideoDetail(id)
 
+    suspend fun commentVideo(
+        id: String,
+        comment: String,
+    ) = videoRepository.commentVideo(videoId = id, comment = comment)
+
     fun onDestroy() {
         conversationRepository.onDestroy()
         scope.coroutineContext.cancel()

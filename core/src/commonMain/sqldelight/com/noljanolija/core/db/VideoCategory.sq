@@ -1,0 +1,24 @@
+CREATE TABLE `video_category` (
+  id TEXT NOT NULL PRIMARY KEY,
+  title TEXT NOT NULL
+ );
+
+upsert {
+  UPDATE `video_category`
+  SET title = :title
+  WHERE id = :id;
+
+  INSERT OR IGNORE INTO `video_category` (
+    id,
+    title
+  )
+  VALUES (
+    :id,
+    :title
+  );
+}
+
+findById:
+SELECT `video_category`.*
+FROM `video_category`
+WHERE id = :category_id;

@@ -1,0 +1,28 @@
+CREATE TABLE `video_channel` (
+  id TEXT NOT NULL PRIMARY KEY,
+  title TEXT NOT NULL,
+  thumbnail TEXT NOT NULL
+);
+
+upsert {
+  UPDATE `video_channel`
+  SET title = :title,
+      thumbnail=:thumbnail
+  WHERE id = :id;
+
+  INSERT OR IGNORE INTO `video_channel` (
+    id,
+    title,
+    thumbnail
+  )
+  VALUES (
+    :id,
+    :title,
+    :thumbnail
+  );
+}
+
+findById:
+SELECT `video_channel`.*
+FROM `video_channel`
+WHERE id = :channel_id;

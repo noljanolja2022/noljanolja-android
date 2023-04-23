@@ -3,6 +3,7 @@ package com.noljanolja.android.features.home.play.playscreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
@@ -90,16 +91,22 @@ private fun VideoDetailContent(
                 }
             )
             uiState.data?.video?.takeIf { !isFullScreen }?.let { video ->
-                SizeBox(height = 8.dp)
-                VideoInformation(video = video)
-                SizeBox(height = 8.dp)
-                VideoParameters(video = video)
-                Divider(
-                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-                )
-                VideoComments(video.fakeComment())
+                LazyColumn(modifier = Modifier.weight(1F)) {
+                    item {
+                        SizeBox(height = 8.dp)
+                        VideoInformation(video = video)
+                        SizeBox(height = 8.dp)
+                        VideoParameters(video = video)
+                        Divider(
+                            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                        )
+                    }
+                    videoComments(video)
+                }
                 uiState.data.user?.let { user ->
-                    CommentInput(me = user, onSend = {})
+                    CommentInput(me = user, onSend = { text ->
+                        handleEvent(VideoDetailEvent.Comment(text))
+                    })
                 }
             }
         }
@@ -185,12 +192,18 @@ private fun RowScope.VideoParameter(
     }
 }
 
-@Composable
-private fun ColumnScope.VideoComments(video: Video) {
-    Column(modifier = Modifier.padding(horizontal = 16.dp).weight(1F)) {
-        Text("Comments", style = MaterialTheme.typography.titleMedium)
+private fun LazyListScope.videoComments(video: Video) {
+    val modifier = Modifier.padding(horizontal = 16.dp)
+    item {
+        Text(
+            "Comments",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = modifier
+        )
         SizeBox(height = 8.dp)
-        Row() {
+    }
+    item {
+        Row(modifier = modifier) {
             VideoCommentSortType.values().forEachIndexed { _, commentSortType ->
                 CommentSortItem(
                     type = commentSortType,
@@ -199,14 +212,9 @@ private fun ColumnScope.VideoComments(video: Video) {
                 SizeBox(width = 10.dp)
             }
         }
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            items(video.comments) {
-                CommentRow(comment = it)
-            }
-        }
+    }
+    items(video.comments) {
+        CommentRow(modifier = modifier, comment = it)
     }
 }
 
@@ -238,9 +246,12 @@ private fun CommentSortItem(
 }
 
 @Composable
-private fun CommentRow(comment: Comment) {
+private fun CommentRow(
+    modifier: Modifier = Modifier,
+    comment: Comment,
+) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .padding(top = 10.dp)
             .fillMaxWidth()
             .height(IntrinsicSize.Min)

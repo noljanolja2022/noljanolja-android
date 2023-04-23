@@ -8,12 +8,11 @@ import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.ui.composable.youtube.YoutubeViewWithFullScreen
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.video.domain.model.Comment
-import com.noljanolja.core.video.domain.model.Commenter
 import com.noljanolja.core.video.domain.model.Video
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlin.random.Random
+import kotlinx.coroutines.flow.catch
 
 class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
     var youTubePlayer: YouTubePlayer? = null
@@ -24,19 +23,20 @@ class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
     init {
         launch {
             val user = coreManager.getCurrentUser().getOrNull()
-            val result = coreManager.getVideoDetail(videoId)
-            if (result.isSuccess) {
-                _uiStateFlow.emit(
-                    UiState(
-                        data = VideoDetailUiData(
-                            video = result.getOrNull()!!,
-                            user = user
+            coreManager.getVideoDetail(videoId)
+                .catch { e ->
+                    e.printStackTrace()
+                }
+                .collect {
+                    _uiStateFlow.emit(
+                        UiState(
+                            data = VideoDetailUiData(
+                                video = it,
+                                user = user
+                            )
                         )
                     )
-                )
-            } else {
-                sendError(result.exceptionOrNull()!!)
-            }
+                }
         }
     }
 
@@ -46,6 +46,7 @@ class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
                 VideoDetailEvent.Back -> navigationManager.back()
                 VideoDetailEvent.ToggleFullScreen -> youTubePlayer?.toggleFullscreen()
                 is VideoDetailEvent.ReadyVideo -> onReady(event.player)
+                is VideoDetailEvent.Comment -> commentVideo(event.comment)
             }
         }
     }
@@ -53,6 +54,14 @@ class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
     private fun onReady(player: YouTubePlayer) {
         youTubePlayer = player
         player.loadVideo(videoId, 0F)
+    }
+
+    private fun commentVideo(comment: String) {
+        launch {
+            coreManager.commentVideo(videoId, comment).exceptionOrNull()?.let {
+                sendError(it)
+            }
+        }
     }
 
     override fun onCleared() {
@@ -72,23 +81,3 @@ enum class VideoCommentSortType(
     Popular(R.string.video_detail_comment_popular),
     Newest(R.string.video_detail_comment_newest),
 }
-
-fun Video.fakeComment() = this.copy(
-    comments = listOf(
-        com.noljanolja.android.features.home.play.playscreen.fakeComment(),
-        com.noljanolja.android.features.home.play.playscreen.fakeComment(),
-        com.noljanolja.android.features.home.play.playscreen.fakeComment(),
-        com.noljanolja.android.features.home.play.playscreen.fakeComment(),
-        com.noljanolja.android.features.home.play.playscreen.fakeComment(),
-        com.noljanolja.android.features.home.play.playscreen.fakeComment()
-    )
-)
-
-fun fakeComment() = Comment(
-    comment = Random.nextInt(10000).toString() + "\n" + Random.nextInt(10000).toString(),
-    commenter = Commenter(
-        name = "Name ${Random.nextInt(100)}",
-        avatar = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQaHzXkwxkLiVf9lCpIjZMsXFqAowpQYdOY60kcYmJehMAal8BpAcnFqxpUZHCBzQ4rKxA&usqp=CAU"
-    ),
-    id = Random.nextInt(10000)
-)

@@ -19,6 +19,7 @@ import com.noljanolja.core.user.data.datasource.UserRemoteDataSource
 import com.noljanolja.core.user.data.datasource.UserRemoteDataSourceImpl
 import com.noljanolja.core.user.data.repository.UserRepositoryImpl
 import com.noljanolja.core.user.domain.repository.UserRepository
+import com.noljanolja.core.video.data.datasource.LocalVideoDataSource
 import com.noljanolja.core.video.data.datasource.VideoApi
 import com.noljanolja.core.video.data.repository.VideoRepositoryImpl
 import com.noljanolja.core.video.domain.repository.VideoRepository
@@ -48,6 +49,17 @@ private val coreModule = module {
     single {
         with(get<Noljanolja>()) {
             LocalUserDataSource(userQueries, participantQueries, Dispatchers.Default)
+        }
+    }
+    single {
+        with(get<Noljanolja>()) {
+            LocalVideoDataSource(
+                videoQueries,
+                videoCategoryQueries,
+                videoChannelQueries,
+                commentQueries,
+                Dispatchers.Default
+            )
         }
     }
     single {
@@ -92,7 +104,7 @@ private val coreModule = module {
         VideoApi(get())
     }
     single<VideoRepository> {
-        VideoRepositoryImpl(get())
+        VideoRepositoryImpl(get(), get())
     }
     single {
         Noljanolja(get())
