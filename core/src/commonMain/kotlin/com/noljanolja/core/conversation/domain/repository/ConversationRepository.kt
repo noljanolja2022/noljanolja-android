@@ -47,6 +47,11 @@ internal interface ConversationRepository {
         onError: suspend (Throwable, String?) -> Unit,
     )
 
+    suspend fun trackVideoProgress(
+        token: String? = null,
+        onError: suspend (Throwable, String?) -> Unit,
+    )
+
     suspend fun leaveConversation(conversationId: Long): Result<Boolean>
 
     suspend fun addParticipants(conversationId: Long, userIds: List<String>): Result<Boolean>

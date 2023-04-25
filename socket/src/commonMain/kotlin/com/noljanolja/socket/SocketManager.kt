@@ -30,6 +30,36 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
 class SocketManager(private val engine: HttpClientEngine, private val tokenRepo: TokenRepo) {
+    private var videoRSocket: RSocket? = null
+
+    suspend fun trackVideoProgress(
+        token: String? = null,
+        onError: suspend (error: Throwable, newToken: String?) -> Unit,
+    ) {
+        val rSocket = videoRSocket ?: getDefaultSocket(engine, tokenRepo).rSocket(BASE_SOCKET_URL).also {
+            videoRSocket = it
+        }
+        val streamToken = token ?: tokenRepo.getToken().takeIf { !it.isNullOrBlank() }
+        try {
+            rSocket.fireAndForget(
+                buildPayload {
+                    data("""{ "id": "testId","event": "testEvent","durationMs": 10000 }""")
+                    metadata(
+                        CompositeMetadata(
+                            RoutingMetadata("v1/videos"),
+                            BearerAuthMetadata("Bearer $streamToken")
+                        )
+                    )
+                }
+            )
+        } catch (error: Throwable) {
+            Logger.e(error) {
+                "FireAndForget error catch $error"
+            }
+            error.printStackTrace()
+        }
+    }
+
     @OptIn(ExperimentalMetadataApi::class)
     suspend fun streamConversations(
         token: String? = null,

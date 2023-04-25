@@ -109,6 +109,13 @@ class CoreManager : KoinComponent {
         conversationRepository.streamConversations(token, onError)
     }
 
+    suspend fun trackVideoProgress(
+        token: String? = null,
+        onError: suspend (Throwable, String?) -> Unit,
+    ) {
+        conversationRepository.trackVideoProgress(token, onError)
+    }
+
     private suspend fun onStreamError(error: Throwable, newToken: String?) {
         streamJob?.cancel()
         streamJob = scope.launch {

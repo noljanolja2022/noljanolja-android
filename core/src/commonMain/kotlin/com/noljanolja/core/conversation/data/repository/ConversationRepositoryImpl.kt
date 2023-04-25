@@ -180,6 +180,10 @@ internal class ConversationRepositoryImpl(
         }
     }
 
+    override suspend fun trackVideoProgress(token: String?, onError: suspend (Throwable, String?) -> Unit) {
+        conversationApi.trackVideoProgress(token, onError)
+    }
+
     override suspend fun leaveConversation(conversationId: Long): Result<Boolean> {
         return try {
             val user = localUserDataSource.findMe()!!
