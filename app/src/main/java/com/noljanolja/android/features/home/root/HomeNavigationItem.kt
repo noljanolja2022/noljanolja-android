@@ -21,11 +21,11 @@ sealed class HomeNavigationItem(
         R.string.home_chats,
     )
 
-    object CelebrationItem : HomeNavigationItem(
+    object WatchItem : HomeNavigationItem(
         NavigationDirections.CelebrationItem.destination,
         Icons.Filled.OndemandVideo,
         Icons.Outlined.OndemandVideo,
-        R.string.home_events,
+        R.string.home_watch,
     )
 
     object WalletItem : HomeNavigationItem(

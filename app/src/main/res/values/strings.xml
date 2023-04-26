@@ -77,7 +77,7 @@
 
     <!--    home-->
     <string name="home_chats">Chats</string>
-    <string name="home_events">Events</string>
+    <string name="home_watch">Watch</string>
     <string name="home_wallet">Wallet</string>
     <string name="home_shop">Shop</string>
     <string name="home_news">News</string>

@@ -60,7 +60,7 @@ private fun NavGraphBuilder.addNavigationGraph() {
     composable(HomeNavigationItem.ChatItem.route) {
         ConversationsScreen()
     }
-    composable(HomeNavigationItem.CelebrationItem.route) {
+    composable(HomeNavigationItem.WatchItem.route) {
         PlayListScreen()
     }
     composable(HomeNavigationItem.WalletItem.route) {
@@ -80,7 +80,7 @@ fun HomeBottomBar(
 ) {
     val items = listOf(
         HomeNavigationItem.ChatItem,
-        HomeNavigationItem.CelebrationItem,
+        HomeNavigationItem.WatchItem,
         HomeNavigationItem.WalletItem,
         HomeNavigationItem.StoreItem,
         HomeNavigationItem.NewsItem,

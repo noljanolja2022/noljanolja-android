@@ -1,6 +1,7 @@
 package com.noljanolja.core.video.domain.model
 
 import kotlinx.serialization.Serializable
+import kotlin.time.Duration
 
 @Serializable
 data class Video(
@@ -19,7 +20,12 @@ data class Video(
     val title: String = "", //
     val url: String = "",
     val viewCount: Long = 0,
-)
+) {
+    fun getVideoProgress(): Float {
+        val fullTime = Duration.parse(duration)
+        return durationMs.toFloat() / fullTime.inWholeMilliseconds.toFloat()
+    }
+}
 
 enum class TrendingVideoDuration {
     Day, Week, Month
