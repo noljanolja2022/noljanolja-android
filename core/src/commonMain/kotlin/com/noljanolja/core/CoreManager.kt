@@ -1,5 +1,6 @@
 package com.noljanolja.core
 
+import co.touchlab.kermit.Logger
 import com.noljanolja.core.auth.domain.repository.AuthRepository
 import com.noljanolja.core.contacts.domain.model.Contact
 import com.noljanolja.core.contacts.domain.repository.ContactsRepository
@@ -10,11 +11,11 @@ import com.noljanolja.core.conversation.domain.repository.ConversationRepository
 import com.noljanolja.core.media.domain.repository.MediaRepository
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.user.domain.repository.UserRepository
+import com.noljanolja.core.video.data.model.request.VideoProgressEvent
 import com.noljanolja.core.video.domain.model.TrendingVideoDuration
 import com.noljanolja.core.video.domain.repository.VideoRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -33,7 +34,6 @@ class CoreManager : KoinComponent {
     private val videoRepository: VideoRepository by inject()
 
     private val scope = CoroutineScope(Dispatchers.Default)
-    private var streamJob: Job? = null
 
     var timeSaveToken: Instant? = null
 
@@ -63,9 +63,8 @@ class CoreManager : KoinComponent {
 
     suspend fun getConversations(): Flow<List<Conversation>> {
         val conversationsFlow = conversationRepository.getConversations()
-        streamJob?.cancel()
-        streamJob = scope.launch {
-            streamConversations(null, ::onStreamError)
+        scope.launch {
+            streamConversations(null)
         }
         return conversationsFlow
     }
@@ -104,23 +103,23 @@ class CoreManager : KoinComponent {
 
     private suspend fun streamConversations(
         token: String? = null,
-        onError: suspend (Throwable, String?) -> Unit,
     ) {
-        conversationRepository.streamConversations(token, onError)
+        conversationRepository.streamConversations(token)
     }
 
     suspend fun trackVideoProgress(
         token: String? = null,
-        onError: suspend (Throwable, String?) -> Unit,
+        videoId: String,
+        event: VideoProgressEvent,
+        durationMs: Long,
     ) {
-        conversationRepository.trackVideoProgress(token, onError)
-    }
-
-    private suspend fun onStreamError(error: Throwable, newToken: String?) {
-        streamJob?.cancel()
-        streamJob = scope.launch {
-            streamConversations(newToken, ::onStreamError)
-        }
+        Logger.d("TrackVideo: $videoId $event $durationMs")
+        conversationRepository.trackVideoProgress(
+            token = token,
+            videoId = videoId,
+            event = event,
+            durationMs = durationMs
+        )
     }
 
     suspend fun leaveConversation(conversationId: Long): Result<Boolean> {

@@ -9,9 +9,14 @@ import com.noljanolja.core.conversation.domain.repository.ConversationRepository
 import com.noljanolja.core.user.data.datasource.LocalUserDataSource
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.user.domain.repository.UserRepository
+import com.noljanolja.core.utils.default
 import com.noljanolja.core.utils.isRemoveFromConversation
+import com.noljanolja.core.video.data.model.request.VideoProgressEvent
+import com.noljanolja.core.video.data.model.request.VideoProgressRequest
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 internal class ConversationRepositoryImpl(
     private val conversationApi: ConversationApi,
@@ -21,7 +26,8 @@ internal class ConversationRepositoryImpl(
 ) : ConversationRepository {
 
     private val scope = CoroutineScope(Dispatchers.Default)
-    private var job: Job? = null
+    private var streamJob: Job? = null
+    private var trackJob: Job? = null
 
     private val _removedConversationEvent = MutableSharedFlow<Conversation>()
     override val removedConversationEvent: SharedFlow<Conversation>
@@ -160,13 +166,11 @@ internal class ConversationRepositoryImpl(
 
     override suspend fun streamConversations(
         token: String?,
-        onError: suspend (Throwable, String?) -> Unit,
     ) {
-        Logger.e("Stream start")
-        job?.cancel()
-        job = scope.launch {
+        streamJob?.cancel()
+        streamJob = scope.launch {
             val me = localUserDataSource.findMe() ?: return@launch
-            conversationApi.streamConversations(token, onError)
+            conversationApi.streamConversations(token, ::onStreamError)
                 .collect {
                     if (me.isRemoveFromConversation(it)) {
                         localConversationDataSource.deleteById(it.id)
@@ -180,8 +184,23 @@ internal class ConversationRepositoryImpl(
         }
     }
 
-    override suspend fun trackVideoProgress(token: String?, onError: suspend (Throwable, String?) -> Unit) {
-        conversationApi.trackVideoProgress(token, onError)
+    override suspend fun trackVideoProgress(
+        token: String?,
+        videoId: String,
+        event: VideoProgressEvent,
+        durationMs: Long,
+    ) {
+        trackJob?.cancel()
+        trackJob = scope.launch {
+            val data = Json.default().encodeToString(
+                VideoProgressRequest(
+                    videoId = videoId,
+                    event = event,
+                    durationMs = durationMs
+                )
+            )
+            conversationApi.trackVideoProgress(token = token, data = data, onError = ::onTrackError)
+        }
     }
 
     override suspend fun leaveConversation(conversationId: Long): Result<Boolean> {
@@ -307,6 +326,17 @@ internal class ConversationRepositoryImpl(
                 "getConversationMessages"
             }
             return listOf()
+        }
+    }
+
+    private suspend fun onStreamError(error: Throwable, newToken: String?) {
+        streamConversations(newToken)
+    }
+
+    private suspend fun onTrackError(error: Throwable, failData: String, newToken: String?) {
+        trackJob?.cancel()
+        trackJob = scope.launch {
+            conversationApi.trackVideoProgress(token = newToken, data = failData, onError = ::onTrackError)
         }
     }
 
@@ -437,7 +467,7 @@ internal class ConversationRepositoryImpl(
     }
 
     override fun onDestroy() {
-        job?.cancel()
+        streamJob?.cancel()
         scope.coroutineContext.cancel()
     }
 

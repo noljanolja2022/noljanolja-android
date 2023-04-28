@@ -2,6 +2,7 @@ package com.noljanolja.core.conversation.domain.repository
 
 import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.Message
+import com.noljanolja.core.video.data.model.request.VideoProgressEvent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 
@@ -44,12 +45,13 @@ internal interface ConversationRepository {
 
     suspend fun streamConversations(
         token: String? = null,
-        onError: suspend (Throwable, String?) -> Unit,
     )
 
     suspend fun trackVideoProgress(
         token: String? = null,
-        onError: suspend (Throwable, String?) -> Unit,
+        videoId: String,
+        event: VideoProgressEvent,
+        durationMs: Long,
     )
 
     suspend fun leaveConversation(conversationId: Long): Result<Boolean>

@@ -24,6 +24,7 @@ import io.rsocket.kotlin.payload.Payload
 import io.rsocket.kotlin.payload.PayloadMimeType
 import io.rsocket.kotlin.payload.buildPayload
 import io.rsocket.kotlin.payload.data
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -34,7 +35,8 @@ class SocketManager(private val engine: HttpClientEngine, private val tokenRepo:
 
     suspend fun trackVideoProgress(
         token: String? = null,
-        onError: suspend (error: Throwable, newToken: String?) -> Unit,
+        data: String,
+        onError: suspend (error: Throwable, failData: String, newToken: String?) -> Unit,
     ) {
         val rSocket = videoRSocket ?: getDefaultSocket(engine, tokenRepo).rSocket(BASE_SOCKET_URL).also {
             videoRSocket = it
@@ -43,7 +45,7 @@ class SocketManager(private val engine: HttpClientEngine, private val tokenRepo:
         try {
             rSocket.fireAndForget(
                 buildPayload {
-                    data("""{ "id": "testId","event": "testEvent","durationMs": 10000 }""")
+                    data(data)
                     metadata(
                         CompositeMetadata(
                             RoutingMetadata("v1/videos"),
@@ -56,6 +58,14 @@ class SocketManager(private val engine: HttpClientEngine, private val tokenRepo:
             Logger.e(error) {
                 "FireAndForget error catch $error"
             }
+            val newToken = if (error.message?.contains("Unauthorized") == true) {
+                tokenRepo.refreshToken()
+            } else {
+                null
+            }
+            videoRSocket?.cancel()
+            videoRSocket = null
+            onError.invoke(error, data, newToken)
             error.printStackTrace()
         }
     }
