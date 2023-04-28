@@ -187,6 +187,7 @@ private fun LazyListScope.trendingVideos(
     }
     videos.forEach { video ->
         item(key = "trending${video.id}") {
+            val context = LocalContext.current
             SubcomposeAsyncImage(
                 ImageRequest.Builder(context = LocalContext.current)
                     .data(video.thumbnail)
@@ -219,7 +220,7 @@ private fun LazyListScope.trendingVideos(
             )
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp),
-                text = video.getShortDescription(),
+                text = video.getShortDescription(context),
                 style = TextStyle(fontSize = 10.sp, color = MaterialTheme.colorScheme.outline)
             )
             SizeBox(height = 40.dp)

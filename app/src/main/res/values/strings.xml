@@ -241,4 +241,12 @@
     <string name="video_detail_comment_popular">Popular</string>
     <string name="video_detail_comment_newest">Newest</string>
     <string name="video_detail_enter_comment">Enter a comment</string>
+    <string name="video_detail_short_description">%s · %s · %s</string>
+    <string name="video_detail_duration_year">%d years ago</string>
+    <string name="video_detail_duration_month">%d months ago</string>
+    <string name="video_detail_duration_days">%d minutes ago</string>
+    <string name="video_detail_duration_hours">%d hours ago</string>
+    <string name="video_detail_duration_minutes">%d minutes ago</string>
+    <string name="video_detail_duration_just_now">just now</string>
+
 </resources>
