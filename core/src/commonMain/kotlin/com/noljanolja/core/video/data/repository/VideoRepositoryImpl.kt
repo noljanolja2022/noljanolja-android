@@ -49,7 +49,7 @@ internal class VideoRepositoryImpl(
     override fun getWatchingVideos(): Flow<List<Video>> = flow {
         try {
             val videos =
-                videoApi.getTrendingVideo(GetTrendingVideosRequest(duration = TrendingVideoDuration.Day)).data.orEmpty()
+                videoApi.getWatchingVideos().data.orEmpty()
             emit(videos)
             updateLocalVideos(videos)
         } catch (e: Throwable) {
