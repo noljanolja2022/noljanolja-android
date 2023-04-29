@@ -1,7 +1,6 @@
 package com.noljanolja.core.video.domain.model
 
 import kotlinx.serialization.Serializable
-import kotlin.time.Duration
 
 @Serializable
 data class Video(
@@ -11,6 +10,7 @@ data class Video(
     val comments: List<Comment> = listOf(),
     val duration: String = "",
     val durationMs: Long = 0,
+    val currentProgressMs: Long = 0,
     val favoriteCount: Long = 0,
     val id: String = "", //
     val isHighlighted: Boolean = false,
@@ -22,8 +22,7 @@ data class Video(
     val viewCount: Long = 0,
 ) {
     fun getVideoProgress(): Float {
-        val fullTime = Duration.parse(duration)
-        return durationMs.toFloat() / fullTime.inWholeMilliseconds.toFloat()
+        return currentProgressMs.toFloat() / durationMs.toFloat()
     }
 }
 
