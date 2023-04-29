@@ -54,6 +54,7 @@ import com.noljanolja.core.di.initKoin
 import com.noljanolja.core.service.ktor.KtorClient
 import com.noljanolja.core.service.ktor.KtorConfig
 import com.noljanolja.core.user.data.datasource.AuthDataSource
+import com.noljanolja.socket.SocketUserAgent
 import com.noljanolja.socket.TokenRepo
 import okhttp3.OkHttpClient
 import org.koin.android.ext.android.inject
@@ -158,6 +159,11 @@ class MyApplication : Application() {
                 }
                 single {
                     StickersLoader(get(), get())
+                }
+                single {
+                    SocketUserAgent(
+                        userAgent = "noljanolja/${BuildConfig.VERSION_NAME} (Mobile; Android ${Build.VERSION.RELEASE}; ${Build.MANUFACTURER} ${Build.MODEL})"
+                    )
                 }
                 single {
                     KtorConfig(

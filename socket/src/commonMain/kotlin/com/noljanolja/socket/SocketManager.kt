@@ -30,7 +30,11 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
-class SocketManager(private val engine: HttpClientEngine, private val tokenRepo: TokenRepo) {
+class SocketManager(
+    private val engine: HttpClientEngine,
+    private val tokenRepo: TokenRepo,
+    private val userAgent: SocketUserAgent,
+) {
     private var videoRSocket: RSocket? = null
 
     suspend fun trackVideoProgress(
@@ -38,7 +42,7 @@ class SocketManager(private val engine: HttpClientEngine, private val tokenRepo:
         data: String,
         onError: suspend (error: Throwable, failData: String, newToken: String?) -> Unit,
     ) {
-        val rSocket = videoRSocket ?: getDefaultSocket(engine, tokenRepo).rSocket(BASE_SOCKET_URL).also {
+        val rSocket = videoRSocket ?: getDefaultSocket(engine, tokenRepo, userAgent).rSocket(BASE_SOCKET_URL).also {
             videoRSocket = it
         }
         val streamToken = token ?: tokenRepo.getToken().takeIf { !it.isNullOrBlank() }
@@ -75,7 +79,7 @@ class SocketManager(private val engine: HttpClientEngine, private val tokenRepo:
         token: String? = null,
         onError: suspend (error: Throwable, newToken: String?) -> Unit,
     ): Flow<String> {
-        val rSocket: RSocket = getDefaultSocket(engine, tokenRepo).rSocket(BASE_SOCKET_URL)
+        val rSocket: RSocket = getDefaultSocket(engine, tokenRepo, userAgent).rSocket(BASE_SOCKET_URL)
         // request stream
         val streamToken = token ?: tokenRepo.getToken().takeIf { !it.isNullOrBlank() }
         return streamToken?.let { streamToken ->
@@ -112,28 +116,35 @@ class SocketManager(private val engine: HttpClientEngine, private val tokenRepo:
     }
 }
 
-private fun getDefaultSocket(engine: HttpClientEngine, tokenRepo: TokenRepo) = HttpClient(engine) {
-    WebSockets {}
-    install(RSocketSupport) {
-        connector = RSocketConnector {
-            connectionConfig {
-                keepAlive = KeepAlive(30 * 1000, 120 * 1000)
-                payloadMimeType = PayloadMimeType(
-                    data = WellKnownMimeType.ApplicationJson,
-                    metadata = WellKnownMimeType.MessageRSocketCompositeMetadata
-                )
-                setupPayload {
-                    buildPayload {
-                        data("hello")
+private fun getDefaultSocket(engine: HttpClientEngine, tokenRepo: TokenRepo, userAgent: SocketUserAgent) =
+    HttpClient(engine) {
+        WebSockets {}
+        install(RSocketSupport) {
+            connector = RSocketConnector {
+                connectionConfig {
+                    keepAlive = KeepAlive(30 * 1000, 120 * 1000)
+                    payloadMimeType = PayloadMimeType(
+                        data = WellKnownMimeType.ApplicationJson,
+                        metadata = WellKnownMimeType.MessageRSocketCompositeMetadata
+                    )
+                    setupPayload {
+                        buildPayload {
+                            data("hello")
+                        }
                     }
                 }
-            }
-            reconnectable { error, attempt ->
-                Logger.e(error) {
-                    "Stream error reconnect $error"
+                reconnectable { error, attempt ->
+                    Logger.e(error) {
+                        "Stream error reconnect $error"
+                    }
+                    attempt <= 3
                 }
-                attempt <= 3
             }
         }
+        install(DefaultRequest) {
+            header(HttpHeaders.ContentType, ContentType.Application.Json)
+            header(HttpHeaders.UserAgent, userAgent.userAgent)
+        }
     }
-}
+
+data class SocketUserAgent(val userAgent: String)
