@@ -5,6 +5,6 @@ import org.koin.dsl.module
 
 val socketModule = module {
     single {
-        SocketManager(get(), get())
+        SocketManager(get(), get(), get())
     }
 }

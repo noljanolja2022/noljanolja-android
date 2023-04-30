@@ -10,6 +10,7 @@ data class Video(
     val comments: List<Comment> = listOf(),
     val duration: String = "",
     val durationMs: Long = 0,
+    val currentProgressMs: Long = 0,
     val favoriteCount: Long = 0,
     val id: String = "", //
     val isHighlighted: Boolean = false,
@@ -19,7 +20,11 @@ data class Video(
     val title: String = "", //
     val url: String = "",
     val viewCount: Long = 0,
-)
+) {
+    fun getVideoProgress(): Float {
+        return currentProgressMs.toFloat() / durationMs.toFloat()
+    }
+}
 
 enum class TrendingVideoDuration {
     Day, Week, Month

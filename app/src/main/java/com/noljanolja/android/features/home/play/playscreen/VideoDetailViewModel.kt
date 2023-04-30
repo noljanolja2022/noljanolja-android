@@ -7,18 +7,26 @@ import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.ui.composable.youtube.YoutubeViewWithFullScreen
 import com.noljanolja.core.user.domain.model.User
+import com.noljanolja.core.video.data.model.request.VideoProgressEvent
 import com.noljanolja.core.video.domain.model.Comment
 import com.noljanolja.core.video.domain.model.Video
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 
 class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
     var youTubePlayer: YouTubePlayer? = null
 
     private val _uiStateFlow = MutableStateFlow(UiState<VideoDetailUiData>())
     val uiStateFlow = _uiStateFlow.asStateFlow()
+    private val videoStateFlow = MutableStateFlow<PlayerConstants.PlayerState>(PlayerConstants.PlayerState.UNKNOWN)
+    private val videoDurationSecondFlow = MutableStateFlow<Float>(0F)
+    private var lastTrackEvent: Pair<VideoProgressEvent, Long>? = null
 
     init {
         launch {
@@ -38,6 +46,13 @@ class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
                     )
                 }
         }
+        launch {
+            videoStateFlow.combine(videoDurationSecondFlow) { state, second ->
+                Pair(state, second)
+            }.collectLatest {
+                trackVideoProgress(state = it.first, durationMs = (it.second * 1000).toLong())
+            }
+        }
     }
 
     fun handleEvent(event: VideoDetailEvent) {
@@ -54,6 +69,23 @@ class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
     private fun onReady(player: YouTubePlayer) {
         youTubePlayer = player
         player.loadVideo(videoId, 0F)
+        player.addListener(
+            listener = object : AbstractYouTubePlayerListener() {
+                override fun onStateChange(youTubePlayer: YouTubePlayer, state: PlayerConstants.PlayerState) {
+                    super.onStateChange(youTubePlayer, state)
+                    launch {
+                        videoStateFlow.emit(state)
+                    }
+                }
+
+                override fun onCurrentSecond(youTubePlayer: YouTubePlayer, second: Float) {
+                    super.onCurrentSecond(youTubePlayer, second)
+                    launch {
+                        videoDurationSecondFlow.emit(second)
+                    }
+                }
+            }
+        )
     }
 
     private fun commentVideo(comment: String) {
@@ -61,6 +93,23 @@ class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
             coreManager.commentVideo(videoId, comment).exceptionOrNull()?.let {
                 sendError(it)
             }
+        }
+    }
+
+    private suspend fun trackVideoProgress(state: PlayerConstants.PlayerState, durationMs: Long) {
+        val event = when (state) {
+            PlayerConstants.PlayerState.PAUSED -> VideoProgressEvent.PAUSE
+            PlayerConstants.PlayerState.ENDED -> VideoProgressEvent.FINISH
+            PlayerConstants.PlayerState.PLAYING -> VideoProgressEvent.PLAY
+            else -> return
+        }
+        if (lastTrackEvent == null || lastTrackEvent!!.first != event || durationMs !in lastTrackEvent!!.second..(lastTrackEvent!!.second + 15_000)) {
+            coreManager.trackVideoProgress(
+                videoId = videoId,
+                event = event,
+                durationMs = durationMs
+            )
+            lastTrackEvent = Pair(event, durationMs)
         }
     }
 

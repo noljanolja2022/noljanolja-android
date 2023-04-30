@@ -102,6 +102,14 @@ class ConversationApi(
         }
     }
 
+    suspend fun trackVideoProgress(
+        token: String? = null,
+        data: String,
+        onError: suspend (Throwable, String, String?) -> Unit,
+    ) {
+        socketManager.trackVideoProgress(token = token, data = data, onError = onError)
+    }
+
     suspend fun getConversationMessages(
         request: GetConversationMessagesRequest,
     ): GetConversationMessagesResponse {

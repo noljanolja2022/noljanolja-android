@@ -25,6 +25,11 @@ internal class VideoApi(private val client: HttpClient) {
             .body()
     }
 
+    suspend fun getWatchingVideos(): GetVideosResponse {
+        return client.get("${Const.BASE_URL}/media/videos/watching")
+            .body()
+    }
+
     suspend fun getVideoDetail(request: GetVideoDetailRequest): GetVideoResponse {
         return client.get("${Const.BASE_URL}/media/videos/${request.videoId}").body()
     }
