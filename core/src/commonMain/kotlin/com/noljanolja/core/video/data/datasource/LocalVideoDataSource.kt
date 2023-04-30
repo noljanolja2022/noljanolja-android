@@ -56,6 +56,7 @@ class LocalVideoDataSource(
             channelId: String,
             categoryId: String,
             viewCount: Long,
+            currentProgress: Long,
             commentCount: Long,
         ->
         Video(
@@ -65,6 +66,7 @@ class LocalVideoDataSource(
             channel = Channel(id = channelId),
             category = Category(id = categoryId),
             viewCount = viewCount,
+            currentProgressMs = currentProgress,
             commentCount = commentCount
         )
     }
@@ -140,6 +142,7 @@ class LocalVideoDataSource(
             category_id = video.category.id,
             channel_id = video.channel.id,
             view_count = video.viewCount,
+            current_progress = video.currentProgressMs,
             comment_count = video.commentCount
         )
     }

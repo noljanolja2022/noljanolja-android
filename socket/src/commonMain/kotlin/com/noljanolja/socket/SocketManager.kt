@@ -67,11 +67,15 @@ class SocketManager(
             } else {
                 null
             }
-            videoRSocket?.cancel()
-            videoRSocket = null
+            cancelTrackVideo()
             onError.invoke(error, data, newToken)
             error.printStackTrace()
         }
+    }
+
+    fun cancelTrackVideo() {
+        videoRSocket?.cancel()
+        videoRSocket = null
     }
 
     @OptIn(ExperimentalMetadataApi::class)
