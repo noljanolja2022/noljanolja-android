@@ -18,7 +18,7 @@ import com.noljanolja.android.features.home.conversations.ConversationsScreen
 import com.noljanolja.android.features.home.play.playlist.PlayListScreen
 import com.noljanolja.android.features.home.utils.click
 import com.noljanolja.android.features.home.utils.isNavItemSelect
-import com.noljanolja.android.features.home.wallet.WalletScreen
+import com.noljanolja.android.features.home.wallet.transaction.WalletTransactionScreen
 import com.noljanolja.android.ui.composable.FullSizeUnderConstruction
 import com.noljanolja.android.util.getErrorMessage
 import com.noljanolja.android.util.showToast
@@ -64,7 +64,7 @@ private fun NavGraphBuilder.addNavigationGraph() {
         PlayListScreen()
     }
     composable(HomeNavigationItem.WalletItem.route) {
-        WalletScreen()
+        WalletTransactionScreen()
     }
     composable(HomeNavigationItem.StoreItem.route) {
         FullSizeUnderConstruction()

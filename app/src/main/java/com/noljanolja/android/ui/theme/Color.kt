@@ -10,7 +10,7 @@ val Orange00 = Color(0xFFFFC700)
 val Orange01 = Color(0xFFE58A00)
 val BlueMain = Color(0xFF007AFF)
 val Blue00 = Color(0xFF4B96FD)
-
+val LightBlue = Color(0xFFB0E6FF)
 val NeutralLight = Color(0xFFFFFFFF)
 val NeutralLightGrey = Color(0xFFE6E6E6)
 val NeutralGrey = Color(0xFFABABAB)
