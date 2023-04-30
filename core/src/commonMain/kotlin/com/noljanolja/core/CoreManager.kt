@@ -14,6 +14,7 @@ import com.noljanolja.core.user.domain.repository.UserRepository
 import com.noljanolja.core.video.data.model.request.VideoProgressEvent
 import com.noljanolja.core.video.domain.model.TrendingVideoDuration
 import com.noljanolja.core.video.domain.repository.VideoRepository
+import com.noljanolja.socket.SocketManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -32,6 +33,7 @@ class CoreManager : KoinComponent {
     private val authRepository: AuthRepository by inject()
     private val mediaRepository: MediaRepository by inject()
     private val videoRepository: VideoRepository by inject()
+    private val socketManager: SocketManager by inject()
 
     private val scope = CoroutineScope(Dispatchers.Default)
 
@@ -234,5 +236,9 @@ class CoreManager : KoinComponent {
     fun onDestroy() {
         conversationRepository.onDestroy()
         scope.coroutineContext.cancel()
+    }
+
+    fun cancelTrackVideo() {
+        socketManager.cancelTrackVideo()
     }
 }
