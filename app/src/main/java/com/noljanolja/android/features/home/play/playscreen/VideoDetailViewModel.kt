@@ -44,6 +44,7 @@ class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
                             )
                         )
                     )
+                    youTubePlayer?.seekTo((it.currentProgressMs / 1000).toFloat())
                 }
         }
         launch {
@@ -67,8 +68,9 @@ class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
     }
 
     private fun onReady(player: YouTubePlayer) {
+        val video = _uiStateFlow.value.data?.video
         youTubePlayer = player
-        player.loadVideo(videoId, 0F)
+        player.loadVideo(videoId, ((video?.currentProgressMs ?: 0) / 1000).toFloat())
         player.addListener(
             listener = object : AbstractYouTubePlayerListener() {
                 override fun onStateChange(youTubePlayer: YouTubePlayer, state: PlayerConstants.PlayerState) {
@@ -103,7 +105,7 @@ class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
             PlayerConstants.PlayerState.PLAYING -> VideoProgressEvent.PLAY
             else -> return
         }
-        if (lastTrackEvent == null || lastTrackEvent!!.first != event || durationMs !in lastTrackEvent!!.second..(lastTrackEvent!!.second + 15_000)) {
+        if (lastTrackEvent == null || lastTrackEvent!!.first != event || durationMs !in lastTrackEvent!!.second..(lastTrackEvent!!.second + delayTimeTrackProgress)) {
             coreManager.trackVideoProgress(
                 videoId = videoId,
                 event = event,
@@ -115,7 +117,12 @@ class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
 
     override fun onCleared() {
         super.onCleared()
+        coreManager.cancelTrackVideo()
         YoutubeViewWithFullScreen.release()
+    }
+
+    companion object {
+        const val delayTimeTrackProgress = 10_000
     }
 }
 
