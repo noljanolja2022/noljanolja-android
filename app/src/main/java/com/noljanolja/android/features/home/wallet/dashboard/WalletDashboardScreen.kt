@@ -3,11 +3,11 @@ package com.noljanolja.android.features.home.wallet.dashboard
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,12 +19,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.noljanolja.android.ui.composable.SizeBox
+import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
+import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.column.columnChart
+import com.patrykandpatrick.vico.core.component.shape.LineComponent
+import com.patrykandpatrick.vico.core.entry.FloatEntry
+import com.patrykandpatrick.vico.core.entry.entryModelOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -44,12 +52,51 @@ private fun WalletDashboardContent() {
     Column(
         modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)
     ) {
+        TransactionsChart()
         RecentTransactions()
     }
 }
 
 @Composable
 private fun TransactionsChart() {
+    Box(
+        modifier = Modifier
+            .clip(
+                RoundedCornerShape(5.dp)
+            )
+            .background(MaterialTheme.colorScheme.background)
+            .padding(vertical = 10.dp, horizontal = 12.dp)
+    ) {
+        Chart(
+            chart = columnChart(
+                columns = listOf(
+                    LineComponent(
+                        thicknessDp = 4f,
+                        color = MaterialTheme.colorScheme.primary.toArgb()
+                    ),
+                    LineComponent(
+                        thicknessDp = 4f,
+                        color = MaterialTheme.colorScheme.error.toArgb()
+                    ),
+                ),
+                innerSpacing = 0.dp,
+            ),
+            model = entryModelOf(
+                listOf(FloatEntry(1f, 3000000f), FloatEntry(2f, 4000000f)),
+                listOf(FloatEntry(1f, 3000000f), FloatEntry(2f, 5000000f)),
+            ),
+            startAxis = startAxis(
+                valueFormatter = { value, _ ->
+                    "${(value / 1000).toInt()}"
+                }
+            ),
+            bottomAxis = bottomAxis(
+                valueFormatter = { value, _ ->
+                    "Hello $value"
+                }
+            ),
+        )
+    }
 }
 
 @Composable
