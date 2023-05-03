@@ -5,4 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CommentVideoRequest(
     val comment: String,
+    val youtubeToken: String,
 )

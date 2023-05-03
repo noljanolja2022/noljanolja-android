@@ -20,6 +20,7 @@ import com.noljanolja.android.common.mobiledata.data.ContactsLoader
 import com.noljanolja.android.common.mobiledata.data.MediaLoader
 import com.noljanolja.android.common.mobiledata.data.StickersLoader
 import com.noljanolja.android.common.navigation.NavigationManager
+import com.noljanolja.android.common.sharedpreference.SharedPreferenceHelper
 import com.noljanolja.android.common.user.data.AuthDataSourceImpl
 import com.noljanolja.android.common.user.data.TokenRepoImpl
 import com.noljanolja.android.features.auth.countries.CountriesViewModel
@@ -109,6 +110,7 @@ class MyApplication : Application() {
         initKoin(
             module {
                 single<Context> { this@MyApplication }
+                single { SharedPreferenceHelper(get()) }
                 single {
                     FirebaseTracker(
                         Firebase.analytics,

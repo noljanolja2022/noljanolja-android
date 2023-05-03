@@ -70,9 +70,13 @@ internal class VideoRepositoryImpl(
         return getLocalVideo(id)
     }
 
-    override suspend fun commentVideo(videoId: String, comment: String): Result<Comment> {
+    override suspend fun commentVideo(
+        videoId: String,
+        comment: String,
+        youtubeToken: String,
+    ): Result<Comment> {
         return try {
-            val response = videoApi.commentVideo(videoId, CommentVideoRequest(comment))
+            val response = videoApi.commentVideo(videoId, CommentVideoRequest(comment, "$youtubeToken"))
             if (response.isSuccessful()) {
                 localVideoDataSource.upsertVideoComments(videoId, listOf(response.data!!))
                 localVideoDataSource.updateVideoCommentCount(videoId)

@@ -231,7 +231,8 @@ class CoreManager : KoinComponent {
     suspend fun commentVideo(
         id: String,
         comment: String,
-    ) = videoRepository.commentVideo(videoId = id, comment = comment)
+        youtubeToken: String,
+    ) = videoRepository.commentVideo(videoId = id, comment = comment, youtubeToken = youtubeToken)
 
     fun onDestroy() {
         conversationRepository.onDestroy()

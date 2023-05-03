@@ -6,5 +6,5 @@ sealed interface VideoDetailEvent {
     object Back : VideoDetailEvent
     object ToggleFullScreen : VideoDetailEvent
     data class ReadyVideo(val player: YouTubePlayer) : VideoDetailEvent
-    data class Comment(val comment: String) : VideoDetailEvent
+    data class Comment(val comment: String, val token: String? = null) : VideoDetailEvent
 }

@@ -51,7 +51,7 @@ dependencies {
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:31.2.0"))
     implementation("com.google.firebase:firebase-auth-ktx")
-    implementation("com.google.android.gms:play-services-auth:20.4.1")
+    api("com.google.android.gms:play-services-auth:20.4.1")
     implementation("com.google.firebase:firebase-functions-ktx")
     api("co.touchlab:kermit:1.1.3")
 }

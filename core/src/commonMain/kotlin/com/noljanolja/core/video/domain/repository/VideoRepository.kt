@@ -14,5 +14,5 @@ interface VideoRepository {
 
     suspend fun getVideoDetail(id: String): Flow<Video>
 
-    suspend fun commentVideo(videoId: String, comment: String): Result<Comment>
+    suspend fun commentVideo(videoId: String, comment: String, youtubeToken: String): Result<Comment>
 }

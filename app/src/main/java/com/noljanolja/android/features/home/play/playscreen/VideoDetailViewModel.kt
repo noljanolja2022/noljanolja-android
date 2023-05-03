@@ -5,21 +5,25 @@ import com.noljanolja.android.R
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
+import com.noljanolja.android.common.sharedpreference.SharedPreferenceHelper
 import com.noljanolja.android.ui.composable.youtube.YoutubeViewWithFullScreen
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.video.data.model.request.VideoProgressEvent
-import com.noljanolja.core.video.domain.model.Comment
 import com.noljanolja.core.video.domain.model.Video
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import org.koin.core.component.inject
 
 class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
+    private val sharedPreferenceHelper: SharedPreferenceHelper by inject()
     var youTubePlayer: YouTubePlayer? = null
 
     private val _uiStateFlow = MutableStateFlow(UiState<VideoDetailUiData>())
@@ -27,6 +31,8 @@ class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
     private val videoStateFlow = MutableStateFlow<PlayerConstants.PlayerState>(PlayerConstants.PlayerState.UNKNOWN)
     private val videoDurationSecondFlow = MutableStateFlow<Float>(0F)
     private var lastTrackEvent: Pair<VideoProgressEvent, Long>? = null
+    private val _eventForceLoginGoogle = MutableSharedFlow<String>()
+    val eventForceLoginGoogle = _eventForceLoginGoogle.asSharedFlow()
 
     init {
         launch {
@@ -62,7 +68,7 @@ class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
                 VideoDetailEvent.Back -> navigationManager.back()
                 VideoDetailEvent.ToggleFullScreen -> youTubePlayer?.toggleFullscreen()
                 is VideoDetailEvent.ReadyVideo -> onReady(event.player)
-                is VideoDetailEvent.Comment -> commentVideo(event.comment)
+                is VideoDetailEvent.Comment -> commentVideo(event.comment, event.token)
             }
         }
     }
@@ -90,10 +96,17 @@ class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
         )
     }
 
-    private fun commentVideo(comment: String) {
+    private fun commentVideo(comment: String, token: String?) {
         launch {
-            coreManager.commentVideo(videoId, comment).exceptionOrNull()?.let {
-                sendError(it)
+            val youtubeToken = token ?: sharedPreferenceHelper.youtubeToken.takeIf { !it.isNullOrBlank() }
+            youtubeToken?.let {
+                val result = coreManager.commentVideo(videoId, comment, youtubeToken)
+                if (result.isFailure) {
+                    sharedPreferenceHelper.youtubeToken = null
+                    sendError(result.exceptionOrNull()!!)
+                }
+            } ?: let {
+                _eventForceLoginGoogle.emit(comment)
             }
         }
     }

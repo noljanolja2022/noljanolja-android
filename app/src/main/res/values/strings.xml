@@ -42,6 +42,7 @@
     <string name="common_reload">Reload</string>
     <string name="common_copy">Copy</string>
     <string name="common_copy_success">Copied in clipboard</string>
+    <string name="common_warning">Warning</string>
 
     <string name="welcome_noljanolja">Welcome to Noja Noja. Watch videos,play and earn.</string>
 
@@ -248,5 +249,7 @@
     <string name="video_detail_duration_hours">%d hours ago</string>
     <string name="video_detail_duration_minutes">%d minutes ago</string>
     <string name="video_detail_duration_just_now">just now</string>
+    <string name="video_detail_require_google_title"></string>
+    <string name="video_detail_require_google_description">You need login google and accept youtube scope to comment or like</string>
 
 </resources>
