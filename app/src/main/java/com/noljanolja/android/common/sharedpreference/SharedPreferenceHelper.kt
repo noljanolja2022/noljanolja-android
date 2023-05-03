@@ -22,7 +22,17 @@ class SharedPreferenceHelper(private val context: Context) {
             setString(YOUTUBE_TOKEN, value.orEmpty())
         }
 
+    var showNewChatDialog: Boolean
+        get() =
+            sharePreference.getBoolean(SHOW_NEW_CHAT_DIALOG, true)
+        set(value) {
+            sharePreference.run {
+                edit().putBoolean(SHOW_NEW_CHAT_DIALOG, value).apply()
+            }
+        }
+
     companion object {
         const val YOUTUBE_TOKEN = "youtube_token"
+        const val SHOW_NEW_CHAT_DIALOG = "show_new_chat_dialog"
     }
 }

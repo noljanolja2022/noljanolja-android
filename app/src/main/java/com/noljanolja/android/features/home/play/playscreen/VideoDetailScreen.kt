@@ -361,7 +361,7 @@ private fun HandleComments(
                     ) {
                         GoogleSignIn.requestPermissions(
                             activity,
-                            1000,
+                            GOOGLE_REQUEST_PERMISSION_CODE,
                             GoogleSignIn.getLastSignedInAccount(activity),
                             scope
                         )
@@ -402,3 +402,5 @@ private fun HandleComments(
         }
     )
 }
+
+const val GOOGLE_REQUEST_PERMISSION_CODE = 1000
