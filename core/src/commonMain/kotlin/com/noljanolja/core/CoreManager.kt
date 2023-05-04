@@ -63,13 +63,15 @@ class CoreManager : KoinComponent {
         return conversationRepository.getConversation(conversationId)
     }
 
-    suspend fun getConversations(): Flow<List<Conversation>> {
-        val conversationsFlow = conversationRepository.getConversations()
+    suspend fun fetchConversations(): Flow<List<Conversation>> {
+        val conversationsFlow = conversationRepository.fetchConversations()
         scope.launch {
             streamConversations(null)
         }
         return conversationsFlow
     }
+
+    suspend fun getLocalConversations() = conversationRepository.getLocalConversations()
 
     suspend fun forceRefreshConversations() = conversationRepository.forceRefreshConversations()
 

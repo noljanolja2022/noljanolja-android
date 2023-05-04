@@ -60,7 +60,7 @@ internal class ConversationRepositoryImpl(
         }
     }
 
-    override suspend fun getConversations(): Flow<List<Conversation>> = flow {
+    override suspend fun fetchConversations(): Flow<List<Conversation>> = flow {
         try {
             forceRefreshConversations()
             getLocalConversations().collect {
@@ -414,7 +414,7 @@ internal class ConversationRepositoryImpl(
         localConversationDataSource.upsert(conversation)
     }
 
-    private suspend fun getLocalConversations(): Flow<List<Conversation>> {
+    override suspend fun getLocalConversations(): Flow<List<Conversation>> {
         return localConversationDataSource.findAll().map { localConversations ->
             localConversations.map { localConversation ->
                 // wait update message db

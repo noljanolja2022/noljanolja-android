@@ -486,10 +486,10 @@ private fun AuthorAndTextMessage(
         Row(
             verticalAlignment = Alignment.Bottom
         ) {
-            if (message.sender.isMe) {
-                Spacer(modifier = Modifier.weight(1F))
-                MessageTimestamp(timestamp = message.createdAt.chatMessageBubbleTime())
-            }
+//            if (message.sender.isMe) {
+//                Spacer(modifier = Modifier.weight(1F))
+//                MessageTimestamp(timestamp = message.createdAt.chatMessageBubbleTime())
+//            }
 
             Box(
                 modifier = Modifier
@@ -504,10 +504,10 @@ private fun AuthorAndTextMessage(
                     onMessageClick = onMessageClick,
                 )
             }
-            if (!message.sender.isMe) {
-                MessageTimestamp(timestamp = message.createdAt.chatMessageBubbleTime())
-                Spacer(modifier = Modifier.weight(1F))
-            }
+//            if (!message.sender.isMe) {
+//                MessageTimestamp(timestamp = message.createdAt.chatMessageBubbleTime())
+//                Spacer(modifier = Modifier.weight(1F))
+//            }
         }
         if (isFirstMessageByAuthorSameDay) {
             Spacer(modifier = Modifier.height(12.dp))

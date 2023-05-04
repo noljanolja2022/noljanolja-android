@@ -1,7 +1,6 @@
 package com.noljanolja.android.features.home.chat.components
 
 import android.net.Uri
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -31,12 +30,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.*
 import coil.request.ImageRequest
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.CombineClickableText
+import com.noljanolja.android.util.chatMessageBubbleTime
 import com.noljanolja.android.util.openImageFromCache
 import com.noljanolja.android.util.openUrl
 import com.noljanolja.android.util.orZero
@@ -61,7 +63,7 @@ fun ClickableMessage(
                 message = message,
                 modifier = Modifier
                     .clickable { onMessageClick(message) }
-                    .padding(vertical = 16.dp, horizontal = 12.dp),
+                    .padding(vertical = 5.dp, horizontal = 10.dp),
             )
         }
 
@@ -91,7 +93,6 @@ fun ClickableMessage(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ClickableTextMessage(
     message: Message,
@@ -102,29 +103,40 @@ private fun ClickableTextMessage(
 
     var showMenu by remember { mutableStateOf(false) }
     val styledMessage = messageFormatter(
-        text = message.message,
+        text = message.message + "        ",
         primary = message.sender.isMe
     )
-    CombineClickableText(
-        text = styledMessage,
-        style = MaterialTheme.typography.bodyMedium.copy(
-            color = if (message.status == MessageStatus.FAILED) {
-                MaterialTheme.colorScheme.error
-            } else {
-                MaterialTheme.colorScheme.onPrimary
+    Box {
+        CombineClickableText(
+            text = styledMessage,
+            style = MaterialTheme.typography.bodyLarge.copy(
+                color = if (message.status == MessageStatus.FAILED) {
+                    MaterialTheme.colorScheme.error
+                } else {
+                    MaterialTheme.colorScheme.onPrimary
+                },
+            ),
+            modifier = modifier,
+            onClick = {
+                styledMessage.getStringAnnotations(start = it, end = it).firstOrNull()
+                    ?.let { annotation ->
+                        context.openUrl(annotation.item)
+                    }
             },
-        ),
-        modifier = modifier,
-        onClick = {
-            styledMessage.getStringAnnotations(start = it, end = it).firstOrNull()
-                ?.let { annotation ->
-                    context.openUrl(annotation.item)
-                }
-        },
-        onLongClick = {
-            showMenu = true
-        }
-    )
+            onLongClick = {
+                showMenu = true
+            }
+        )
+        Text(
+            message.createdAt.chatMessageBubbleTime(),
+            style = TextStyle(
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            ),
+            modifier = Modifier.align(Alignment.BottomEnd)
+                .padding(bottom = 5.dp, end = 10.dp)
+        )
+    }
 
     if (showMenu) {
         DropdownMenu(
