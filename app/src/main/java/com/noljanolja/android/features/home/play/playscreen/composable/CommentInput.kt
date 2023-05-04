@@ -99,7 +99,8 @@ fun CommentInput(
         val account = GoogleSignIn.getLastSignedInAccount(context)
         if (account != null) {
             val newAccount = if (account.isExpired) {
-                googleSignInClient.silentSignIn().getResult(ApiException::class.java)
+                val task = googleSignInClient.silentSignIn()
+                task.getResult(ApiException::class.java)
             } else {
                 account
             }
