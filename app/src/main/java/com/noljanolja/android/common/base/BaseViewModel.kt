@@ -66,8 +66,13 @@ fun launchInMain(block: suspend () -> Unit) = MainScope().launch {
     block.invoke()
 }
 
-fun launchInMainIO(block: suspend () -> Unit) = MainScope().launch {
+fun launchInMainIO(onError: (Throwable) -> Unit = {}, block: suspend () -> Unit) = MainScope().launch {
     withContext(Dispatchers.IO) {
-        block.invoke()
+        try {
+            block.invoke()
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            onError(e)
+        }
     }
 }

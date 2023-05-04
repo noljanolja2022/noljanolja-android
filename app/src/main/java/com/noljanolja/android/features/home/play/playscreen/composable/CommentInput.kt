@@ -1,5 +1,8 @@
 package com.noljanolja.android.features.home.play.playscreen.composable
 
+import android.app.Activity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -32,24 +35,88 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.google.android.gms.auth.GoogleAuthUtil
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.Scope
 import com.noljanolja.android.R
+import com.noljanolja.android.common.base.launchInMainIO
 import com.noljanolja.android.ui.composable.BackPressHandler
 import com.noljanolja.android.ui.composable.CircleAvatar
 import com.noljanolja.android.ui.composable.SizeBox
+import com.noljanolja.android.util.findActivity
 import com.noljanolja.core.user.domain.model.User
+import org.koin.androidx.compose.get
 
 @Composable
-fun CommentInput(me: User, onSend: (String) -> Unit) {
+fun CommentInput(
+    me: User,
+    onSend: (String, String) -> Unit,
+    onError: (Throwable) -> Unit = {},
+) {
+    var comment by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
-    var comment by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
+    val activity = context.findActivity()!!
+    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail()
+        .requestIdToken(stringResource(id = R.string.web_client_id)).requestScopes(YOUTUBE_SCOPE).build()
+
+    val googleSignInClient = GoogleSignIn.getClient(context, gso)
+    val googleSignInLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartActivityForResult(),
+            onResult = { result ->
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                val account = task.getResult(ApiException::class.java)
+                getTokenFromAccount(
+                    activity,
+                    account,
+                    onError = { error ->
+                        onError(error)
+                    }
+                ) { token ->
+                    onSend(comment, token)
+                    comment = ""
+                    focusManager.clearFocus()
+                }
+            }
+        )
+
     var lastFocusState by remember { mutableStateOf(false) }
     BackPressHandler(lastFocusState) {
         focusManager.clearFocus()
+    }
+    val send = {
+        val account = GoogleSignIn.getLastSignedInAccount(context)
+        if (account != null) {
+            val newAccount = if (account.isExpired) {
+                googleSignInClient.silentSignIn().getResult(ApiException::class.java)
+            } else {
+                account
+            }
+            getTokenFromAccount(
+                activity,
+                newAccount,
+                onError = { error ->
+                    onError(error)
+                }
+            ) { token ->
+                onSend(comment, token)
+                comment = ""
+                focusManager.clearFocus()
+            }
+        } else {
+            googleSignInLauncher.launch(googleSignInClient.signInIntent)
+        }
     }
     Row(
         modifier = Modifier.fillMaxWidth()
@@ -78,9 +145,7 @@ fun CommentInput(me: User, onSend: (String) -> Unit) {
                 maxLines = 1,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
                 keyboardActions = KeyboardActions(onSend = {
-                    onSend(comment)
-                    focusManager.clearFocus()
-                    comment = ""
+                    send.invoke()
                 }),
                 cursorBrush = SolidColor(LocalContentColor.current),
                 textStyle = MaterialTheme.typography.bodyLarge.copy(
@@ -99,11 +164,7 @@ fun CommentInput(me: User, onSend: (String) -> Unit) {
         AnimatedVisibility(visible = lastFocusState) {
             val enable = comment.isNotBlank()
             IconButton(
-                onClick = {
-                    onSend(comment)
-                    focusManager.clearFocus()
-                    comment = ""
-                },
+                onClick = send,
                 modifier = Modifier
                     .padding(start = 12.dp)
                     .then(Modifier.size(27.dp))
@@ -124,3 +185,35 @@ fun CommentInput(me: User, onSend: (String) -> Unit) {
         }
     }
 }
+
+private fun getTokenFromAccount(
+    activity: Activity,
+    account: GoogleSignInAccount,
+    onError: (Throwable) -> Unit,
+    onTokenResult: (String) -> Unit,
+) {
+    launchInMainIO(onError = onError) {
+        if (!GoogleSignIn.hasPermissions(
+                GoogleSignIn.getLastSignedInAccount(activity),
+                YOUTUBE_SCOPE
+            )
+        ) {
+            GoogleSignIn.requestPermissions(
+                activity,
+                GOOGLE_REQUEST_PERMISSION_CODE,
+                GoogleSignIn.getLastSignedInAccount(activity),
+                YOUTUBE_SCOPE
+            )
+        }
+
+        val token = GoogleAuthUtil.getToken(
+            activity,
+            account.account!!,
+            "oauth2:https://www.googleapis.com/auth/youtube.force-ssl",
+        )
+        onTokenResult.invoke(token)
+    }
+}
+
+private const val GOOGLE_REQUEST_PERMISSION_CODE = 1000
+private val YOUTUBE_SCOPE = Scope("https://www.googleapis.com/auth/youtube.force-ssl")
