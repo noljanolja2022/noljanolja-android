@@ -117,7 +117,12 @@ fun ChatScreenContent(
         topBar = {
             CommonTopAppBar(
                 title = conversation.getDisplayTitle(),
-                centeredTitle = true,
+                leadingTitle = conversation.getSingleReceiver()?.let {
+                    {
+                        OvalAvatar(user = it, size = 34.dp, modifier = Modifier.padding(end = 10.dp))
+                    }
+                },
+                centeredTitle = conversation.type == ConversationType.GROUP,
                 onBack = { handleEvent(ChatEvent.GoBack) },
                 actions = {
                     ChatBarActions(onChatOption = {

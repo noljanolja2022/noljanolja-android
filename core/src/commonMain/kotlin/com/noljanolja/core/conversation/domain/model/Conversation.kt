@@ -33,6 +33,8 @@ data class Conversation(
             null
         }
     }
+
+    fun getSingleReceiver(): User? = participants.find { !it.isMe }.takeIf { type == ConversationType.SINGLE }
 }
 
 @Serializable
