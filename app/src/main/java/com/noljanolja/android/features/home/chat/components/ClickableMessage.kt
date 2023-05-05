@@ -23,16 +23,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -192,45 +196,52 @@ fun ClickablePhotoMessage(
     modifier: Modifier,
     onMessageClick: (Message) -> Unit,
 ) {
-    when (val size = message.attachments.size) {
-        1 -> {
-            val attachment = message.attachments.first()
-            Column(
-                horizontalAlignment = if (message.sender.isMe) Alignment.End else Alignment.Start
-            ) {
-                PhotoPreview(
-                    modifier = modifier
-                        .clip(RoundedCornerShape(6.dp))
-                        .clickable { onMessageClick(message.copy(attachments = listOf(attachment))) },
-                    uri = attachment.getPhotoUri(conversationId).toUri(),
-                    key = "${message.localId}/${attachment.originalName}",
-                    contentScale = ContentScale.FillWidth,
-                    isMe = message.sender.isMe
-                )
-            }
-        }
-
-        else -> {
-            val maxAttachmentPerRow = if (size == 2 || size == 4) 2 else 3
-            val attachmentRows =
-                size / maxAttachmentPerRow + 1.takeIf { size % maxAttachmentPerRow > 0 }.orZero()
-            Column(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                horizontalAlignment = if (message.sender.isMe) Alignment.End else Alignment.Start
-            ) {
-                repeat(attachmentRows) { row ->
-                    if (row > 0) {
-                        Spacer(modifier = Modifier.height(4.dp))
-                    }
-                    AttachmentRow(
-                        message = message,
-                        conversationId = conversationId,
-                        attachments = message.attachments.filterIndexed { index, _ -> index >= row * maxAttachmentPerRow && index < (row + 1) * maxAttachmentPerRow },
-                        maxAttachmentPerRow = maxAttachmentPerRow,
-                        onMessageClick = onMessageClick
+    Box(
+        modifier = Modifier.wrapContentWidth().clip(RoundedCornerShape(10.dp))
+            .background(MaterialTheme.colorScheme.primaryContainer).padding(3.dp)
+    ) {
+        when (val size = message.attachments.size) {
+            1 -> {
+                val attachment = message.attachments.first()
+                Column(
+                    horizontalAlignment = if (message.sender.isMe) Alignment.End else Alignment.Start
+                ) {
+                    PhotoPreview(
+                        modifier = modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .clickable { onMessageClick(message.copy(attachments = listOf(attachment))) },
+                        uri = attachment.getPhotoUri(conversationId).toUri(),
+                        key = "${message.localId}/${attachment.originalName}",
+                        contentScale = ContentScale.FillWidth,
+                        isMe = message.sender.isMe,
+                        time = message.createdAt.chatMessageBubbleTime(),
+                        timeAlign = TextAlign.End,
                     )
+                }
+            }
+
+            else -> {
+                val maxAttachmentPerRow = if (size == 2 || size == 4) 2 else 3
+                val attachmentRows =
+                    size / maxAttachmentPerRow + 1.takeIf { size % maxAttachmentPerRow > 0 }.orZero()
+                Column(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    horizontalAlignment = if (message.sender.isMe) Alignment.End else Alignment.Start
+                ) {
+                    repeat(attachmentRows) { row ->
+                        if (row > 0) {
+                            Spacer(modifier = Modifier.height(4.dp))
+                        }
+                        AttachmentRow(
+                            message = message,
+                            conversationId = conversationId,
+                            attachments = message.attachments.filterIndexed { index, _ -> index >= row * maxAttachmentPerRow && index < (row + 1) * maxAttachmentPerRow },
+                            maxAttachmentPerRow = maxAttachmentPerRow,
+                            onMessageClick = onMessageClick
+                        )
+                    }
                 }
             }
         }
@@ -262,11 +273,13 @@ fun AttachmentRow(
                         modifier = Modifier
                             .weight(1f)
                             .aspectRatio(1f)
-                            .clip(RoundedCornerShape(6.dp))
+                            .clip(RoundedCornerShape(10.dp))
                             .clickable { onMessageClick(message.copy(attachments = listOf(attachment))) },
                         uri = attachment.getPhotoUri(conversationId).toUri(),
                         key = "${message.localId}/${attachment.originalName}",
                         isMe = message.sender.isMe,
+                        time = message.createdAt.chatMessageBubbleTime(),
+                        timeAlign = if (message.sender.isMe) TextAlign.Start else TextAlign.End
                     )
                 } ?: Spacer(modifier = Modifier.weight(1F))
             }
@@ -279,11 +292,16 @@ private fun PhotoPreview(
     modifier: Modifier,
     uri: Uri,
     key: String,
+    time: String,
     isMe: Boolean,
+    timeAlign: TextAlign = TextAlign.End,
     contentScale: ContentScale = ContentScale.Crop,
 ) {
     val context = LocalContext.current
-
+    var boxWidth by remember {
+        mutableStateOf(0)
+    }
+    val density = LocalDensity.current
     Box(
         modifier = modifier.clickable {
             context.openImageFromCache(key)
@@ -297,7 +315,10 @@ private fun PhotoPreview(
                 .diskCacheKey(key)
                 .build(),
             contentDescription = null,
-            contentScale = contentScale
+            contentScale = contentScale,
+            modifier = Modifier.onSizeChanged { size ->
+                boxWidth = size.width
+            }
         ) {
             AsyncImageState(
                 modifier = Modifier
@@ -306,6 +327,22 @@ private fun PhotoPreview(
                 contentScale = contentScale,
             )
         }
+        Text(
+            time,
+            modifier = Modifier
+                .width(with(density) { boxWidth.toDp() })
+                .height(50.dp)
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            Color.Transparent,
+                            Color.Black,
+                        ),
+                    )
+                )
+                .padding(top = 25.dp, end = 10.dp),
+            textAlign = timeAlign
+        )
     }
 }
 

@@ -408,11 +408,11 @@ private fun MessageRow(
                         user = message.sender,
                         modifier = Modifier
                             .clickable { onSenderClick(message.sender) }
-                            .padding(end = 5.dp)
+                            .padding(start = 16.dp, end = 5.dp)
                     )
                 } else {
                     // Space under avatar
-                    Spacer(modifier = Modifier.width(44.dp))
+                    Spacer(modifier = Modifier.width(53.dp))
                 }
                 AuthorAndTextMessage(
                     conversationId = conversationId,
@@ -486,11 +486,6 @@ private fun AuthorAndTextMessage(
         Row(
             verticalAlignment = Alignment.Bottom
         ) {
-//            if (message.sender.isMe) {
-//                Spacer(modifier = Modifier.weight(1F))
-//                MessageTimestamp(timestamp = message.createdAt.chatMessageBubbleTime())
-//            }
-
             Box(
                 modifier = Modifier
                     .widthIn(0.dp, maxChatItemWidth)
@@ -504,10 +499,6 @@ private fun AuthorAndTextMessage(
                     onMessageClick = onMessageClick,
                 )
             }
-//            if (!message.sender.isMe) {
-//                MessageTimestamp(timestamp = message.createdAt.chatMessageBubbleTime())
-//                Spacer(modifier = Modifier.weight(1F))
-//            }
         }
         if (isFirstMessageByAuthorSameDay) {
             Spacer(modifier = Modifier.height(12.dp))
