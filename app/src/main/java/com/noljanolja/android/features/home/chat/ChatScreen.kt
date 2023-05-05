@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Error
 import androidx.compose.material3.*
@@ -20,6 +22,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
@@ -94,6 +97,7 @@ fun ChatScreenContent(
     handleEvent: (ChatEvent) -> Unit,
 ) {
     val scrollState = rememberLazyListState()
+    val firstItemVisible = remember { derivedStateOf { scrollState.firstVisibleItemIndex } }
     var stickerSelected by remember {
         mutableStateOf<Sticker?>(null)
     }
@@ -102,6 +106,7 @@ fun ChatScreenContent(
             scrollState.animateScrollToItem(0)
         }
     }
+
     val context = LocalContext.current
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -129,7 +134,7 @@ fun ChatScreenContent(
             ) {
                 Box(
                     modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.BottomCenter,
+                    contentAlignment = Alignment.BottomEnd,
                 ) {
                     MessageList(
                         conversationId = conversation.id,
@@ -147,6 +152,13 @@ fun ChatScreenContent(
                         scrollState = scrollState,
                         onMessageClick = { handleEvent(ChatEvent.ClickMessage(it)) }
                     )
+                    if (firstItemVisible.value != 0) {
+                        ScrollToNewestMessageButton(onClick = {
+                            scope.launch {
+                                scrollState.scrollToItem(0)
+                            }
+                        })
+                    }
                 }
                 ChatInput(
                     onMessageSent = { message, type, attachments ->
@@ -629,5 +641,47 @@ private fun MessageEvent(text: String) {
             textAlign = TextAlign.Center,
             overflow = TextOverflow.Ellipsis
         )
+    }
+}
+
+@Composable
+private fun ScrollToNewestMessageButton(
+    onClick: () -> Unit,
+) {
+    val borderRadius = RoundedCornerShape(
+        10.dp,
+        0.dp,
+        0.dp,
+        10.dp
+    )
+    Box(
+        modifier = Modifier
+            .padding(bottom = 30.dp)
+            .width(53.dp)
+            .height(35.dp)
+            .clip(
+                borderRadius
+            ).background(color = MaterialTheme.colorScheme.primaryContainer)
+            .shadow(elevation = 5.dp)
+            .padding(start = 2.dp, bottom = 2.dp, top = 2.dp)
+            .clickable {
+                onClick.invoke()
+            }
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize().clip(borderRadius)
+                .background(color = MaterialTheme.colorScheme.background)
+                .padding(start = 9.dp)
+        ) {
+            Icon(
+                Icons.Default.ExpandMore,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp)
+                    .align(Alignment.CenterStart)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+                tint = MaterialTheme.colorScheme.background
+            )
+        }
     }
 }
