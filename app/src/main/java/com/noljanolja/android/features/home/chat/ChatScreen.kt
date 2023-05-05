@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -47,7 +46,7 @@ import com.noljanolja.android.ui.composable.InfiniteListHandler
 import com.noljanolja.android.ui.composable.OvalAvatar
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.ui.theme.BgChat02
+import com.noljanolja.android.ui.theme.BlueGray
 import com.noljanolja.android.util.*
 import com.noljanolja.core.conversation.domain.model.*
 import com.noljanolja.core.media.domain.model.Sticker
@@ -310,15 +309,16 @@ private fun DayHeader(dayString: String) {
     ) {
         Box(
             modifier = Modifier
-                .padding(vertical = 16.dp)
+                .padding(top = 30.dp)
                 .background(
-                    BgChat02,
-                    shape = CircleShape
+                    BlueGray,
+                    shape = RoundedCornerShape(7.dp)
                 )
         ) {
             Text(
                 text = dayString,
-                modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+                    .align(Alignment.Center),
                 style = MaterialTheme.typography.labelSmall.copy(
                     color = MaterialTheme.colorScheme.background
                 )
@@ -346,61 +346,33 @@ private fun MessageRow(
     val context = LocalContext.current
     val spaceBetweenAuthors =
         if (isLastMessageByAuthorSameDay) Modifier.padding(top = 8.dp) else Modifier
-
-    val eventModifier = Modifier
-        .fillMaxWidth()
-        .padding(
-            start = 50.dp,
-            end = 50.dp,
-            bottom = 4.dp
-        )
-        .clip(RoundedCornerShape(30.dp))
-        .background(BgChat02)
-        .padding(vertical = 5.dp, horizontal = 10.dp)
-    val eventStyle =
-        MaterialTheme.typography.labelSmall.copy(color = MaterialTheme.colorScheme.background)
     when (message.type) {
         MessageType.EVENT_JOINED -> {
-            Text(
+            MessageEvent(
                 stringResource(
                     id = R.string.chat_message_event_joined,
                     message.sender.name,
                     message.joinParticipants.joinToString(", ") { it.name }
                 ),
-                modifier = eventModifier,
-                style = eventStyle,
-                maxLines = 1,
-                textAlign = TextAlign.Center,
-                overflow = TextOverflow.Ellipsis
             )
         }
 
         MessageType.EVENT_LEFT -> {
-            Text(
+            MessageEvent(
                 stringResource(
                     id = R.string.chat_message_event_left,
                     message.leftParticipants.joinToString(", ") { it.name }
                 ),
-                modifier = eventModifier,
-                style = eventStyle,
-                maxLines = 1,
-                textAlign = TextAlign.Center,
-                overflow = TextOverflow.Ellipsis
             )
         }
 
         MessageType.EVENT_UPDATED -> {
-            Text(
+            MessageEvent(
                 stringResource(
                     id = R.string.chat_message_event_updated,
                     message.sender.name,
                     message.message
                 ),
-                modifier = eventModifier,
-                style = eventStyle,
-                maxLines = 1,
-                textAlign = TextAlign.Center,
-                overflow = TextOverflow.Ellipsis
             )
         }
 
@@ -509,9 +481,9 @@ private fun AuthorAndTextMessage(
             }
         }
         if (isFirstMessageByAuthorSameDay) {
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(10.dp))
         } else {
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(3.dp))
         }
     }
 }
@@ -631,5 +603,31 @@ private fun ChatItemBubble(
                 onMessageClick = onMessageClick,
             )
         }
+    }
+}
+
+@Composable
+private fun MessageEvent(text: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text,
+            modifier = Modifier
+                .padding(
+                    start = 57.dp,
+                    end = 57.dp,
+                    bottom = 4.dp,
+                    top = 3.dp,
+                )
+                .clip(RoundedCornerShape(7.dp))
+                .background(BlueGray)
+                .padding(vertical = 5.dp, horizontal = 10.dp),
+            style = MaterialTheme.typography.labelSmall.copy(color = MaterialTheme.colorScheme.background),
+            maxLines = 1,
+            textAlign = TextAlign.Center,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
