@@ -663,7 +663,7 @@ private fun ScrollToNewestMessageButton(
                 borderRadius
             ).background(color = MaterialTheme.colorScheme.primaryContainer)
             .shadow(elevation = 5.dp)
-            .padding(start = 2.dp, bottom = 2.dp, top = 2.dp)
+            .padding(start = 1.dp, bottom = 1.dp, top = 1.dp)
             .clickable {
                 onClick.invoke()
             }
