@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.outlined.Error
 import androidx.compose.material.icons.outlined.Search
@@ -225,18 +226,25 @@ fun ConversationRow(
                 .size(40.dp),
             contentAlignment = Alignment.BottomEnd,
         ) {
-            AsyncImage(
-                ImageRequest.Builder(context = context)
-                    .data(conversation.getDisplayAvatarUrl())
-                    .placeholder(R.drawable.placeholder_avatar)
-                    .error(R.drawable.placeholder_avatar)
-                    .fallback(R.drawable.placeholder_avatar)
-                    .build(),
+            val avatarModifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(14.dp))
+            conversation.getDisplayAvatarUrl()?.let { url ->
+                AsyncImage(
+                    ImageRequest.Builder(context = context)
+                        .data(url)
+                        .placeholder(R.drawable.placeholder_avatar)
+                        .error(R.drawable.placeholder_avatar)
+                        .fallback(R.drawable.placeholder_avatar)
+                        .build(),
+                    contentDescription = null,
+                    modifier = avatarModifier,
+                    contentScale = ContentScale.Crop,
+                )
+            } ?: Icon(
+                Icons.Filled.Group,
                 contentDescription = null,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(14.dp)),
-                contentScale = ContentScale.Crop,
+                modifier = avatarModifier.background(MaterialTheme.colorScheme.primaryContainer).padding(8.dp)
             )
         }
 

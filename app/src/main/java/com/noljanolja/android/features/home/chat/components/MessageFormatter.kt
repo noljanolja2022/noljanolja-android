@@ -101,7 +101,7 @@ private fun getSymbolAnnotation(
             AnnotatedString(
                 text = matchResult.value,
                 spanStyle = SpanStyle(
-                    color = if (primary) colorScheme.inversePrimary else colorScheme.primary
+                    color = if (primary) Color.Blue else colorScheme.primary
                 )
             ),
             StringAnnotation(
@@ -117,7 +117,7 @@ private fun getSymbolAnnotation(
                 AnnotatedString(
                     text = matchResult.value,
                     spanStyle = SpanStyle(
-                        color = if (primary) colorScheme.inversePrimary else colorScheme.primary,
+                        color = if (primary) Color.Blue else colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     )
                 ),
@@ -170,7 +170,7 @@ private fun getSymbolAnnotation(
                 AnnotatedString(
                     text = matchResult.value,
                     spanStyle = SpanStyle(
-                        color = if (primary) colorScheme.inversePrimary else colorScheme.primary
+                        color = if (primary) Color.Blue else colorScheme.primary
                     )
                 ),
                 StringAnnotation(

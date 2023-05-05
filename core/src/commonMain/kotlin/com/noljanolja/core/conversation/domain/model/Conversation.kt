@@ -25,12 +25,12 @@ data class Conversation(
         }
     }
 
-    fun getDisplayAvatarUrl(): String {
+    fun getDisplayAvatarUrl(): String? {
         return if (type == ConversationType.SINGLE) {
             (participants.find { !it.isMe } ?: participants.firstOrNull())?.getAvatarUrl()
                 .orEmpty()
         } else {
-            ""
+            null
         }
     }
 }
