@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -30,7 +31,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -102,10 +105,17 @@ private fun ClickableTextMessage(
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
 
     var showMenu by remember { mutableStateOf(false) }
-    val styledMessage = messageFormatter(
-        text = message.message + "        ",
-        primary = message.sender.isMe
-    )
+    val styledMessage = AnnotatedString.Builder().apply {
+        append(
+            messageFormatter(
+                text = message.message,
+                primary = message.sender.isMe
+            )
+        )
+        withStyle(SpanStyle(color = Color.Transparent)) {
+            append(" " + message.createdAt.chatMessageBubbleTime())
+        }
+    }.toAnnotatedString()
     Box {
         CombineClickableText(
             text = styledMessage,
@@ -133,7 +143,8 @@ private fun ClickableTextMessage(
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             ),
-            modifier = Modifier.align(Alignment.BottomEnd)
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
                 .padding(bottom = 5.dp, end = 10.dp)
         )
     }
