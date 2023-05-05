@@ -46,6 +46,7 @@ import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.InfiniteListHandler
 import com.noljanolja.android.ui.composable.OvalAvatar
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
+import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.BgChat02
 import com.noljanolja.android.util.*
 import com.noljanolja.core.conversation.domain.model.*
@@ -134,6 +135,7 @@ fun ChatScreenContent(
                     MessageList(
                         conversationId = conversation.id,
                         messages = conversation.messages,
+                        conversationType = conversation.type,
                         loadMoreMessages = { handleEvent(ChatEvent.LoadMoreMessages) },
                         navigateToProfile = { user ->
                             handleEvent(
@@ -237,6 +239,7 @@ fun ChatBarActions(onChatOption: () -> Unit) {
 private fun MessageList(
     conversationId: Long,
     messages: List<Message>,
+    conversationType: ConversationType,
     loadMoreMessages: () -> Unit,
     navigateToProfile: (User) -> Unit,
     scrollState: LazyListState,
@@ -280,6 +283,7 @@ private fun MessageList(
                     MessageRow(
                         conversationId = conversationId,
                         message = message,
+                        conversationType = conversationType,
                         isFirstMessageByAuthorSameDay = isFirstMessageByAuthorSameDay,
                         isLastMessageByAuthorSameDay = isLastMessageByAuthorSameDay,
                         onMessageClick = onMessageClick,
@@ -333,6 +337,7 @@ private fun DayHeaderPreview() {
 private fun MessageRow(
     conversationId: Long,
     message: Message,
+    conversationType: ConversationType,
     isFirstMessageByAuthorSameDay: Boolean,
     isLastMessageByAuthorSameDay: Boolean,
     onMessageClick: (Message) -> Unit,
@@ -401,18 +406,21 @@ private fun MessageRow(
 
         else -> {
             Row(modifier = spaceBetweenAuthors) {
-                if (isLastMessageByAuthorSameDay && !message.sender.isMe) {
-                    // Avatar
-                    OvalAvatar(
-                        size = 32.dp,
-                        user = message.sender,
-                        modifier = Modifier
-                            .clickable { onSenderClick(message.sender) }
-                            .padding(start = 16.dp, end = 5.dp)
-                    )
-                } else {
-                    // Space under avatar
-                    Spacer(modifier = Modifier.width(53.dp))
+                SizeBox(width = 16.dp)
+                if (conversationType == ConversationType.GROUP) {
+                    if (isLastMessageByAuthorSameDay && !message.sender.isMe) {
+                        // Avatar
+                        OvalAvatar(
+                            size = 32.dp,
+                            user = message.sender,
+                            modifier = Modifier
+                                .clickable { onSenderClick(message.sender) }
+                                .padding(end = 5.dp)
+                        )
+                    } else {
+                        // Space under avatar
+                        Spacer(modifier = Modifier.width(37.dp))
+                    }
                 }
                 AuthorAndTextMessage(
                     conversationId = conversationId,
@@ -590,7 +598,7 @@ private fun ChatItemBubble(
     )
     var backgroundBubbleColor: Color = MaterialTheme.colorScheme.surface
     if (message.sender.isMe) {
-        backgroundBubbleColor = MaterialTheme.colorScheme.primary
+        backgroundBubbleColor = MaterialTheme.colorScheme.primaryContainer
     }
     when (message.type) {
         MessageType.DOCUMENT -> {
