@@ -9,21 +9,25 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.outlined.Store
+import androidx.compose.material.icons.outlined.GifBox
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
@@ -33,6 +37,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
+import com.noljanolja.android.R
 import com.noljanolja.android.common.mobiledata.data.StickersLoader
 import com.noljanolja.android.util.checkIfExits
 import com.noljanolja.core.media.domain.model.Sticker
@@ -56,13 +61,6 @@ fun StickerTable(
     val stickerPacks by stickersLoader.stickerPacks.collectAsStateWithLifecycle()
 
     Column(modifier = modifier) {
-        StickerList(
-            stickerPacks = stickerPacks,
-            pagerState = pagerState,
-            onStickerClicked = onStickerClicked,
-            onShowSticker = onShowSticker,
-            modifier = Modifier.fillMaxWidth().weight(1f),
-        )
         StickerTabs(
             modifier = Modifier.fillMaxWidth().wrapContentHeight(),
             stickerPacks = stickerPacks,
@@ -72,6 +70,13 @@ fun StickerTable(
                     pagerState.animateScrollToPage(it)
                 }
             }
+        )
+        StickerList(
+            stickerPacks = stickerPacks,
+            pagerState = pagerState,
+            onStickerClicked = onStickerClicked,
+            onShowSticker = onShowSticker,
+            modifier = Modifier.fillMaxWidth().weight(1f),
         )
     }
 }
@@ -87,6 +92,15 @@ private fun StickerTabs(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
+        IconButton(
+            onClick = {},
+            modifier = Modifier.padding(horizontal = 8.dp).size(tabSizeDp.dp),
+        ) {
+            Icon(
+                Icons.Outlined.GifBox,
+                contentDescription = null,
+            )
+        }
         LazyRow(
             state = rememberLazyListState(),
             modifier = Modifier.weight(1f),
@@ -105,16 +119,12 @@ private fun StickerTabs(
                 }
             }
         }
-        Divider(
-            modifier = Modifier.width(1.dp).height(24.dp)
-                .background(MaterialTheme.colorScheme.onSurface.copy(.12f))
-        )
         IconButton(
             onClick = {},
             modifier = Modifier.padding(horizontal = 8.dp).size(tabSizeDp.dp),
         ) {
             Icon(
-                Icons.Outlined.Store,
+                ImageVector.vectorResource(id = R.drawable.ic_shop_find_outline),
                 contentDescription = null,
             )
         }
@@ -127,40 +137,31 @@ private fun StickerTab(
     isSelected: Boolean,
     onTabSelected: () -> Unit,
 ) {
-    Box(
-        modifier = Modifier.padding(horizontal = 2.dp).size(tabSizeDp.dp),
-        contentAlignment = Alignment.BottomCenter,
+    IconButton(
+        onClick = onTabSelected,
+        modifier = Modifier
+            .background(
+                if (isSelected) MaterialTheme.colorScheme.surface else Color.Transparent,
+                shape = RoundedCornerShape(4.dp)
+            ).padding(4.dp)
+            .size(tabSizeDp.dp),
     ) {
-        if (isSelected) {
-            Box(
-                modifier = Modifier.padding(vertical = 6.dp).fillMaxSize().background(
-                    MaterialTheme.colorScheme.secondaryContainer,
-                    shape = RoundedCornerShape(18.dp)
-                )
+        val modifier = Modifier.padding(vertical = 6.dp, horizontal = 8.dp).size(28.dp)
+        if (stickerPack.trayImageFile.checkIfExits()) {
+            Image(
+                painter = rememberAsyncImagePainter(stickerPack.trayImageFile),
+                contentDescription = null,
+                modifier = modifier
             )
-        }
-        IconButton(
-            onClick = onTabSelected,
-            modifier = Modifier.size(tabSizeDp.dp),
-        ) {
-            val modifier = Modifier.padding(vertical = 6.dp, horizontal = 8.dp).size(28.dp)
-            if (stickerPack.trayImageFile.checkIfExits()) {
-                Image(
-                    painter = rememberAsyncImagePainter(stickerPack.trayImageFile),
-                    contentDescription = null,
-                    modifier = modifier
-                )
-            } else {
-                SubcomposeAsyncImage(
-                    ImageRequest.Builder(context = LocalContext.current)
-                        .data(stickerPack.getImageUrl())
-                        .memoryCacheKey("${stickerPack.id} ${stickerPack.trayImageFile}")
-                        .diskCacheKey("${stickerPack.id} ${stickerPack.trayImageFile}").build(),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = modifier
-                )
-            }
+        } else {
+            SubcomposeAsyncImage(
+                ImageRequest.Builder(context = LocalContext.current).data(stickerPack.getImageUrl())
+                    .memoryCacheKey("${stickerPack.id} ${stickerPack.trayImageFile}")
+                    .diskCacheKey("${stickerPack.id} ${stickerPack.trayImageFile}").build(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = modifier
+            )
         }
     }
 }
@@ -216,12 +217,8 @@ private fun StickerList(
                 if (stickerPack.downloading) {
                     CircularProgressIndicator(modifier = Modifier.size(50.dp))
                 } else {
-                    IconButton(onClick = { stickersLoader.downloadStickerPack(stickerPack) }) {
-                        Icon(
-                            Icons.Default.Download,
-                            contentDescription = null,
-                            modifier = Modifier.size(50.dp)
-                        )
+                    TextButton(onClick = { stickersLoader.downloadStickerPack(stickerPack) }) {
+                        Text(text = "Download")
                     }
                 }
             }
@@ -229,7 +226,7 @@ private fun StickerList(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+
 @Composable
 private fun StickerRow(
     totalStickers: List<Sticker>,
@@ -247,31 +244,21 @@ private fun StickerRow(
             if (sticker != null) {
                 var isPressed by remember { mutableStateOf(false) }
                 var isLongClick by remember { mutableStateOf(false) }
-                LaunchedEffect(
-                    key1 = isPressed,
-                    key2 = isLongClick,
-                    block = {
-                        onShowSticker(sticker.takeIf { isPressed && isLongClick })
-                        if (!isPressed) isLongClick = false
-                    }
-                )
+                LaunchedEffect(key1 = isPressed, key2 = isLongClick, block = {
+                    onShowSticker(sticker.takeIf { isPressed && isLongClick })
+                    if (!isPressed) isLongClick = false
+                })
 
                 Image(
                     painter = rememberAsyncImagePainter(sticker.imageFile),
                     contentDescription = null,
-                    modifier = Modifier
-                        .size(stickerSizeDp.dp)
-                        .pointerInput(Unit) {
-                            detectTapGestures(
-                                onPress = { _ ->
-                                    isPressed = true
-                                    tryAwaitRelease()
-                                    isPressed = false
-                                },
-                                onTap = { onStickerClicked(sticker) },
-                                onLongPress = { isLongClick = true }
-                            )
-                        }
+                    modifier = Modifier.size(stickerSizeDp.dp).pointerInput(Unit) {
+                        detectTapGestures(onPress = { _ ->
+                            isPressed = true
+                            tryAwaitRelease()
+                            isPressed = false
+                        }, onTap = { onStickerClicked(sticker) }, onLongPress = { isLongClick = true })
+                    }
                 )
             } else {
                 IconButton(

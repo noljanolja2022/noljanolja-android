@@ -611,17 +611,17 @@ private fun EmojiSelector(
             .focusTarget()
             .background(MaterialTheme.colorScheme.background),
     ) {
-        EmojiSelectorTabs(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            selectedTab = selected,
-            onTabSelected = {
-                selected = it
-                onGifTabSelected(it == EmojiStickerSelector.GIF)
-                onEmojiChange(it)
-            }
-        )
+//        EmojiSelectorTabs(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .wrapContentHeight(),
+//            selectedTab = selected,
+//            onTabSelected = {
+//                selected = it
+//                onGifTabSelected(it == EmojiStickerSelector.GIF)
+//                onEmojiChange(it)
+//            }
+//        )
 
         when (selected) {
             EmojiStickerSelector.STICKER -> {
