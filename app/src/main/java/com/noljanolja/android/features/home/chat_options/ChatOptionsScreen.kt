@@ -83,7 +83,7 @@ fun ChatOptionsContent(
         mutableStateOf<User?>(null)
     }
     val bottomSheetState =
-        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+        rememberBottomSheetScaffoldState()
 
     var showLeaveChatDialog by remember {
         mutableStateOf(false)
@@ -141,7 +141,7 @@ fun ChatOptionsContent(
                             onUserClick = {
                                 scope.launch {
                                     selectParticipant = it
-                                    bottomSheetState.show()
+                                    bottomSheetState.bottomSheetState.expand()
                                 }
                             },
                             onAddParticipant = {
@@ -185,7 +185,7 @@ fun ChatOptionsContent(
         onDismiss = { showAssignAdminChatDialog = false },
         onConfirm = {
             scope.launch {
-                bottomSheetState.hide()
+                bottomSheetState.bottomSheetState.collapse()
             }
             selectParticipant?.let {
                 handleEvent(ChatOptionsEvent.MakeAdminConversation(it.id))
@@ -213,7 +213,7 @@ fun ChatOptionsContent(
         onDismiss = { showRemoveParticipantChatDialog = false },
         onConfirm = {
             scope.launch {
-                bottomSheetState.hide()
+                bottomSheetState.bottomSheetState.collapse()
             }
             selectParticipant?.let {
                 handleEvent(ChatOptionsEvent.RemoveParticipant(it.id))
@@ -283,6 +283,7 @@ fun LazyListScope.chatParticipants(
                 }
             }
         }
+
         ConversationType.SINGLE -> {
         }
     }

@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
@@ -44,6 +45,7 @@ import com.noljanolja.android.util.getFileName
 import com.noljanolja.android.util.getTmpFileUri
 import com.noljanolja.core.conversation.domain.model.MessageType
 import com.noljanolja.core.media.domain.model.Sticker
+import kotlinx.coroutines.launch
 
 private enum class InputSelector {
     NONE,
@@ -63,14 +65,17 @@ private enum class EmojiStickerSelector {
 @Composable
 fun ChatInput(
     onMessageSent: (String, MessageType, List<Uri>) -> Unit,
+    selectedMedia: List<Uri>,
     modifier: Modifier = Modifier,
     shouldShowSendButton: Boolean = false,
     resetScroll: () -> Unit = {},
     mediaList: List<Pair<Uri, Long?>>,
     loadMedia: () -> Unit,
     openPhoneSetting: () -> Unit,
+    onChangeSelectMedia: (List<Uri>) -> Unit,
     onHandleBottomSheetBackPress: () -> Unit = {},
     onShowSticker: (Sticker?) -> Unit,
+    onOpenFullImages: () -> Unit,
 ) {
     var currentInputSelector by rememberSaveable { mutableStateOf(InputSelector.NONE) }
     // when gif BottomSheet is expanding, if back button is pressed, collapse bottom sheet instead of
@@ -94,7 +99,24 @@ fun ChatInput(
     var message by remember { mutableStateOf(TextFieldValue()) }
     var attachments by remember { mutableStateOf<List<Uri>>(listOf()) }
     var showConfirmDialog by remember { mutableStateOf(false) }
-    val selectedMedia = remember { mutableStateListOf<Uri>() }
+    val modifiableSelectMedia = mutableListOf<Uri>().apply {
+        addAll(selectedMedia)
+    }
+    val onMediaSelect = { mediaSelect: List<Uri>, isAdd: Boolean? ->
+
+        when (isAdd) {
+            true -> modifiableSelectMedia.addAll(mediaSelect)
+            false -> modifiableSelectMedia.removeAll(mediaSelect)
+            else -> {
+                mediaSelect.forEach { media ->
+                    if (!selectedMedia.contains(media)) {
+                        modifiableSelectMedia.add(media)
+                    }
+                }
+            }
+        }
+        onChangeSelectMedia(modifiableSelectMedia)
+    }
 
     Column(modifier = modifier) {
         Box {
@@ -134,7 +156,7 @@ fun ChatInput(
             } else {
                 SendMedia(
                     numberSelected = selectedMedia.size,
-                    onClear = { selectedMedia.clear() },
+                    onClear = { onChangeSelectMedia(emptyList()) },
                     onSendMedia = {
                         onMessageSent(
                             message.text,
@@ -142,7 +164,7 @@ fun ChatInput(
                             selectedMedia
                         )
                         currentInputSelector = InputSelector.NONE
-                        selectedMedia.clear()
+                        onChangeSelectMedia(emptyList())
                     }
                 )
             }
@@ -153,17 +175,7 @@ fun ChatInput(
                 .height(232.dp),
             currentSelector = currentInputSelector,
             onMediaSelect = { mediaSelect, isAdd ->
-                when (isAdd) {
-                    true -> selectedMedia.addAll(mediaSelect)
-                    false -> selectedMedia.removeAll(mediaSelect)
-                    else -> {
-                        mediaSelect.forEach { media ->
-                            if (!selectedMedia.contains(media)) {
-                                selectedMedia.add(media)
-                            }
-                        }
-                    }
-                }
+                onMediaSelect.invoke(mediaSelect, isAdd)
             },
             onStickerClicked = { id, sticker ->
                 onMessageSent(
@@ -178,6 +190,7 @@ fun ChatInput(
             selectedMedia = selectedMedia,
             loadMedia = loadMedia,
             openPhoneSetting = openPhoneSetting,
+            onOpenFullImages = onOpenFullImages,
         )
         if (extendActionState && (currentInputSelector == InputSelector.NONE || currentInputSelector == InputSelector.CAMERA)) {
             ExtraActions(
@@ -188,6 +201,7 @@ fun ChatInput(
             )
         }
     }
+
     if (currentInputSelector == InputSelector.CAMERA) {
         onHandleBottomSheetBackPress()
 
@@ -371,6 +385,7 @@ private fun ChatInputText(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun SelectorExpanded(
     modifier: Modifier,
@@ -383,6 +398,7 @@ private fun SelectorExpanded(
     selectedMedia: List<Uri>,
     loadMedia: () -> Unit,
     openPhoneSetting: () -> Unit,
+    onOpenFullImages: () -> Unit,
 ) {
     if (currentSelector == InputSelector.NONE || currentSelector == InputSelector.CAMERA) return
 
@@ -419,7 +435,8 @@ private fun SelectorExpanded(
                 mediaList = mediaList,
                 selectedMedia = selectedMedia,
                 loadMedia = loadMedia,
-                openPhoneSetting = openPhoneSetting
+                openPhoneSetting = openPhoneSetting,
+                onOpenFullImages = onOpenFullImages,
             )
 
             InputSelector.EMOJI -> EmojiSelector(
@@ -546,6 +563,7 @@ private fun GallerySelector(
     selectedMedia: List<Uri>,
     loadMedia: () -> Unit,
     openPhoneSetting: () -> Unit,
+    onOpenFullImages: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -562,7 +580,8 @@ private fun GallerySelector(
                 .weight(1f),
             onMediaSelect = onMediaSelect,
             loadMedia = loadMedia,
-            openPhoneSetting = openPhoneSetting
+            openPhoneSetting = openPhoneSetting,
+            onOpenFullImages = onOpenFullImages,
         )
     }
 }

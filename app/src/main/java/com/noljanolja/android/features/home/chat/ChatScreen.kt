@@ -10,10 +10,13 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Error
+import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -44,7 +47,9 @@ import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.features.home.chat.components.ChatInput
 import com.noljanolja.android.features.home.chat.components.ClickableMessage
+import com.noljanolja.android.features.home.chat.components.GridContent
 import com.noljanolja.android.ui.composable.CommonTopAppBar
+import com.noljanolja.android.ui.composable.FullSizeWithBottomSheet
 import com.noljanolja.android.ui.composable.InfiniteListHandler
 import com.noljanolja.android.ui.composable.OvalAvatar
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
@@ -88,7 +93,7 @@ fun ChatScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun ChatScreenContent(
     chatUiState: UiState<Conversation>,
@@ -112,136 +117,184 @@ fun ChatScreenContent(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val scope = rememberCoroutineScope()
     val conversation = chatUiState.data ?: return
-    ScaffoldWithUiState(
-        uiState = chatUiState,
-        topBar = {
-            CommonTopAppBar(
-                title = conversation.getDisplayTitle(),
-                leadingTitle = conversation.getSingleReceiver()?.let {
-                    {
-                        OvalAvatar(user = it, size = 34.dp, modifier = Modifier.padding(end = 10.dp))
+    val selectedMedia = remember { mutableStateListOf<Uri>() }
+
+    val bottomSheetState = rememberBottomSheetScaffoldState()
+
+    FullSizeWithBottomSheet(modalSheetState = bottomSheetState, sheetContent = {
+        Column(
+            modifier = Modifier.heightIn(max = (LocalConfiguration.current.screenHeightDp * 0.9f).dp)
+                .background(Color.White)
+        ) {
+            Row(
+                modifier = Modifier.height(54.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("All", style = MaterialTheme.typography.titleMedium)
+                IconButton(onClick = {
+                    scope.launch {
+                        bottomSheetState.bottomSheetState.collapse()
                     }
-                },
-                centeredTitle = conversation.type == ConversationType.GROUP,
-                onBack = { handleEvent(ChatEvent.GoBack) },
-                actions = {
-                    ChatBarActions(onChatOption = {
-                        handleEvent(ChatEvent.ChatOptions)
-                    })
+                }) {
+                    Icon(Icons.Default.Close, contentDescription = null)
+                }
+            }
+            GridContent(
+                mediaList = mediaList,
+                selectedMedia = selectedMedia,
+                onMediaSelect = { mediaSelect: List<Uri>, isAdd: Boolean ->
+                    when (isAdd) {
+                        true -> selectedMedia.addAll(mediaSelect)
+                        false -> selectedMedia.removeAll(mediaSelect)
+                    }
                 }
             )
-        },
-        content = {
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .nestedScroll(scrollBehavior.nestedScrollConnection)
-            ) {
-                Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.BottomEnd,
-                ) {
-                    MessageList(
-                        conversationId = conversation.id,
-                        messages = conversation.messages,
-                        conversationType = conversation.type,
-                        loadMoreMessages = { handleEvent(ChatEvent.LoadMoreMessages) },
-                        navigateToProfile = { user ->
-                            handleEvent(
-                                ChatEvent.NavigateToProfile(
-                                    user
-                                )
-                            )
-                        },
-                        modifier = Modifier.fillMaxSize(),
-                        scrollState = scrollState,
-                        onMessageClick = { handleEvent(ChatEvent.ClickMessage(it)) }
-                    )
-                    if (firstItemVisible.value != 0) {
-                        ScrollToNewestMessageButton(onClick = {
-                            scope.launch {
-                                scrollState.scrollToItem(0)
-                            }
+        }
+    }) {
+        ScaffoldWithUiState(
+            uiState = chatUiState,
+            topBar = {
+                CommonTopAppBar(
+                    title = conversation.getDisplayTitle(),
+                    leadingTitle = conversation.getSingleReceiver()?.let {
+                        {
+                            OvalAvatar(user = it, size = 34.dp, modifier = Modifier.padding(end = 10.dp))
+                        }
+                    },
+                    centeredTitle = conversation.type == ConversationType.GROUP,
+                    onBack = { handleEvent(ChatEvent.GoBack) },
+                    actions = {
+                        ChatBarActions(onChatOption = {
+                            handleEvent(ChatEvent.ChatOptions)
                         })
                     }
-                }
-                ChatInput(
-                    onMessageSent = { message, type, attachments ->
-                        val sendMessage = when (type) {
-                            MessageType.GIF,
-                            MessageType.PLAINTEXT,
-                            -> {
-                                if (message.isNotBlank()) {
+                )
+            },
+            content = {
+                Column(
+                    Modifier
+                        .fillMaxSize()
+                        .nestedScroll(scrollBehavior.nestedScrollConnection)
+                ) {
+                    Box(
+                        modifier = Modifier.weight(1f),
+                        contentAlignment = Alignment.BottomEnd,
+                    ) {
+                        MessageList(
+                            conversationId = conversation.id,
+                            messages = conversation.messages,
+                            conversationType = conversation.type,
+                            loadMoreMessages = { handleEvent(ChatEvent.LoadMoreMessages) },
+                            navigateToProfile = { user ->
+                                handleEvent(
+                                    ChatEvent.NavigateToProfile(
+                                        user
+                                    )
+                                )
+                            },
+                            modifier = Modifier.fillMaxSize(),
+                            scrollState = scrollState,
+                            onMessageClick = { handleEvent(ChatEvent.ClickMessage(it)) }
+                        )
+                        if (firstItemVisible.value != 0) {
+                            ScrollToNewestMessageButton(onClick = {
+                                scope.launch {
+                                    scrollState.scrollToItem(0)
+                                }
+                            })
+                        }
+                    }
+                    ChatInput(
+                        onMessageSent = { message, type, attachments ->
+                            val sendMessage = when (type) {
+                                MessageType.GIF,
+                                MessageType.PLAINTEXT,
+                                -> {
+                                    if (message.isNotBlank()) {
+                                        Message(
+                                            message = message.trim(),
+                                            type = type,
+                                        )
+                                    } else {
+                                        null
+                                    }
+                                }
+
+                                MessageType.DOCUMENT, MessageType.PHOTO -> {
                                     Message(
                                         message = message.trim(),
                                         type = type,
+                                        attachments = attachments.map {
+                                            val fileInfo = context.loadFileInfo(it)
+                                            MessageAttachment(
+                                                name = "",
+                                                originalName = fileInfo.name,
+                                                type = fileInfo.contentType,
+                                                size = fileInfo.contents.size.toLong(),
+                                                contents = fileInfo.contents,
+                                                localPath = fileInfo.path.toString(),
+                                            )
+                                        },
                                     )
-                                } else {
-                                    null
                                 }
-                            }
 
-                            MessageType.DOCUMENT, MessageType.PHOTO -> {
-                                Message(
-                                    message = message.trim(),
-                                    type = type,
-                                    attachments = attachments.map {
-                                        val fileInfo = context.loadFileInfo(it)
-                                        MessageAttachment(
-                                            name = "",
-                                            originalName = fileInfo.name,
-                                            type = fileInfo.contentType,
-                                            size = fileInfo.contents.size.toLong(),
-                                            contents = fileInfo.contents,
-                                            localPath = fileInfo.path.toString(),
-                                        )
-                                    },
-                                )
-                            }
+                                MessageType.STICKER -> {
+                                    Message(
+                                        message = message,
+                                        stickerUrl = message,
+                                        type = MessageType.STICKER,
+                                    )
+                                }
 
-                            MessageType.STICKER -> {
-                                Message(
-                                    message = message,
-                                    stickerUrl = message,
-                                    type = MessageType.STICKER,
-                                )
+                                else -> null
                             }
-
-                            else -> null
+                            sendMessage?.let { handleEvent(ChatEvent.SendMessage(it)) }
+                        },
+                        modifier = Modifier
+                            .navigationBarsPadding()
+                            .imePadding(),
+                        selectedMedia = selectedMedia,
+                        resetScroll = { scope.launch { scrollState.scrollToItem(0) } },
+                        mediaList = mediaList,
+                        loadMedia = { handleEvent(ChatEvent.LoadMedia) },
+                        openPhoneSetting = { handleEvent(ChatEvent.OpenPhoneSettings) },
+                        onShowSticker = {
+                            stickerSelected = it
+                        },
+                        onChangeSelectMedia = {
+                            selectedMedia.clear()
+                            selectedMedia.addAll(it)
+                        },
+                        onOpenFullImages = {
+                            scope.launch {
+                                bottomSheetState.bottomSheetState.expand()
+                            }
                         }
-                        sendMessage?.let { handleEvent(ChatEvent.SendMessage(it)) }
-                    },
-                    modifier = Modifier
-                        .navigationBarsPadding()
-                        .imePadding(),
-                    resetScroll = { scope.launch { scrollState.scrollToItem(0) } },
-                    mediaList = mediaList,
-                    loadMedia = { handleEvent(ChatEvent.LoadMedia) },
-                    openPhoneSetting = { handleEvent(ChatEvent.OpenPhoneSettings) },
-                    onShowSticker = {
-                        stickerSelected = it
-                    }
-                )
-            }
-            stickerSelected?.let {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.7F)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    SubcomposeAsyncImage(
-                        ImageRequest.Builder(context = LocalContext.current)
-                            .setAnimated(true)
-                            .data(it.imageFile)
-                            .build(),
-                        contentDescription = null,
-                        modifier = Modifier.size(150.dp)
                     )
                 }
+                stickerSelected?.let {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(alpha = 0.7F)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        SubcomposeAsyncImage(
+                            ImageRequest.Builder(context = LocalContext.current)
+                                .setAnimated(true)
+                                .data(it.imageFile)
+                                .build(),
+                            contentDescription = null,
+                            modifier = Modifier.size(150.dp)
+                        )
+                    }
+                }
             }
-        }
-    )
+        )
+    }
 }
 
 @Composable

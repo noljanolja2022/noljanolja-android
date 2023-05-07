@@ -11,14 +11,15 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun FullSizeWithBottomSheet(
     sheetShape: Shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-    modalSheetState: ModalBottomSheetState,
+    modalSheetState: BottomSheetScaffoldState,
     sheetContent: @Composable ColumnScope.() -> Unit,
     content: @Composable () -> Unit,
 ) {
-    ModalBottomSheetLayout(
-        sheetState = modalSheetState,
+    BottomSheetScaffold(
+        scaffoldState = modalSheetState,
         sheetShape = sheetShape,
         sheetContent = sheetContent,
+        sheetPeekHeight = 0.dp
     ) {
         content.invoke()
     }

@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material3.FloatingActionButton
@@ -37,6 +38,7 @@ import com.noljanolja.android.services.PermissionChecker
 import com.noljanolja.android.services.PermissionChecker.Companion.IMAGE_PERMISSION
 import com.noljanolja.android.ui.composable.Rationale
 
+@OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun PhotoTable(
@@ -46,6 +48,7 @@ fun PhotoTable(
     onMediaSelect: (List<Uri>, Boolean?) -> Unit,
     loadMedia: () -> Unit,
     openPhoneSetting: () -> Unit,
+    onOpenFullImages: () -> Unit,
 ) {
     val libraryLauncher =
         rememberLauncherForActivityResult(object : ActivityResultContracts.GetMultipleContents() {
@@ -70,7 +73,7 @@ fun PhotoTable(
             openPhoneSetting = openPhoneSetting
         )
         FloatingActionButton(
-            onClick = { libraryLauncher.launch("*/*") },
+            onClick = onOpenFullImages,
             modifier = Modifier.padding(start = 8.dp, bottom = 16.dp)
         ) {
             Icon(
