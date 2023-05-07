@@ -134,6 +134,7 @@ fun ChatInput(
             } else {
                 SendMedia(
                     numberSelected = selectedMedia.size,
+                    onClear = { selectedMedia.clear() },
                     onSendMedia = {
                         onMessageSent(
                             message.text,
@@ -735,15 +736,23 @@ private fun CameraSelectorRow(
 @Composable
 private fun SendMedia(
     numberSelected: Int,
+    onClear: () -> Unit,
     onSendMedia: () -> Unit,
 ) {
     Box(
         modifier = Modifier
             .height(48.dp)
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.primaryContainer),
+            .background(MaterialTheme.colorScheme.surface),
         contentAlignment = Alignment.CenterEnd,
     ) {
+        IconButton(
+            onClick = onClear,
+            modifier = Modifier.align(Alignment.CenterStart)
+                .padding(start = 12.dp)
+        ) {
+            Icon(Icons.Default.Close, contentDescription = null)
+        }
         Text(
             stringResource(id = R.string.args_chat_selected, numberSelected),
             style = MaterialTheme.typography.titleSmall,
@@ -756,13 +765,9 @@ private fun SendMedia(
             onClick = onSendMedia,
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .padding(end = 12.dp)
-                .then(Modifier.size(32.dp))
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer.copy(.12F),
-                    shape = RoundedCornerShape(12.dp)
-                )
+                .padding(end = 16.dp)
+                .then(Modifier.size(30.dp))
+                .clip(CircleShape)
                 .background(
                     color = MaterialTheme.colorScheme.primary,
                     shape = RoundedCornerShape(12.dp)
@@ -773,7 +778,7 @@ private fun SendMedia(
             Icon(
                 Icons.Default.Send,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimary
+                tint = MaterialTheme.colorScheme.background
             )
         }
     }

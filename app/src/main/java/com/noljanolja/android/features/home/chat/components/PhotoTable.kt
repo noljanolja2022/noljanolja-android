@@ -16,7 +16,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -74,8 +74,9 @@ fun PhotoTable(
             modifier = Modifier.padding(start = 8.dp, bottom = 16.dp)
         ) {
             Icon(
-                Icons.Default.PhotoLibrary,
+                Icons.Default.Apps,
                 contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimary
             )
         }
     }
