@@ -196,9 +196,17 @@ fun ClickablePhotoMessage(
     modifier: Modifier,
     onMessageClick: (Message) -> Unit,
 ) {
+    val backgroundColor = if (message.sender.isMe) {
+        MaterialTheme.colorScheme.primaryContainer
+    } else {
+        MaterialTheme.colorScheme.surface
+    }
     Box(
-        modifier = Modifier.wrapContentWidth().clip(RoundedCornerShape(10.dp))
-            .background(MaterialTheme.colorScheme.primaryContainer).padding(3.dp)
+        modifier = Modifier
+            .wrapContentWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(backgroundColor)
+            .padding(3.dp)
     ) {
         when (val size = message.attachments.size) {
             1 -> {

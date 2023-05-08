@@ -19,4 +19,4 @@ val NeutralDeepGrey = Color(0xFF636363)
 val NeutralDarkGrey = Color(0xFF1A1A1A)
 
 val PrimaryGreen = Color(0xFF8BC900)
-val LightGreen = Color(0xFFAED94A)
+val LightGreen = Color(0xFFB8EB42)
