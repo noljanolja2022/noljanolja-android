@@ -249,7 +249,7 @@ private fun LazyListScope.watchingVideos(
         ) {
             items(items = videos, key = { "watching ${it.id}" }) { video ->
                 Column(
-                    modifier = Modifier.width(142.dp).clickable {
+                    modifier = Modifier.padding(end = 6.dp).width(142.dp).clickable {
                         onClick(video)
                     }
                 ) {
@@ -284,9 +284,9 @@ private fun LazyListScope.watchingVideos(
                         ),
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 2,
+                        modifier = Modifier.height(30.dp)
                     )
                 }
-                SizeBox(width = 8.dp)
             }
         }
     }
