@@ -666,24 +666,26 @@ private fun ChatItemBubble(
 
         else -> {}
     }
+
     Box {
-        if (isLastMessageByAuthorSameDay && message.sender.isMe) {
-            Image(
-                painterResource(id = R.drawable.ic_chat_arrow_mine),
-                contentDescription = null,
-                modifier = Modifier.align(
-                    Alignment.BottomEnd
-                ).size(12.dp)
-            )
-        }
-        if (conversationType == ConversationType.SINGLE && isLastMessageByAuthorSameDay && !message.sender.isMe) {
-            Image(
-                painterResource(id = R.drawable.ic_chat_arrow),
-                contentDescription = null,
-                modifier = Modifier.align(
-                    Alignment.BottomStart
-                ).size(12.dp)
-            )
+        if (isLastMessageByAuthorSameDay && message.type == MessageType.PHOTO || message.type == MessageType.PLAINTEXT) {
+            if (message.sender.isMe) {
+                Image(
+                    painterResource(id = R.drawable.ic_chat_arrow_mine),
+                    contentDescription = null,
+                    modifier = Modifier.align(
+                        Alignment.BottomEnd
+                    ).size(12.dp)
+                )
+            } else if (conversationType == ConversationType.SINGLE) {
+                Image(
+                    painterResource(id = R.drawable.ic_chat_arrow),
+                    contentDescription = null,
+                    modifier = Modifier.align(
+                        Alignment.BottomStart
+                    ).size(12.dp)
+                )
+            }
         }
         Box(modifier = Modifier.align(Alignment.BottomEnd).padding(horizontal = 6.dp)) {
             Surface(
