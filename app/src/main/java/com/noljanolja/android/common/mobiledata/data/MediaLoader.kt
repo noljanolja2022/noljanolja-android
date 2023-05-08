@@ -32,8 +32,11 @@ class MediaLoader(
         MediaStore.MediaColumns._ID,
         MediaStore.MediaColumns.DATE_ADDED,
         MediaStore.Files.FileColumns.MEDIA_TYPE,
-        MediaStore.Video.VideoColumns.DURATION
+        MediaStore.Video.VideoColumns.DURATION,
+        MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,
     )
+
+    private val _albumsFlow = mutableListOf<String>()
 
     fun getPhotoDir(): File = File(context.getExternalFilesDir(null), photoPath).apply {
         if (!exists()) mkdir()
@@ -177,6 +180,12 @@ class MediaLoader(
 
                         val duration = cursor.getColumnIndex(projections[3])
                             .takeIf { it >= 0 }?.let { cursor.getLong(it) }
+
+                        val album = cursor.getColumnIndex(projections[4])
+                            .takeIf { it >= 0 }?.let { cursor.getString(it) }
+                        album?.let {
+                            _albumsFlow.add(it)
+                        }
 
                         mediaId?.let {
                             val mediaUri =

@@ -14,9 +14,11 @@ internal interface ConversationRepository {
         conversationId: Long,
     ): Flow<Conversation>
 
-    suspend fun getConversations(): Flow<List<Conversation>>
+    suspend fun fetchConversations(): Flow<List<Conversation>>
 
     suspend fun forceRefreshConversations()
+
+    suspend fun getLocalConversations(): Flow<List<Conversation>>
 
     suspend fun sendConversationMessage(
         title: String = "",

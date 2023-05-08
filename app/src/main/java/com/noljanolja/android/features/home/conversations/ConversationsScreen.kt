@@ -1,6 +1,7 @@
 package com.noljanolja.android.features.home.conversations
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.outlined.Error
 import androidx.compose.material.icons.outlined.Search
@@ -18,13 +20,18 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -34,6 +41,7 @@ import com.noljanolja.android.MainActivity.Companion.getConversationId
 import com.noljanolja.android.MainActivity.Companion.removeConversationId
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
+import com.noljanolja.android.common.sharedpreference.SharedPreferenceHelper
 import com.noljanolja.android.features.home.chat.components.NewChatDialog
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.EmptyPage
@@ -44,6 +52,7 @@ import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.ConversationType
 import com.noljanolja.core.conversation.domain.model.Message
 import com.noljanolja.core.conversation.domain.model.MessageType
+import org.koin.androidx.compose.get
 import org.koin.androidx.compose.getViewModel
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -71,8 +80,16 @@ fun ConversationsScreenContent(
     uiState: UiState<List<Conversation>>,
     handleEvent: (ConversationsEvent) -> Unit,
 ) {
+    val sharedPreferenceHelper: SharedPreferenceHelper = get()
+
     var showNewChatDialog by remember {
         mutableStateOf(false)
+    }
+    var showNewChatTooltip by remember {
+        mutableStateOf(sharedPreferenceHelper.showNewChatDialog)
+    }
+    var newChatIconPositions by remember {
+        mutableStateOf(Pair(0f, 0f))
     }
 
     ScaffoldWithUiState(
@@ -97,11 +114,23 @@ fun ConversationsScreenContent(
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
-                    IconButton(onClick = { showNewChatDialog = true }) {
+                    IconButton(onClick = {
+                        showNewChatDialog = true
+                        showNewChatTooltip = false
+                        sharedPreferenceHelper.showNewChatDialog = false
+                    }) {
                         Icon(
                             painter = painterResource(id = R.drawable.chat_add),
                             contentDescription = null,
-                            modifier = Modifier.padding(bottom = 2.dp).size(21.dp),
+                            modifier = Modifier
+                                .padding(bottom = 2.dp)
+                                .size(21.dp)
+                                .onGloballyPositioned { coordinates ->
+                                    val x = coordinates.positionInRoot().x
+
+                                    val y = coordinates.positionInRoot().y
+                                    newChatIconPositions = Pair(x, y)
+                                },
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
@@ -110,7 +139,9 @@ fun ConversationsScreenContent(
                         Icon(
                             Icons.Outlined.Settings,
                             contentDescription = null,
-                            modifier = Modifier.padding(bottom = 2.dp).size(21.dp),
+                            modifier = Modifier
+                                .padding(bottom = 2.dp)
+                                .size(21.dp),
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
@@ -151,6 +182,9 @@ fun ConversationsScreenContent(
         onNewSecretChat = { handleEvent(ConversationsEvent.OpenContactPicker(it)) },
         onNewGroupChat = { handleEvent(ConversationsEvent.OpenContactPicker(it)) },
     )
+    if (showNewChatTooltip) {
+        NewChatTooltip(iconPosition = newChatIconPositions, onDismissRequest = { showNewChatTooltip = false })
+    }
 }
 
 @Composable
@@ -192,18 +226,25 @@ fun ConversationRow(
                 .size(40.dp),
             contentAlignment = Alignment.BottomEnd,
         ) {
-            AsyncImage(
-                ImageRequest.Builder(context = context)
-                    .data(conversation.getDisplayAvatarUrl())
-                    .placeholder(R.drawable.placeholder_avatar)
-                    .error(R.drawable.placeholder_avatar)
-                    .fallback(R.drawable.placeholder_avatar)
-                    .build(),
+            val avatarModifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(14.dp))
+            conversation.getDisplayAvatarUrl()?.let { url ->
+                AsyncImage(
+                    ImageRequest.Builder(context = context)
+                        .data(url)
+                        .placeholder(R.drawable.placeholder_avatar)
+                        .error(R.drawable.placeholder_avatar)
+                        .fallback(R.drawable.placeholder_avatar)
+                        .build(),
+                    contentDescription = null,
+                    modifier = avatarModifier,
+                    contentScale = ContentScale.Crop,
+                )
+            } ?: Icon(
+                Icons.Filled.Group,
                 contentDescription = null,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(14.dp)),
-                contentScale = ContentScale.Crop,
+                modifier = avatarModifier.background(MaterialTheme.colorScheme.primaryContainer).padding(8.dp)
             )
         }
 
@@ -226,6 +267,7 @@ fun ConversationRow(
                 MessageType.PLAINTEXT -> {
                     message.message
                 }
+
                 MessageType.STICKER -> {
                     if (message.sender.isMe) {
                         stringResource(R.string.chats_message_my_sticker)
@@ -233,6 +275,7 @@ fun ConversationRow(
                         stringResource(R.string.chats_message_sticker)
                     }
                 }
+
                 MessageType.DOCUMENT, MessageType.GIF -> {
                     if (message.sender.isMe) {
                         stringResource(R.string.chats_message_my_file)
@@ -240,6 +283,7 @@ fun ConversationRow(
                         stringResource(R.string.chats_message_file)
                     }
                 }
+
                 MessageType.PHOTO -> {
                     val attachment = message.attachments.last()
                     if (message.sender.isMe) {
@@ -256,9 +300,11 @@ fun ConversationRow(
                         }
                     }
                 }
+
                 MessageType.EVENT_UPDATED, MessageType.EVENT_LEFT, MessageType.EVENT_JOINED -> {
                     stringResource(id = R.string.conversation_has_changed)
                 }
+
                 else -> {
                     if (message.sender.isMe) {
                         stringResource(R.string.chats_message_my_unknown)
@@ -306,5 +352,57 @@ fun ConversationRow(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun NewChatTooltip(
+    iconPosition: Pair<Float, Float>,
+    onDismissRequest: () -> Unit,
+) {
+    val density = LocalDensity.current
+    val xInDp = with(density) { iconPosition.first.toDp() }
+    val yInDp = with(density) { iconPosition.second.toDp() + 24.dp }
+
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        RightTriangle(
+            modifier = Modifier.padding(
+                top = yInDp + 6.dp,
+                start = xInDp + 3.dp
+            ),
+            size = 10.dp
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(end = 30.dp),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Text(
+                text = "Please tap this button to start a new chat",
+                modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(MaterialTheme.colorScheme.primary)
+                    .padding(vertical = 13.dp, horizontal = 10.dp),
+            )
+        }
+    }
+}
+
+@Composable
+fun RightTriangle(
+    modifier: Modifier = Modifier,
+    size: Dp,
+) {
+    val pixel = with(LocalDensity.current) { size.toPx() }
+    val background = MaterialTheme.colorScheme.primary
+    Canvas(modifier = modifier) {
+        val path = Path().apply {
+            moveTo(0f, 0f)
+            lineTo(pixel, 0f)
+            lineTo(pixel, -pixel)
+            close()
+        }
+        drawPath(path, background)
     }
 }

@@ -16,13 +16,25 @@ class SharedPreferenceHelper(private val context: Context) {
         return sharePreference.getString(key, defaultValue)
     }
 
-    var youtubeToken
-        get() = getString(YOUTUBE_TOKEN)
+    var showNewChatDialog: Boolean
+        get() = sharePreference.getBoolean(SHOW_NEW_CHAT_DIALOG, true)
         set(value) {
-            setString(YOUTUBE_TOKEN, value.orEmpty())
+            sharePreference.run {
+                edit().putBoolean(SHOW_NEW_CHAT_DIALOG, value).apply()
+            }
+        }
+
+    var needCheckRequestGoogle: Boolean
+        get() = sharePreference.getBoolean(REQUEST_LOGIN_GOOGLE, true)
+        set(value) {
+            sharePreference.run {
+                edit().putBoolean(REQUEST_LOGIN_GOOGLE, value).apply()
+            }
         }
 
     companion object {
         const val YOUTUBE_TOKEN = "youtube_token"
+        const val SHOW_NEW_CHAT_DIALOG = "show_new_chat_dialog"
+        const val REQUEST_LOGIN_GOOGLE = "request_login_google"
     }
 }

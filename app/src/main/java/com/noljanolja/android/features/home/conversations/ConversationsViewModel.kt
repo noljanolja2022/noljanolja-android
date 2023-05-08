@@ -7,7 +7,6 @@ import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.core.conversation.domain.model.Conversation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 
 class ConversationsViewModel : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow(UiState<List<Conversation>>())
@@ -38,7 +37,7 @@ class ConversationsViewModel : BaseViewModel() {
         launch {
             val value = _uiStateFlow.value
             _uiStateFlow.emit(value.copy(loading = true))
-            coreManager.getConversations().collect {
+            coreManager.fetchConversations().collect {
                 _uiStateFlow.emit(UiState(data = it))
             }
         }

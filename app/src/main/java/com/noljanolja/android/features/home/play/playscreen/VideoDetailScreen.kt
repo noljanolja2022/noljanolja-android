@@ -1,7 +1,5 @@
 package com.noljanolja.android.features.home.play.playscreen
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,15 +22,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.android.gms.auth.GoogleAuthUtil
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.Scope
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
-import com.noljanolja.android.common.base.launchInMainIO
-import com.noljanolja.android.common.sharedpreference.SharedPreferenceHelper
 import com.noljanolja.android.features.home.play.playscreen.composable.CommentInput
 import com.noljanolja.android.ui.composable.BackPressHandler
 import com.noljanolja.android.ui.composable.BoxWithBottomElevation
@@ -40,17 +31,13 @@ import com.noljanolja.android.ui.composable.CircleAvatar
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.composable.VerticalDivider
-import com.noljanolja.android.ui.composable.WarningDialog
 import com.noljanolja.android.ui.composable.youtube.YoutubeView
 import com.noljanolja.android.ui.theme.OrangeMain
-import com.noljanolja.android.util.findActivity
 import com.noljanolja.android.util.showToast
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.video.domain.model.Comment
 import com.noljanolja.core.video.domain.model.Commenter
 import com.noljanolja.core.video.domain.model.Video
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
@@ -62,11 +49,10 @@ fun VideoDetailScreen(
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    HandleComments(viewModel = viewModel)
 
     LaunchedEffect(key1 = viewModel.errorFlow, block = {
         viewModel.errorFlow.collect {
-            context.showToast(it.message)
+            context.showToast(it.toString())
         }
     })
     VideoDetailContent(
@@ -100,14 +86,10 @@ private fun VideoDetailContent(
         }
     }) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it)
+            modifier = Modifier.fillMaxSize().padding(it)
         ) {
             YoutubeView(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
+                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                 onReady = { player -> handleEvent(VideoDetailEvent.ReadyVideo(player)) },
                 toggleFullScreen = {
                     isFullScreen = it
@@ -127,9 +109,15 @@ private fun VideoDetailContent(
                     videoComments(video)
                 }
                 uiState.data.user?.let { user ->
-                    CommentInput(me = user, onSend = { text ->
-                        handleEvent(VideoDetailEvent.Comment(text))
-                    })
+                    CommentInput(
+                        me = user,
+                        onSend = { text, token ->
+                            handleEvent(VideoDetailEvent.Comment(text, token))
+                        },
+                        onError = {
+                            handleEvent(VideoDetailEvent.SendError(it))
+                        }
+                    )
                 }
             }
         }
@@ -162,9 +150,7 @@ private fun VideoInformation(video: Video) {
 @Composable
 private fun VideoParameters(video: Video) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
     ) {
         VideoParameter(
             title = stringResource(id = R.string.video_detail_views),
@@ -191,13 +177,10 @@ private fun RowScope.VideoParameter(
     valueColor: Color = MaterialTheme.colorScheme.onBackground,
 ) {
     BoxWithBottomElevation(
-        modifier = Modifier
-            .weight(1F)
-            .height(55.dp)
+        modifier = Modifier.weight(1F).height(55.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.SpaceAround,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -260,9 +243,7 @@ private fun CommentSortItem(
     Text(
         text = stringResource(id = type.id),
         style = MaterialTheme.typography.labelMedium,
-        modifier = Modifier
-            .clip(RoundedCornerShape(25.dp))
-            .background(containerColor)
+        modifier = Modifier.clip(RoundedCornerShape(25.dp)).background(containerColor)
             .padding(vertical = 5.dp, horizontal = 10.dp),
         color = contentColor,
     )
@@ -274,16 +255,10 @@ private fun CommentRow(
     comment: Comment,
 ) {
     Row(
-        modifier = modifier
-            .padding(top = 10.dp)
-            .fillMaxWidth()
-            .height(IntrinsicSize.Min)
-            .wrapContentHeight(),
+        modifier = modifier.padding(top = 10.dp).fillMaxWidth().height(IntrinsicSize.Min).wrapContentHeight(),
     ) {
         Column(
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .fillMaxHeight(),
+            modifier = Modifier.padding(top = 8.dp).fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             CommenterAvatar(commenter = comment.commenter)
@@ -304,15 +279,11 @@ private fun CommentRow(
             )
             SizeBox(height = 8.dp)
             BoxWithBottomElevation(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(IntrinsicSize.Min)
+                modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)
             ) {
                 Text(
                     text = comment.comment,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(vertical = 10.dp, horizontal = 13.dp)
+                    modifier = Modifier.fillMaxSize().padding(vertical = 10.dp, horizontal = 13.dp)
                 )
             }
             SizeBox(height = 8.dp)
@@ -325,80 +296,4 @@ private fun CommentRow(
 @Composable
 private fun CommenterAvatar(commenter: Commenter) {
     CircleAvatar(user = User(avatar = commenter.avatar), size = 25.dp)
-}
-
-@Composable
-private fun HandleComments(
-    viewModel: VideoDetailViewModel,
-) {
-    var showRequireGoogle by remember { mutableStateOf(false) }
-
-    val sharedPreferenceHelper: SharedPreferenceHelper = get()
-    val context = LocalContext.current
-    val activity = context.findActivity()!!
-    var currentComment by remember {
-        mutableStateOf("")
-    }
-    val scope = Scope("https://www.googleapis.com/auth/youtube.force-ssl")
-    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-        .requestEmail()
-        .requestIdToken(stringResource(id = R.string.web_client_id))
-        .requestScopes(scope)
-        .build()
-
-    val googleSignInClient = GoogleSignIn.getClient(LocalContext.current, gso)
-    val googleSignInLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult(),
-        onResult = { result ->
-            try {
-                launchInMainIO {
-                    val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-                    val account = task.getResult(ApiException::class.java)
-                    if (!GoogleSignIn.hasPermissions(
-                            GoogleSignIn.getLastSignedInAccount(activity),
-                            scope
-                        )
-                    ) {
-                        GoogleSignIn.requestPermissions(
-                            activity,
-                            1000,
-                            GoogleSignIn.getLastSignedInAccount(activity),
-                            scope
-                        )
-                    }
-
-                    val token = GoogleAuthUtil.getToken(
-                        context,
-                        account.account!!,
-                        "oauth2:https://www.googleapis.com/auth/youtube.force-ssl"
-                    )
-                    sharedPreferenceHelper.youtubeToken = token
-                    viewModel.handleEvent(VideoDetailEvent.Comment(currentComment, token))
-                }
-            } catch (e: Throwable) {
-                context.showToast(e.message)
-            }
-        }
-    )
-    LaunchedEffect(key1 = viewModel.eventForceLoginGoogle) {
-        viewModel.eventForceLoginGoogle.collect { comment ->
-            currentComment = comment
-            showRequireGoogle = true
-        }
-    }
-
-    WarningDialog(
-        title = stringResource(id = R.string.common_warning),
-        content = stringResource(R.string.video_detail_require_google_description),
-        dismissText = stringResource(R.string.common_cancel),
-        confirmText = stringResource(R.string.common_confirm),
-        isWarning = showRequireGoogle,
-        onDismiss = {
-            showRequireGoogle = false
-        },
-        onConfirm = {
-            showRequireGoogle = false
-            googleSignInLauncher.launch(googleSignInClient.signInIntent)
-        }
-    )
 }

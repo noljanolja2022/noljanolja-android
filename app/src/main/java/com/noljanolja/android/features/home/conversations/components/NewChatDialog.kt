@@ -5,25 +5,28 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.outlined.Chat
-import androidx.compose.material.icons.outlined.Forum
-import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.CommonAppBarTitle
+import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.core.conversation.domain.model.ConversationType
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,24 +67,22 @@ fun NewChatDialog(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 20.dp)
+                        .padding(vertical = 16.dp, horizontal = 10.dp)
                 ) {
                     NewChatItem(
                         title = stringResource(id = R.string.contacts_title_normal),
-                        icon = Icons.Outlined.Chat
+                        icon = ImageVector.vectorResource(id = R.drawable.ic_chat),
+                        background = MaterialTheme.colorScheme.primary
                     ) {
                         onDismissRequest()
                         onNewSingleChat.invoke(ConversationType.SINGLE.name)
                     }
-                    NewChatItem(
-                        title = stringResource(id = R.string.contacts_title_secret),
-                        icon = Icons.Outlined.Lock
-                    ) {
-                        onDismissRequest()
-                    }
+                    SizeBox(width = 10.dp)
                     NewChatItem(
                         title = stringResource(id = R.string.contacts_title_group),
-                        icon = Icons.Outlined.Forum
+                        icon = ImageVector.vectorResource(id = R.drawable.ic_chat_bubble),
+                        size = 21.dp,
+                        background = MaterialTheme.colorScheme.secondary,
                     ) {
                         onDismissRequest()
                         onNewGroupChat.invoke(ConversationType.GROUP.name)
@@ -96,22 +97,28 @@ fun NewChatDialog(
 private fun RowScope.NewChatItem(
     title: String,
     icon: ImageVector,
+    background: Color,
+    size: Dp = 16.dp,
     onClick: () -> Unit,
 ) {
-    Column(
+    Row(
         modifier = Modifier
             .weight(1F)
+            .height(40.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(background)
             .clickable {
                 onClick.invoke()
             },
-        horizontalAlignment = Alignment.CenterHorizontally
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
     ) {
         Icon(
             icon,
             contentDescription = null,
-            modifier = Modifier.size(16.dp)
+            modifier = Modifier.size(size)
         )
-        Spacer(modifier = Modifier.height(5.dp))
+        SizeBox(width = 10.dp)
         Text(title, style = MaterialTheme.typography.bodyMedium)
     }
 }

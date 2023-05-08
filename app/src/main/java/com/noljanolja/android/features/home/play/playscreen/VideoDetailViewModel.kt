@@ -69,6 +69,7 @@ class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
                 VideoDetailEvent.ToggleFullScreen -> youTubePlayer?.toggleFullscreen()
                 is VideoDetailEvent.ReadyVideo -> onReady(event.player)
                 is VideoDetailEvent.Comment -> commentVideo(event.comment, event.token)
+                is VideoDetailEvent.SendError -> sendError(event.error)
             }
         }
     }
@@ -96,17 +97,11 @@ class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
         )
     }
 
-    private fun commentVideo(comment: String, token: String?) {
+    private fun commentVideo(comment: String, token: String) {
         launch {
-            val youtubeToken = token ?: sharedPreferenceHelper.youtubeToken.takeIf { !it.isNullOrBlank() }
-            youtubeToken?.let {
-                val result = coreManager.commentVideo(videoId, comment, youtubeToken)
-                if (result.isFailure) {
-                    sharedPreferenceHelper.youtubeToken = null
-                    sendError(result.exceptionOrNull()!!)
-                }
-            } ?: let {
-                _eventForceLoginGoogle.emit(comment)
+            val result = coreManager.commentVideo(videoId, comment, token)
+            if (result.isFailure) {
+                sendError(result.exceptionOrNull()!!)
             }
         }
     }

@@ -1,7 +1,6 @@
 package com.noljanolja.android.features.home.chat.components
 
 import android.net.Uri
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -24,19 +23,29 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.*
 import coil.request.ImageRequest
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.CombineClickableText
+import com.noljanolja.android.util.chatMessageBubbleTime
 import com.noljanolja.android.util.openImageFromCache
 import com.noljanolja.android.util.openUrl
 import com.noljanolja.android.util.orZero
@@ -61,7 +70,7 @@ fun ClickableMessage(
                 message = message,
                 modifier = Modifier
                     .clickable { onMessageClick(message) }
-                    .padding(vertical = 16.dp, horizontal = 12.dp),
+                    .padding(vertical = 5.dp, horizontal = 10.dp),
             )
         }
 
@@ -91,7 +100,6 @@ fun ClickableMessage(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ClickableTextMessage(
     message: Message,
@@ -101,30 +109,49 @@ private fun ClickableTextMessage(
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
 
     var showMenu by remember { mutableStateOf(false) }
-    val styledMessage = messageFormatter(
-        text = message.message,
-        primary = message.sender.isMe
-    )
-    CombineClickableText(
-        text = styledMessage,
-        style = MaterialTheme.typography.bodyMedium.copy(
-            color = if (message.status == MessageStatus.FAILED) {
-                MaterialTheme.colorScheme.error
-            } else {
-                MaterialTheme.colorScheme.onPrimary
-            },
-        ),
-        modifier = modifier,
-        onClick = {
-            styledMessage.getStringAnnotations(start = it, end = it).firstOrNull()
-                ?.let { annotation ->
-                    context.openUrl(annotation.item)
-                }
-        },
-        onLongClick = {
-            showMenu = true
+    val styledMessage = AnnotatedString.Builder().apply {
+        append(
+            messageFormatter(
+                text = message.message,
+                primary = message.sender.isMe
+            )
+        )
+        withStyle(SpanStyle(color = Color.Transparent)) {
+            append(" " + message.createdAt.chatMessageBubbleTime())
         }
-    )
+    }.toAnnotatedString()
+    Box {
+        CombineClickableText(
+            text = styledMessage,
+            style = MaterialTheme.typography.bodyLarge.copy(
+                color = if (message.status == MessageStatus.FAILED) {
+                    MaterialTheme.colorScheme.error
+                } else {
+                    MaterialTheme.colorScheme.onPrimary
+                },
+            ),
+            modifier = modifier,
+            onClick = {
+                styledMessage.getStringAnnotations(start = it, end = it).firstOrNull()
+                    ?.let { annotation ->
+                        context.openUrl(annotation.item)
+                    }
+            },
+            onLongClick = {
+                showMenu = true
+            }
+        )
+        Text(
+            message.createdAt.chatMessageBubbleTime(),
+            style = TextStyle(
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            ),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(bottom = 5.dp, end = 10.dp)
+        )
+    }
 
     if (showMenu) {
         DropdownMenu(
@@ -169,45 +196,52 @@ fun ClickablePhotoMessage(
     modifier: Modifier,
     onMessageClick: (Message) -> Unit,
 ) {
-    when (val size = message.attachments.size) {
-        1 -> {
-            val attachment = message.attachments.first()
-            Column(
-                horizontalAlignment = if (message.sender.isMe) Alignment.End else Alignment.Start
-            ) {
-                PhotoPreview(
-                    modifier = modifier
-                        .clip(RoundedCornerShape(6.dp))
-                        .clickable { onMessageClick(message.copy(attachments = listOf(attachment))) },
-                    uri = attachment.getPhotoUri(conversationId).toUri(),
-                    key = "${message.localId}/${attachment.originalName}",
-                    contentScale = ContentScale.FillWidth,
-                    isMe = message.sender.isMe
-                )
-            }
-        }
-
-        else -> {
-            val maxAttachmentPerRow = if (size == 2 || size == 4) 2 else 3
-            val attachmentRows =
-                size / maxAttachmentPerRow + 1.takeIf { size % maxAttachmentPerRow > 0 }.orZero()
-            Column(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                horizontalAlignment = if (message.sender.isMe) Alignment.End else Alignment.Start
-            ) {
-                repeat(attachmentRows) { row ->
-                    if (row > 0) {
-                        Spacer(modifier = Modifier.height(4.dp))
-                    }
-                    AttachmentRow(
-                        message = message,
-                        conversationId = conversationId,
-                        attachments = message.attachments.filterIndexed { index, _ -> index >= row * maxAttachmentPerRow && index < (row + 1) * maxAttachmentPerRow },
-                        maxAttachmentPerRow = maxAttachmentPerRow,
-                        onMessageClick = onMessageClick
+    Box(
+        modifier = Modifier.wrapContentWidth().clip(RoundedCornerShape(10.dp))
+            .background(MaterialTheme.colorScheme.primaryContainer).padding(3.dp)
+    ) {
+        when (val size = message.attachments.size) {
+            1 -> {
+                val attachment = message.attachments.first()
+                Column(
+                    horizontalAlignment = if (message.sender.isMe) Alignment.End else Alignment.Start
+                ) {
+                    PhotoPreview(
+                        modifier = modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .clickable { onMessageClick(message.copy(attachments = listOf(attachment))) },
+                        uri = attachment.getPhotoUri(conversationId).toUri(),
+                        key = "${message.localId}/${attachment.originalName}",
+                        contentScale = ContentScale.FillWidth,
+                        isMe = message.sender.isMe,
+                        time = message.createdAt.chatMessageBubbleTime(),
+                        timeAlign = TextAlign.End,
                     )
+                }
+            }
+
+            else -> {
+                val maxAttachmentPerRow = if (size == 2 || size == 4) 2 else 3
+                val attachmentRows =
+                    size / maxAttachmentPerRow + 1.takeIf { size % maxAttachmentPerRow > 0 }.orZero()
+                Column(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    horizontalAlignment = if (message.sender.isMe) Alignment.End else Alignment.Start
+                ) {
+                    repeat(attachmentRows) { row ->
+                        if (row > 0) {
+                            Spacer(modifier = Modifier.height(4.dp))
+                        }
+                        AttachmentRow(
+                            message = message,
+                            conversationId = conversationId,
+                            attachments = message.attachments.filterIndexed { index, _ -> index >= row * maxAttachmentPerRow && index < (row + 1) * maxAttachmentPerRow },
+                            maxAttachmentPerRow = maxAttachmentPerRow,
+                            onMessageClick = onMessageClick
+                        )
+                    }
                 }
             }
         }
@@ -239,11 +273,13 @@ fun AttachmentRow(
                         modifier = Modifier
                             .weight(1f)
                             .aspectRatio(1f)
-                            .clip(RoundedCornerShape(6.dp))
+                            .clip(RoundedCornerShape(10.dp))
                             .clickable { onMessageClick(message.copy(attachments = listOf(attachment))) },
                         uri = attachment.getPhotoUri(conversationId).toUri(),
                         key = "${message.localId}/${attachment.originalName}",
                         isMe = message.sender.isMe,
+                        time = message.createdAt.chatMessageBubbleTime(),
+                        timeAlign = if (message.sender.isMe) TextAlign.Start else TextAlign.End
                     )
                 } ?: Spacer(modifier = Modifier.weight(1F))
             }
@@ -256,11 +292,16 @@ private fun PhotoPreview(
     modifier: Modifier,
     uri: Uri,
     key: String,
+    time: String,
     isMe: Boolean,
+    timeAlign: TextAlign = TextAlign.End,
     contentScale: ContentScale = ContentScale.Crop,
 ) {
     val context = LocalContext.current
-
+    var boxWidth by remember {
+        mutableStateOf(0)
+    }
+    val density = LocalDensity.current
     Box(
         modifier = modifier.clickable {
             context.openImageFromCache(key)
@@ -274,7 +315,10 @@ private fun PhotoPreview(
                 .diskCacheKey(key)
                 .build(),
             contentDescription = null,
-            contentScale = contentScale
+            contentScale = contentScale,
+            modifier = Modifier.onSizeChanged { size ->
+                boxWidth = size.width
+            }
         ) {
             AsyncImageState(
                 modifier = Modifier
@@ -283,6 +327,22 @@ private fun PhotoPreview(
                 contentScale = contentScale,
             )
         }
+        Text(
+            time,
+            modifier = Modifier
+                .width(with(density) { boxWidth.toDp() })
+                .height(50.dp)
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            Color.Transparent,
+                            Color.Black,
+                        ),
+                    )
+                )
+                .padding(top = 25.dp, end = 10.dp),
+            textAlign = timeAlign
+        )
     }
 }
 

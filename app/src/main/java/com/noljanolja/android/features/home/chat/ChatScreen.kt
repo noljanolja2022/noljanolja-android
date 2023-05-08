@@ -10,9 +10,13 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Error
+import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -21,6 +25,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
@@ -42,11 +47,14 @@ import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.features.home.chat.components.ChatInput
 import com.noljanolja.android.features.home.chat.components.ClickableMessage
+import com.noljanolja.android.features.home.chat.components.GridContent
 import com.noljanolja.android.ui.composable.CommonTopAppBar
+import com.noljanolja.android.ui.composable.FullSizeWithBottomSheet
 import com.noljanolja.android.ui.composable.InfiniteListHandler
 import com.noljanolja.android.ui.composable.OvalAvatar
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
-import com.noljanolja.android.ui.theme.BgChat02
+import com.noljanolja.android.ui.composable.SizeBox
+import com.noljanolja.android.ui.theme.BlueGray
 import com.noljanolja.android.util.*
 import com.noljanolja.core.conversation.domain.model.*
 import com.noljanolja.core.media.domain.model.Sticker
@@ -85,7 +93,7 @@ fun ChatScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun ChatScreenContent(
     chatUiState: UiState<Conversation>,
@@ -94,6 +102,7 @@ fun ChatScreenContent(
     handleEvent: (ChatEvent) -> Unit,
 ) {
     val scrollState = rememberLazyListState()
+    val firstItemVisible = remember { derivedStateOf { scrollState.firstVisibleItemIndex } }
     var stickerSelected by remember {
         mutableStateOf<Sticker?>(null)
     }
@@ -102,128 +111,190 @@ fun ChatScreenContent(
             scrollState.animateScrollToItem(0)
         }
     }
+
     val context = LocalContext.current
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val scope = rememberCoroutineScope()
     val conversation = chatUiState.data ?: return
-    ScaffoldWithUiState(
-        uiState = chatUiState,
-        topBar = {
-            CommonTopAppBar(
-                title = conversation.getDisplayTitle(),
-                centeredTitle = true,
-                onBack = { handleEvent(ChatEvent.GoBack) },
-                actions = {
-                    ChatBarActions(onChatOption = {
-                        handleEvent(ChatEvent.ChatOptions)
-                    })
+    val selectedMedia = remember { mutableStateListOf<Uri>() }
+
+    val bottomSheetState = rememberBottomSheetScaffoldState()
+
+    FullSizeWithBottomSheet(modalSheetState = bottomSheetState, sheetContent = {
+        Column(
+            modifier = Modifier.heightIn(max = (LocalConfiguration.current.screenHeightDp * 0.9f).dp)
+                .background(Color.White)
+        ) {
+            Row(
+                modifier = Modifier.height(54.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("All", style = MaterialTheme.typography.titleMedium)
+                IconButton(onClick = {
+                    scope.launch {
+                        bottomSheetState.bottomSheetState.collapse()
+                    }
+                }) {
+                    Icon(Icons.Default.Close, contentDescription = null)
+                }
+            }
+            GridContent(
+                mediaList = mediaList,
+                selectedMedia = selectedMedia,
+                onMediaSelect = { mediaSelect: List<Uri>, isAdd: Boolean ->
+                    when (isAdd) {
+                        true -> selectedMedia.addAll(mediaSelect)
+                        false -> selectedMedia.removeAll(mediaSelect)
+                    }
                 }
             )
-        },
-        content = {
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .nestedScroll(scrollBehavior.nestedScrollConnection)
-            ) {
-                Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.BottomCenter,
+        }
+    }) {
+        ScaffoldWithUiState(
+            uiState = chatUiState,
+            topBar = {
+                CommonTopAppBar(
+                    title = conversation.getDisplayTitle(),
+                    leadingTitle = conversation.getSingleReceiver()?.let {
+                        {
+                            OvalAvatar(user = it, size = 34.dp, modifier = Modifier.padding(end = 10.dp))
+                        }
+                    },
+                    centeredTitle = conversation.type == ConversationType.GROUP,
+                    onBack = { handleEvent(ChatEvent.GoBack) },
+                    actions = {
+                        ChatBarActions(onChatOption = {
+                            handleEvent(ChatEvent.ChatOptions)
+                        })
+                    }
+                )
+            },
+            content = {
+                Column(
+                    Modifier
+                        .fillMaxSize()
+                        .nestedScroll(scrollBehavior.nestedScrollConnection)
                 ) {
-                    MessageList(
-                        conversationId = conversation.id,
-                        messages = conversation.messages,
-                        loadMoreMessages = { handleEvent(ChatEvent.LoadMoreMessages) },
-                        navigateToProfile = { user ->
-                            handleEvent(
-                                ChatEvent.NavigateToProfile(
-                                    user
+                    Box(
+                        modifier = Modifier.weight(1f),
+                        contentAlignment = Alignment.BottomEnd,
+                    ) {
+                        MessageList(
+                            conversationId = conversation.id,
+                            messages = conversation.messages,
+                            conversationType = conversation.type,
+                            loadMoreMessages = { handleEvent(ChatEvent.LoadMoreMessages) },
+                            navigateToProfile = { user ->
+                                handleEvent(
+                                    ChatEvent.NavigateToProfile(
+                                        user
+                                    )
                                 )
-                            )
-                        },
-                        modifier = Modifier.fillMaxSize(),
-                        scrollState = scrollState,
-                        onMessageClick = { handleEvent(ChatEvent.ClickMessage(it)) }
-                    )
-                }
-                ChatInput(
-                    onMessageSent = { message, type, attachments ->
-                        val sendMessage = when (type) {
-                            MessageType.GIF,
-                            MessageType.PLAINTEXT,
-                            -> {
-                                if (message.isNotBlank()) {
+                            },
+                            modifier = Modifier.fillMaxSize(),
+                            scrollState = scrollState,
+                            onMessageClick = { handleEvent(ChatEvent.ClickMessage(it)) }
+                        )
+                        if (firstItemVisible.value != 0) {
+                            ScrollToNewestMessageButton(onClick = {
+                                scope.launch {
+                                    scrollState.scrollToItem(0)
+                                }
+                            })
+                        }
+                    }
+                    ChatInput(
+                        onMessageSent = { message, type, attachments ->
+                            val sendMessage = when (type) {
+                                MessageType.GIF,
+                                MessageType.PLAINTEXT,
+                                -> {
+                                    if (message.isNotBlank()) {
+                                        Message(
+                                            message = message.trim(),
+                                            type = type,
+                                        )
+                                    } else {
+                                        null
+                                    }
+                                }
+
+                                MessageType.DOCUMENT, MessageType.PHOTO -> {
                                     Message(
                                         message = message.trim(),
                                         type = type,
+                                        attachments = attachments.map {
+                                            val fileInfo = context.loadFileInfo(it)
+                                            MessageAttachment(
+                                                name = "",
+                                                originalName = fileInfo.name,
+                                                type = fileInfo.contentType,
+                                                size = fileInfo.contents.size.toLong(),
+                                                contents = fileInfo.contents,
+                                                localPath = fileInfo.path.toString(),
+                                            )
+                                        },
                                     )
-                                } else {
-                                    null
                                 }
-                            }
 
-                            MessageType.DOCUMENT, MessageType.PHOTO -> {
-                                Message(
-                                    message = message.trim(),
-                                    type = type,
-                                    attachments = attachments.map {
-                                        val fileInfo = context.loadFileInfo(it)
-                                        MessageAttachment(
-                                            name = "",
-                                            originalName = fileInfo.name,
-                                            type = fileInfo.contentType,
-                                            size = fileInfo.contents.size.toLong(),
-                                            contents = fileInfo.contents,
-                                            localPath = fileInfo.path.toString(),
-                                        )
-                                    },
-                                )
-                            }
+                                MessageType.STICKER -> {
+                                    Message(
+                                        message = message,
+                                        stickerUrl = message,
+                                        type = MessageType.STICKER,
+                                    )
+                                }
 
-                            MessageType.STICKER -> {
-                                Message(
-                                    message = message,
-                                    stickerUrl = message,
-                                    type = MessageType.STICKER,
-                                )
+                                else -> null
                             }
-
-                            else -> null
+                            sendMessage?.let { handleEvent(ChatEvent.SendMessage(it)) }
+                        },
+                        modifier = Modifier
+                            .navigationBarsPadding()
+                            .imePadding(),
+                        selectedMedia = selectedMedia,
+                        resetScroll = { scope.launch { scrollState.scrollToItem(0) } },
+                        mediaList = mediaList,
+                        loadMedia = { handleEvent(ChatEvent.LoadMedia) },
+                        openPhoneSetting = { handleEvent(ChatEvent.OpenPhoneSettings) },
+                        onShowSticker = {
+                            stickerSelected = it
+                        },
+                        onChangeSelectMedia = {
+                            selectedMedia.clear()
+                            selectedMedia.addAll(it)
+                        },
+                        onOpenFullImages = {
+                            scope.launch {
+                                bottomSheetState.bottomSheetState.expand()
+                            }
                         }
-                        sendMessage?.let { handleEvent(ChatEvent.SendMessage(it)) }
-                    },
-                    modifier = Modifier
-                        .navigationBarsPadding()
-                        .imePadding(),
-                    resetScroll = { scope.launch { scrollState.scrollToItem(0) } },
-                    mediaList = mediaList,
-                    loadMedia = { handleEvent(ChatEvent.LoadMedia) },
-                    openPhoneSetting = { handleEvent(ChatEvent.OpenPhoneSettings) },
-                    onShowSticker = {
-                        stickerSelected = it
-                    }
-                )
-            }
-            stickerSelected?.let {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.7F)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    SubcomposeAsyncImage(
-                        ImageRequest.Builder(context = LocalContext.current)
-                            .setAnimated(true)
-                            .data(it.imageFile)
-                            .build(),
-                        contentDescription = null,
-                        modifier = Modifier.size(150.dp)
                     )
                 }
+                stickerSelected?.let {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(alpha = 0.7F)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        SubcomposeAsyncImage(
+                            ImageRequest.Builder(context = LocalContext.current)
+                                .setAnimated(true)
+                                .data(it.imageFile)
+                                .build(),
+                            contentDescription = null,
+                            modifier = Modifier.size(150.dp)
+                        )
+                    }
+                }
             }
-        }
-    )
+        )
+    }
 }
 
 @Composable
@@ -237,6 +308,7 @@ fun ChatBarActions(onChatOption: () -> Unit) {
 private fun MessageList(
     conversationId: Long,
     messages: List<Message>,
+    conversationType: ConversationType,
     loadMoreMessages: () -> Unit,
     navigateToProfile: (User) -> Unit,
     scrollState: LazyListState,
@@ -280,6 +352,7 @@ private fun MessageList(
                     MessageRow(
                         conversationId = conversationId,
                         message = message,
+                        conversationType = conversationType,
                         isFirstMessageByAuthorSameDay = isFirstMessageByAuthorSameDay,
                         isLastMessageByAuthorSameDay = isLastMessageByAuthorSameDay,
                         onMessageClick = onMessageClick,
@@ -306,15 +379,16 @@ private fun DayHeader(dayString: String) {
     ) {
         Box(
             modifier = Modifier
-                .padding(vertical = 16.dp)
+                .padding(top = 30.dp)
                 .background(
-                    BgChat02,
-                    shape = CircleShape
+                    BlueGray,
+                    shape = RoundedCornerShape(7.dp)
                 )
         ) {
             Text(
                 text = dayString,
-                modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+                    .align(Alignment.Center),
                 style = MaterialTheme.typography.labelSmall.copy(
                     color = MaterialTheme.colorScheme.background
                 )
@@ -333,6 +407,7 @@ private fun DayHeaderPreview() {
 private fun MessageRow(
     conversationId: Long,
     message: Message,
+    conversationType: ConversationType,
     isFirstMessageByAuthorSameDay: Boolean,
     isLastMessageByAuthorSameDay: Boolean,
     onMessageClick: (Message) -> Unit,
@@ -341,78 +416,53 @@ private fun MessageRow(
     val context = LocalContext.current
     val spaceBetweenAuthors =
         if (isLastMessageByAuthorSameDay) Modifier.padding(top = 8.dp) else Modifier
-
-    val eventModifier = Modifier
-        .fillMaxWidth()
-        .padding(
-            start = 50.dp,
-            end = 50.dp,
-            bottom = 4.dp
-        )
-        .clip(RoundedCornerShape(30.dp))
-        .background(BgChat02)
-        .padding(vertical = 5.dp, horizontal = 10.dp)
-    val eventStyle =
-        MaterialTheme.typography.labelSmall.copy(color = MaterialTheme.colorScheme.background)
     when (message.type) {
         MessageType.EVENT_JOINED -> {
-            Text(
+            MessageEvent(
                 stringResource(
                     id = R.string.chat_message_event_joined,
                     message.sender.name,
                     message.joinParticipants.joinToString(", ") { it.name }
                 ),
-                modifier = eventModifier,
-                style = eventStyle,
-                maxLines = 1,
-                textAlign = TextAlign.Center,
-                overflow = TextOverflow.Ellipsis
             )
         }
 
         MessageType.EVENT_LEFT -> {
-            Text(
+            MessageEvent(
                 stringResource(
                     id = R.string.chat_message_event_left,
                     message.leftParticipants.joinToString(", ") { it.name }
                 ),
-                modifier = eventModifier,
-                style = eventStyle,
-                maxLines = 1,
-                textAlign = TextAlign.Center,
-                overflow = TextOverflow.Ellipsis
             )
         }
 
         MessageType.EVENT_UPDATED -> {
-            Text(
+            MessageEvent(
                 stringResource(
                     id = R.string.chat_message_event_updated,
                     message.sender.name,
                     message.message
                 ),
-                modifier = eventModifier,
-                style = eventStyle,
-                maxLines = 1,
-                textAlign = TextAlign.Center,
-                overflow = TextOverflow.Ellipsis
             )
         }
 
         else -> {
             Row(modifier = spaceBetweenAuthors) {
-                if (isLastMessageByAuthorSameDay && !message.sender.isMe) {
-                    // Avatar
-                    OvalAvatar(
-                        size = 32.dp,
-                        user = message.sender,
-                        modifier = Modifier
-                            .clickable { onSenderClick(message.sender) }
-                            .padding(end = 5.dp)
-                    )
-                } else {
-                    // Space under avatar
-                    Spacer(modifier = Modifier.width(44.dp))
+                SizeBox(width = 16.dp)
+                if (conversationType == ConversationType.GROUP) {
+                    if (isLastMessageByAuthorSameDay && !message.sender.isMe) {
+                        // Avatar
+                        OvalAvatar(
+                            size = 32.dp,
+                            user = message.sender,
+                            modifier = Modifier
+                                .clickable { onSenderClick(message.sender) }
+                                .padding(end = 5.dp)
+                        )
+                    } else {
+                        // Space under avatar
+                        Spacer(modifier = Modifier.width(37.dp))
+                    }
                 }
                 AuthorAndTextMessage(
                     conversationId = conversationId,
@@ -486,11 +536,6 @@ private fun AuthorAndTextMessage(
         Row(
             verticalAlignment = Alignment.Bottom
         ) {
-            if (message.sender.isMe) {
-                Spacer(modifier = Modifier.weight(1F))
-                MessageTimestamp(timestamp = message.createdAt.chatMessageBubbleTime())
-            }
-
             Box(
                 modifier = Modifier
                     .widthIn(0.dp, maxChatItemWidth)
@@ -504,15 +549,11 @@ private fun AuthorAndTextMessage(
                     onMessageClick = onMessageClick,
                 )
             }
-            if (!message.sender.isMe) {
-                MessageTimestamp(timestamp = message.createdAt.chatMessageBubbleTime())
-                Spacer(modifier = Modifier.weight(1F))
-            }
         }
         if (isFirstMessageByAuthorSameDay) {
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(10.dp))
         } else {
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(3.dp))
         }
     }
 }
@@ -599,7 +640,7 @@ private fun ChatItemBubble(
     )
     var backgroundBubbleColor: Color = MaterialTheme.colorScheme.surface
     if (message.sender.isMe) {
-        backgroundBubbleColor = MaterialTheme.colorScheme.primary
+        backgroundBubbleColor = MaterialTheme.colorScheme.primaryContainer
     }
     when (message.type) {
         MessageType.DOCUMENT -> {
@@ -630,6 +671,74 @@ private fun ChatItemBubble(
                 conversationId = conversationId,
                 message = message,
                 onMessageClick = onMessageClick,
+            )
+        }
+    }
+}
+
+@Composable
+private fun MessageEvent(text: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text,
+            modifier = Modifier
+                .padding(
+                    start = 57.dp,
+                    end = 57.dp,
+                    bottom = 4.dp,
+                    top = 3.dp,
+                )
+                .clip(RoundedCornerShape(7.dp))
+                .background(BlueGray)
+                .padding(vertical = 5.dp, horizontal = 10.dp),
+            style = MaterialTheme.typography.labelSmall.copy(color = MaterialTheme.colorScheme.background),
+            maxLines = 1,
+            textAlign = TextAlign.Center,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Composable
+private fun ScrollToNewestMessageButton(
+    onClick: () -> Unit,
+) {
+    val borderRadius = RoundedCornerShape(
+        10.dp,
+        0.dp,
+        0.dp,
+        10.dp
+    )
+    Box(
+        modifier = Modifier
+            .padding(bottom = 30.dp)
+            .width(53.dp)
+            .height(35.dp)
+            .clip(
+                borderRadius
+            ).background(color = MaterialTheme.colorScheme.primaryContainer)
+            .shadow(elevation = 5.dp)
+            .padding(start = 1.dp, bottom = 1.dp, top = 1.dp)
+            .clickable {
+                onClick.invoke()
+            }
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize().clip(borderRadius)
+                .background(color = MaterialTheme.colorScheme.background)
+                .padding(start = 9.dp)
+        ) {
+            Icon(
+                Icons.Default.ExpandMore,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp)
+                    .align(Alignment.CenterStart)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+                tint = MaterialTheme.colorScheme.background
             )
         }
     }
