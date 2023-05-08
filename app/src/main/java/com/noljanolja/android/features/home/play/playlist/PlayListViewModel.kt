@@ -6,6 +6,7 @@ import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.core.video.domain.model.TrendingVideoDuration
 import com.noljanolja.core.video.domain.model.Video
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -14,42 +15,7 @@ class PlayListViewModel : BaseViewModel() {
     val uiStateFlow = _uiStateFlow.asStateFlow()
 
     init {
-        launch {
-            coreManager.getTrendingVideos(TrendingVideoDuration.Month).collect {
-                val data = _uiStateFlow.value.data ?: PlayListUIData()
-                _uiStateFlow.emit(
-                    UiState(
-                        data = data.copy(
-                            todayVideos = it
-                        )
-                    )
-                )
-            }
-        }
-        launch {
-            coreManager.getVideos(isHighlight = true).collect {
-                val data = _uiStateFlow.value.data ?: PlayListUIData()
-                _uiStateFlow.emit(
-                    UiState(
-                        data = data.copy(
-                            highlightVideos = it
-                        )
-                    )
-                )
-            }
-        }
-        launch {
-            coreManager.getWatchingVideos().collect {
-                val data = _uiStateFlow.value.data ?: PlayListUIData()
-                _uiStateFlow.emit(
-                    UiState(
-                        data = data.copy(
-                            watchingVideos = it
-                        )
-                    )
-                )
-            }
-        }
+        refresh()
     }
 
     fun handleEvent(event: PlayListEvent) {
@@ -63,6 +29,62 @@ class PlayListViewModel : BaseViewModel() {
                         )
                     )
                 }
+
+                PlayListEvent.Refresh -> {
+                    launch {
+                        val data = _uiStateFlow.value.data ?: PlayListUIData()
+                        _uiStateFlow.emit(
+                            UiState(
+                                data = data,
+                                loading = true
+                            )
+                        )
+                        delay(500)
+                        refresh()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun refresh() {
+        launch {
+            coreManager.getTrendingVideos(TrendingVideoDuration.Month).collect {
+                val data = _uiStateFlow.value.data ?: PlayListUIData()
+                _uiStateFlow.emit(
+                    UiState(
+                        data = data.copy(
+                            todayVideos = it
+                        ),
+                        loading = false
+                    )
+                )
+            }
+        }
+        launch {
+            coreManager.getVideos(isHighlight = true).collect {
+                val data = _uiStateFlow.value.data ?: PlayListUIData()
+                _uiStateFlow.emit(
+                    UiState(
+                        data = data.copy(
+                            highlightVideos = it
+                        ),
+                        loading = false
+                    )
+                )
+            }
+        }
+        launch {
+            coreManager.getWatchingVideos().collect {
+                val data = _uiStateFlow.value.data ?: PlayListUIData()
+                _uiStateFlow.emit(
+                    UiState(
+                        data = data.copy(
+                            watchingVideos = it
+                        ),
+                        loading = false
+                    )
+                )
             }
         }
     }

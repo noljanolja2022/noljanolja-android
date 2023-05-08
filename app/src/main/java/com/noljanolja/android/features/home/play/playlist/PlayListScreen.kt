@@ -21,6 +21,9 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -28,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -39,6 +43,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -63,11 +68,13 @@ fun PlayListScreen(
     PlayListContent(uiState = uiState, handleEvent = viewModel::handleEvent)
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun PlayListContent(
     uiState: UiState<PlayListUIData>,
     handleEvent: (PlayListEvent) -> Unit,
 ) {
+    val state = rememberPullRefreshState(uiState.loading, { handleEvent(PlayListEvent.Refresh) })
     ScaffoldWithUiState(uiState = uiState, topBar = {
         CommonTopAppBar(
             centeredTitle = true,
@@ -76,7 +83,7 @@ private fun PlayListContent(
         )
     }) {
         val data = uiState.data ?: return@ScaffoldWithUiState
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(modifier = Modifier.fillMaxSize().pullRefresh(state)) {
             item {
                 HighlightVideos(
                     videos = data.todayVideos,
