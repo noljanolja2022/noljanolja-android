@@ -2,6 +2,7 @@ package com.noljanolja.android.features.home.chat
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -33,6 +34,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -467,6 +469,7 @@ private fun MessageRow(
                 AuthorAndTextMessage(
                     conversationId = conversationId,
                     message = message,
+                    conversationType = conversationType,
                     isFirstMessageByAuthorSameDay = isFirstMessageByAuthorSameDay,
                     isLastMessageByAuthorSameDay = isLastMessageByAuthorSameDay,
                     modifier = Modifier
@@ -518,6 +521,7 @@ private fun MessageRow(
 private fun AuthorAndTextMessage(
     conversationId: Long,
     message: Message,
+    conversationType: ConversationType,
     isFirstMessageByAuthorSameDay: Boolean,
     isLastMessageByAuthorSameDay: Boolean,
     modifier: Modifier = Modifier,
@@ -544,6 +548,7 @@ private fun AuthorAndTextMessage(
                 ChatItemBubble(
                     conversationId = conversationId,
                     message = message,
+                    conversationType = conversationType,
                     isFirstMessageByAuthorSameDay = isFirstMessageByAuthorSameDay,
                     isLastMessageByAuthorSameDay = isLastMessageByAuthorSameDay,
                     onMessageClick = onMessageClick,
@@ -629,6 +634,7 @@ object MessageChatBubbleShape {
 private fun ChatItemBubble(
     conversationId: Long,
     message: Message,
+    conversationType: ConversationType,
     isFirstMessageByAuthorSameDay: Boolean,
     isLastMessageByAuthorSameDay: Boolean,
     onMessageClick: (Message) -> Unit,
@@ -661,17 +667,38 @@ private fun ChatItemBubble(
         else -> {}
     }
 
-    Column {
-        Surface(
-            color = backgroundBubbleColor,
-            contentColor = Color.White,
-            shape = backgroundBubbleShape,
-        ) {
-            ClickableMessage(
-                conversationId = conversationId,
-                message = message,
-                onMessageClick = onMessageClick,
-            )
+    Box {
+        if (isLastMessageByAuthorSameDay && message.type == MessageType.PHOTO || message.type == MessageType.PLAINTEXT) {
+            if (message.sender.isMe) {
+                Image(
+                    painterResource(id = R.drawable.ic_chat_arrow_mine),
+                    contentDescription = null,
+                    modifier = Modifier.align(
+                        Alignment.BottomEnd
+                    ).size(12.dp)
+                )
+            } else if (conversationType == ConversationType.SINGLE) {
+                Image(
+                    painterResource(id = R.drawable.ic_chat_arrow),
+                    contentDescription = null,
+                    modifier = Modifier.align(
+                        Alignment.BottomStart
+                    ).size(12.dp)
+                )
+            }
+        }
+        Box(modifier = Modifier.align(Alignment.BottomEnd).padding(horizontal = 6.dp)) {
+            Surface(
+                color = backgroundBubbleColor,
+                contentColor = Color.White,
+                shape = backgroundBubbleShape,
+            ) {
+                ClickableMessage(
+                    conversationId = conversationId,
+                    message = message,
+                    onMessageClick = onMessageClick,
+                )
+            }
         }
     }
 }
