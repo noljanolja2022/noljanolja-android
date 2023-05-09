@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.Color
 
 private val DarkColorScheme = darkColorScheme(
     primary = PrimaryGreen,
-    secondary = OrangeMain,
+    secondary = Orange400,
     tertiary = BlueMain,
 )
 

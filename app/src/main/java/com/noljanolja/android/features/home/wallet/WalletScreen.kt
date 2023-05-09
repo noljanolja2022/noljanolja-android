@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,8 +20,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +32,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -40,10 +46,11 @@ import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.ui.composable.CircleAvatar
 import com.noljanolja.android.ui.composable.Expanded
-import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.util.dashedBorder
+import com.noljanolja.android.ui.theme.Orange400
+import com.noljanolja.android.util.formatDigitsNumber
+import com.noljanolja.android.util.orZero
 import com.noljanolja.core.user.domain.model.User
 import org.koin.androidx.compose.getViewModel
 
@@ -62,44 +69,40 @@ private fun WalletContent(
 ) {
     ScaffoldWithUiState(uiState = uiState) {
         val user = uiState.data?.user ?: return@ScaffoldWithUiState
+        val memberInfo = uiState.data.memberInfo
         val friendNumber = uiState.data.friendNumber
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.primary)
+            modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.primary)
         ) {
-            UserInformation(user = user, friendNumber = friendNumber)
-            UserPoint()
-            UserWalletInfo()
-            Expanded()
-            PrimaryButton(
-                text = stringResource(id = R.string.common_log_out).uppercase(),
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth(),
-                containerColor = MaterialTheme.colorScheme.background,
-                contentColor = MaterialTheme.colorScheme.onBackground,
-                onClick = {
-                    handleEvent(WalletEvent.Logout)
+            UserInformation(
+                user = user,
+                friendNumber = friendNumber,
+                goToSetting = {
+                    handleEvent(WalletEvent.Setting)
                 }
             )
+            UserPoint(memberInfo?.point.orZero().formatDigitsNumber())
+            UserWalletInfo()
+            UserAttendance()
+            Expanded()
             SizeBox(height = 24.dp)
         }
     }
 }
 
 @Composable
-private fun UserInformation(user: User, friendNumber: Int) {
+private fun UserInformation(
+    user: User,
+    friendNumber: Int,
+    goToSetting: () -> Unit,
+) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(
-                RoundedCornerShape(
-                    bottomStart = 24.dp,
-                    bottomEnd = 24.dp
-                )
+        modifier = Modifier.fillMaxWidth().clip(
+            RoundedCornerShape(
+                bottomStart = 24.dp,
+                bottomEnd = 24.dp
             )
-            .background(MaterialTheme.colorScheme.background)
+        ).background(MaterialTheme.colorScheme.background)
             .padding(start = 16.dp, end = 16.dp, top = 50.dp, bottom = 24.dp)
     ) {
         CircleAvatar(user = user, size = 64.dp)
@@ -118,10 +121,8 @@ private fun UserInformation(user: User, friendNumber: Int) {
                 color = MaterialTheme.colorScheme.onBackground
             )
             Row(
-                modifier = Modifier.height(26.dp)
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(MaterialTheme.colorScheme.onPrimary)
-                    .padding(horizontal = 12.dp),
+                modifier = Modifier.height(26.dp).clip(RoundedCornerShape(20.dp))
+                    .background(MaterialTheme.colorScheme.onPrimary).padding(horizontal = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(painterResource(id = R.drawable.ic_king), contentDescription = null)
@@ -143,7 +144,7 @@ private fun UserInformation(user: User, friendNumber: Int) {
         }
         Expanded()
         IconButton(
-            onClick = { /*TODO*/ },
+            onClick = goToSetting,
             modifier = Modifier.align(Alignment.Bottom)
         ) {
             Icon(Icons.Filled.Settings, contentDescription = null)
@@ -152,35 +153,41 @@ private fun UserInformation(user: User, friendNumber: Int) {
 }
 
 @Composable
-private fun UserPoint() {
-    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+private fun UserPoint(
+    point: String,
+) {
+    Card(
+        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 10.dp
+        )
+    ) {
         Column(
-            modifier = Modifier.fillMaxWidth()
-                .height(116.dp)
-                .dashedBorder(
-                    strokeWidth = 1.dp,
-                    color = MaterialTheme.colorScheme.secondary,
-                    cornerRadiusDp = 16.dp
-                ),
+            modifier = Modifier.fillMaxWidth().height(79.dp).clip(RoundedCornerShape(8.dp))
+                .background(MaterialTheme.colorScheme.background),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Text(
                 text = stringResource(id = R.string.wallet_my_point),
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleMedium
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(painter = painterResource(id = R.drawable.ic_coin), contentDescription = null)
-                SizeBox(width = 8.dp)
+                Image(
+                    painter = painterResource(id = R.drawable.ic_coin),
+                    contentDescription = null,
+                    modifier = Modifier.size(37.dp)
+                )
+                SizeBox(width = 10.dp)
                 Text(
-                    text = "982,350",
+                    text = point,
                     style = TextStyle(
-                        fontSize = 32.sp,
-                        lineHeight = 46.sp,
+                        fontSize = 28.sp,
+                        lineHeight = 36.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.tertiary
+                        color = Orange400
                     )
                 )
             }
@@ -190,11 +197,14 @@ private fun UserPoint() {
 
 @Composable
 private fun UserWalletInfo() {
-    Row(modifier = Modifier.fillMaxWidth().wrapContentHeight().padding(horizontal = 16.dp)) {
+    Row(
+        modifier = Modifier.fillMaxWidth().wrapContentHeight().padding(horizontal = 16.dp)
+    ) {
         WalletInfoItem(
             R.drawable.img_coins,
             "Accumulated points for the day",
             14_000,
+            valueColor = Color(0xFF623B00),
             "View History",
             {}
         )
@@ -203,6 +213,7 @@ private fun UserWalletInfo() {
             R.drawable.img_exchange,
             "Points that can be exchanged",
             8_500,
+            valueColor = Color(0xFF007AFF),
             "Exchange money",
             {}
         )
@@ -214,39 +225,46 @@ private fun RowScope.WalletInfoItem(
     @DrawableRes image: Int,
     description: String,
     value: Long,
+    valueColor: Color,
     textButton: String,
     onClick: () -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .weight(1F)
-            .height(246.dp)
-            .clip(RoundedCornerShape(13.dp))
-            .background(MaterialTheme.colorScheme.background)
-            .padding(horizontal = 8.dp, vertical = 15.dp),
+        modifier = Modifier.weight(1F).wrapContentHeight().clip(RoundedCornerShape(13.dp))
+            .background(MaterialTheme.colorScheme.background).padding(horizontal = 8.dp, vertical = 15.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Image(
-            painter = painterResource(id = image),
-            contentDescription = null,
-            modifier = Modifier.size(75.dp)
-        )
         Text(
             text = description,
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
-            maxLines = 2
+            maxLines = 2,
+            modifier = Modifier.height(50.dp)
         )
-        Text(
-            text = "$value P",
-            style = TextStyle(
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                lineHeight = 35.sp,
+        Row {
+            Text(
+                text = value.formatDigitsNumber(),
+                style = TextStyle(
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 35.sp,
+                    color = valueColor
+                )
             )
-        )
+            Text(
+                " P",
+                style = TextStyle(
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 35.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            )
+        }
+
+        SizeBox(height = 14.dp)
         Button(
             onClick = onClick,
             modifier = Modifier.fillMaxWidth().height(34.dp),
@@ -254,7 +272,99 @@ private fun RowScope.WalletInfoItem(
             elevation = ButtonDefaults.buttonElevation(),
             contentPadding = PaddingValues(0.dp)
         ) {
-            Text(textButton.uppercase(), style = MaterialTheme.typography.bodyMedium)
+            Text(textButton.uppercase(), style = MaterialTheme.typography.labelLarge)
         }
+    }
+}
+
+@Composable
+private fun UserAttendance() {
+    Box(modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp)) {
+        Card(
+            modifier = Modifier.padding(top = 7.dp),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 5.dp
+            )
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                SizeBox(height = 17.dp)
+                Box(modifier = Modifier.padding(start = 24.dp, end = 12.dp).fillMaxWidth().wrapContentHeight()) {
+                    Image(
+                        painter = painterResource(id = R.drawable.attendance_banner),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxWidth(),
+                        contentScale = ContentScale.FillWidth
+                    )
+                }
+                SizeBox(height = 18.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.padding(end = 12.dp).weight(1F)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                "My attendance",
+                                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
+                            )
+                            SizeBox(width = 10.dp)
+                            Row(verticalAlignment = Alignment.Bottom) {
+                                Text(
+                                    "12",
+                                    style = TextStyle(
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onBackground
+                                    )
+                                )
+                                Text(
+                                    " / 30",
+                                    style = TextStyle(
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                )
+                            }
+                        }
+                        SizeBox(height = 4.dp)
+                        LinearProgressIndicator(
+                            progress = 12f / 30,
+                            modifier = Modifier.clip(RoundedCornerShape(6.dp)).height(6.dp),
+                            color = MaterialTheme.colorScheme.secondary,
+                            trackColor = MaterialTheme.colorScheme.surface,
+                        )
+                    }
+                    Button(
+                        onClick = { /*TODO*/ },
+                        modifier = Modifier.padding(start = 18.dp).weight(1F),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF4F6D00)
+                        ),
+                        shape = RoundedCornerShape(4.dp),
+                    ) {
+                        Text(
+                            "Attend now",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.background
+                            )
+                        )
+                    }
+                }
+                SizeBox(height = 14.dp)
+            }
+        }
+        Image(
+            painterResource(id = R.drawable.ic_light_wallet),
+            contentDescription = null,
+            modifier = Modifier.padding(start = 10.dp).size(88.dp).align(Alignment.TopStart)
+        )
     }
 }

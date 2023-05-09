@@ -58,3 +58,11 @@ fun Instant.customFormatTime(format: String): String {
     return DateTimeFormatter.ofPattern(format)
         .format(this.toLocalDateTime(TimeZone.currentSystemDefault()).toJavaLocalDateTime())
 }
+
+fun Instant.formatMonthAndYear(): String {
+    return this@formatMonthAndYear.customFormatTime("MMMM yyyy")
+}
+
+fun Instant.formatTransactionFullTime(): String {
+    return this.customFormatTime("hh:mm - MMMM dd yyyy")
+}

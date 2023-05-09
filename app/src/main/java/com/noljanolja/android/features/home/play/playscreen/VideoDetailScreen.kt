@@ -32,13 +32,12 @@ import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.composable.VerticalDivider
 import com.noljanolja.android.ui.composable.youtube.YoutubeView
-import com.noljanolja.android.ui.theme.OrangeMain
+import com.noljanolja.android.ui.theme.Orange400
 import com.noljanolja.android.util.showToast
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.video.domain.model.Comment
 import com.noljanolja.core.video.domain.model.Commenter
 import com.noljanolja.core.video.domain.model.Video
-import org.koin.androidx.compose.get
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -165,7 +164,7 @@ private fun VideoParameters(video: Video) {
         VideoParameter(
             title = stringResource(id = R.string.video_detail_reward),
             value = "90 Points",
-            valueColor = OrangeMain
+            valueColor = Orange400
         )
     }
 }

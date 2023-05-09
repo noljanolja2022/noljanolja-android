@@ -8,6 +8,7 @@ import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.Message
 import com.noljanolja.core.conversation.domain.model.MessageStatus
 import com.noljanolja.core.conversation.domain.repository.ConversationRepository
+import com.noljanolja.core.loyalty.domain.repository.LoyaltyRepository
 import com.noljanolja.core.media.domain.repository.MediaRepository
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.user.domain.repository.UserRepository
@@ -33,6 +34,7 @@ class CoreManager : KoinComponent {
     private val authRepository: AuthRepository by inject()
     private val mediaRepository: MediaRepository by inject()
     private val videoRepository: VideoRepository by inject()
+    private val loyaltyRepository: LoyaltyRepository by inject()
     private val socketManager: SocketManager by inject()
 
     private val scope = CoroutineScope(Dispatchers.Default)
@@ -235,6 +237,8 @@ class CoreManager : KoinComponent {
         comment: String,
         youtubeToken: String,
     ) = videoRepository.commentVideo(videoId = id, comment = comment, youtubeToken = youtubeToken)
+
+    suspend fun getMemberInfo() = loyaltyRepository.getMemberInfo()
 
     fun onDestroy() {
         conversationRepository.onDestroy()

@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,8 +45,8 @@ import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Scope
+import com.google.android.gms.tasks.Task
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.launchInMainIO
 import com.noljanolja.android.ui.composable.BackPressHandler
@@ -53,6 +54,8 @@ import com.noljanolja.android.ui.composable.CircleAvatar
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.util.findActivity
 import com.noljanolja.core.user.domain.model.User
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import org.koin.androidx.compose.get
 
 @Composable
@@ -64,29 +67,33 @@ fun CommentInput(
     var comment by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
-
+    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val activity = context.findActivity()!!
     val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail()
         .requestIdToken(stringResource(id = R.string.web_client_id)).requestScopes(YOUTUBE_SCOPE).build()
 
     val googleSignInClient = GoogleSignIn.getClient(context, gso)
+    val onTokenResult = { token: String ->
+        onSend(comment, token)
+        comment = ""
+        focusManager.clearFocus()
+    }
     val googleSignInLauncher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult(),
             onResult = { result ->
-                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-                val account = task.getResult(ApiException::class.java)
-                getTokenFromAccount(
-                    activity,
-                    account,
-                    onError = { error ->
-                        onError(error)
-                    }
-                ) { token ->
-                    onSend(comment, token)
-                    comment = ""
-                    focusManager.clearFocus()
+                scope.launch {
+                    val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                    val account = task.getAccount(onError) ?: return@launch
+                    getTokenFromAccount(
+                        activity,
+                        account,
+                        onError = { error ->
+                            onError(error)
+                        },
+                        onTokenResult = onTokenResult
+                    )
                 }
             }
         )
@@ -95,28 +102,28 @@ fun CommentInput(
     BackPressHandler(lastFocusState) {
         focusManager.clearFocus()
     }
-    val send = {
-        val account = GoogleSignIn.getLastSignedInAccount(context)
-        if (account != null) {
-            val newAccount = if (account.isExpired) {
-                val task = googleSignInClient.silentSignIn()
-                task.getResult(ApiException::class.java)
-            } else {
-                account
-            }
-            getTokenFromAccount(
-                activity,
-                newAccount,
-                onError = { error ->
-                    onError(error)
+    val send: () -> Unit = {
+        scope.launch {
+            val account = GoogleSignIn.getLastSignedInAccount(context)
+            if (account != null) {
+                val newAccount = if (account.isExpired) {
+                    googleSignInClient.silentSignIn().getAccount(onError)
+                } else {
+                    account
                 }
-            ) { token ->
-                onSend(comment, token)
-                comment = ""
-                focusManager.clearFocus()
+                if (newAccount != null) {
+                    getTokenFromAccount(
+                        activity,
+                        newAccount,
+                        onError = { error ->
+                            onError(error)
+                        },
+                        onTokenResult = onTokenResult
+                    )
+                }
+            } else {
+                googleSignInLauncher.launch(googleSignInClient.signInIntent)
             }
-        } else {
-            googleSignInLauncher.launch(googleSignInClient.signInIntent)
         }
     }
     Row(
@@ -214,6 +221,15 @@ private fun getTokenFromAccount(
         )
         onTokenResult.invoke(token)
     }
+}
+
+private suspend fun Task<GoogleSignInAccount>.getAccount(
+    onError: (Throwable) -> Unit,
+) = try {
+    this.await()
+} catch (e: Throwable) {
+    onError(e)
+    null
 }
 
 private const val GOOGLE_REQUEST_PERMISSION_CODE = 1000

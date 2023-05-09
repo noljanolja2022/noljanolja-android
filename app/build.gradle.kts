@@ -137,6 +137,9 @@ dependencies {
 
     // Youtube
     implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.0.0")
+    // chart
+    implementation("com.patrykandpatrick.vico:core:1.6.5")
+    implementation("com.patrykandpatrick.vico:compose-m3:1.6.5")
 }
 
 kapt {

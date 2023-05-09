@@ -48,7 +48,6 @@ import com.noljanolja.android.ui.composable.CombineClickableText
 import com.noljanolja.android.util.chatMessageBubbleTime
 import com.noljanolja.android.util.openImageFromCache
 import com.noljanolja.android.util.openUrl
-import com.noljanolja.android.util.orZero
 import com.noljanolja.android.util.setAnimated
 import com.noljanolja.android.util.showToast
 import com.noljanolja.android.util.toUri
@@ -196,15 +195,23 @@ fun ClickablePhotoMessage(
     modifier: Modifier,
     onMessageClick: (Message) -> Unit,
 ) {
+    val backgroundColor = if (message.sender.isMe) {
+        MaterialTheme.colorScheme.primaryContainer
+    } else {
+        MaterialTheme.colorScheme.surface
+    }
     Box(
-        modifier = Modifier.wrapContentWidth().clip(RoundedCornerShape(10.dp))
-            .background(MaterialTheme.colorScheme.primaryContainer).padding(3.dp)
+        modifier = Modifier
+            .wrapContentWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(backgroundColor)
+            .padding(3.dp)
     ) {
         when (val size = message.attachments.size) {
             1 -> {
                 val attachment = message.attachments.first()
                 Column(
-                    horizontalAlignment = if (message.sender.isMe) Alignment.End else Alignment.Start
+//                    horizontalAlignment = if (message.sender.isMe) Alignment.End else Alignment.Start
                 ) {
                     PhotoPreview(
                         modifier = modifier
@@ -221,14 +228,14 @@ fun ClickablePhotoMessage(
             }
 
             else -> {
-                val maxAttachmentPerRow = if (size == 2 || size == 4) 2 else 3
-                val attachmentRows =
-                    size / maxAttachmentPerRow + 1.takeIf { size % maxAttachmentPerRow > 0 }.orZero()
+                val maxAttachmentPerRow = if (size == 3) 3 else 2
+                val attachmentRows = if (size < 4) 1 else 2
+//                    size / maxAttachmentPerRow + 1.takeIf { size % maxAttachmentPerRow > 0 }.orZero()
                 Column(
                     modifier = modifier
                         .fillMaxWidth()
                         .wrapContentHeight(),
-                    horizontalAlignment = if (message.sender.isMe) Alignment.End else Alignment.Start
+//                    horizontalAlignment = if (message.sender.isMe) Alignment.End else Alignment.Start
                 ) {
                     repeat(attachmentRows) { row ->
                         if (row > 0) {
@@ -239,7 +246,8 @@ fun ClickablePhotoMessage(
                             conversationId = conversationId,
                             attachments = message.attachments.filterIndexed { index, _ -> index >= row * maxAttachmentPerRow && index < (row + 1) * maxAttachmentPerRow },
                             maxAttachmentPerRow = maxAttachmentPerRow,
-                            onMessageClick = onMessageClick
+                            onMessageClick = onMessageClick,
+                            notShowImages = (size - 3).takeIf { it > 0 && row > 0 }
                         )
                     }
                 }
@@ -252,16 +260,18 @@ fun ClickablePhotoMessage(
 fun AttachmentRow(
     message: Message,
     conversationId: Long,
+    notShowImages: Int? = null,
     attachments: List<MessageAttachment>,
     maxAttachmentPerRow: Int,
     onMessageClick: (Message) -> Unit,
 ) {
+    val isMe = message.sender.isMe
     CompositionLocalProvider(LocalLayoutDirection provides if (message.sender.isMe) LayoutDirection.Rtl else LayoutDirection.Ltr) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
-            horizontalArrangement = if (message.sender.isMe) Arrangement.End else Arrangement.Start,
+//            horizontalArrangement = if (message.sender.isMe) Arrangement.End else Arrangement.Start,
         ) {
             repeat(maxAttachmentPerRow) { index ->
                 if (index > 0) {
@@ -269,18 +279,43 @@ fun AttachmentRow(
                 }
                 val attachment = attachments.getOrNull(index)
                 attachment?.let {
-                    PhotoPreview(
+                    Box(
                         modifier = Modifier
                             .weight(1f)
                             .aspectRatio(1f)
-                            .clip(RoundedCornerShape(10.dp))
-                            .clickable { onMessageClick(message.copy(attachments = listOf(attachment))) },
-                        uri = attachment.getPhotoUri(conversationId).toUri(),
-                        key = "${message.localId}/${attachment.originalName}",
-                        isMe = message.sender.isMe,
-                        time = message.createdAt.chatMessageBubbleTime(),
-                        timeAlign = if (message.sender.isMe) TextAlign.Start else TextAlign.End
-                    )
+                    ) {
+                        PhotoPreview(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(10.dp))
+                                .clickable { onMessageClick(message.copy(attachments = listOf(attachment))) },
+                            uri = attachment.getPhotoUri(conversationId).toUri(),
+                            key = "${message.localId}/${attachment.originalName}",
+                            isMe = message.sender.isMe,
+                            time = message.createdAt.chatMessageBubbleTime(),
+                            timeAlign = if (isMe) TextAlign.Start else TextAlign.End
+                        )
+                        if ((index == 1 && !isMe) || (index == 0 && isMe)) {
+                            notShowImages?.let {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .background(Color.Black.copy(alpha = 0.7F)),
+                                ) {
+                                    Text(
+                                        text = if (isMe) "$it +" else "+ $it",
+                                        style = TextStyle(
+                                            fontSize = 36.sp,
+                                            color = MaterialTheme.colorScheme.background
+                                        ),
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            }
+                        }
+                    }
                 } ?: Spacer(modifier = Modifier.weight(1F))
             }
         }

@@ -19,16 +19,6 @@ fun Video.getShortDescription(context: Context): String {
     )
 }
 
-fun Long.formatNumber(): String {
-    val number = this.toDouble()
-    return when {
-        number < 1000 -> String.format("%.0f", number)
-        number < 10000 -> String.format("%.1f", number / 1000) + "k"
-        number < 1000000 -> String.format("%.0f", number / 1000) + "k"
-        else -> String.format("%.1f", number / 1000000) + "M"
-    }
-}
-
 fun LocalDateTime.formatPeriodVideo(context: Context): String {
     val now = LocalDateTime.now()
     val duration = Duration.between(this, now)

@@ -27,6 +27,7 @@ import com.noljanolja.android.features.home.play.playlist.PlayListScreen
 import com.noljanolja.android.features.home.utils.click
 import com.noljanolja.android.features.home.utils.isNavItemSelect
 import com.noljanolja.android.features.home.wallet.WalletScreen
+import com.noljanolja.android.features.home.wallet.transaction.WalletTransactionScreen
 import com.noljanolja.android.ui.composable.FullSizeUnderConstruction
 import com.noljanolja.android.util.getErrorMessage
 import com.noljanolja.android.util.showToast

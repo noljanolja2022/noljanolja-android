@@ -17,11 +17,18 @@ class SettingViewModel : BaseViewModel() {
                 SettingEvent.Back -> {
                     navigationManager.navigate(NavigationDirections.Back)
                 }
+
                 SettingEvent.ClearCacheData -> {}
                 SettingEvent.ShowLicense -> {}
                 SettingEvent.TogglePushNotification -> {
                     with(_uiStateFlow) {
                         emit(value.copy(allowPushNotification = !value.allowPushNotification))
+                    }
+                }
+
+                SettingEvent.Logout -> {
+                    if (coreManager.logout().getOrNull() == true) {
+                        navigationManager.navigate(NavigationDirections.Auth)
                     }
                 }
             }

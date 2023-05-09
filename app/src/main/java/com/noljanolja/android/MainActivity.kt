@@ -22,6 +22,7 @@ import com.noljanolja.android.common.base.launchInMainIO
 import com.noljanolja.android.common.mobiledata.data.ContactsLoader
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
+import com.noljanolja.android.features.home.wallet.dashboard.WalletDashboardScreen
 import com.noljanolja.android.ui.theme.NoljanoljaTheme
 import com.noljanolja.core.CoreManager
 import kotlinx.coroutines.Dispatchers
@@ -53,6 +54,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
+//                    WalletDashboardScreen()
                     MainScreen(navigationManager)
                 }
             }

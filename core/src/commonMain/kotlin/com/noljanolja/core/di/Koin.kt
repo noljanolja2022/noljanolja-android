@@ -10,6 +10,9 @@ import com.noljanolja.core.conversation.data.datasource.LocalConversationDataSou
 import com.noljanolja.core.conversation.data.repository.ConversationRepositoryImpl
 import com.noljanolja.core.conversation.domain.repository.ConversationRepository
 import com.noljanolja.core.db.Noljanolja
+import com.noljanolja.core.loyalty.data.datasource.LoyaltyApi
+import com.noljanolja.core.loyalty.data.repository.LoyaltyRepositoryImpl
+import com.noljanolja.core.loyalty.domain.repository.LoyaltyRepository
 import com.noljanolja.core.media.data.datasource.MediaApi
 import com.noljanolja.core.media.data.repository.MediaRepositoryImpl
 import com.noljanolja.core.media.domain.repository.MediaRepository
@@ -105,6 +108,12 @@ private val coreModule = module {
     }
     single<VideoRepository> {
         VideoRepositoryImpl(get(), get())
+    }
+    single {
+        LoyaltyApi(get())
+    }
+    single<LoyaltyRepository> {
+        LoyaltyRepositoryImpl(get())
     }
     single {
         Noljanolja(get())

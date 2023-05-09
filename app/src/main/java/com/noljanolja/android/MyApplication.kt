@@ -44,6 +44,7 @@ import com.noljanolja.android.features.home.play.playscreen.VideoDetailViewModel
 import com.noljanolja.android.features.home.require_login.RequireLoginViewModel
 import com.noljanolja.android.features.home.root.HomeViewModel
 import com.noljanolja.android.features.home.wallet.WalletViewModel
+import com.noljanolja.android.features.home.wallet.dashboard.WalletDashboardViewModel
 import com.noljanolja.android.features.setting.SettingViewModel
 import com.noljanolja.android.features.splash.SplashViewModel
 import com.noljanolja.android.services.PermissionChecker
@@ -251,6 +252,9 @@ class MyApplication : Application() {
                 }
                 viewModel {
                     PlayListViewModel()
+                }
+                viewModel {
+                    WalletDashboardViewModel()
                 }
             }
         )

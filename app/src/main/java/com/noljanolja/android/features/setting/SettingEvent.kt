@@ -5,4 +5,5 @@ sealed interface SettingEvent {
     object ClearCacheData : SettingEvent
     object ShowLicense : SettingEvent
     object TogglePushNotification : SettingEvent
+    object Logout : SettingEvent
 }
