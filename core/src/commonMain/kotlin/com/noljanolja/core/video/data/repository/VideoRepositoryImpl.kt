@@ -1,5 +1,6 @@
 package com.noljanolja.core.video.data.repository
 
+import com.noljanolja.core.Failure
 import com.noljanolja.core.video.data.datasource.LocalVideoDataSource
 import com.noljanolja.core.video.data.datasource.VideoApi
 import com.noljanolja.core.video.data.model.request.CommentVideoRequest
@@ -80,7 +81,9 @@ internal class VideoRepositoryImpl(
             if (response.isSuccessful()) {
                 localVideoDataSource.upsertVideoComments(videoId, listOf(response.data!!))
                 localVideoDataSource.updateVideoCommentCount(videoId)
-                Result.success(response.data!!)
+                Result.success(response.data)
+            } else if (response.code == Failure.NotHasYoutubeChannel.code) {
+                throw Failure.NotHasYoutubeChannel
             } else {
                 throw Throwable("Comment video error")
             }

@@ -1,0 +1,47 @@
+package com.noljanolja.android.features.home.wallet.composable
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.noljanolja.android.R
+import com.noljanolja.android.ui.theme.Orange400
+import com.noljanolja.core.loyalty.domain.model.MemberTier
+
+@Composable
+fun TierIcon(tier: MemberTier, width: Dp = 24.dp) {
+    val iconColor: Color
+    with(MaterialTheme.colorScheme) {
+        when (tier) {
+            MemberTier.BRONZE -> {
+                iconColor = outline
+            }
+
+            MemberTier.SILVER -> {
+                iconColor = secondary
+            }
+
+            MemberTier.GOLD -> {
+                iconColor = secondary
+            }
+
+            MemberTier.PREMIUM -> {
+                iconColor = Orange400
+            }
+        }
+    }
+    Image(
+        painterResource(id = R.drawable.ic_king),
+        contentDescription = null,
+        modifier = Modifier.width(width),
+        colorFilter = ColorFilter.tint(iconColor),
+        contentScale = ContentScale.FillWidth
+    )
+}

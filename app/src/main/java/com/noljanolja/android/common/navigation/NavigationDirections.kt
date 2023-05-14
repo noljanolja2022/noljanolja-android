@@ -269,6 +269,18 @@ object NavigationDirections {
         }
     }
 
+    object TransactionHistory : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "transaction_history"
+    }
+
+    object MyRanking : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "my_ranking"
+    }
+
     // Back
     data class FinishWithResults(
         val data: Map<String, Any>,

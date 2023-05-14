@@ -27,6 +27,14 @@ class WalletViewModel : BaseViewModel() {
                 WalletEvent.Setting -> {
                     navigationManager.navigate(NavigationDirections.Setting)
                 }
+
+                WalletEvent.TransactionHistory -> {
+                    navigationManager.navigate(NavigationDirections.TransactionHistory)
+                }
+
+                WalletEvent.Ranking -> {
+                    navigationManager.navigate(NavigationDirections.MyRanking)
+                }
             }
         }
     }

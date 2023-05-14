@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.util.showToast
 import com.noljanolja.core.CoreManager
@@ -29,6 +30,12 @@ open class BaseViewModel : ViewModel(), KoinComponent {
     fun sendError(e: Throwable) {
         launch {
             _errorFlow.emit(e)
+        }
+    }
+
+    fun back() {
+        launch {
+            navigationManager.navigate(NavigationDirections.Back)
         }
     }
 }

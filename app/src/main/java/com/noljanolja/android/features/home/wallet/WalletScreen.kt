@@ -3,6 +3,7 @@ package com.noljanolja.android.features.home.wallet
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -44,13 +46,18 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
+import com.noljanolja.android.features.home.wallet.composable.TierIcon
 import com.noljanolja.android.ui.composable.CircleAvatar
 import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.Orange400
 import com.noljanolja.android.util.formatDigitsNumber
+import com.noljanolja.android.util.getBackgroundColor
+import com.noljanolja.android.util.getTitle
 import com.noljanolja.android.util.orZero
+import com.noljanolja.core.loyalty.domain.model.MemberInfo
+import com.noljanolja.core.loyalty.domain.model.MemberTier
 import com.noljanolja.core.user.domain.model.User
 import org.koin.androidx.compose.getViewModel
 
@@ -76,13 +83,20 @@ private fun WalletContent(
         ) {
             UserInformation(
                 user = user,
-                friendNumber = friendNumber,
+                memberInfo = memberInfo,
                 goToSetting = {
                     handleEvent(WalletEvent.Setting)
+                },
+                goToRanking = {
+                    handleEvent(WalletEvent.Ranking)
                 }
             )
             UserPoint(memberInfo?.point.orZero().formatDigitsNumber())
-            UserWalletInfo()
+            UserWalletInfo(
+                onGoToTransactionHistory = {
+                    handleEvent(WalletEvent.TransactionHistory)
+                }
+            )
             UserAttendance()
             Expanded()
             SizeBox(height = 24.dp)
@@ -93,8 +107,9 @@ private fun WalletContent(
 @Composable
 private fun UserInformation(
     user: User,
-    friendNumber: Int,
+    memberInfo: MemberInfo?,
     goToSetting: () -> Unit,
+    goToRanking: () -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth().clip(
@@ -120,25 +135,9 @@ private fun UserInformation(
                 ),
                 color = MaterialTheme.colorScheme.onBackground
             )
-            Row(
-                modifier = Modifier.height(26.dp).clip(RoundedCornerShape(20.dp))
-                    .background(MaterialTheme.colorScheme.onPrimary).padding(horizontal = 12.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(painterResource(id = R.drawable.ic_king), contentDescription = null)
-                SizeBox(width = 4.dp)
-                Text(
-                    text = stringResource(id = R.string.wallet_gold_member_ship),
-                    style = TextStyle(
-                        fontSize = 8.sp,
-                        lineHeight = 16.sp,
-                        color = MaterialTheme.colorScheme.background,
-                        fontWeight = FontWeight.Medium
-                    ),
-                )
-            }
+            memberInfo?.currentTier?.let { RankingRow(tier = it, onClick = goToRanking) }
             Text(
-                text = stringResource(id = R.string.wallet_number_friends, friendNumber),
+                text = stringResource(id = R.string.wallet_point_ranking, 12345.formatDigitsNumber()),
                 style = MaterialTheme.typography.labelSmall,
             )
         }
@@ -196,7 +195,9 @@ private fun UserPoint(
 }
 
 @Composable
-private fun UserWalletInfo() {
+private fun UserWalletInfo(
+    onGoToTransactionHistory: () -> Unit,
+) {
     Row(
         modifier = Modifier.fillMaxWidth().wrapContentHeight().padding(horizontal = 16.dp)
     ) {
@@ -206,7 +207,7 @@ private fun UserWalletInfo() {
             14_000,
             valueColor = Color(0xFF623B00),
             "View History",
-            {}
+            onGoToTransactionHistory,
         )
         SizeBox(width = 12.dp)
         WalletInfoItem(
@@ -365,6 +366,51 @@ private fun UserAttendance() {
             painterResource(id = R.drawable.ic_light_wallet),
             contentDescription = null,
             modifier = Modifier.padding(start = 10.dp).size(88.dp).align(Alignment.TopStart)
+        )
+    }
+}
+
+@Composable
+private fun RankingRow(tier: MemberTier, onClick: () -> Unit) {
+    val containerColor: Color = tier.getBackgroundColor()
+    val contentColor: Color
+    val context = LocalContext.current
+    with(MaterialTheme.colorScheme) {
+        when (tier) {
+            MemberTier.BRONZE -> {
+                contentColor = onBackground
+            }
+
+            MemberTier.SILVER -> {
+                contentColor = background
+            }
+
+            MemberTier.GOLD -> {
+                contentColor = background
+            }
+
+            MemberTier.PREMIUM -> {
+                contentColor = background
+            }
+        }
+    }
+    Row(
+        modifier = Modifier.height(26.dp).clip(RoundedCornerShape(20.dp))
+            .background(containerColor)
+            .clickable { onClick() }
+            .padding(horizontal = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        TierIcon(tier = tier, width = 20.dp)
+        SizeBox(width = 4.dp)
+        Text(
+            text = tier.getTitle(context),
+            style = TextStyle(
+                fontSize = 11.sp,
+                lineHeight = 16.sp,
+                color = contentColor,
+                fontWeight = FontWeight.Medium
+            ),
         )
     }
 }

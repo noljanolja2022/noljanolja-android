@@ -230,6 +230,11 @@
     <string name="wallet_number_friends">Friend: %d</string>
     <string name="wallet_my_point">My point</string>
     <string name="wallet_gold_member_ship">Gold member ship</string>
+    <string name="wallet_point_ranking">Overall Point Ranking: %s</string>
+    <string name="wallet_ranking_general">General Membership</string>
+    <string name="wallet_ranking_gold">Gold Membership</string>
+    <string name="wallet_ranking_premium">Premium Membership</string>
+    <string name="wallet_expect_next_tier">Expected rating for next month</string>
 
     <!--    video-->
     <string name="video_title">Let’s get points by watching</string>
@@ -251,5 +256,7 @@
     <string name="video_detail_duration_just_now">just now</string>
     <string name="video_detail_require_google_title"></string>
     <string name="video_detail_require_google_description">You need login google and accept youtube scope to comment or like</string>
+    <string name="video_detail_need_youtube_account">You don\'t have a youtube account yet.</string>
+    <string name="video_detail_need_youtube_account_description">To comment on youtube you need an account. Click OK to see the tutorial on how to create youtube.</string>
 
 </resources>

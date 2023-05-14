@@ -24,6 +24,8 @@ import com.noljanolja.android.features.home.contacts.ContactsScreen
 import com.noljanolja.android.features.home.info.MyInfoScreen
 import com.noljanolja.android.features.home.play.playscreen.VideoDetailScreen
 import com.noljanolja.android.features.home.root.HomeScreen
+import com.noljanolja.android.features.home.wallet.myranking.MyRankingScreen
+import com.noljanolja.android.features.home.wallet.transaction.TransactionsHistoryScreen
 import com.noljanolja.android.features.setting.SettingScreen
 import com.noljanolja.android.features.splash.SplashScreen
 import com.noljanolja.android.util.showToast
@@ -90,6 +92,7 @@ fun MainScreen(
         addContactsGraph()
         addChatGraph()
         addVideoGraph()
+        addWalletGraph()
     }
 }
 
@@ -195,6 +198,19 @@ private fun NavGraphBuilder.addVideoGraph() {
         composable(destination, arguments) {
             val videoId = (it.arguments?.getString("videoId").orEmpty())
             VideoDetailScreen(videoId)
+        }
+    }
+}
+
+private fun NavGraphBuilder.addWalletGraph() {
+    with(NavigationDirections.TransactionHistory) {
+        composable(destination, arguments) {
+            TransactionsHistoryScreen()
+        }
+    }
+    with(NavigationDirections.MyRanking) {
+        composable(destination, arguments) {
+            MyRankingScreen()
         }
     }
 }

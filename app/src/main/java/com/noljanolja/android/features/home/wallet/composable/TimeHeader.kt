@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.ui.theme.BlueGray
+import com.noljanolja.android.ui.theme.LightBlue
 import com.noljanolja.android.util.formatMonthAndYear
 import kotlinx.datetime.Instant
 
@@ -27,20 +27,30 @@ fun TimeHeader(time: Instant, onClick: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth()
             .height(32.dp)
-            .background(BlueGray)
+            .background(LightBlue)
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             time.formatMonthAndYear(),
-            style = MaterialTheme.typography.titleSmall
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
         )
         Expanded()
 
-        Text("Dashboard", style = MaterialTheme.typography.titleSmall)
+        Text(
+            "Dashboard",
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
+        )
         SizeBox(width = 5.dp)
         IconButton(onClick = onClick, modifier = Modifier.size(24.dp)) {
-            Icon(Icons.Default.ChevronRight, contentDescription = null, modifier = Modifier.size(24.dp))
+            Icon(
+                Icons.Default.ChevronRight,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+                tint = MaterialTheme.colorScheme.onBackground
+            )
         }
     }
 }

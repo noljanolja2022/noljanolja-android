@@ -1,5 +1,9 @@
 package com.noljanolja.android.features.home.play.playscreen
 
+import android.content.Intent
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,9 +35,11 @@ import com.noljanolja.android.ui.composable.CircleAvatar
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.composable.VerticalDivider
+import com.noljanolja.android.ui.composable.WarningDialog
 import com.noljanolja.android.ui.composable.youtube.YoutubeView
 import com.noljanolja.android.ui.theme.Orange400
 import com.noljanolja.android.util.showToast
+import com.noljanolja.core.Failure
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.video.domain.model.Comment
 import com.noljanolja.core.video.domain.model.Commenter
@@ -48,15 +54,42 @@ fun VideoDetailScreen(
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     val context = LocalContext.current
-
+    var showCreateYoutubeDirectionDialog by remember { mutableStateOf(false) }
+    val openUrl = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { }
     LaunchedEffect(key1 = viewModel.errorFlow, block = {
         viewModel.errorFlow.collect {
-            context.showToast(it.toString())
+            when (it) {
+                is Failure.NotHasYoutubeChannel -> {
+                    showCreateYoutubeDirectionDialog = true
+                }
+
+                else -> context.showToast(it.toString())
+            }
         }
     })
     VideoDetailContent(
         uiState = uiState,
         handleEvent = viewModel::handleEvent
+    )
+    WarningDialog(
+        title = stringResource(id = R.string.video_detail_need_youtube_account),
+        content = stringResource(id = R.string.video_detail_need_youtube_account_description),
+        dismissText = stringResource(R.string.common_cancel),
+        confirmText = stringResource(R.string.common_confirm),
+        isWarning = showCreateYoutubeDirectionDialog,
+        onDismiss = {
+            showCreateYoutubeDirectionDialog = false
+        },
+        onConfirm = {
+            showCreateYoutubeDirectionDialog = false
+            val intent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(helpYoutubeUri)
+            )
+            openUrl.launch(intent)
+        }
     )
 }
 
@@ -85,10 +118,14 @@ private fun VideoDetailContent(
         }
     }) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(it)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
         ) {
             YoutubeView(
-                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
                 onReady = { player -> handleEvent(VideoDetailEvent.ReadyVideo(player)) },
                 toggleFullScreen = {
                     isFullScreen = it
@@ -149,7 +186,9 @@ private fun VideoInformation(video: Video) {
 @Composable
 private fun VideoParameters(video: Video) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
     ) {
         VideoParameter(
             title = stringResource(id = R.string.video_detail_views),
@@ -176,7 +215,9 @@ private fun RowScope.VideoParameter(
     valueColor: Color = MaterialTheme.colorScheme.onBackground,
 ) {
     BoxWithBottomElevation(
-        modifier = Modifier.weight(1F).height(55.dp)
+        modifier = Modifier
+            .weight(1F)
+            .height(55.dp)
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -242,7 +283,9 @@ private fun CommentSortItem(
     Text(
         text = stringResource(id = type.id),
         style = MaterialTheme.typography.labelMedium,
-        modifier = Modifier.clip(RoundedCornerShape(25.dp)).background(containerColor)
+        modifier = Modifier
+            .clip(RoundedCornerShape(25.dp))
+            .background(containerColor)
             .padding(vertical = 5.dp, horizontal = 10.dp),
         color = contentColor,
     )
@@ -254,10 +297,16 @@ private fun CommentRow(
     comment: Comment,
 ) {
     Row(
-        modifier = modifier.padding(top = 10.dp).fillMaxWidth().height(IntrinsicSize.Min).wrapContentHeight(),
+        modifier = modifier
+            .padding(top = 10.dp)
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min)
+            .wrapContentHeight(),
     ) {
         Column(
-            modifier = Modifier.padding(top = 8.dp).fillMaxHeight(),
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             CommenterAvatar(commenter = comment.commenter)
@@ -278,11 +327,15 @@ private fun CommentRow(
             )
             SizeBox(height = 8.dp)
             BoxWithBottomElevation(
-                modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min)
             ) {
                 Text(
                     text = comment.comment,
-                    modifier = Modifier.fillMaxSize().padding(vertical = 10.dp, horizontal = 13.dp)
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(vertical = 10.dp, horizontal = 13.dp)
                 )
             }
             SizeBox(height = 8.dp)
@@ -296,3 +349,5 @@ private fun CommentRow(
 private fun CommenterAvatar(commenter: Commenter) {
     CircleAvatar(user = User(avatar = commenter.avatar), size = 25.dp)
 }
+
+private const val helpYoutubeUri = "https://support.google.com/youtube/answer/1646861?topic=3024170&hl=en"

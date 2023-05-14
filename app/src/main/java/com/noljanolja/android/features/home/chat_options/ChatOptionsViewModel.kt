@@ -73,12 +73,6 @@ class ChatOptionsViewModel(private val conversationId: Long) : BaseViewModel() {
         }
     }
 
-    private fun back() {
-        launch {
-            navigationManager.navigate(NavigationDirections.Back)
-        }
-    }
-
     private suspend fun removeParticipants(userIds: List<String>) {
         coreManager.removeConversationParticipants(conversationId, userIds).exceptionOrNull()?.let {
             sendError(it)
