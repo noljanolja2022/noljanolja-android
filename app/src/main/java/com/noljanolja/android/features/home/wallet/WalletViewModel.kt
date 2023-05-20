@@ -6,6 +6,7 @@ import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
 import com.noljanolja.core.user.domain.model.User
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -15,9 +16,7 @@ class WalletViewModel : BaseViewModel() {
 
     init {
         launch {
-            val user = coreManager.getCurrentUser().getOrNull()
-            val memberInfo = coreManager.getMemberInfo().getOrNull()
-            _uiStateFlow.emit(UiState(data = WalletUIData(user = user, memberInfo = memberInfo)))
+            refreshMemberInfo()
         }
     }
 
@@ -35,8 +34,26 @@ class WalletViewModel : BaseViewModel() {
                 WalletEvent.Ranking -> {
                     navigationManager.navigate(NavigationDirections.MyRanking)
                 }
+
+                WalletEvent.Refresh -> {
+                    val data = _uiStateFlow.value.data
+                    _uiStateFlow.emit(
+                        UiState(
+                            data = data,
+                            loading = true
+                        )
+                    )
+                    delay(300)
+                    refreshMemberInfo()
+                }
             }
         }
+    }
+
+    private suspend fun refreshMemberInfo() {
+        val user = coreManager.getCurrentUser().getOrNull()
+        val memberInfo = coreManager.getMemberInfo().getOrNull()
+        _uiStateFlow.emit(UiState(data = WalletUIData(user = user, memberInfo = memberInfo)))
     }
 }
 

@@ -31,6 +31,7 @@ import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.features.home.wallet.composable.TimeHeader
 import com.noljanolja.android.features.home.wallet.composable.TransactionRow
 import com.noljanolja.android.ui.composable.CommonTopAppBar
+import com.noljanolja.android.ui.composable.EmptyAnimation
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SearchBar
 import com.noljanolja.android.ui.composable.SizeBox
@@ -38,7 +39,6 @@ import com.noljanolja.android.ui.theme.DeeperGrey
 import com.noljanolja.android.util.formatMonthAndYear
 import com.noljanolja.android.util.getMonth
 import com.noljanolja.android.util.getYear
-import org.koin.androidx.compose.get
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -86,59 +86,66 @@ private fun WalletTransactionContent(
                         title = stringResource(id = it.titleId),
                         isSelect = uiState.data.filterType == it
                     ) {
+                        handleEvent(TransactionsHistoryEvent.Filter(it))
                     }
                 }
                 TransactionFilterType.Received.let {
                     TransactionTypeButton(
                         modifier = Modifier.padding(start = 15.dp).weight(1.3F),
-                        title = it.name,
+                        title = stringResource(id = it.titleId),
                         isSelect = uiState.data.filterType == it
                     ) {
+                        handleEvent(TransactionsHistoryEvent.Filter(it))
                     }
                 }
-                TransactionFilterType.Exchange.let {
+                TransactionFilterType.Spent.let {
                     TransactionTypeButton(
                         modifier = Modifier.padding(start = 15.dp).weight(1.3F),
-                        title = it.name,
+                        title = stringResource(id = it.titleId),
                         isSelect = uiState.data.filterType == it
                     ) {
+                        handleEvent(TransactionsHistoryEvent.Filter(it))
                     }
                 }
-                TransactionFilterType.BuyInShop.let {
-                    TransactionTypeButton(
-                        modifier = Modifier.padding(start = 15.dp).weight(1.3F),
-                        title = it.name,
-                        isSelect = uiState.data.filterType == it
-                    ) {
-                    }
-                }
+//                TransactionFilterType.BuyInShop.let {
+//                    TransactionTypeButton(
+//                        modifier = Modifier.padding(start = 15.dp).weight(1.3F),
+//                        title = stringResource(id = it.titleId),
+//                        isSelect = uiState.data.filterType == it
+//                    ) {
+//                    }
+//                }
             }
             SizeBox(height = 16.dp)
-            LazyColumn() {
-                val transactionsByMonth = uiData.transactions.sortedByDescending { it.createdAt }.groupBy {
-                    it.createdAt.formatMonthAndYear()
-                }
-                transactionsByMonth.forEach {
-                    val time = it.value.first().createdAt
-                    item {
-                        TimeHeader(time = it.key) {
-                            handleEvent(TransactionsHistoryEvent.Dashboard(time.getMonth(), time.getYear()))
-                        }
+            if (uiData.transactions.isNotEmpty()) {
+                LazyColumn() {
+                    val transactionsByMonth = uiData.transactions.sortedByDescending { it.createdAt }.groupBy {
+                        it.createdAt.formatMonthAndYear()
                     }
-                    it.value.withIndex().forEach { (index, value) ->
+                    transactionsByMonth.forEach {
+                        val time = it.value.first().createdAt
                         item {
-                            TransactionRow(
-                                transaction = value,
-                                modifier = Modifier.fillMaxWidth().height(54.dp)
-                                    .clickable {
-                                        handleEvent(TransactionsHistoryEvent.Detail(value))
-                                    }
-                                    .background(if (index % 2 == 0) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.background)
-                                    .padding(vertical = 10.dp, horizontal = 16.dp),
-                            )
+                            TimeHeader(time = it.key) {
+                                handleEvent(TransactionsHistoryEvent.Dashboard(time.getMonth(), time.getYear()))
+                            }
+                        }
+                        it.value.withIndex().forEach { (index, value) ->
+                            item {
+                                TransactionRow(
+                                    transaction = value,
+                                    modifier = Modifier.fillMaxWidth().height(54.dp)
+                                        .clickable {
+                                            handleEvent(TransactionsHistoryEvent.Detail(value))
+                                        }
+                                        .background(if (index % 2 == 0) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.background)
+                                        .padding(vertical = 10.dp, horizontal = 16.dp),
+                                )
+                            }
                         }
                     }
                 }
+            } else {
+                EmptyAnimation(modifier = Modifier.fillMaxSize())
             }
         }
     }
@@ -155,6 +162,7 @@ private fun TransactionTypeButton(
         modifier = modifier
             .height(36.dp)
             .clip(RoundedCornerShape(5.dp))
+            .clickable { onClick.invoke() }
             .background(
                 if (isSelect) MaterialTheme.colorScheme.primaryContainer else Color.Transparent
             )

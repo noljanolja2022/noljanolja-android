@@ -20,6 +20,8 @@ data class Video(
     val title: String = "", //
     val url: String = "",
     val viewCount: Long = 0,
+    val earnedPoints: Long = 0,
+    val totalPoints: Long = 0,
 ) {
     fun getVideoProgress(): Float {
         return currentProgressMs.toFloat() / durationMs.toFloat()

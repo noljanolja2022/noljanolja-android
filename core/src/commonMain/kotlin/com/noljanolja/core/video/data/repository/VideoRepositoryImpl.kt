@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.launch
 
 internal class VideoRepositoryImpl(
     private val videoApi: VideoApi,
@@ -58,17 +57,14 @@ internal class VideoRepositoryImpl(
         }
     }
 
-    override suspend fun getVideoDetail(id: String): Flow<Video> {
-        scope.launch {
-            try {
-                videoApi.getVideoDetail(GetVideoDetailRequest(videoId = id)).data?.let {
-                    updateLocalVideo(it)
-                }
-            } catch (e: Throwable) {
-                e.printStackTrace()
+    override suspend fun getVideoDetail(id: String): Flow<Video> = flow {
+        try {
+            videoApi.getVideoDetail(GetVideoDetailRequest(videoId = id)).data?.let {
+                emit(it)
             }
+        } catch (e: Throwable) {
+            e.printStackTrace()
         }
-        return getLocalVideo(id)
     }
 
     override suspend fun commentVideo(

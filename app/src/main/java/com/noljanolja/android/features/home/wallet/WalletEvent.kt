@@ -4,4 +4,5 @@ sealed interface WalletEvent {
     object Setting : WalletEvent
     object TransactionHistory : WalletEvent
     object Ranking : WalletEvent
+    object Refresh : WalletEvent
 }

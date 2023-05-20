@@ -49,7 +49,10 @@ class WalletDashboardViewModel() : BaseViewModel() {
     private suspend fun loadData(month: Int, year: Int) {
         val currentValue = _uiStateFlow.value
         val data = currentValue.data
-        val result = coreManager.getLoyaltyPoints()
+        val result = coreManager.getLoyaltyPoints(
+            month = month,
+            year = year
+        )
         if (result.isSuccess) {
             val transactionsByMonth = result
                 .getOrDefault(emptyList())

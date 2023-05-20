@@ -2,6 +2,7 @@ package com.noljanolja.android.ui.composable
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -18,6 +19,21 @@ fun FullSizeUnderConstruction() {
         modifier = Modifier.fillMaxSize()
     ) {
         val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.under_construction))
+        val progress by animateLottieCompositionAsState(composition)
+        LottieAnimation(
+            modifier = Modifier.align(Alignment.Center),
+            composition = composition,
+            progress = { progress }
+        )
+    }
+}
+
+@Composable
+fun EmptyAnimation(modifier: Modifier) {
+    Box(
+        modifier = modifier.fillMaxWidth()
+    ) {
+        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.animation_empty))
         val progress by animateLottieCompositionAsState(composition)
         LottieAnimation(
             modifier = Modifier.align(Alignment.Center),

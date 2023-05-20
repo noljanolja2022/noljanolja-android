@@ -216,7 +216,7 @@ private fun TransactionsChart(
                 },
                 guideline = null,
                 tickLength = 0.dp,
-                maxLabelCount = 8,
+                maxLabelCount = 5,
             ),
             bottomAxis = bottomAxis(
                 label = TextComponent.Builder()
@@ -317,7 +317,7 @@ private fun LazyListScope.recentTransactions(transactions: List<UiLoyaltyPoint>)
         ) {
             Text(
                 text = stringResource(
-                    id = if (transaction.type == Type.Receive) {
+                    id = if (transaction.type == Type.RECEIVE) {
                         R.string.transactions_history_receive_reason
                     } else {
                         R.string.transactions_history_spent_reason

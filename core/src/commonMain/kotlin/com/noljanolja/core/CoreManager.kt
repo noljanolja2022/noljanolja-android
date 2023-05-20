@@ -8,6 +8,7 @@ import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.Message
 import com.noljanolja.core.conversation.domain.model.MessageStatus
 import com.noljanolja.core.conversation.domain.repository.ConversationRepository
+import com.noljanolja.core.loyalty.domain.model.LoyaltyType
 import com.noljanolja.core.loyalty.domain.repository.LoyaltyRepository
 import com.noljanolja.core.media.domain.repository.MediaRepository
 import com.noljanolja.core.user.domain.model.User
@@ -240,7 +241,15 @@ class CoreManager : KoinComponent {
 
     suspend fun getMemberInfo() = loyaltyRepository.getMemberInfo()
 
-    suspend fun getLoyaltyPoints() = loyaltyRepository.getLoyaltyPoints()
+    suspend fun getLoyaltyPoints(
+        filter: LoyaltyType? = null,
+        month: Int? = null,
+        year: Int? = null,
+    ) = loyaltyRepository.getLoyaltyPoints(
+        type = filter,
+        month = month,
+        year = year
+    )
 
     fun onDestroy() {
         conversationRepository.onDestroy()

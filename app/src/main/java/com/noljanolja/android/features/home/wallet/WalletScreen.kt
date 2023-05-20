@@ -18,8 +18,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -69,16 +72,18 @@ fun WalletScreen(
     WalletContent(uiState = uiState, handleEvent = viewModel::handleEvent)
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun WalletContent(
     uiState: UiState<WalletUIData>,
     handleEvent: (WalletEvent) -> Unit,
 ) {
+    val state = rememberPullRefreshState(uiState.loading, { handleEvent(WalletEvent.Refresh) })
     ScaffoldWithUiState(uiState = uiState) {
         val user = uiState.data?.user ?: return@ScaffoldWithUiState
         val memberInfo = uiState.data.memberInfo ?: return@ScaffoldWithUiState
         LazyColumn(
-            modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.primary)
+            modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.primary).pullRefresh(state)
         ) {
             item {
                 UserInformation(
@@ -322,9 +327,9 @@ private fun UserAttendance() {
                         ) {
                             Text(
                                 "My attendance",
-                                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
+                                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                                modifier = Modifier.weight(1f)
                             )
-                            SizeBox(width = 10.dp)
                             Row(verticalAlignment = Alignment.Bottom) {
                                 Text(
                                     "12",

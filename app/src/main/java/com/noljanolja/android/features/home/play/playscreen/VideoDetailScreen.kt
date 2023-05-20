@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -38,6 +40,8 @@ import com.noljanolja.android.ui.composable.VerticalDivider
 import com.noljanolja.android.ui.composable.WarningDialog
 import com.noljanolja.android.ui.composable.youtube.YoutubeView
 import com.noljanolja.android.ui.theme.Orange400
+import com.noljanolja.android.ui.theme.withBold
+import com.noljanolja.android.util.lightTextColor
 import com.noljanolja.android.util.showToast
 import com.noljanolja.core.Failure
 import com.noljanolja.core.user.domain.model.User
@@ -103,6 +107,8 @@ private fun VideoDetailContent(
         mutableStateOf(false)
     }
 
+    val video = uiState.data?.video
+
     BackPressHandler(isFullScreen) {
         handleEvent(VideoDetailEvent.ToggleFullScreen)
     }
@@ -118,14 +124,28 @@ private fun VideoDetailContent(
         }
     }) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it)
+            modifier = Modifier.fillMaxSize().padding(it)
         ) {
+            if (!isFullScreen && video != null) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().background(Color.Black),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "+Earn ${video.earnedPoints}",
+                        style = MaterialTheme.typography.bodyMedium.withBold(),
+                        color = MaterialTheme.lightTextColor(),
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 5.dp)
+                    )
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_video_point),
+                        contentDescription = null,
+                        modifier = Modifier.padding(start = 1.dp).size(18.dp)
+                    )
+                }
+            }
             YoutubeView(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
+                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                 onReady = { player -> handleEvent(VideoDetailEvent.ReadyVideo(player)) },
                 toggleFullScreen = {
                     isFullScreen = it
@@ -145,15 +165,11 @@ private fun VideoDetailContent(
                     videoComments(video)
                 }
                 uiState.data.user?.let { user ->
-                    CommentInput(
-                        me = user,
-                        onSend = { text, token ->
-                            handleEvent(VideoDetailEvent.Comment(text, token))
-                        },
-                        onError = {
-                            handleEvent(VideoDetailEvent.SendError(it))
-                        }
-                    )
+                    CommentInput(me = user, onSend = { text, token ->
+                        handleEvent(VideoDetailEvent.Comment(text, token))
+                    }, onError = {
+                        handleEvent(VideoDetailEvent.SendError(it))
+                    })
                 }
             }
         }
@@ -186,9 +202,7 @@ private fun VideoInformation(video: Video) {
 @Composable
 private fun VideoParameters(video: Video) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
     ) {
         VideoParameter(
             title = stringResource(id = R.string.video_detail_views),
@@ -202,7 +216,7 @@ private fun VideoParameters(video: Video) {
         SizeBox(width = 10.dp)
         VideoParameter(
             title = stringResource(id = R.string.video_detail_reward),
-            value = "90 Points",
+            value = stringResource(id = R.string.video_detail_reward_point, video.totalPoints),
             valueColor = Orange400
         )
     }
@@ -215,9 +229,7 @@ private fun RowScope.VideoParameter(
     valueColor: Color = MaterialTheme.colorScheme.onBackground,
 ) {
     BoxWithBottomElevation(
-        modifier = Modifier
-            .weight(1F)
-            .height(55.dp)
+        modifier = Modifier.weight(1F).height(55.dp)
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -283,9 +295,7 @@ private fun CommentSortItem(
     Text(
         text = stringResource(id = type.id),
         style = MaterialTheme.typography.labelMedium,
-        modifier = Modifier
-            .clip(RoundedCornerShape(25.dp))
-            .background(containerColor)
+        modifier = Modifier.clip(RoundedCornerShape(25.dp)).background(containerColor)
             .padding(vertical = 5.dp, horizontal = 10.dp),
         color = contentColor,
     )
@@ -297,16 +307,10 @@ private fun CommentRow(
     comment: Comment,
 ) {
     Row(
-        modifier = modifier
-            .padding(top = 10.dp)
-            .fillMaxWidth()
-            .height(IntrinsicSize.Min)
-            .wrapContentHeight(),
+        modifier = modifier.padding(top = 10.dp).fillMaxWidth().height(IntrinsicSize.Min).wrapContentHeight(),
     ) {
         Column(
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .fillMaxHeight(),
+            modifier = Modifier.padding(top = 8.dp).fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             CommenterAvatar(commenter = comment.commenter)
@@ -327,15 +331,11 @@ private fun CommentRow(
             )
             SizeBox(height = 8.dp)
             BoxWithBottomElevation(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(IntrinsicSize.Min)
+                modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)
             ) {
                 Text(
                     text = comment.comment,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(vertical = 10.dp, horizontal = 13.dp)
+                    modifier = Modifier.fillMaxSize().padding(vertical = 10.dp, horizontal = 13.dp)
                 )
             }
             SizeBox(height = 8.dp)

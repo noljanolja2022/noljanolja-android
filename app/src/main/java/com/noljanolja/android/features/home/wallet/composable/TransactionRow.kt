@@ -2,7 +2,6 @@ package com.noljanolja.android.features.home.wallet.composable
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,7 +35,7 @@ fun TransactionRow(
         ) {
             Text(
                 stringResource(
-                    id = if (transaction.type == Type.Receive) {
+                    id = if (transaction.type == Type.RECEIVE) {
                         R.string.transactions_history_receive_reason
                     } else {
                         R.string.transactions_history_spent_reason

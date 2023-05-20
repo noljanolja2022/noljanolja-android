@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -66,48 +67,55 @@ private fun MyRankingContent(
         )
     }) {
         val memberInfo = uiState.data?.memberInfo ?: return@ScaffoldWithUiState
-        Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)) {
-            Column(
-                modifier = Modifier.fillMaxWidth().heightIn(min = 150.dp)
-                    .background(MaterialTheme.colorScheme.background).padding(horizontal = 16.dp, vertical = 8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                MyRankingInfo(tier = memberInfo.currentTier)
-                SizeBox(height = 3.dp)
-                Row() {
-                    Text(
-                        "Overall Point Ranking: ",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = 12345.formatDigitsNumber(),
-                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.primaryContainer
-                    )
-                }
-                memberInfo.nextTier?.let { nextTier ->
-                    SizeBox(height = 8.dp)
-                    Text(
-                        text = stringResource(id = R.string.wallet_expect_next_tier),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    SizeBox(height = 6.dp)
-                    TierIcon(tier = nextTier)
-                    SizeBox(height = 6.dp)
-                    Text(
-                        text = nextTier.getTitle(context),
-                        style = MaterialTheme.typography.labelSmall,
-                        modifier = Modifier.clip(RoundedCornerShape(20.dp))
-                            .background(nextTier.getBackgroundColor())
-                            .padding(vertical = 5.dp, horizontal = 10.dp)
-                    )
+        LazyColumn(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)) {
+            item {
+                Column(
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 150.dp)
+                        .background(MaterialTheme.colorScheme.background).padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    MyRankingInfo(tier = memberInfo.currentTier)
+                    SizeBox(height = 3.dp)
+                    Row() {
+                        Text(
+                            "Overall Point Ranking: ",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = 12345.formatDigitsNumber(),
+                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.primaryContainer
+                        )
+                    }
+                    memberInfo.nextTier?.let { nextTier ->
+                        SizeBox(height = 8.dp)
+                        Text(
+                            text = stringResource(id = R.string.wallet_expect_next_tier),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        SizeBox(height = 6.dp)
+                        TierIcon(tier = nextTier)
+                        SizeBox(height = 6.dp)
+                        Text(
+                            text = nextTier.getTitle(context),
+                            style = MaterialTheme.typography.labelSmall,
+                            modifier = Modifier.clip(RoundedCornerShape(20.dp))
+                                .background(nextTier.getBackgroundColor())
+                                .padding(vertical = 5.dp, horizontal = 10.dp)
+                        )
+                    }
                 }
             }
             MemberTier.values().forEach {
-                RankingInfo(tier = it)
+                item {
+                    RankingInfo(tier = it)
+                }
+            }
+            item {
+                SizeBox(height = 10.dp)
             }
         }
     }

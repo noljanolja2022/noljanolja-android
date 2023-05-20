@@ -1,7 +1,9 @@
 package com.noljanolja.core.loyalty.data.repository
 
 import com.noljanolja.core.loyalty.data.datasource.LoyaltyApi
+import com.noljanolja.core.loyalty.data.model.request.GetLoyaltyPointsRequest
 import com.noljanolja.core.loyalty.domain.model.LoyaltyPoint
+import com.noljanolja.core.loyalty.domain.model.LoyaltyType
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
 import com.noljanolja.core.loyalty.domain.repository.LoyaltyRepository
 import kotlinx.datetime.Instant
@@ -20,10 +22,24 @@ internal class LoyaltyRepositoryImpl(
         }
     }
 
-    override suspend fun getLoyaltyPoints(): Result<List<LoyaltyPoint>> {
+    override suspend fun getLoyaltyPoints(
+        type: LoyaltyType?,
+        month: Int?,
+        year: Int?,
+    ): Result<List<LoyaltyPoint>> {
         return try {
-            loyaltyApi.getLoyaltyPoints().data.let {
-                Result.success(fake())
+            loyaltyApi.getLoyaltyPoints(
+                GetLoyaltyPointsRequest(
+                    type = when (type) {
+                        null -> GetLoyaltyPointsRequest.FilterType.ALL
+                        LoyaltyType.RECEIVE -> GetLoyaltyPointsRequest.FilterType.RECEIVE
+                        LoyaltyType.SPENT -> GetLoyaltyPointsRequest.FilterType.SPENT
+                    },
+                    month = month,
+                    year = year
+                )
+            ).data.let {
+                Result.success(it)
             }
         } catch (e: Throwable) {
             Result.failure(e)

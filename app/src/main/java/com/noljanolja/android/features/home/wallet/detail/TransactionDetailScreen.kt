@@ -27,7 +27,6 @@ import com.noljanolja.android.ui.theme.systemGreen
 import com.noljanolja.android.ui.theme.systemRed100
 import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.util.formatTransactionFullTime
-import org.koin.androidx.compose.get
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -44,7 +43,7 @@ private fun TransactionDetailContent(
     loyaltyPoint: UiLoyaltyPoint,
     handleEvent: (TransactionDetailEvent) -> Unit,
 ) {
-    val isReceive = loyaltyPoint.type == Type.Receive
+    val isReceive = loyaltyPoint.type == Type.RECEIVE
     Scaffold(
         topBar = {
             CommonTopAppBar(

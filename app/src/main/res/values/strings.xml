@@ -284,5 +284,5 @@
     <string name="video_detail_require_google_description">You need login google and accept youtube scope to comment or like</string>
     <string name="video_detail_need_youtube_account">You don\'t have a youtube account yet.</string>
     <string name="video_detail_need_youtube_account_description">To comment on youtube you need an account. Click OK to see the tutorial on how to create youtube.</string>
-
+    <string name="video_detail_reward_point">%d point</string>
 </resources>

@@ -8,3 +8,6 @@ fun MaterialTheme.primaryTextColor() = colorScheme.onBackground
 
 @Composable
 fun MaterialTheme.secondaryTextColor() = colorScheme.onSurfaceVariant
+
+@Composable
+fun MaterialTheme.lightTextColor() = colorScheme.background

@@ -8,36 +8,46 @@ import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.features.home.wallet.model.UiLoyaltyPoint
 import com.noljanolja.android.features.home.wallet.model.toUiModel
+import com.noljanolja.core.loyalty.domain.model.LoyaltyType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 
 class TransactionHistoryViewModel() : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow<UiState<TransactionHistoryUiData>>(
         UiState(
-            loading = true
+            loading = true,
+            data = TransactionHistoryUiData()
         )
     )
     val uiStateFlow = _uiStateFlow.asStateFlow()
 
     init {
         launch {
-            val result = coreManager.getLoyaltyPoints()
-            if (result.isSuccess) {
-                _uiStateFlow.emit(
-                    UiState(
-                        data = TransactionHistoryUiData(
-                            transactions = result.getOrDefault(emptyList()).map { it.toUiModel() }
-                        )
-                    )
-                )
-            } else {
-                result.exceptionOrNull().let {
+            _uiStateFlow.map { it.data?.filterType }.filterNotNull().collect {
+                val value = _uiStateFlow.value
+                val type = when (it) {
+                    TransactionFilterType.Received -> LoyaltyType.RECEIVE
+                    TransactionFilterType.Spent -> LoyaltyType.SPENT
+                    else -> null
+                }
+                val result = coreManager.getLoyaltyPoints(type)
+                if (result.isSuccess) {
                     _uiStateFlow.emit(
                         UiState(
-                            error = it
+                            data = value.data?.copy(
+                                transactions = result.getOrDefault(emptyList()).map { it.toUiModel() }
+                            )
                         )
                     )
-                    sendError(it!!)
+                } else {
+                    result.exceptionOrNull().let { err ->
+                        _uiStateFlow.emit(
+                            value.copy(error = err)
+                        )
+                        sendError(err!!)
+                    }
                 }
             }
         }
@@ -59,19 +69,32 @@ class TransactionHistoryViewModel() : BaseViewModel() {
                         event.transaction
                     )
                 )
+
+                is TransactionsHistoryEvent.Filter -> changeFilter(event.type)
             }
         }
+    }
+
+    private suspend fun changeFilter(filterType: TransactionFilterType) {
+        val value = _uiStateFlow.value
+        _uiStateFlow.emit(
+            UiState(
+                data = value.data?.copy(
+                    filterType = filterType
+                )
+            )
+        )
     }
 }
 
 data class TransactionHistoryUiData(
     val filterType: TransactionFilterType = TransactionFilterType.All,
-    val transactions: List<UiLoyaltyPoint>,
+    val transactions: List<UiLoyaltyPoint> = emptyList(),
 )
 
 enum class TransactionFilterType(@StringRes val titleId: Int) {
-    All(R.string.wallet_my_point),
-    Received(R.string.wallet_my_point),
-    Exchange(R.string.wallet_my_point),
-    BuyInShop(R.string.wallet_my_point),
+    All(R.string.common_all),
+    Received(R.string.transaction_receive_type),
+    Spent(R.string.transaction_spent_type),
+//    BuyInShop(R.string.wallet_my_point),
 }
