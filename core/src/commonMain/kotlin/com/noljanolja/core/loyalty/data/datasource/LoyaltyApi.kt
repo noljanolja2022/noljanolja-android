@@ -1,5 +1,6 @@
 package com.noljanolja.core.loyalty.data.datasource
 
+import com.noljanolja.core.loyalty.data.model.response.GetLoyaltyPointsResponse
 import com.noljanolja.core.loyalty.data.model.response.GetMemberInfoResponse
 import com.noljanolja.core.utils.Const
 import io.ktor.client.HttpClient
@@ -11,5 +12,9 @@ internal class LoyaltyApi(
 ) {
     suspend fun getMemberInfo(): GetMemberInfoResponse {
         return client.get("${Const.BASE_URL}/loyalty/me").body()
+    }
+
+    suspend fun getLoyaltyPoints(): GetLoyaltyPointsResponse {
+        return client.get("${Const.BASE_URL}/loyalty/points").body()
     }
 }

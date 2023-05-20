@@ -1,6 +1,10 @@
 package com.noljanolja.android.common.navigation
 
+import android.net.Uri
 import androidx.navigation.*
+import com.noljanolja.android.features.home.wallet.model.UiLoyaltyPoint
+import com.noljanolja.core.utils.defaultJson
+import kotlinx.serialization.encodeToString
 import java.net.URLEncoder
 
 object NavigationDirections {
@@ -281,6 +285,43 @@ object NavigationDirections {
         override val destination: String = "my_ranking"
     }
 
+    data class Dashboard(
+        val month: Int = 0,
+        val year: Int = 0,
+    ) : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf(
+            navArgument("month") {
+                defaultValue = 0
+                type = NavType.IntType
+            },
+            navArgument("year") {
+                defaultValue = 0
+                type = NavType.IntType
+            },
+        )
+        override val options = null
+        override val destination: String = "wallet_dashboard?month={month}&year={year}"
+        override fun createDestination(): String {
+            return "wallet_dashboard?month=$month&year=$year"
+        }
+    }
+
+    data class TransactionDetail(
+        val transaction: UiLoyaltyPoint = UiLoyaltyPoint(),
+    ) : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf(
+            navArgument("transaction") {
+                defaultValue = UiLoyaltyPoint()
+                type = serializableType<NavObject<UiLoyaltyPoint>>()
+            },
+        )
+        override val options = null
+        override val destination: String = "transaction_detail?transaction={transaction}"
+        override fun createDestination(): String {
+            return "transaction_detail?transaction=${parseSerializableArgs(transaction)}"
+        }
+    }
+
     // Back
     data class FinishWithResults(
         val data: Map<String, Any>,
@@ -295,4 +336,8 @@ object NavigationDirections {
         override val options: NavOptions? = null
         override val destination: String = "phone_settings"
     }
+}
+
+private inline fun <reified T> parseSerializableArgs(data: T): String {
+    return Uri.encode(defaultJson().encodeToString(NavObject(data)))
 }

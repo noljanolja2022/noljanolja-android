@@ -240,6 +240,8 @@ class CoreManager : KoinComponent {
 
     suspend fun getMemberInfo() = loyaltyRepository.getMemberInfo()
 
+    suspend fun getLoyaltyPoints() = loyaltyRepository.getLoyaltyPoints()
+
     fun onDestroy() {
         conversationRepository.onDestroy()
         scope.coroutineContext.cancel()

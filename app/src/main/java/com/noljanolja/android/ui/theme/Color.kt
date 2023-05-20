@@ -17,6 +17,8 @@ val NeutralLightGrey = Color(0xFFE6E6E6)
 val NeutralGrey = Color(0xFFABABAB)
 val NeutralDeepGrey = Color(0xFF636363)
 val NeutralDarkGrey = Color(0xFF1A1A1A)
+val DeeperGrey = Color(0xFF4B4B4B)
 
 val PrimaryGreen = Color(0xFF8BC900)
 val LightGreen = Color(0xFFB8EB42)
+val Bronze = Color(0xFF904500)

@@ -84,6 +84,8 @@ private fun EditTitleField(title: String, onChange: (String) -> Unit) {
                 onValueChange = onChange,
             )
         }
-        Text("${title.length}/40")
+        Text(
+            "${title.length}/40"
+        )
     }
 }

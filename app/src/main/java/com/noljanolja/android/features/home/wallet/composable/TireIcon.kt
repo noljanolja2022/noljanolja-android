@@ -12,6 +12,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.noljanolja.android.R
+import com.noljanolja.android.ui.theme.Bronze
+import com.noljanolja.android.ui.theme.NeutralGrey
 import com.noljanolja.android.ui.theme.Orange400
 import com.noljanolja.core.loyalty.domain.model.MemberTier
 
@@ -21,11 +23,11 @@ fun TierIcon(tier: MemberTier, width: Dp = 24.dp) {
     with(MaterialTheme.colorScheme) {
         when (tier) {
             MemberTier.BRONZE -> {
-                iconColor = outline
+                iconColor = Bronze
             }
 
             MemberTier.SILVER -> {
-                iconColor = secondary
+                iconColor = NeutralGrey
             }
 
             MemberTier.GOLD -> {

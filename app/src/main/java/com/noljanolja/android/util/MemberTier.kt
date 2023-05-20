@@ -11,11 +11,11 @@ fun MemberTier.getTitle(context: Context): String {
     val titleId: Int
     when (this) {
         MemberTier.BRONZE -> {
-            titleId = R.string.wallet_ranking_general
+            titleId = R.string.wallet_ranking_bronze
         }
 
         MemberTier.SILVER -> {
-            titleId = R.string.wallet_ranking_general
+            titleId = R.string.wallet_ranking_silver
         }
 
         MemberTier.GOLD -> {
@@ -60,7 +60,7 @@ fun MemberTier.getBackgroundColor(): Color {
             }
 
             MemberTier.SILVER -> {
-                containerColor = onBackground
+                containerColor = surface
             }
 
             MemberTier.GOLD -> {

@@ -1,6 +1,7 @@
 package com.noljanolja.android.features.home.wallet.composable
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,15 +16,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.Expanded
-import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.LightBlue
-import com.noljanolja.android.util.formatMonthAndYear
-import kotlinx.datetime.Instant
+import com.noljanolja.android.ui.theme.systemBlue
 
 @Composable
-fun TimeHeader(time: Instant, onClick: () -> Unit) {
+fun TimeHeader(time: String, onClick: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth()
             .height(32.dp)
@@ -32,24 +33,25 @@ fun TimeHeader(time: Instant, onClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            time.formatMonthAndYear(),
+            time,
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onBackground
         )
         Expanded()
-
         Text(
-            "Dashboard",
+            stringResource(id = R.string.wallet_history_dashboard),
             style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.systemBlue(),
+            modifier = Modifier.clickable {
+                onClick.invoke()
+            }.padding(end = 5.dp)
         )
-        SizeBox(width = 5.dp)
         IconButton(onClick = onClick, modifier = Modifier.size(24.dp)) {
             Icon(
                 Icons.Default.ChevronRight,
                 contentDescription = null,
                 modifier = Modifier.size(24.dp),
-                tint = MaterialTheme.colorScheme.onBackground
+                tint = MaterialTheme.systemBlue()
             )
         }
     }

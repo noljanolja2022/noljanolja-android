@@ -79,3 +79,7 @@ val Typography = Typography(
         letterSpacing = 0.sp,
     ),
 )
+
+fun TextStyle.withBold() = this.copy(fontWeight = FontWeight.Bold)
+fun TextStyle.withMedium() = this.copy(fontWeight = FontWeight.Medium)
+fun TextStyle.withRegular() = this.copy(fontWeight = FontWeight.Normal)

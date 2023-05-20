@@ -45,6 +45,7 @@ import com.noljanolja.android.features.home.require_login.RequireLoginViewModel
 import com.noljanolja.android.features.home.root.HomeViewModel
 import com.noljanolja.android.features.home.wallet.WalletViewModel
 import com.noljanolja.android.features.home.wallet.dashboard.WalletDashboardViewModel
+import com.noljanolja.android.features.home.wallet.detail.TransactionDetailViewModel
 import com.noljanolja.android.features.home.wallet.myranking.MyRankingViewModel
 import com.noljanolja.android.features.home.wallet.transaction.TransactionHistoryViewModel
 import com.noljanolja.android.features.setting.SettingViewModel
@@ -263,6 +264,9 @@ class MyApplication : Application() {
                 }
                 viewModel {
                     MyRankingViewModel()
+                }
+                viewModel {
+                    TransactionDetailViewModel()
                 }
             }
         )

@@ -4,6 +4,7 @@ import android.content.Context
 import com.noljanolja.android.R
 import kotlinx.datetime.*
 import kotlinx.datetime.TimeZone
+import java.time.Year
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -64,5 +65,27 @@ fun Instant.formatMonthAndYear(): String {
 }
 
 fun Instant.formatTransactionFullTime(): String {
-    return this.customFormatTime("hh:mm - MMMM dd yyyy")
+    return this.customFormatTime("HH:mm - MMMM dd, yyyy").capitalizeFirstLetter()
 }
+
+fun Instant.formatTransactionShortTime(): String {
+    return this.customFormatTime("MMMM dd, yyyy").capitalizeFirstLetter()
+}
+
+fun Instant.getMonth() = this.toLocalDateTime(TimeZone.currentSystemDefault()).month.value
+
+fun Instant.getYear() = this.toLocalDateTime(TimeZone.currentSystemDefault()).year
+
+fun Instant.getDayOfMonth() = this.toLocalDateTime(TimeZone.currentSystemDefault()).dayOfMonth
+
+fun Instant.getDayOfWeek() = this.toLocalDateTime(TimeZone.currentSystemDefault()).dayOfWeek
+
+fun Int.getLastDay(year: Int) = Month.of(this).length(Year.of(year).isLeap)
+
+private fun createInstantFromMonthYear(month: Int, year: Int): Instant {
+    val m = if (month > 9) "$month" else "0$month"
+    return Instant.parse("$year-$m-01T01:00:00Z")
+}
+
+fun formatMonthYear(month: Int, year: Int): String =
+    createInstantFromMonthYear(month, year).customFormatTime("MMMM yyyy").capitalizeFirstLetter()

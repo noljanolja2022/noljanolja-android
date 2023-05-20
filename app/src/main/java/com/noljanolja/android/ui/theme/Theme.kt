@@ -49,8 +49,51 @@ fun NoljanoljaTheme(
     content: @Composable () -> Unit,
 ) {
     MaterialTheme(
-        colorScheme = LightColorScheme,
+        colorScheme = if (darkTheme) {
+            LightColorScheme
+        } else {
+            LightColorScheme
+        },
         typography = Typography,
         content = content,
     )
 }
+
+@Composable
+fun MaterialTheme.colorBackground(darkTheme: Boolean = isSystemInDarkTheme()) = if (darkTheme) {
+    NeutralLight
+} else {
+    NeutralLight
+}
+
+@Composable
+fun MaterialTheme.systemGreen(darkTheme: Boolean = isSystemInDarkTheme()) =
+    if (darkTheme) {
+        Color(0xFF34C759)
+    } else {
+        Color(0xFF34C759)
+    }
+
+@Composable
+fun MaterialTheme.systemRed50(darkTheme: Boolean = isSystemInDarkTheme()) =
+    if (darkTheme) {
+        Color(0xFFFB5141)
+    } else {
+        Color(0xFFFB5141)
+    }
+
+@Composable
+fun MaterialTheme.systemRed100(darkTheme: Boolean = isSystemInDarkTheme()) =
+    if (darkTheme) {
+        Color(0xFFFF3B30)
+    } else {
+        Color(0xFFFF3B30)
+    }
+
+@Composable
+fun MaterialTheme.systemBlue(darkTheme: Boolean = isSystemInDarkTheme()) =
+    if (darkTheme) {
+        Color(0xFF007AFF)
+    } else {
+        Color(0xFF007AFF)
+    }

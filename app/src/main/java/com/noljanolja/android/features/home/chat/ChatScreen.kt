@@ -135,7 +135,7 @@ fun ChatScreenContent(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("All", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(id = R.string.common_all), style = MaterialTheme.typography.titleMedium)
                 IconButton(onClick = {
                     scope.launch {
                         bottomSheetState.bottomSheetState.collapse()

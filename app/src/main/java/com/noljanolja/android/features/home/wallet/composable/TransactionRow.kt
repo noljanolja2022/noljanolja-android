@@ -8,23 +8,24 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.noljanolja.android.R
+import com.noljanolja.android.features.home.wallet.model.Type
+import com.noljanolja.android.features.home.wallet.model.UiLoyaltyPoint
 import com.noljanolja.android.ui.composable.SizeBox
+import com.noljanolja.android.ui.theme.systemGreen
+import com.noljanolja.android.ui.theme.systemRed100
 import com.noljanolja.android.util.formatTransactionFullTime
-import com.noljanolja.core.loyalty.domain.model.LoyaltyPoint
-import kotlinx.datetime.Clock
-import kotlin.random.Random
-import kotlin.time.Duration.Companion.days
 
 @Composable
 fun TransactionRow(
     modifier: Modifier = Modifier,
-    transaction: LoyaltyPoint,
+    transaction: UiLoyaltyPoint,
 ) {
-    val time = Clock.System.now().minus(Random.nextInt().days)
     val value = transaction.amount
     Row(
         modifier = modifier,
@@ -34,13 +35,20 @@ fun TransactionRow(
             modifier = Modifier.weight(1F)
         ) {
             Text(
-                "Received: Video watching",
+                stringResource(
+                    id = if (transaction.type == Type.Receive) {
+                        R.string.transactions_history_receive_reason
+                    } else {
+                        R.string.transactions_history_spent_reason
+                    },
+                    transaction.reason
+                ),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onBackground
             )
             SizeBox(height = 5.dp)
             Text(
-                time.formatTransactionFullTime(),
+                transaction.createdAt.formatTransactionFullTime(),
                 style = TextStyle(
                     fontSize = 8.sp,
                     fontWeight = FontWeight.Medium,
@@ -49,12 +57,15 @@ fun TransactionRow(
             )
         }
         Text(
-            text = "$value points",
+            text = stringResource(
+                id = R.string.transaction_history_point,
+                transaction.getPoint()
+            ),
             style = MaterialTheme.typography.labelLarge,
             color = if (value >= 0) {
-                MaterialTheme.colorScheme.primary
+                MaterialTheme.systemGreen()
             } else {
-                MaterialTheme.colorScheme.error
+                MaterialTheme.systemRed100()
             }
         )
     }

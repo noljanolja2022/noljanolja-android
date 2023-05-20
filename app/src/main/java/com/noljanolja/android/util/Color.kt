@@ -4,7 +4,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 
 @Composable
-fun MaterialTheme.primaryTextColor() = colorScheme.secondary
+fun MaterialTheme.primaryTextColor() = colorScheme.onBackground
 
 @Composable
-fun MaterialTheme.secondaryTextColor() = colorScheme.outline
+fun MaterialTheme.secondaryTextColor() = colorScheme.onSurfaceVariant

@@ -10,6 +10,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.noljanolja.android.common.navigation.NavObject
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.features.auth.countries.CountriesScreen
@@ -24,10 +25,14 @@ import com.noljanolja.android.features.home.contacts.ContactsScreen
 import com.noljanolja.android.features.home.info.MyInfoScreen
 import com.noljanolja.android.features.home.play.playscreen.VideoDetailScreen
 import com.noljanolja.android.features.home.root.HomeScreen
+import com.noljanolja.android.features.home.wallet.dashboard.WalletDashboardScreen
+import com.noljanolja.android.features.home.wallet.detail.TransactionDetailScreen
+import com.noljanolja.android.features.home.wallet.model.UiLoyaltyPoint
 import com.noljanolja.android.features.home.wallet.myranking.MyRankingScreen
 import com.noljanolja.android.features.home.wallet.transaction.TransactionsHistoryScreen
 import com.noljanolja.android.features.setting.SettingScreen
 import com.noljanolja.android.features.splash.SplashScreen
+import com.noljanolja.android.util.orZero
 import com.noljanolja.android.util.showToast
 import com.noljanolja.core.CoreManager
 import com.noljanolja.core.conversation.domain.model.ConversationType
@@ -211,6 +216,20 @@ private fun NavGraphBuilder.addWalletGraph() {
     with(NavigationDirections.MyRanking) {
         composable(destination, arguments) {
             MyRankingScreen()
+        }
+    }
+    with(NavigationDirections.Dashboard()) {
+        composable(destination, arguments) {
+            val month = it.arguments?.getInt("month").orZero()
+            val year = it.arguments?.getInt("year").orZero()
+            WalletDashboardScreen(month = month, year = year)
+        }
+    }
+    with(NavigationDirections.TransactionDetail()) {
+        composable(destination, arguments) {
+            val navObject = it.arguments?.getSerializable("transaction") as? NavObject<UiLoyaltyPoint>
+            val transaction = navObject?.data ?: UiLoyaltyPoint()
+            TransactionDetailScreen(loyaltyPoint = transaction)
         }
     }
 }

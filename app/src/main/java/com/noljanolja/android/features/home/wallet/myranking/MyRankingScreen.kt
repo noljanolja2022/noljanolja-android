@@ -38,10 +38,11 @@ import com.noljanolja.android.util.getTitle
 import com.noljanolja.android.util.secondaryTextColor
 import com.noljanolja.core.loyalty.domain.model.MemberTier
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun MyRankingScreen(
-    viewModel: MyRankingViewModel = get(),
+    viewModel: MyRankingViewModel = getViewModel(),
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     MyRankingContent(
@@ -100,7 +101,7 @@ private fun MyRankingContent(
                         text = nextTier.getTitle(context),
                         style = MaterialTheme.typography.labelSmall,
                         modifier = Modifier.clip(RoundedCornerShape(20.dp))
-                            .background(MaterialTheme.colorScheme.secondary)
+                            .background(nextTier.getBackgroundColor())
                             .padding(vertical = 5.dp, horizontal = 10.dp)
                     )
                 }

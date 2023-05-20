@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -55,7 +56,6 @@ import com.noljanolja.android.ui.theme.Orange400
 import com.noljanolja.android.util.formatDigitsNumber
 import com.noljanolja.android.util.getBackgroundColor
 import com.noljanolja.android.util.getTitle
-import com.noljanolja.android.util.orZero
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
 import com.noljanolja.core.loyalty.domain.model.MemberTier
 import com.noljanolja.core.user.domain.model.User
@@ -76,30 +76,39 @@ private fun WalletContent(
 ) {
     ScaffoldWithUiState(uiState = uiState) {
         val user = uiState.data?.user ?: return@ScaffoldWithUiState
-        val memberInfo = uiState.data.memberInfo
-        val friendNumber = uiState.data.friendNumber
-        Column(
+        val memberInfo = uiState.data.memberInfo ?: return@ScaffoldWithUiState
+        LazyColumn(
             modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.primary)
         ) {
-            UserInformation(
-                user = user,
-                memberInfo = memberInfo,
-                goToSetting = {
-                    handleEvent(WalletEvent.Setting)
-                },
-                goToRanking = {
-                    handleEvent(WalletEvent.Ranking)
-                }
-            )
-            UserPoint(memberInfo?.point.orZero().formatDigitsNumber())
-            UserWalletInfo(
-                onGoToTransactionHistory = {
-                    handleEvent(WalletEvent.TransactionHistory)
-                }
-            )
-            UserAttendance()
-            Expanded()
-            SizeBox(height = 24.dp)
+            item {
+                UserInformation(
+                    user = user,
+                    memberInfo = memberInfo,
+                    goToSetting = {
+                        handleEvent(WalletEvent.Setting)
+                    },
+                    goToRanking = {
+                        handleEvent(WalletEvent.Ranking)
+                    }
+                )
+            }
+            item {
+                UserPoint(memberInfo.point.formatDigitsNumber())
+            }
+            item {
+                UserWalletInfo(
+                    memberInfo = memberInfo,
+                    onGoToTransactionHistory = {
+                        handleEvent(WalletEvent.TransactionHistory)
+                    }
+                )
+            }
+            item {
+                UserAttendance()
+            }
+            item {
+                SizeBox(height = 24.dp)
+            }
         }
     }
 }
@@ -196,6 +205,7 @@ private fun UserPoint(
 
 @Composable
 private fun UserWalletInfo(
+    memberInfo: MemberInfo,
     onGoToTransactionHistory: () -> Unit,
 ) {
     Row(
@@ -203,19 +213,19 @@ private fun UserWalletInfo(
     ) {
         WalletInfoItem(
             R.drawable.img_coins,
-            "Accumulated points for the day",
-            14_000,
+            stringResource(id = R.string.wallet_accumulated_point),
+            memberInfo.accumulatedPointsToday,
             valueColor = Color(0xFF623B00),
-            "View History",
+            stringResource(id = R.string.wallet_view_history),
             onGoToTransactionHistory,
         )
         SizeBox(width = 12.dp)
         WalletInfoItem(
             R.drawable.img_exchange,
-            "Points that can be exchanged",
-            8_500,
+            stringResource(id = R.string.wallet_point_can_exchange),
+            memberInfo.exchangeablePoints,
             valueColor = Color(0xFF007AFF),
-            "Exchange money",
+            stringResource(id = R.string.wallet_exchange_money),
             {}
         )
     }

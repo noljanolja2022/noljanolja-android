@@ -242,7 +242,7 @@ private fun LazyListScope.videoComments(video: Video) {
     val modifier = Modifier.padding(horizontal = 16.dp)
     item {
         Text(
-            "Comments",
+            stringResource(id = R.string.video_detail_comment),
             style = MaterialTheme.typography.titleMedium,
             modifier = modifier
         )

@@ -10,6 +10,8 @@ data class MemberInfo(
     val nextTier: MemberTier? = null,
     val nextTierMinPoint: Long = 0,
     val point: Long = 0,
+    val accumulatedPointsToday: Long = 0,
+    val exchangeablePoints: Long = 0,
 )
 
 enum class MemberTier {

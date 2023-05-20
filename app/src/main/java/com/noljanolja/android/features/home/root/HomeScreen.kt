@@ -28,6 +28,7 @@ import com.noljanolja.android.features.home.utils.click
 import com.noljanolja.android.features.home.utils.isNavItemSelect
 import com.noljanolja.android.features.home.wallet.WalletScreen
 import com.noljanolja.android.ui.composable.FullSizeUnderConstruction
+import com.noljanolja.android.ui.theme.colorBackground
 import com.noljanolja.android.util.getErrorMessage
 import com.noljanolja.android.util.showToast
 import kotlinx.coroutines.launch
@@ -99,7 +100,7 @@ fun HomeBottomBar(
     )
     NavigationBar(
         tonalElevation = 0.dp,
-        containerColor = Color.White,
+        containerColor = MaterialTheme.colorBackground(),
     ) {
         items.forEachIndexed { index, item ->
             val isSelected = item.isNavItemSelect(navController = navController)
