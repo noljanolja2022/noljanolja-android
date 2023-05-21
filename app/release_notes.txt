@@ -1,3 +1,4 @@
+- 1.0.14: Release wallet, histories transactions, dashboard and detail transaction + guide to create youtube account
 - 1.0.13: Comment with youtube token and update some UI chat and conversation
 - 1.0.12: Release track progress video
 - 1.0.11: List and video detail
