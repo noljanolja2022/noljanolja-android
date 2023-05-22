@@ -242,7 +242,7 @@
     <string name="wallet_accumulated_point">Accumulated points for the day</string>
     <string name="wallet_point_can_exchange">Points that can be exchanged</string>
     <string name="wallet_view_history">View History</string>
-    <string name="wallet_exchange_money">Exchange money</string>
+    <string name="wallet_exchange_money">Use now</string>
 
     <string name="transaction_history">Transaction History</string>
     <string name="transaction_history_search_hint">Search transaction</string>
@@ -257,6 +257,8 @@
     <string name="wallet_dashboard_receive">Receive</string>
     <string name="wallet_dashboard_spent">Spent</string>
     <string name="wallet_dashboard_recent_transactions">Recent transactions</string>
+    <string name="wallet_attend_now">Attend now</string>
+    <string name="wallet_my_attendance">My attendance</string>
 
     <string name="transaction_detail">Detail Transaction</string>
     <string name="transaction_detail_status">Status</string>

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -257,7 +258,7 @@ private fun RowScope.WalletInfoItem(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
             maxLines = 2,
-            modifier = Modifier.height(50.dp)
+            modifier = Modifier.heightIn(min = 50.dp)
         )
         Row {
             Text(
@@ -326,7 +327,7 @@ private fun UserAttendance() {
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                "My attendance",
+                                stringResource(id = R.string.wallet_my_attendance),
                                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                                 modifier = Modifier.weight(1f)
                             )
@@ -364,9 +365,10 @@ private fun UserAttendance() {
                             containerColor = Color(0xFF4F6D00)
                         ),
                         shape = RoundedCornerShape(4.dp),
+                        contentPadding = PaddingValues(0.dp),
                     ) {
                         Text(
-                            "Attend now",
+                            stringResource(id = R.string.wallet_attend_now),
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.background
