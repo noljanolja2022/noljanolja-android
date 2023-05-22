@@ -210,9 +210,7 @@ fun ClickablePhotoMessage(
         when (val size = message.attachments.size) {
             1 -> {
                 val attachment = message.attachments.first()
-                Column(
-//                    horizontalAlignment = if (message.sender.isMe) Alignment.End else Alignment.Start
-                ) {
+                Column {
                     PhotoPreview(
                         modifier = modifier
                             .clip(RoundedCornerShape(6.dp))
@@ -258,6 +256,7 @@ fun ClickablePhotoMessage(
 
 @Composable
 fun AttachmentRow(
+    modifier: Modifier = Modifier,
     message: Message,
     conversationId: Long,
     notShowImages: Int? = null,
@@ -268,10 +267,9 @@ fun AttachmentRow(
     val isMe = message.sender.isMe
     CompositionLocalProvider(LocalLayoutDirection provides if (message.sender.isMe) LayoutDirection.Rtl else LayoutDirection.Ltr) {
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
-//            horizontalArrangement = if (message.sender.isMe) Arrangement.End else Arrangement.Start,
         ) {
             repeat(maxAttachmentPerRow) { index ->
                 if (index > 0) {

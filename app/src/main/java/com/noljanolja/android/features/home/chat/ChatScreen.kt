@@ -39,7 +39,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
@@ -125,11 +127,13 @@ fun ChatScreenContent(
 
     FullSizeWithBottomSheet(modalSheetState = bottomSheetState, sheetContent = {
         Column(
-            modifier = Modifier.heightIn(max = (LocalConfiguration.current.screenHeightDp * 0.9f).dp)
+            modifier = Modifier
+                .heightIn(max = (LocalConfiguration.current.screenHeightDp * 0.9f).dp)
                 .background(Color.White)
         ) {
             Row(
-                modifier = Modifier.height(54.dp)
+                modifier = Modifier
+                    .height(54.dp)
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -350,7 +354,7 @@ private fun MessageList(
                     }
                 }
 
-                item(key = "${message.id} ${message.localId}") {
+                item {
                     MessageRow(
                         conversationId = conversationId,
                         message = message,
@@ -389,7 +393,8 @@ private fun DayHeader(dayString: String) {
         ) {
             Text(
                 text = dayString,
-                modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+                modifier = Modifier
+                    .padding(horizontal = 10.dp, vertical = 5.dp)
                     .align(Alignment.Center),
                 style = MaterialTheme.typography.labelSmall.copy(
                     color = MaterialTheme.colorScheme.background
@@ -533,7 +538,15 @@ private fun AuthorAndTextMessage(
     ) {
         val configuration = LocalConfiguration.current
         val maxChatItemWidth = (configuration.screenWidthDp * 0.66).dp
-        val maxChatItemHeight = (configuration.screenHeightDp * 0.33).dp
+        val maxChatItemHeight =
+            if (message.type == MessageType.PLAINTEXT) {
+                Dp.Unspecified
+            } else {
+                max(
+                    (configuration.screenHeightDp * 0.33).dp,
+                    maxChatItemWidth
+                )
+            }
         if (isLastMessageByAuthorSameDay && !message.sender.isMe) {
             Spacer(modifier = Modifier.height(12.dp))
         }
@@ -673,21 +686,29 @@ private fun ChatItemBubble(
                 Image(
                     painterResource(id = R.drawable.ic_chat_arrow_mine),
                     contentDescription = null,
-                    modifier = Modifier.align(
-                        Alignment.BottomEnd
-                    ).size(12.dp)
+                    modifier = Modifier
+                        .align(
+                            Alignment.BottomEnd
+                        )
+                        .size(12.dp)
                 )
             } else if (conversationType == ConversationType.SINGLE) {
                 Image(
                     painterResource(id = R.drawable.ic_chat_arrow),
                     contentDescription = null,
-                    modifier = Modifier.align(
-                        Alignment.BottomStart
-                    ).size(12.dp)
+                    modifier = Modifier
+                        .align(
+                            Alignment.BottomStart
+                        )
+                        .size(12.dp)
                 )
             }
         }
-        Box(modifier = Modifier.align(Alignment.BottomEnd).padding(horizontal = 6.dp)) {
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(horizontal = 6.dp)
+        ) {
             Surface(
                 color = backgroundBubbleColor,
                 contentColor = Color.White,
@@ -746,7 +767,8 @@ private fun ScrollToNewestMessageButton(
             .height(35.dp)
             .clip(
                 borderRadius
-            ).background(color = MaterialTheme.colorScheme.primaryContainer)
+            )
+            .background(color = MaterialTheme.colorScheme.primaryContainer)
             .shadow(elevation = 5.dp)
             .padding(start = 1.dp, bottom = 1.dp, top = 1.dp)
             .clickable {
@@ -754,14 +776,17 @@ private fun ScrollToNewestMessageButton(
             }
     ) {
         Box(
-            modifier = Modifier.fillMaxSize().clip(borderRadius)
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(borderRadius)
                 .background(color = MaterialTheme.colorScheme.background)
                 .padding(start = 9.dp)
         ) {
             Icon(
                 Icons.Default.ExpandMore,
                 contentDescription = null,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier
+                    .size(20.dp)
                     .align(Alignment.CenterStart)
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.primaryContainer),

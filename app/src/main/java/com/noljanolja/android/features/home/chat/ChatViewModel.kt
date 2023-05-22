@@ -165,13 +165,13 @@ class ChatViewModel(
                     }
             }
         }
-        conversation.messages.firstOrNull()?.let {
-            if (it.localId != lastMessageId) {
-                lastMessageId = it.localId
-                delay(10L)
-                _scrollToNewMessageEvent.emit(Unit)
-            }
-        }
+//        conversation.messages.firstOrNull()?.let {
+//            if (it.localId != lastMessageId) {
+//                lastMessageId = it.localId
+//                delay(10L)
+//                _scrollToNewMessageEvent.emit(Unit)
+//            }
+//        }
     }
 
     private fun loadMedia() {
