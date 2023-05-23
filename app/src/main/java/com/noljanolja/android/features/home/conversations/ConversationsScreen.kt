@@ -103,7 +103,7 @@ fun ConversationsScreenContent(
                             Icons.Filled.PersonAdd,
                             contentDescription = null,
                             modifier = Modifier.size(24.dp),
-                            tint = MaterialTheme.colorScheme.onPrimary
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
                     IconButton(onClick = { }) {
@@ -111,7 +111,7 @@ fun ConversationsScreenContent(
                             Icons.Outlined.Search,
                             contentDescription = null,
                             modifier = Modifier.size(24.dp),
-                            tint = MaterialTheme.colorScheme.onPrimary
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
                     IconButton(onClick = {
@@ -131,7 +131,7 @@ fun ConversationsScreenContent(
                                     val y = coordinates.positionInRoot().y
                                     newChatIconPositions = Pair(x, y)
                                 },
-                            tint = MaterialTheme.colorScheme.onPrimary
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
 
@@ -142,7 +142,7 @@ fun ConversationsScreenContent(
                             modifier = Modifier
                                 .padding(bottom = 2.dp)
                                 .size(21.dp),
-                            tint = MaterialTheme.colorScheme.onPrimary
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
                 }

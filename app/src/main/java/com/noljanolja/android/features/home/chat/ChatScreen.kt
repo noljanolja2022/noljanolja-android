@@ -657,7 +657,7 @@ private fun ChatItemBubble(
         isLastMessageByAuthorSameDay,
         message.sender.isMe
     )
-    var backgroundBubbleColor: Color = MaterialTheme.colorScheme.surface
+    var backgroundBubbleColor: Color = MaterialTheme.colorScheme.surfaceVariant
     if (message.sender.isMe) {
         backgroundBubbleColor = MaterialTheme.colorScheme.primaryContainer
     }

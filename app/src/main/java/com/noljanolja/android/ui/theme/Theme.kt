@@ -30,7 +30,7 @@ private val LightColorScheme = lightColorScheme(
     outline = NeutralGrey,
     onBackground = NeutralDarkGrey,
     surface = NeutralLightGrey,
-    surfaceVariant = NeutralLight,
+    surfaceVariant = NeutralLightGrey,
     onSurfaceVariant = NeutralDeepGrey,
 )
 

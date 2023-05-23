@@ -126,7 +126,7 @@ private fun ClickableTextMessage(
                 color = if (message.status == MessageStatus.FAILED) {
                     MaterialTheme.colorScheme.error
                 } else {
-                    MaterialTheme.colorScheme.onPrimary
+                    MaterialTheme.colorScheme.onBackground
                 },
             ),
             modifier = modifier,
