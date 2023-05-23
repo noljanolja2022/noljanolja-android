@@ -4,12 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -65,7 +65,7 @@ fun LoginOrSignupContent(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.White)
+                        .background(MaterialTheme.colorScheme.background)
                         .padding(horizontal = 20.dp)
                         .padding(top = 18.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -91,6 +91,7 @@ fun LoginOrSignupContent(
                                 viewModel = loginViewModel,
                                 savedStateHandle = savedStateHandle,
                             )
+
                             LoginOrSignupUIState.Signup -> SignupScreen(signupViewModel = signupViewModel)
                         }
                     },

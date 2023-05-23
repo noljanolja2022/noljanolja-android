@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.noljanolja.android.util.secondaryTextColor
 
 @Composable
 fun PrimaryListTile(
@@ -25,20 +26,19 @@ fun PrimaryListTile(
     description: (@Composable () -> Unit)? = null,
     @DrawableRes leadingDrawable: Int? = null,
     @DrawableRes trailingDrawable: Int? = null,
-    onClick: () -> Unit,
+    onClick: () -> Unit = {},
 ) {
     CommonListTile(
         modifier = modifier,
         title = title,
         description = description,
-        leading =
-        leadingDrawable?.let {
+        leading = leadingDrawable?.let {
             {
                 Icon(
                     painter = painterResource(id = it),
-                    contentDescription = "start icon",
+                    contentDescription = null,
                     modifier = Modifier.size(24.dp),
-                    tint = MaterialTheme.colorScheme.onBackground,
+                    tint = MaterialTheme.secondaryTextColor(),
                 )
                 Spacer(modifier = Modifier.width(16.dp))
             }
@@ -49,7 +49,7 @@ fun PrimaryListTile(
                     painter = painterResource(id = it),
                     contentDescription = "start icon",
                     modifier = Modifier.size(24.dp),
-                    tint = MaterialTheme.colorScheme.onBackground,
+                    tint = MaterialTheme.secondaryTextColor(),
                 )
             }
         },
@@ -130,8 +130,9 @@ fun ListTileWithToggleButton(
                 onCheckedChange = onCheckedChange,
                 colors = SwitchDefaults.colors(
                     uncheckedBorderColor = Color.Transparent,
-                    uncheckedThumbColor = MaterialTheme.colorScheme.onPrimary,
-                    uncheckedTrackColor = MaterialTheme.colorScheme.onBackground,
+                    uncheckedThumbColor = MaterialTheme.colorScheme.surfaceVariant,
+                    uncheckedTrackColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    checkedThumbColor = MaterialTheme.colorScheme.background
                 ),
             )
         },

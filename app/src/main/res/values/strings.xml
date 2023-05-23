@@ -121,6 +121,11 @@
 
     <!--    Setting-->
     <string name="setting_push_notification">App push notification</string>
+    <string name="setting_exchange_account_management">Exchange account management</string>
+    <string name="setting_name">Name</string>
+    <string name="setting_phone_number">Phone number</string>
+    <string name="setting_open_source_licence">Open source license</string>
+    <string name="setting_faq">FAQ</string>
     <string name="setting_clear_cache_data">Clear cache data</string>
     <string name="setting_open_source_license">Open source license</string>
     <string name="setting_current_version">Current version %s</string>

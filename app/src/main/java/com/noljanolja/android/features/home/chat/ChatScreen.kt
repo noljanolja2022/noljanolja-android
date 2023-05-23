@@ -129,7 +129,7 @@ fun ChatScreenContent(
         Column(
             modifier = Modifier
                 .heightIn(max = (LocalConfiguration.current.screenHeightDp * 0.9f).dp)
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.background)
         ) {
             Row(
                 modifier = Modifier
@@ -711,7 +711,7 @@ private fun ChatItemBubble(
         ) {
             Surface(
                 color = backgroundBubbleColor,
-                contentColor = Color.White,
+                contentColor = MaterialTheme.colorScheme.background,
                 shape = backgroundBubbleShape,
             ) {
                 ClickableMessage(

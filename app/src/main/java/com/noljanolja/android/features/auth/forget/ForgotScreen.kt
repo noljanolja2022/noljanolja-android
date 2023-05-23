@@ -75,7 +75,7 @@ fun ForgotContent(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.White)
+                    .background(MaterialTheme.colorScheme.background)
                     .padding(
                         vertical = 24.dp,
                         horizontal = 20.dp,
