@@ -56,7 +56,7 @@ private val DarkColorScheme = darkColorScheme(
     background = NeutralDarkGrey,
     outline = NeutralGrey,
     onBackground = Color(0xFFE4E3DB),
-    surface = Color(0xFF1B1C17),
+    surface = Color(0xFF45483C),
     surfaceVariant = Color(0xFF45483C),
     onSurfaceVariant = Color(0xFFC6C8B9),
 
