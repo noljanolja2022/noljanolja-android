@@ -1,7 +1,11 @@
 package com.noljanolja.android.common.navigation
 
 import android.net.Uri
-import androidx.navigation.*
+import androidx.navigation.NamedNavArgument
+import androidx.navigation.NavOptions
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import androidx.navigation.navOptions
 import com.noljanolja.android.features.home.wallet.model.UiLoyaltyPoint
 import com.noljanolja.core.utils.defaultJson
 import kotlinx.serialization.encodeToString

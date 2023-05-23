@@ -32,11 +32,8 @@ import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.util.getBackgroundColor
-import com.noljanolja.android.util.getDescription
 import com.noljanolja.android.util.getTitle
-import com.noljanolja.android.util.secondaryTextColor
 import com.noljanolja.core.loyalty.domain.model.MemberTier
-import org.koin.androidx.compose.get
 import org.koin.androidx.compose.getViewModel
 
 @Composable

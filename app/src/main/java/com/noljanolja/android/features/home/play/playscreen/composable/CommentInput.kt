@@ -56,7 +56,6 @@ import com.noljanolja.android.util.findActivity
 import com.noljanolja.core.user.domain.model.User
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import org.koin.androidx.compose.get
 
 @Composable
 fun CommentInput(

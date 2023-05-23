@@ -1,6 +1,5 @@
 package com.noljanolja.android.ui.composable
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
