@@ -45,6 +45,7 @@ import coil.compose.*
 import coil.request.ImageRequest
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.CombineClickableText
+import com.noljanolja.android.ui.theme.NeutralLight
 import com.noljanolja.android.util.chatMessageBubbleTime
 import com.noljanolja.android.util.openImageFromCache
 import com.noljanolja.android.util.openUrl
@@ -306,7 +307,7 @@ fun AttachmentRow(
                                         text = if (isMe) "$it +" else "+ $it",
                                         style = TextStyle(
                                             fontSize = 36.sp,
-                                            color = MaterialTheme.colorScheme.background
+                                            color = NeutralLight
                                         ),
                                         textAlign = TextAlign.Center
                                     )
@@ -374,7 +375,8 @@ private fun PhotoPreview(
                     )
                 )
                 .padding(top = 25.dp, end = 10.dp),
-            textAlign = timeAlign
+            textAlign = timeAlign,
+            style = MaterialTheme.typography.bodySmall.copy(NeutralLight)
         )
     }
 }

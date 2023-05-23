@@ -2,7 +2,6 @@ package com.noljanolja.android.features.home.chat
 
 import android.annotation.SuppressLint
 import android.net.Uri
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -683,24 +682,26 @@ private fun ChatItemBubble(
     Box {
         if (isLastMessageByAuthorSameDay && (message.type == MessageType.PHOTO || message.type == MessageType.PLAINTEXT)) {
             if (message.sender.isMe) {
-                Image(
+                Icon(
                     painterResource(id = R.drawable.ic_chat_arrow_mine),
                     contentDescription = null,
                     modifier = Modifier
                         .align(
                             Alignment.BottomEnd
                         )
-                        .size(12.dp)
+                        .size(12.dp),
+                    tint = backgroundBubbleColor
                 )
             } else if (conversationType == ConversationType.SINGLE) {
-                Image(
+                Icon(
                     painterResource(id = R.drawable.ic_chat_arrow),
                     contentDescription = null,
                     modifier = Modifier
                         .align(
                             Alignment.BottomStart
                         )
-                        .size(12.dp)
+                        .size(12.dp),
+                    tint = backgroundBubbleColor
                 )
             }
         }
