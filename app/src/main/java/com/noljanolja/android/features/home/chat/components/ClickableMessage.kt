@@ -61,6 +61,7 @@ import coil.request.ImageRequest
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.CombineClickableText
 import com.noljanolja.android.ui.theme.NeutralLight
+import com.noljanolja.android.ui.theme.colorMyChatText
 import com.noljanolja.android.util.chatMessageBubbleTime
 import com.noljanolja.android.util.openImageFromCache
 import com.noljanolja.android.util.openUrl
@@ -122,7 +123,7 @@ private fun ClickableTextMessage(
 ) {
     val context = LocalContext.current
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
-
+    val isMe = message.sender.isMe
     var showMenu by remember { mutableStateOf(false) }
     val styledMessage = AnnotatedString.Builder().apply {
         append(
@@ -141,6 +142,8 @@ private fun ClickableTextMessage(
             style = MaterialTheme.typography.bodyLarge.copy(
                 color = if (message.status == MessageStatus.FAILED) {
                     MaterialTheme.colorScheme.error
+                } else if (isMe) {
+                    MaterialTheme.colorMyChatText()
                 } else {
                     MaterialTheme.colorScheme.onBackground
                 },
@@ -160,7 +163,11 @@ private fun ClickableTextMessage(
             message.createdAt.chatMessageBubbleTime(),
             style = TextStyle(
                 fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = if (isMe) {
+                    MaterialTheme.colorMyChatText()
+                } else {
+                    MaterialTheme.colorScheme.onBackground
+                }.copy(alpha = 0.6f)
             ),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -414,6 +421,7 @@ private fun SubcomposeAsyncImageScope.AsyncImageState(
                 )
             }
         }
+
         is AsyncImagePainter.State.Error -> {
             Box(
                 modifier = modifier

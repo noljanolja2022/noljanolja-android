@@ -37,7 +37,7 @@ private val LightColorScheme = lightColorScheme(
 private val DarkColorScheme = darkColorScheme(
     primary = PrimaryGreen,
     onPrimary = Color(0xFF263500),
-    primaryContainer = Color(0xFF384E00),
+    primaryContainer = LightGreen,
     onPrimaryContainer = Color(0xFFC0F44A),
 
     secondary = YellowMain,
@@ -118,3 +118,16 @@ fun MaterialTheme.systemBlue(darkTheme: Boolean = isSystemInDarkTheme()) =
     } else {
         Color(0xFF007AFF)
     }
+
+@Composable
+fun MaterialTheme.colorMyChatText(darkTheme: Boolean = isSystemInDarkTheme()) =
+    NeutralDarkGrey
+
+@Composable
+fun MaterialTheme.colorMyChatTime(darkTheme: Boolean = isSystemInDarkTheme()) =
+    if (darkTheme) {
+        Color(0xFF007AFF)
+    } else {
+        Color(0xFF007AFF)
+    }
+
