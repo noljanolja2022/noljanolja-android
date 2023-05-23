@@ -243,7 +243,7 @@
     <string name="wallet_ranking_silver">Silver Membership</string>
     <string name="wallet_ranking_gold">Gold Membership</string>
     <string name="wallet_ranking_premium">Premium Membership</string>
-    <string name="wallet_expect_next_tier">Expected rating for next month</string>
+    <string name="wallet_expect_next_tier">Expected ranking for next month</string>
     <string name="wallet_accumulated_point">Accumulated points for the day</string>
     <string name="wallet_point_can_exchange">Points that can be exchanged</string>
     <string name="wallet_view_history">View History</string>
@@ -268,6 +268,8 @@
     <string name="transaction_detail">Detail Transaction</string>
     <string name="transaction_detail_status">Status</string>
     <string name="transaction_detail_time">Time</string>
+
+    <string name="my_ranking_title">My ranking</string>
 
     <!--    video-->
     <string name="video_title">Let’s get points by watching</string>

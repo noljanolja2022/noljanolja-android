@@ -399,7 +399,6 @@ private fun SubcomposeAsyncImageScope.AsyncImageState(
                 )
             }
         }
-
         is AsyncImagePainter.State.Error -> {
             Box(
                 modifier = modifier

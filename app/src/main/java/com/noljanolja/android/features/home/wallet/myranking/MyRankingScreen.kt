@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
@@ -32,7 +31,6 @@ import com.noljanolja.android.features.home.wallet.composable.TierIcon
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.util.formatDigitsNumber
 import com.noljanolja.android.util.getBackgroundColor
 import com.noljanolja.android.util.getDescription
 import com.noljanolja.android.util.getTitle
@@ -60,7 +58,7 @@ private fun MyRankingContent(
     val context = LocalContext.current
     ScaffoldWithUiState(uiState = uiState, topBar = {
         CommonTopAppBar(
-            title = "MyRanking",
+            title = stringResource(id = R.string.my_ranking_title),
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             centeredTitle = true,
             onBack = { handleEvent(MyRankingEvent.Back) }
@@ -76,19 +74,19 @@ private fun MyRankingContent(
                     verticalArrangement = Arrangement.Center
                 ) {
                     MyRankingInfo(tier = memberInfo.currentTier)
-                    SizeBox(height = 3.dp)
-                    Row() {
-                        Text(
-                            "Overall Point Ranking: ",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Text(
-                            text = 12345.formatDigitsNumber(),
-                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.primaryContainer
-                        )
-                    }
+//                    SizeBox(height = 3.dp)
+//                    Row() {
+//                        Text(
+//                            "Overall Point Ranking: ",
+//                            style = MaterialTheme.typography.bodyLarge,
+//                            color = MaterialTheme.colorScheme.onSurfaceVariant
+//                        )
+//                        Text(
+//                            text = 12345.formatDigitsNumber(),
+//                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+//                            color = MaterialTheme.colorScheme.primaryContainer
+//                        )
+//                    }
                     memberInfo.nextTier?.let { nextTier ->
                         SizeBox(height = 8.dp)
                         Text(
@@ -103,8 +101,7 @@ private fun MyRankingContent(
                             text = nextTier.getTitle(context),
                             style = MaterialTheme.typography.labelSmall,
                             modifier = Modifier.clip(RoundedCornerShape(20.dp))
-                                .background(nextTier.getBackgroundColor())
-                                .padding(vertical = 5.dp, horizontal = 10.dp)
+                                .background(nextTier.getBackgroundColor()).padding(vertical = 5.dp, horizontal = 10.dp)
                         )
                     }
                 }
@@ -159,11 +156,11 @@ private fun RankingInfo(tier: MemberTier) {
                     text = tier.getTitle(context),
                     style = MaterialTheme.typography.titleMedium,
                 )
-                Text(
-                    text = tier.getDescription(context),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.secondaryTextColor()
-                )
+//                Text(
+//                    text = tier.getDescription(context),
+//                    style = MaterialTheme.typography.bodySmall,
+//                    color = MaterialTheme.secondaryTextColor()
+//                )
             }
         }
     }

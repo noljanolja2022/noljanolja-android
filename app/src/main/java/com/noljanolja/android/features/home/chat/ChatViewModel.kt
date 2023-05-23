@@ -75,11 +75,13 @@ class ChatViewModel(
                             ?: let { noMoreMessages = true }
                     }
                 }
+
                 is ChatEvent.NavigateToProfile -> {}
                 is ChatEvent.ReloadConversation -> {}
                 is ChatEvent.SendMessage -> {
                     sendMessage(event.message)
                 }
+
                 ChatEvent.LoadMedia -> loadMedia()
                 ChatEvent.OpenPhoneSettings -> {}
                 ChatEvent.ChatOptions -> {
@@ -103,6 +105,8 @@ class ChatViewModel(
                     conversationId = it
                     fetchConversation(onlyLocalData = true)
                 }
+                delay(100)
+                _scrollToNewMessageEvent.emit(Unit)
             }
         }
     }
@@ -165,13 +169,6 @@ class ChatViewModel(
                     }
             }
         }
-//        conversation.messages.firstOrNull()?.let {
-//            if (it.localId != lastMessageId) {
-//                lastMessageId = it.localId
-//                delay(10L)
-//                _scrollToNewMessageEvent.emit(Unit)
-//            }
-//        }
     }
 
     private fun loadMedia() {

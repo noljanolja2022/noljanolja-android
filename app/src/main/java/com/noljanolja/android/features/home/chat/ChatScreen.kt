@@ -353,7 +353,7 @@ private fun MessageList(
                     }
                 }
 
-                item {
+                item(key = "${message.id} ${message.localId}") {
                     MessageRow(
                         conversationId = conversationId,
                         message = message,

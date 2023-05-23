@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -127,18 +128,22 @@ private fun UserInformation(
     goToRanking: () -> Unit,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().clip(
-            RoundedCornerShape(
-                bottomStart = 24.dp,
-                bottomEnd = 24.dp
-            )
-        ).background(MaterialTheme.colorScheme.background)
-            .padding(start = 16.dp, end = 16.dp, top = 50.dp, bottom = 24.dp)
+        modifier = Modifier.fillMaxWidth()
+            .clip(
+                RoundedCornerShape(
+                    bottomStart = 24.dp,
+                    bottomEnd = 24.dp
+                )
+            ).background(MaterialTheme.colorScheme.background)
+            .padding(start = 16.dp, end = 16.dp, top = 50.dp, bottom = 24.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         CircleAvatar(user = user, size = 64.dp)
         SizeBox(width = 16.dp)
         Column(
-            verticalArrangement = Arrangement.SpaceBetween
+            verticalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxHeight(),
+
         ) {
             Text(
                 text = user.name,
@@ -151,10 +156,10 @@ private fun UserInformation(
                 color = MaterialTheme.colorScheme.onBackground
             )
             memberInfo?.currentTier?.let { RankingRow(tier = it, onClick = goToRanking) }
-            Text(
-                text = stringResource(id = R.string.wallet_point_ranking, 12345.formatDigitsNumber()),
-                style = MaterialTheme.typography.labelSmall,
-            )
+//            Text(
+//                text = stringResource(id = R.string.wallet_point_ranking, 12345.formatDigitsNumber()),
+//                style = MaterialTheme.typography.labelSmall,
+//            )
         }
         Expanded()
         IconButton(

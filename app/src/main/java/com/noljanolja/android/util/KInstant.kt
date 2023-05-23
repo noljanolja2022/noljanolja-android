@@ -61,11 +61,11 @@ fun Instant.customFormatTime(format: String): String {
 }
 
 fun Instant.formatMonthAndYear(): String {
-    return this@formatMonthAndYear.customFormatTime("MMMM yyyy")
+    return this@formatMonthAndYear.customFormatTime("MMMM yyyy").capitalizeFirstLetter()
 }
 
 fun Instant.formatTransactionFullTime(): String {
-    return this.customFormatTime("HH:mm - MMMM dd, yyyy").capitalizeFirstLetter()
+    return this.customFormatTime("HH:mm - MMMM dd, yyyy").capitalizeLetterAt(8)
 }
 
 fun Instant.formatTransactionShortTime(): String {
