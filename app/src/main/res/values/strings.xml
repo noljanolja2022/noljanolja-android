@@ -20,6 +20,7 @@
     <string name="common_ok">OK</string>
     <string name="common_cancel">Cancel</string>
     <string name="common_confirm">Confirm</string>
+    <string name="common_yes">Yes</string>
     <string name="common_skip">Skip</string>
     <string name="common_error_title">Error</string>
     <string name="common_error_description">An unexpected error has occurred. Please try again.</string>
@@ -121,6 +122,11 @@
 
     <!--    Setting-->
     <string name="setting_push_notification">App push notification</string>
+    <string name="setting_exchange_account_management">Exchange account management</string>
+    <string name="setting_name">Name</string>
+    <string name="setting_phone_number">Phone number</string>
+    <string name="setting_open_source_licence">Open source license</string>
+    <string name="setting_faq">FAQ</string>
     <string name="setting_clear_cache_data">Clear cache data</string>
     <string name="setting_open_source_license">Open source license</string>
     <string name="setting_current_version">Current version %s</string>
@@ -128,9 +134,6 @@
     <!--    Menu-->
     <string name="menu_title">Menu</string>
     <string name="menu_announcement">Announcement</string>
-    <string name="menu_play_video">Let\'s play while watching the video</string>
-    <string name="menu_join_and_play">Let\'s join and play</string>
-    <string name="menu_checkout_and_play">Check out and play</string>
     <string name="menu_point_details">Point details</string>
     <string name="menu_exchange_money">Exchanging money</string>
 
@@ -238,11 +241,11 @@
     <string name="wallet_ranking_silver">Silver Membership</string>
     <string name="wallet_ranking_gold">Gold Membership</string>
     <string name="wallet_ranking_premium">Premium Membership</string>
-    <string name="wallet_expect_next_tier">Expected rating for next month</string>
+    <string name="wallet_expect_next_tier">Expected ranking for next month</string>
     <string name="wallet_accumulated_point">Accumulated points for the day</string>
     <string name="wallet_point_can_exchange">Points that can be exchanged</string>
     <string name="wallet_view_history">View History</string>
-    <string name="wallet_exchange_money">Exchange money</string>
+    <string name="wallet_exchange_money">Use now</string>
 
     <string name="transaction_history">Transaction History</string>
     <string name="transaction_history_search_hint">Search transaction</string>
@@ -257,10 +260,18 @@
     <string name="wallet_dashboard_receive">Receive</string>
     <string name="wallet_dashboard_spent">Spent</string>
     <string name="wallet_dashboard_recent_transactions">Recent transactions</string>
+    <string name="wallet_attend_now">Attend now</string>
+    <string name="wallet_my_attendance">My attendance</string>
+
+    <string name="setting_faq_title">FAQ</string>
+    <string name="setting_license_title">Open source license</string>
+    <string name="setting_about_us_title">About us</string>
 
     <string name="transaction_detail">Detail Transaction</string>
     <string name="transaction_detail_status">Status</string>
     <string name="transaction_detail_time">Time</string>
+
+    <string name="my_ranking_title">My ranking</string>
 
     <!--    video-->
     <string name="video_title">Let’s get points by watching</string>
@@ -280,7 +291,6 @@
     <string name="video_detail_duration_hours">%d hours ago</string>
     <string name="video_detail_duration_minutes">%d minutes ago</string>
     <string name="video_detail_duration_just_now">just now</string>
-    <string name="video_detail_require_google_title"></string>
     <string name="video_detail_require_google_description">You need login google and accept youtube scope to comment or like</string>
     <string name="video_detail_need_youtube_account">You don\'t have a youtube account yet.</string>
     <string name="video_detail_need_youtube_account_description">To comment on youtube you need an account. Click OK to see the tutorial on how to create youtube.</string>

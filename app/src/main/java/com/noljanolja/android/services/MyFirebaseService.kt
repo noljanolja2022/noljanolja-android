@@ -23,7 +23,8 @@ import com.noljanolja.android.R
 import com.noljanolja.core.CoreManager
 import com.noljanolja.core.conversation.domain.model.ConversationType
 import com.noljanolja.core.conversation.domain.model.MessageType
-import kotlinx.coroutines.*
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class MyFirebaseService : FirebaseMessagingService() {

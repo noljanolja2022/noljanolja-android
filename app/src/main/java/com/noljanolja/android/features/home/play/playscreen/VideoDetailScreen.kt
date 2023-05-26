@@ -41,6 +41,7 @@ import com.noljanolja.android.ui.composable.WarningDialog
 import com.noljanolja.android.ui.composable.youtube.YoutubeView
 import com.noljanolja.android.ui.theme.Orange400
 import com.noljanolja.android.ui.theme.withBold
+import com.noljanolja.android.util.formatFullTime
 import com.noljanolja.android.util.lightTextColor
 import com.noljanolja.android.util.showToast
 import com.noljanolja.core.Failure
@@ -116,6 +117,7 @@ private fun VideoDetailContent(
         if (!isFullScreen) {
             CommonTopAppBar(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 title = stringResource(id = R.string.video_title),
                 onBack = {
                     handleEvent(VideoDetailEvent.Back)
@@ -320,7 +322,7 @@ private fun CommentRow(
         SizeBox(width = 15.dp)
         Column {
             Text(
-                "2022.05.12  11:13",
+                comment.updatedAt.formatFullTime(),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.outline,
             )

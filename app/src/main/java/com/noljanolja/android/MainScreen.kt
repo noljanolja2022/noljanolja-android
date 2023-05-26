@@ -31,6 +31,9 @@ import com.noljanolja.android.features.home.wallet.model.UiLoyaltyPoint
 import com.noljanolja.android.features.home.wallet.myranking.MyRankingScreen
 import com.noljanolja.android.features.home.wallet.transaction.TransactionsHistoryScreen
 import com.noljanolja.android.features.setting.SettingScreen
+import com.noljanolja.android.features.setting.more.AboutUsScreen
+import com.noljanolja.android.features.setting.more.FAQScreen
+import com.noljanolja.android.features.setting.more.LicenseScreen
 import com.noljanolja.android.features.splash.SplashScreen
 import com.noljanolja.android.util.orZero
 import com.noljanolja.android.util.showToast
@@ -227,9 +230,25 @@ private fun NavGraphBuilder.addWalletGraph() {
     }
     with(NavigationDirections.TransactionDetail()) {
         composable(destination, arguments) {
-            val navObject = it.arguments?.getSerializable("transaction") as? NavObject<UiLoyaltyPoint>
+            val navObject =
+                it.arguments?.getSerializable("transaction") as? NavObject<UiLoyaltyPoint>
             val transaction = navObject?.data ?: UiLoyaltyPoint()
             TransactionDetailScreen(loyaltyPoint = transaction)
+        }
+    }
+    with(NavigationDirections.FAQ) {
+        composable(destination, arguments) {
+            FAQScreen()
+        }
+    }
+    with(NavigationDirections.Licenses) {
+        composable(destination, arguments) {
+            LicenseScreen()
+        }
+    }
+    with(NavigationDirections.AboutUs) {
+        composable(destination, arguments) {
+            AboutUsScreen()
         }
     }
 }

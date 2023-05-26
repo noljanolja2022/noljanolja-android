@@ -3,7 +3,19 @@ package com.noljanolja.android.features.home.chat.components
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.SyncProblem
@@ -41,10 +53,15 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.*
+import coil.compose.AsyncImagePainter
+import coil.compose.SubcomposeAsyncImage
+import coil.compose.SubcomposeAsyncImageContent
+import coil.compose.SubcomposeAsyncImageScope
 import coil.request.ImageRequest
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.CombineClickableText
+import com.noljanolja.android.ui.theme.NeutralLight
+import com.noljanolja.android.ui.theme.colorMyChatText
 import com.noljanolja.android.util.chatMessageBubbleTime
 import com.noljanolja.android.util.openImageFromCache
 import com.noljanolja.android.util.openUrl
@@ -106,7 +123,7 @@ private fun ClickableTextMessage(
 ) {
     val context = LocalContext.current
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
-
+    val isMe = message.sender.isMe
     var showMenu by remember { mutableStateOf(false) }
     val styledMessage = AnnotatedString.Builder().apply {
         append(
@@ -125,8 +142,10 @@ private fun ClickableTextMessage(
             style = MaterialTheme.typography.bodyLarge.copy(
                 color = if (message.status == MessageStatus.FAILED) {
                     MaterialTheme.colorScheme.error
+                } else if (isMe) {
+                    MaterialTheme.colorMyChatText()
                 } else {
-                    MaterialTheme.colorScheme.onPrimary
+                    MaterialTheme.colorScheme.onBackground
                 },
             ),
             modifier = modifier,
@@ -144,7 +163,11 @@ private fun ClickableTextMessage(
             message.createdAt.chatMessageBubbleTime(),
             style = TextStyle(
                 fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = if (isMe) {
+                    MaterialTheme.colorMyChatText()
+                } else {
+                    MaterialTheme.colorScheme.onBackground
+                }.copy(alpha = 0.6f)
             ),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -210,9 +233,7 @@ fun ClickablePhotoMessage(
         when (val size = message.attachments.size) {
             1 -> {
                 val attachment = message.attachments.first()
-                Column(
-//                    horizontalAlignment = if (message.sender.isMe) Alignment.End else Alignment.Start
-                ) {
+                Column {
                     PhotoPreview(
                         modifier = modifier
                             .clip(RoundedCornerShape(6.dp))
@@ -258,6 +279,7 @@ fun ClickablePhotoMessage(
 
 @Composable
 fun AttachmentRow(
+    modifier: Modifier = Modifier,
     message: Message,
     conversationId: Long,
     notShowImages: Int? = null,
@@ -268,10 +290,9 @@ fun AttachmentRow(
     val isMe = message.sender.isMe
     CompositionLocalProvider(LocalLayoutDirection provides if (message.sender.isMe) LayoutDirection.Rtl else LayoutDirection.Ltr) {
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
-//            horizontalArrangement = if (message.sender.isMe) Arrangement.End else Arrangement.Start,
         ) {
             repeat(maxAttachmentPerRow) { index ->
                 if (index > 0) {
@@ -308,7 +329,7 @@ fun AttachmentRow(
                                         text = if (isMe) "$it +" else "+ $it",
                                         style = TextStyle(
                                             fontSize = 36.sp,
-                                            color = MaterialTheme.colorScheme.background
+                                            color = NeutralLight
                                         ),
                                         textAlign = TextAlign.Center
                                     )
@@ -376,7 +397,8 @@ private fun PhotoPreview(
                     )
                 )
                 .padding(top = 25.dp, end = 10.dp),
-            textAlign = timeAlign
+            textAlign = timeAlign,
+            style = MaterialTheme.typography.bodySmall.copy(NeutralLight)
         )
     }
 }

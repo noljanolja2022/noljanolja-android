@@ -26,7 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -168,7 +167,7 @@ fun PhotoItem(
         if (durationInMil != null && durationInMil != 0L) {
             Text(
                 text = setDurationDisplay(durationInMil),
-                color = Color.White,
+                color = MaterialTheme.colorScheme.background,
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier
                     .padding(end = 4.dp, bottom = 4.dp)
@@ -210,7 +209,7 @@ fun PhotoItem(
                     .aspectRatio(1F)
                     .border(
                         width = 2.dp,
-                        color = Color.White.copy(.87F),
+                        color = MaterialTheme.colorScheme.background.copy(.87F),
                         shape = CircleShape
                     )
                     .align(Alignment.TopEnd),

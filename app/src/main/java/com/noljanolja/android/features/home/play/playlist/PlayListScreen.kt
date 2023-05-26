@@ -31,7 +31,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -43,7 +42,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -79,11 +77,14 @@ private fun PlayListContent(
         CommonTopAppBar(
             centeredTitle = true,
             title = stringResource(id = R.string.video_title),
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
         )
     }) {
         val data = uiState.data ?: return@ScaffoldWithUiState
-        LazyColumn(modifier = Modifier.fillMaxSize().pullRefresh(state)) {
+        LazyColumn(modifier = Modifier
+            .fillMaxSize()
+            .pullRefresh(state)) {
             item {
                 HighlightVideos(
                     videos = data.todayVideos,
@@ -250,15 +251,19 @@ private fun LazyListScope.watchingVideos(
     }
     item {
         LazyRow(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(horizontal = 16.dp)
                 .wrapContentHeight()
         ) {
             items(items = videos, key = { "watching ${it.id}" }) { video ->
                 Column(
-                    modifier = Modifier.padding(end = 6.dp).width(142.dp).clickable {
-                        onClick(video)
-                    }
+                    modifier = Modifier
+                        .padding(end = 6.dp)
+                        .width(142.dp)
+                        .clickable {
+                            onClick(video)
+                        }
                 ) {
                     SubcomposeAsyncImage(
                         ImageRequest.Builder(context = LocalContext.current)

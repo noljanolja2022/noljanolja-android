@@ -1,6 +1,5 @@
 package com.noljanolja.android.ui.composable
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
@@ -23,20 +22,21 @@ fun CommonTopAppBar(
     centeredTitle: Boolean = false,
     navigationIcon: ImageVector = Icons.Default.ArrowBack,
     containerColor: Color = MaterialTheme.colorScheme.background,
+    contentColor: Color = MaterialTheme.colorScheme.onBackground,
     onBack: (() -> Unit)? = null,
 
-) {
+    ) {
     val colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
         containerColor = containerColor,
-        titleContentColor = MaterialTheme.colorScheme.onPrimary,
-        actionIconContentColor = MaterialTheme.colorScheme.onPrimary,
-        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+        titleContentColor = contentColor,
+        actionIconContentColor = MaterialTheme.colorScheme.onBackground,
+        navigationIconContentColor = MaterialTheme.colorScheme.onBackground,
     )
     if (centeredTitle) {
         CenterAlignedTopAppBar(
             colors = colors,
             title = {
-                CommonAppBarTitle(title = title, leadingTitle = leadingTitle)
+                CommonAppBarTitle(title = title, leadingTitle = leadingTitle, color = contentColor)
             },
             actions = actions,
             navigationIcon = {
@@ -45,6 +45,7 @@ fun CommonTopAppBar(
                         Icon(
                             navigationIcon,
                             contentDescription = null,
+                            tint = contentColor,
                         )
                     }
                 }
@@ -54,7 +55,7 @@ fun CommonTopAppBar(
         TopAppBar(
             colors = colors,
             title = {
-                CommonAppBarTitle(title = title, leadingTitle = leadingTitle)
+                CommonAppBarTitle(title = title, leadingTitle = leadingTitle, color = contentColor)
             },
             actions = actions,
             navigationIcon = {
@@ -63,6 +64,7 @@ fun CommonTopAppBar(
                         Icon(
                             Icons.Default.ArrowBack,
                             contentDescription = null,
+                            tint = contentColor
                         )
                     }
                 }
@@ -75,6 +77,7 @@ fun CommonTopAppBar(
 fun CommonAppBarTitle(
     title: String,
     leadingTitle: @Composable (() -> Unit)? = null,
+    color: Color = MaterialTheme.colorScheme.onPrimaryContainer,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically
@@ -86,6 +89,7 @@ fun CommonAppBarTitle(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
                 lineHeight = 24.sp,
+                color = color
             ),
         )
     }

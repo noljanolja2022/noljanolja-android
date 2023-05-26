@@ -1,12 +1,29 @@
 package com.noljanolja.android.features.auth.terms_of_service
 
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckBox
 import androidx.compose.material.icons.filled.CheckBoxOutlineBlank
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -61,12 +78,16 @@ fun TermsOfServiceScreenContent(
             TermsHeading()
         }) {
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Column(
-                    modifier = Modifier.fillMaxWidth().weight(1f)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
                         .verticalScroll(rememberScrollState()),
                 ) {
                     Spacer(modifier = Modifier.weight(1F))
@@ -82,7 +103,9 @@ fun TermsOfServiceScreenContent(
                     )
 
                     TermRow(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
                         termTitle = stringResource(R.string.tos_compulsory_item_title_1),
                         checked = compulsoryTerms.getOrDefault(1, false),
                         onChecked = { compulsoryTerms[1] = it },
@@ -90,7 +113,9 @@ fun TermsOfServiceScreenContent(
                     )
 
                     TermRow(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
                         termTitle = stringResource(R.string.tos_compulsory_item_title_2),
                         checked = compulsoryTerms.getOrDefault(2, false),
                         onChecked = { compulsoryTerms[2] = it },
@@ -98,7 +123,9 @@ fun TermsOfServiceScreenContent(
                     )
 
                     TermRow(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
                         termTitle = stringResource(R.string.tos_compulsory_item_title_3),
                         checked = compulsoryTerms.getOrDefault(3, false),
                         onChecked = { compulsoryTerms[3] = it },
@@ -119,7 +146,9 @@ fun TermsOfServiceScreenContent(
                     )
 
                     TermRow(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
                         termTitle = stringResource(R.string.tos_optional_item_title_1),
                         checked = optionalTerms.getOrDefault(1, false),
                         onChecked = { optionalTerms[1] = it },
@@ -130,7 +159,8 @@ fun TermsOfServiceScreenContent(
 
                 PrimaryButton(
                     onClick = { event(TermsOfServiceEvent.Continue) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(start = 16.dp, end = 16.dp, bottom = 42.dp),
                     isEnable = compulsoryTerms.all { it.value },
                     text = stringResource(id = R.string.common_next).uppercase()
@@ -157,7 +187,10 @@ private fun TermRow(
 ) {
     Column(modifier = modifier) {
         Row(
-            modifier = Modifier.fillMaxWidth().wrapContentHeight().padding(vertical = 15.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(vertical = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
         ) {
@@ -178,7 +211,9 @@ private fun TermRow(
                 Icon(
                     Icons.Default.ChevronRight,
                     contentDescription = null,
-                    modifier = Modifier.padding(start = 8.dp).size(24.dp),
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .size(24.dp),
                 )
             }
         }
@@ -195,7 +230,9 @@ private fun TermCheckBox(
     Icon(
         checkBoxIcon,
         contentDescription = null,
-        modifier = modifier.size(24.dp).clickable { onChecked(!checked) },
+        modifier = modifier
+            .size(24.dp)
+            .clickable { onChecked(!checked) },
         tint = with(MaterialTheme.colorScheme) { if (checked) primary else outline }
     )
 }
@@ -203,12 +240,16 @@ private fun TermCheckBox(
 @Composable
 private fun TermsHeading() {
     Column(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp, horizontal = 16.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 20.dp, horizontal = 16.dp)
     ) {
         Image(
             painter = painterResource(id = R.drawable.logo),
             contentDescription = null,
-            modifier = Modifier.width(66.dp).height(62.dp)
+            modifier = Modifier
+                .width(66.dp)
+                .height(62.dp)
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(

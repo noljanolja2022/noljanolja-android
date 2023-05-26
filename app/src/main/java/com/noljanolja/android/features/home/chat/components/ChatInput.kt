@@ -45,7 +45,6 @@ import com.noljanolja.android.util.getFileName
 import com.noljanolja.android.util.getTmpFileUri
 import com.noljanolja.core.conversation.domain.model.MessageType
 import com.noljanolja.core.media.domain.model.Sticker
-import kotlinx.coroutines.launch
 
 private enum class InputSelector {
     NONE,

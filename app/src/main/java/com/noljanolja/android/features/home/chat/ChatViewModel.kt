@@ -17,7 +17,11 @@ import com.noljanolja.core.utils.isNormalType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 import org.koin.core.component.inject
 
@@ -75,11 +79,13 @@ class ChatViewModel(
                             ?: let { noMoreMessages = true }
                     }
                 }
+
                 is ChatEvent.NavigateToProfile -> {}
                 is ChatEvent.ReloadConversation -> {}
                 is ChatEvent.SendMessage -> {
                     sendMessage(event.message)
                 }
+
                 ChatEvent.LoadMedia -> loadMedia()
                 ChatEvent.OpenPhoneSettings -> {}
                 ChatEvent.ChatOptions -> {
@@ -103,6 +109,8 @@ class ChatViewModel(
                     conversationId = it
                     fetchConversation(onlyLocalData = true)
                 }
+                delay(100)
+                _scrollToNewMessageEvent.emit(Unit)
             }
         }
     }
@@ -163,13 +171,6 @@ class ChatViewModel(
                             coreManager.updateMessageStatus(conversationId, message.id)
                         }
                     }
-            }
-        }
-        conversation.messages.firstOrNull()?.let {
-            if (it.localId != lastMessageId) {
-                lastMessageId = it.localId
-                delay(10L)
-                _scrollToNewMessageEvent.emit(Unit)
             }
         }
     }

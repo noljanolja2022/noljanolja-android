@@ -2,11 +2,18 @@ package com.noljanolja.android.util
 
 import android.content.Context
 import com.noljanolja.android.R
-import kotlinx.datetime.*
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.Instant
+import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toJavaLocalDateTime
+import kotlinx.datetime.toLocalDateTime
 import java.time.Year
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Locale
 
 fun Instant.humanReadableDate(): String {
     with(this.toLocalDateTime(TimeZone.currentSystemDefault())) {
@@ -61,11 +68,11 @@ fun Instant.customFormatTime(format: String): String {
 }
 
 fun Instant.formatMonthAndYear(): String {
-    return this@formatMonthAndYear.customFormatTime("MMMM yyyy")
+    return this@formatMonthAndYear.customFormatTime("MMMM yyyy").capitalizeFirstLetter()
 }
 
-fun Instant.formatTransactionFullTime(): String {
-    return this.customFormatTime("HH:mm - MMMM dd, yyyy").capitalizeFirstLetter()
+fun Instant.formatFullTime(): String {
+    return this.customFormatTime("HH:mm - MMMM dd, yyyy").capitalizeLetterAt(8)
 }
 
 fun Instant.formatTransactionShortTime(): String {

@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
@@ -32,13 +31,9 @@ import com.noljanolja.android.features.home.wallet.composable.TierIcon
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.util.formatDigitsNumber
 import com.noljanolja.android.util.getBackgroundColor
-import com.noljanolja.android.util.getDescription
 import com.noljanolja.android.util.getTitle
-import com.noljanolja.android.util.secondaryTextColor
 import com.noljanolja.core.loyalty.domain.model.MemberTier
-import org.koin.androidx.compose.get
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -60,35 +55,43 @@ private fun MyRankingContent(
     val context = LocalContext.current
     ScaffoldWithUiState(uiState = uiState, topBar = {
         CommonTopAppBar(
-            title = "MyRanking",
+            title = stringResource(id = R.string.my_ranking_title),
             containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             centeredTitle = true,
             onBack = { handleEvent(MyRankingEvent.Back) }
         )
     }) {
         val memberInfo = uiState.data?.memberInfo ?: return@ScaffoldWithUiState
-        LazyColumn(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface)
+        ) {
             item {
                 Column(
-                    modifier = Modifier.fillMaxWidth().heightIn(min = 150.dp)
-                        .background(MaterialTheme.colorScheme.background).padding(horizontal = 16.dp, vertical = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 150.dp)
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
                     MyRankingInfo(tier = memberInfo.currentTier)
-                    SizeBox(height = 3.dp)
-                    Row() {
-                        Text(
-                            "Overall Point Ranking: ",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Text(
-                            text = 12345.formatDigitsNumber(),
-                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.primaryContainer
-                        )
-                    }
+//                    SizeBox(height = 3.dp)
+//                    Row() {
+//                        Text(
+//                            "Overall Point Ranking: ",
+//                            style = MaterialTheme.typography.bodyLarge,
+//                            color = MaterialTheme.colorScheme.onSurfaceVariant
+//                        )
+//                        Text(
+//                            text = 12345.formatDigitsNumber(),
+//                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+//                            color = MaterialTheme.colorScheme.primaryContainer
+//                        )
+//                    }
                     memberInfo.nextTier?.let { nextTier ->
                         SizeBox(height = 8.dp)
                         Text(
@@ -102,7 +105,8 @@ private fun MyRankingContent(
                         Text(
                             text = nextTier.getTitle(context),
                             style = MaterialTheme.typography.labelSmall,
-                            modifier = Modifier.clip(RoundedCornerShape(20.dp))
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(20.dp))
                                 .background(nextTier.getBackgroundColor())
                                 .padding(vertical = 5.dp, horizontal = 10.dp)
                         )
@@ -144,11 +148,17 @@ private fun RankingInfo(tier: MemberTier) {
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp))
-                .background(MaterialTheme.colorScheme.background).padding(vertical = 10.dp, horizontal = 36.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(10.dp))
+                .background(MaterialTheme.colorScheme.background)
+                .padding(vertical = 10.dp, horizontal = 36.dp),
         ) {
             Box(
-                modifier = Modifier.size(33.dp).clip(RoundedCornerShape(5.dp)).background(backgroundColor),
+                modifier = Modifier
+                    .size(33.dp)
+                    .clip(RoundedCornerShape(5.dp))
+                    .background(backgroundColor),
                 contentAlignment = Alignment.Center
             ) {
                 TierIcon(tier = tier, width = 24.dp)
@@ -159,11 +169,11 @@ private fun RankingInfo(tier: MemberTier) {
                     text = tier.getTitle(context),
                     style = MaterialTheme.typography.titleMedium,
                 )
-                Text(
-                    text = tier.getDescription(context),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.secondaryTextColor()
-                )
+//                Text(
+//                    text = tier.getDescription(context),
+//                    style = MaterialTheme.typography.bodySmall,
+//                    color = MaterialTheme.secondaryTextColor()
+//                )
             }
         }
     }

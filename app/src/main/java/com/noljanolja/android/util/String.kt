@@ -22,3 +22,12 @@ fun String.capitalizeFirstLetter(): String {
     val remainingChars = this.substring(1)
     return capitalizedFirstChar + remainingChars.lowercase()
 }
+
+fun String.capitalizeLetterAt(index: Int): String {
+    if (this.isEmpty()) {
+        return this
+    }
+    val replaceChar = this[index]
+    val capitalizedReplaceChar = replaceChar.uppercaseChar()
+    return substring(0, index) + capitalizedReplaceChar + this.substring(index + 1)
+}

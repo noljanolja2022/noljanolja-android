@@ -66,21 +66,21 @@ private fun MenuContent(
                 iconDrawable = R.drawable.ic_announce,
                 onClick = {},
             )
-            MenuItemSection(
-                title = stringResource(id = R.string.menu_play_video),
-                iconDrawable = R.drawable.ic_youtube,
-                onClick = {},
-            )
-            MenuItemSection(
-                title = stringResource(id = R.string.menu_join_and_play),
-                iconDrawable = R.drawable.ic_user_circle,
-                onClick = {},
-            )
-            MenuItemSection(
-                title = stringResource(id = R.string.menu_checkout_and_play),
-                iconDrawable = R.drawable.ic_calendar,
-                onClick = {},
-            )
+//            MenuItemSection(
+//                title = stringResource(id = R.string.menu_play_video),
+//                iconDrawable = R.drawable.ic_youtube,
+//                onClick = {},
+//            )
+//            MenuItemSection(
+//                title = stringResource(id = R.string.menu_join_and_play),
+//                iconDrawable = R.drawable.ic_user_circle,
+//                onClick = {},
+//            )
+//            MenuItemSection(
+//                title = stringResource(id = R.string.menu_checkout_and_play),
+//                iconDrawable = R.drawable.ic_calendar,
+//                onClick = {},
+//            )
             MenuItemSection(
                 title = stringResource(id = R.string.menu_point_details),
                 iconDrawable = R.drawable.ic_point,

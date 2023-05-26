@@ -1,7 +1,11 @@
 package com.noljanolja.android.common.navigation
 
 import android.net.Uri
-import androidx.navigation.*
+import androidx.navigation.NamedNavArgument
+import androidx.navigation.NavOptions
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import androidx.navigation.navOptions
 import com.noljanolja.android.features.home.wallet.model.UiLoyaltyPoint
 import com.noljanolja.core.utils.defaultJson
 import kotlinx.serialization.encodeToString
@@ -304,6 +308,24 @@ object NavigationDirections {
         override fun createDestination(): String {
             return "wallet_dashboard?month=$month&year=$year"
         }
+    }
+
+    object FAQ : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "faq"
+    }
+
+    object Licenses : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "licence"
+    }
+
+    object AboutUs : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "about_us"
     }
 
     data class TransactionDetail(

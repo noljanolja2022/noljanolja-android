@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -126,18 +128,22 @@ private fun UserInformation(
     goToRanking: () -> Unit,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().clip(
-            RoundedCornerShape(
-                bottomStart = 24.dp,
-                bottomEnd = 24.dp
-            )
-        ).background(MaterialTheme.colorScheme.background)
-            .padding(start = 16.dp, end = 16.dp, top = 50.dp, bottom = 24.dp)
+        modifier = Modifier.fillMaxWidth()
+            .clip(
+                RoundedCornerShape(
+                    bottomStart = 24.dp,
+                    bottomEnd = 24.dp
+                )
+            ).background(MaterialTheme.colorScheme.background)
+            .padding(start = 16.dp, end = 16.dp, top = 50.dp, bottom = 24.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         CircleAvatar(user = user, size = 64.dp)
         SizeBox(width = 16.dp)
         Column(
-            verticalArrangement = Arrangement.SpaceBetween
+            verticalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxHeight(),
+
         ) {
             Text(
                 text = user.name,
@@ -150,10 +156,10 @@ private fun UserInformation(
                 color = MaterialTheme.colorScheme.onBackground
             )
             memberInfo?.currentTier?.let { RankingRow(tier = it, onClick = goToRanking) }
-            Text(
-                text = stringResource(id = R.string.wallet_point_ranking, 12345.formatDigitsNumber()),
-                style = MaterialTheme.typography.labelSmall,
-            )
+//            Text(
+//                text = stringResource(id = R.string.wallet_point_ranking, 12345.formatDigitsNumber()),
+//                style = MaterialTheme.typography.labelSmall,
+//            )
         }
         Expanded()
         IconButton(
@@ -257,7 +263,7 @@ private fun RowScope.WalletInfoItem(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
             maxLines = 2,
-            modifier = Modifier.height(50.dp)
+            modifier = Modifier.heightIn(min = 50.dp)
         )
         Row {
             Text(
@@ -303,7 +309,7 @@ private fun UserAttendance() {
             )
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().background(Color.White)
             ) {
                 SizeBox(height = 17.dp)
                 Box(modifier = Modifier.padding(start = 24.dp, end = 12.dp).fillMaxWidth().wrapContentHeight()) {
@@ -326,7 +332,7 @@ private fun UserAttendance() {
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                "My attendance",
+                                stringResource(id = R.string.wallet_my_attendance),
                                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                                 modifier = Modifier.weight(1f)
                             )
@@ -364,9 +370,10 @@ private fun UserAttendance() {
                             containerColor = Color(0xFF4F6D00)
                         ),
                         shape = RoundedCornerShape(4.dp),
+                        contentPadding = PaddingValues(0.dp),
                     ) {
                         Text(
-                            "Attend now",
+                            stringResource(id = R.string.wallet_attend_now),
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.background

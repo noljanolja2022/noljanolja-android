@@ -7,17 +7,11 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-private val DarkColorScheme = darkColorScheme(
-    primary = PrimaryGreen,
-    secondary = Orange400,
-    tertiary = BlueMain,
-)
-
 private val LightColorScheme = lightColorScheme(
     primary = PrimaryGreen,
     onPrimary = NeutralDarkGrey,
     primaryContainer = LightGreen,
-    onPrimaryContainer = NeutralGrey,
+    onPrimaryContainer = NeutralDarkGrey,
 
     secondary = YellowMain,
     secondaryContainer = Yellow00,
@@ -36,10 +30,37 @@ private val LightColorScheme = lightColorScheme(
     outline = NeutralGrey,
     onBackground = NeutralDarkGrey,
     surface = NeutralLightGrey,
-    surfaceVariant = NeutralLight,
+    surfaceVariant = NeutralLightGrey,
     onSurfaceVariant = NeutralDeepGrey,
-
 )
+
+private val DarkColorScheme = darkColorScheme(
+    primary = PrimaryGreen,
+    onPrimary = Color(0xFF263500),
+    primaryContainer = LightGreen,
+    onPrimaryContainer = NeutralDarkGrey,
+
+    secondary = YellowMain,
+    secondaryContainer = Color(0xFF373100),
+    onSecondary = Color(0xFF504700),
+    onSecondaryContainer = Color(0xFFFDE40F),
+
+    tertiary = BlueMain,
+    tertiaryContainer = Blue00,
+    onTertiary = Color(0xFF263500),
+    onTertiaryContainer = Color(0xFFC0F44A),
+
+    error = Color(0xFFFF4F4F),
+    errorContainer = Color(0xFFFF4F4F),
+
+    background = NeutralDarkGrey,
+    outline = NeutralGrey,
+    onBackground = Color(0xFFE4E3DB),
+    surface = Color(0xFF45483C),
+    surfaceVariant = Color(0xFF45483C),
+    onSurfaceVariant = Color(0xFFC6C8B9),
+
+    )
 
 @Composable
 fun NoljanoljaTheme(
@@ -50,7 +71,7 @@ fun NoljanoljaTheme(
 ) {
     MaterialTheme(
         colorScheme = if (darkTheme) {
-            LightColorScheme
+            DarkColorScheme
         } else {
             LightColorScheme
         },
@@ -61,7 +82,7 @@ fun NoljanoljaTheme(
 
 @Composable
 fun MaterialTheme.colorBackground(darkTheme: Boolean = isSystemInDarkTheme()) = if (darkTheme) {
-    NeutralLight
+    NeutralDarkGrey
 } else {
     NeutralLight
 }
@@ -97,3 +118,24 @@ fun MaterialTheme.systemBlue(darkTheme: Boolean = isSystemInDarkTheme()) =
     } else {
         Color(0xFF007AFF)
     }
+
+@Composable
+fun MaterialTheme.colorMyChatText(darkTheme: Boolean = isSystemInDarkTheme()) =
+    NeutralDarkGrey
+
+@Composable
+fun MaterialTheme.colorMyChatTime(darkTheme: Boolean = isSystemInDarkTheme()) =
+    if (darkTheme) {
+        Color(0xFF007AFF)
+    } else {
+        Color(0xFF007AFF)
+    }
+
+@Composable
+fun MaterialTheme.green300() = Color(0xFF4F6D00)
+
+@Composable
+fun MaterialTheme.darkText() = NeutralDarkGrey
+
+@Composable
+fun MaterialTheme.lightText() = Color.LightGray
