@@ -134,9 +134,6 @@
     <!--    Menu-->
     <string name="menu_title">Menu</string>
     <string name="menu_announcement">Announcement</string>
-    <string name="menu_play_video">Let\'s play while watching the video</string>
-    <string name="menu_join_and_play">Let\'s join and play</string>
-    <string name="menu_checkout_and_play">Check out and play</string>
     <string name="menu_point_details">Point details</string>
     <string name="menu_exchange_money">Exchanging money</string>
 
@@ -294,7 +291,6 @@
     <string name="video_detail_duration_hours">%d hours ago</string>
     <string name="video_detail_duration_minutes">%d minutes ago</string>
     <string name="video_detail_duration_just_now">just now</string>
-    <string name="video_detail_require_google_title"></string>
     <string name="video_detail_require_google_description">You need login google and accept youtube scope to comment or like</string>
     <string name="video_detail_need_youtube_account">You don\'t have a youtube account yet.</string>
     <string name="video_detail_need_youtube_account_description">To comment on youtube you need an account. Click OK to see the tutorial on how to create youtube.</string>
