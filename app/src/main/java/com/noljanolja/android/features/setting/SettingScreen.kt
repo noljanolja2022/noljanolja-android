@@ -10,12 +10,16 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
+import com.noljanolja.android.features.auth.login.LoginEvent
 import com.noljanolja.android.ui.composable.*
 import com.noljanolja.android.ui.theme.withBold
 import org.koin.androidx.compose.getViewModel
@@ -38,6 +42,9 @@ private fun SettingContent(
     handleEvent: (SettingEvent) -> Unit,
 ) {
     val user = uiState.user
+    var isShowLogoutDialog by remember {
+        mutableStateOf(false)
+    }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -180,11 +187,28 @@ private fun SettingContent(
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth(),
                 onClick = {
-                    handleEvent(SettingEvent.Logout)
+                    isShowLogoutDialog = true
                 }
             )
             SizeBox(height = 24.dp)
         }
+    }
+
+    if (isShowLogoutDialog) {
+        WarningDialog(
+            title = null,
+            content = "Do you want to Log out",
+            dismissText = stringResource(R.string.common_cancel),
+            confirmText = stringResource(R.string.common_yes),
+            isWarning = isShowLogoutDialog,
+            onDismiss = {
+                isShowLogoutDialog = false
+            },
+            onConfirm = {
+                isShowLogoutDialog = false
+                handleEvent(SettingEvent.Logout)
+            }
+        )
     }
 }
 

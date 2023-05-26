@@ -118,16 +118,22 @@ fun WarningDialog(
             text = { Text(text = content) },
             dismissButton = {
                 TextButton(onClick = onDismiss) {
-                    Text(dismissText, color = MaterialTheme.colorScheme.onPrimary)
+                    Text(dismissText, color = MaterialTheme.colorScheme.primary)
                 }
             },
             confirmButton = {
                 TextButton(onClick = onConfirm) {
-                    Text(confirmText, color = MaterialTheme.colorScheme.onPrimary)
+                    Text(confirmText, color = MaterialTheme.colorScheme.primary)
                 }
             },
             onDismissRequest = {},
-            properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+            properties = DialogProperties(
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false
+            ),
+            containerColor = MaterialTheme.colorScheme.background,
+            titleContentColor = MaterialTheme.colorScheme.onBackground,
+            textContentColor = MaterialTheme.colorScheme.onBackground
         )
     }
 }

@@ -20,6 +20,7 @@
     <string name="common_ok">OK</string>
     <string name="common_cancel">Cancel</string>
     <string name="common_confirm">Confirm</string>
+    <string name="common_yes">Yes</string>
     <string name="common_skip">Skip</string>
     <string name="common_error_title">Error</string>
     <string name="common_error_description">An unexpected error has occurred. Please try again.</string>
