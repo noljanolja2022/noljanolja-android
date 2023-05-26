@@ -265,6 +265,8 @@
     <string name="wallet_attend_now">Attend now</string>
     <string name="wallet_my_attendance">My attendance</string>
 
+    <string name="setting_faq_title">FAQ</string>
+
     <string name="transaction_detail">Detail Transaction</string>
     <string name="transaction_detail_status">Status</string>
     <string name="transaction_detail_time">Time</string>

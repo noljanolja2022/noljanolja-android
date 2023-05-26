@@ -38,7 +38,7 @@ private val DarkColorScheme = darkColorScheme(
     primary = PrimaryGreen,
     onPrimary = Color(0xFF263500),
     primaryContainer = LightGreen,
-    onPrimaryContainer = Color(0xFFC0F44A),
+    onPrimaryContainer = NeutralGrey,
 
     secondary = YellowMain,
     secondaryContainer = Color(0xFF373100),
@@ -60,7 +60,7 @@ private val DarkColorScheme = darkColorScheme(
     surfaceVariant = Color(0xFF45483C),
     onSurfaceVariant = Color(0xFFC6C8B9),
 
-)
+    )
 
 @Composable
 fun NoljanoljaTheme(
@@ -131,3 +131,11 @@ fun MaterialTheme.colorMyChatTime(darkTheme: Boolean = isSystemInDarkTheme()) =
         Color(0xFF007AFF)
     }
 
+@Composable
+fun MaterialTheme.green300() = Color(0xFF4F6D00)
+
+@Composable
+fun MaterialTheme.darkText() = NeutralDarkGrey
+
+@Composable
+fun MaterialTheme.lightText() = Color.LightGray

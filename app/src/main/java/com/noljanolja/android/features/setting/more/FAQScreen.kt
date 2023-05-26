@@ -2,12 +2,21 @@ package com.noljanolja.android.features.setting.more
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -16,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -23,16 +33,23 @@ import androidx.compose.ui.unit.dp
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.SizeBox
+import com.noljanolja.android.ui.theme.darkText
+import com.noljanolja.android.ui.theme.green300
 import com.noljanolja.android.ui.theme.withBold
+import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun FAQScreen() {
-    FAQContent()
+fun FAQScreen(viewModel: AppInfoViewModel = getViewModel()) {
+    FAQContent(
+        handleEvent = viewModel::handleEvent
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun FAQContent() {
+private fun FAQContent(
+    handleEvent: (AppInfoEvent) -> Unit,
+) {
     var selectedIndex by remember {
         mutableStateOf(-1)
     }
@@ -57,14 +74,17 @@ private fun FAQContent() {
     Scaffold(topBar = {
         CommonTopAppBar(
             centeredTitle = true,
-            title = stringResource(id = R.string.video_title),
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            title = stringResource(id = R.string.setting_faq_title),
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.darkText(),
+            onBack = {
+                handleEvent(AppInfoEvent.Back)
+            }
         )
     }) { padding ->
         LazyColumn(
             modifier = Modifier
                 .padding(padding)
-                .padding(horizontal = 16.dp)
         ) {
             item {
                 SizeBox(height = 45.dp)
@@ -87,11 +107,30 @@ private fun FAQContent() {
 
 @Composable
 private fun QAItem(qa: QA, onClick: () -> Unit) {
-    Column(modifier = Modifier.clickable {
-        onClick.invoke()
-    }) {
-        Row(modifier = Modifier.padding(top = 35.dp, bottom = 12.dp)) {
-            Text(qa.question, style = MaterialTheme.typography.bodyLarge.withBold())
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .clickable {
+                onClick.invoke()
+            },
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 35.dp, bottom = 12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                qa.question, style = MaterialTheme
+                    .typography
+                    .bodyLarge
+                    .withBold()
+                    .copy(color = MaterialTheme.green300())
+            )
+            IconButton(onClick = onClick, modifier = Modifier.size(24.dp)) {
+                Icon(Icons.Default.ChevronRight, contentDescription = null)
+            }
         }
         Divider()
     }
@@ -105,9 +144,23 @@ private fun SelectedQAItem(qa: QA, onClick: () -> Unit) {
             onClick.invoke()
         }
         .background(Color(0xFFFFFAD0))
-        .padding(vertical = 30.dp)) {
-        Row {
-            Text(qa.question, style = MaterialTheme.typography.bodyLarge.withBold())
+        .padding(vertical = 30.dp, horizontal = 16.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                qa.question,
+                style = MaterialTheme
+                    .typography
+                    .bodyLarge
+                    .withBold()
+                    .copy(color = MaterialTheme.green300())
+            )
+            IconButton(onClick = onClick, modifier = Modifier.size(24.dp)) {
+                Icon(Icons.Default.KeyboardArrowDown, contentDescription = null)
+            }
         }
         SizeBox(height = 16.dp)
         Text(text = qa.answer, style = MaterialTheme.typography.bodyLarge)

@@ -49,6 +49,7 @@ import com.noljanolja.android.features.home.wallet.detail.TransactionDetailViewM
 import com.noljanolja.android.features.home.wallet.myranking.MyRankingViewModel
 import com.noljanolja.android.features.home.wallet.transaction.TransactionHistoryViewModel
 import com.noljanolja.android.features.setting.SettingViewModel
+import com.noljanolja.android.features.setting.more.AppInfoViewModel
 import com.noljanolja.android.features.splash.SplashViewModel
 import com.noljanolja.android.services.PermissionChecker
 import com.noljanolja.android.services.analytics.AppAnalytics
@@ -267,6 +268,9 @@ class MyApplication : Application() {
                 }
                 viewModel {
                     TransactionDetailViewModel()
+                }
+                viewModel {
+                    AppInfoViewModel()
                 }
             }
         )

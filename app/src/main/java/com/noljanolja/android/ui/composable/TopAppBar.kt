@@ -22,12 +22,13 @@ fun CommonTopAppBar(
     centeredTitle: Boolean = false,
     navigationIcon: ImageVector = Icons.Default.ArrowBack,
     containerColor: Color = MaterialTheme.colorScheme.background,
+    contentColor: Color = MaterialTheme.colorScheme.onBackground,
     onBack: (() -> Unit)? = null,
 
-) {
+    ) {
     val colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
         containerColor = containerColor,
-        titleContentColor = MaterialTheme.colorScheme.onBackground,
+        titleContentColor = contentColor,
         actionIconContentColor = MaterialTheme.colorScheme.onBackground,
         navigationIconContentColor = MaterialTheme.colorScheme.onBackground,
     )
@@ -44,7 +45,7 @@ fun CommonTopAppBar(
                         Icon(
                             navigationIcon,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onBackground,
+                            tint = contentColor,
                         )
                     }
                 }
