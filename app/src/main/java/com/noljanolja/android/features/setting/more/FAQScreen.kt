@@ -61,11 +61,19 @@ private fun FAQContent(
                     "Nolja Nolja is an entertainment app. We provide video, livestream service. you can earn by watching and buy products in the shop by the points received after watching. "
                 ),
                 QA(
-                    "What is Nolja Nolja?",
+                    "What are Benefits?",
                     "Nolja Nolja is an entertainment app. We provide video, livestream service. you can earn by watching and buy products in the shop by the points received after watching. "
                 ),
                 QA(
-                    "What is Nolja Nolja?",
+                    "How can I make purchase?",
+                    "Nolja Nolja is an entertainment app. We provide video, livestream service. you can earn by watching and buy products in the shop by the points received after watching. "
+                ),
+                QA(
+                    "How can I get more points?",
+                    "Nolja Nolja is an entertainment app. We provide video, livestream service. you can earn by watching and buy products in the shop by the points received after watching. "
+                ),
+                QA(
+                    "How to delete account?",
                     "Nolja Nolja is an entertainment app. We provide video, livestream service. you can earn by watching and buy products in the shop by the points received after watching. "
                 ),
             )
