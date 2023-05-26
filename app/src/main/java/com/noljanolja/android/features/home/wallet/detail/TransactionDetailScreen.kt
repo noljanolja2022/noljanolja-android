@@ -26,7 +26,7 @@ import com.noljanolja.android.ui.theme.colorBackground
 import com.noljanolja.android.ui.theme.systemGreen
 import com.noljanolja.android.ui.theme.systemRed100
 import com.noljanolja.android.ui.theme.withBold
-import com.noljanolja.android.util.formatTransactionFullTime
+import com.noljanolja.android.util.formatFullTime
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -112,7 +112,7 @@ private fun TransactionDetailContent(
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
-                    loyaltyPoint.createdAt.formatTransactionFullTime(),
+                    loyaltyPoint.createdAt.formatFullTime(),
                     style = MaterialTheme.typography.bodyMedium.withBold()
                 )
             }

@@ -18,7 +18,7 @@ import com.noljanolja.android.features.home.wallet.model.UiLoyaltyPoint
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.systemGreen
 import com.noljanolja.android.ui.theme.systemRed100
-import com.noljanolja.android.util.formatTransactionFullTime
+import com.noljanolja.android.util.formatFullTime
 
 @Composable
 fun TransactionRow(
@@ -47,7 +47,7 @@ fun TransactionRow(
             )
             SizeBox(height = 5.dp)
             Text(
-                transaction.createdAt.formatTransactionFullTime(),
+                transaction.createdAt.formatFullTime(),
                 style = TextStyle(
                     fontSize = 8.sp,
                     fontWeight = FontWeight.Medium,

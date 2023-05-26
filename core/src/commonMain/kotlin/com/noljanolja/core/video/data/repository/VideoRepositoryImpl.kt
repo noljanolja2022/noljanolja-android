@@ -29,7 +29,7 @@ internal class VideoRepositoryImpl(
             val videos =
                 videoApi.getTrendingVideo(GetTrendingVideosRequest(duration = duration)).data.orEmpty()
             emit(videos)
-            updateLocalVideos(videos)
+//            updateLocalVideos(videos)
         } catch (e: Throwable) {
             emit(emptyList())
         }
@@ -40,7 +40,7 @@ internal class VideoRepositoryImpl(
             val videos =
                 videoApi.getVideos(GetVideosRequest(isHighlight = isHighlight)).data.orEmpty()
             emit(videos)
-            updateLocalVideos(videos)
+//            updateLocalVideos(videos)
         } catch (e: Throwable) {
             emit(emptyList())
         }
@@ -51,7 +51,7 @@ internal class VideoRepositoryImpl(
             val videos =
                 videoApi.getWatchingVideos().data.orEmpty()
             emit(videos)
-            updateLocalVideos(videos)
+//            updateLocalVideos(videos)
         } catch (e: Throwable) {
             emit(emptyList())
         }
@@ -73,7 +73,8 @@ internal class VideoRepositoryImpl(
         youtubeToken: String,
     ): Result<Comment> {
         return try {
-            val response = videoApi.commentVideo(videoId, CommentVideoRequest(comment, "$youtubeToken"))
+            val response =
+                videoApi.commentVideo(videoId, CommentVideoRequest(comment, "$youtubeToken"))
             if (response.isSuccessful()) {
                 localVideoDataSource.upsertVideoComments(videoId, listOf(response.data!!))
                 localVideoDataSource.updateVideoCommentCount(videoId)

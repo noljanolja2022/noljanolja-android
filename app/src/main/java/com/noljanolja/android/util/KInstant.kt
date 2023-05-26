@@ -71,7 +71,7 @@ fun Instant.formatMonthAndYear(): String {
     return this@formatMonthAndYear.customFormatTime("MMMM yyyy").capitalizeFirstLetter()
 }
 
-fun Instant.formatTransactionFullTime(): String {
+fun Instant.formatFullTime(): String {
     return this.customFormatTime("HH:mm - MMMM dd, yyyy").capitalizeLetterAt(8)
 }
 
