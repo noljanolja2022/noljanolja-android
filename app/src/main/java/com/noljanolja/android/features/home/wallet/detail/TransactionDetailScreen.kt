@@ -48,6 +48,7 @@ private fun TransactionDetailContent(
         topBar = {
             CommonTopAppBar(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 title = stringResource(id = R.string.transaction_detail),
                 onBack = {
                     handleEvent(TransactionDetailEvent.Back)

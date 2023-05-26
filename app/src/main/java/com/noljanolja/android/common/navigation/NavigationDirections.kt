@@ -322,6 +322,12 @@ object NavigationDirections {
         override val destination: String = "licence"
     }
 
+    object AboutUs : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "about_us"
+    }
+
     data class TransactionDetail(
         val transaction: UiLoyaltyPoint = UiLoyaltyPoint(),
     ) : NavigationCommand {

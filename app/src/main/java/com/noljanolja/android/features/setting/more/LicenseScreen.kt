@@ -37,7 +37,7 @@ private fun LicenseContent(
             centeredTitle = true,
             title = stringResource(id = R.string.setting_license_title),
             containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.darkText(),
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             onBack = {
                 handleEvent(AppInfoEvent.Back)
             }
@@ -62,7 +62,7 @@ private fun LicenseContent(
             )
             SizeBox(height = 24.dp)
             PrimaryButton(text = "About us".uppercase(), modifier = Modifier.fillMaxWidth()) {
-
+                handleEvent(AppInfoEvent.AboutUs)
             }
         }
     }

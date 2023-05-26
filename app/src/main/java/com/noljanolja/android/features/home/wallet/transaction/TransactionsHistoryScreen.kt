@@ -61,6 +61,7 @@ private fun WalletTransactionContent(
         topBar = {
             CommonTopAppBar(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 title = stringResource(id = R.string.transaction_history),
                 onBack = {
                     handleEvent(TransactionsHistoryEvent.Back)

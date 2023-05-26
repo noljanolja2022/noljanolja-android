@@ -124,7 +124,8 @@ fun ChatOptionsContent(
                     onBack = {
                         handleEvent(ChatOptionsEvent.Back)
                     },
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             },
             uiState = uiState

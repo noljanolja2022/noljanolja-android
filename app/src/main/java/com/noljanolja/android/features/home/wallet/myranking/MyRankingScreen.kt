@@ -57,16 +57,24 @@ private fun MyRankingContent(
         CommonTopAppBar(
             title = stringResource(id = R.string.my_ranking_title),
             containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             centeredTitle = true,
             onBack = { handleEvent(MyRankingEvent.Back) }
         )
     }) {
         val memberInfo = uiState.data?.memberInfo ?: return@ScaffoldWithUiState
-        LazyColumn(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface)
+        ) {
             item {
                 Column(
-                    modifier = Modifier.fillMaxWidth().heightIn(min = 150.dp)
-                        .background(MaterialTheme.colorScheme.background).padding(horizontal = 16.dp, vertical = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 150.dp)
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -97,8 +105,10 @@ private fun MyRankingContent(
                         Text(
                             text = nextTier.getTitle(context),
                             style = MaterialTheme.typography.labelSmall,
-                            modifier = Modifier.clip(RoundedCornerShape(20.dp))
-                                .background(nextTier.getBackgroundColor()).padding(vertical = 5.dp, horizontal = 10.dp)
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(nextTier.getBackgroundColor())
+                                .padding(vertical = 5.dp, horizontal = 10.dp)
                         )
                     }
                 }
@@ -138,11 +148,17 @@ private fun RankingInfo(tier: MemberTier) {
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp))
-                .background(MaterialTheme.colorScheme.background).padding(vertical = 10.dp, horizontal = 36.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(10.dp))
+                .background(MaterialTheme.colorScheme.background)
+                .padding(vertical = 10.dp, horizontal = 36.dp),
         ) {
             Box(
-                modifier = Modifier.size(33.dp).clip(RoundedCornerShape(5.dp)).background(backgroundColor),
+                modifier = Modifier
+                    .size(33.dp)
+                    .clip(RoundedCornerShape(5.dp))
+                    .background(backgroundColor),
                 contentAlignment = Alignment.Center
             ) {
                 TierIcon(tier = tier, width = 24.dp)

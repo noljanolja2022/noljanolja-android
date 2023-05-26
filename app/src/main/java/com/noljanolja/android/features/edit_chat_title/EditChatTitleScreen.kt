@@ -43,6 +43,7 @@ private fun EditChatTitleContent(
         CommonTopAppBar(
             title = "Change nickname",
             containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             onBack = {
                 handleEvent(EditChatTitleEvent.Back)
             }

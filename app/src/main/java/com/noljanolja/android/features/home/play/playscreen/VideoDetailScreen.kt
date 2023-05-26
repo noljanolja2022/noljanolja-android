@@ -116,6 +116,7 @@ private fun VideoDetailContent(
         if (!isFullScreen) {
             CommonTopAppBar(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 title = stringResource(id = R.string.video_title),
                 onBack = {
                     handleEvent(VideoDetailEvent.Back)

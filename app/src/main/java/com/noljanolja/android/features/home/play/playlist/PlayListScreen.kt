@@ -77,11 +77,14 @@ private fun PlayListContent(
         CommonTopAppBar(
             centeredTitle = true,
             title = stringResource(id = R.string.video_title),
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
         )
     }) {
         val data = uiState.data ?: return@ScaffoldWithUiState
-        LazyColumn(modifier = Modifier.fillMaxSize().pullRefresh(state)) {
+        LazyColumn(modifier = Modifier
+            .fillMaxSize()
+            .pullRefresh(state)) {
             item {
                 HighlightVideos(
                     videos = data.todayVideos,
@@ -248,15 +251,19 @@ private fun LazyListScope.watchingVideos(
     }
     item {
         LazyRow(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(horizontal = 16.dp)
                 .wrapContentHeight()
         ) {
             items(items = videos, key = { "watching ${it.id}" }) { video ->
                 Column(
-                    modifier = Modifier.padding(end = 6.dp).width(142.dp).clickable {
-                        onClick(video)
-                    }
+                    modifier = Modifier
+                        .padding(end = 6.dp)
+                        .width(142.dp)
+                        .clickable {
+                            onClick(video)
+                        }
                 ) {
                     SubcomposeAsyncImage(
                         ImageRequest.Builder(context = LocalContext.current)

@@ -76,7 +76,7 @@ private fun FAQContent(
             centeredTitle = true,
             title = stringResource(id = R.string.setting_faq_title),
             containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.darkText(),
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             onBack = {
                 handleEvent(AppInfoEvent.Back)
             }

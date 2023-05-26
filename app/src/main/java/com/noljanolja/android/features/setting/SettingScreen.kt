@@ -46,7 +46,8 @@ private fun SettingContent(
                 onBack = {
                     handleEvent(SettingEvent.Back)
                 },
-                containerColor = MaterialTheme.colorScheme.primaryContainer
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             )
         },
     ) {

@@ -90,6 +90,7 @@ private fun WalletDashboardContent(
         topBar = {
             CommonTopAppBar(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 title = stringResource(id = R.string.wallet_dashboard_title),
                 onBack = {
                     handleEvent(WalletDashboardEvent.Back)
