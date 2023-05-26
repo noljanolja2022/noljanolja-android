@@ -127,7 +127,7 @@ private fun OTPChar(
     val maxChar = 1
     val code = if (char != Char.MIN_VALUE) char.toString() else ""
     val textColor =
-        if (isFillAll) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onBackground
+        if (isFillAll) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,

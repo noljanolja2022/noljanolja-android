@@ -99,7 +99,7 @@ fun TermsOfServiceScreenContent(
                             bottom = 5.dp
                         ),
                         style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onPrimary,
+                        color = MaterialTheme.colorScheme.onBackground,
                     )
 
                     TermRow(
@@ -142,7 +142,7 @@ fun TermsOfServiceScreenContent(
                             bottom = 5.dp
                         ),
                         style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onPrimary,
+                        color = MaterialTheme.colorScheme.onBackground,
                     )
 
                     TermRow(
@@ -257,12 +257,14 @@ private fun TermsHeading() {
             style = TextStyle(
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
-                lineHeight = 40.sp
+                lineHeight = 40.sp,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
             )
         )
         Text(
             text = stringResource(id = R.string.welcome_noljanolja),
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
         )
     }
 }
