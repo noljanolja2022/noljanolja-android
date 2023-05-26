@@ -143,6 +143,9 @@ private fun SettingContent(
                         style = MaterialTheme.typography.bodyLarge,
                     )
                 },
+                onClick = {
+                    handleEvent(SettingEvent.Licence)
+                }
             )
             Divider(modifier = Modifier.padding(bottom = 10.dp))
             PrimaryListTile(

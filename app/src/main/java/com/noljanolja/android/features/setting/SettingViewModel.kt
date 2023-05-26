@@ -48,6 +48,10 @@ class SettingViewModel : BaseViewModel() {
                 SettingEvent.FAQ -> {
                     navigationManager.navigate(NavigationDirections.FAQ)
                 }
+
+                SettingEvent.Licence -> {
+                    navigationManager.navigate(NavigationDirections.Licenses)
+                }
             }
         }
     }
