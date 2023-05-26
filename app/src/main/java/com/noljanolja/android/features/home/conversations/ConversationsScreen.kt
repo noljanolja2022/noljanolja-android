@@ -183,7 +183,9 @@ fun ConversationsScreenContent(
         onNewGroupChat = { handleEvent(ConversationsEvent.OpenContactPicker(it)) },
     )
     if (showNewChatTooltip) {
-        NewChatTooltip(iconPosition = newChatIconPositions, onDismissRequest = { showNewChatTooltip = false })
+        NewChatTooltip(
+            iconPosition = newChatIconPositions,
+            onDismissRequest = { showNewChatTooltip = false })
     }
 }
 
@@ -219,7 +221,7 @@ fun ConversationRow(
             ),
             type = MessageType.PLAINTEXT
         ).apply { isSeenByMe = true }.takeIf { conversation.type == ConversationType.GROUP }
-            ?: return
+        ?: return
         Box(
             modifier = Modifier
                 .padding(top = 6.dp)
@@ -244,7 +246,10 @@ fun ConversationRow(
             } ?: Icon(
                 Icons.Filled.Group,
                 contentDescription = null,
-                modifier = avatarModifier.background(MaterialTheme.colorScheme.primaryContainer).padding(8.dp)
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = avatarModifier
+                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .padding(8.dp)
             )
         }
 
@@ -375,7 +380,9 @@ private fun NewChatTooltip(
             size = 10.dp
         )
         Row(
-            modifier = Modifier.fillMaxWidth().padding(end = 30.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 30.dp),
             horizontalArrangement = Arrangement.End
         ) {
             Text(
