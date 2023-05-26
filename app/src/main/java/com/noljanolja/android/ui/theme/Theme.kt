@@ -11,7 +11,7 @@ private val LightColorScheme = lightColorScheme(
     primary = PrimaryGreen,
     onPrimary = NeutralDarkGrey,
     primaryContainer = LightGreen,
-    onPrimaryContainer = NeutralGrey,
+    onPrimaryContainer = NeutralDarkGrey,
 
     secondary = YellowMain,
     secondaryContainer = Yellow00,
