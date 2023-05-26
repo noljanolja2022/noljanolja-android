@@ -79,9 +79,15 @@ private fun SettingContent(
                 },
                 trailing = {
                     Row {
-                        Text(user?.name.orEmpty(), style = MaterialTheme.typography.bodyLarge.withBold())
+                        Text(
+                            user?.name.orEmpty(),
+                            style = MaterialTheme.typography.bodyLarge.withBold()
+                        )
                         SizeBox(width = 24.dp)
-                        Icon(painter = painterResource(id = R.drawable.ic_edit), contentDescription = null)
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_edit),
+                            contentDescription = null
+                        )
                     }
                 }
             )
@@ -148,6 +154,9 @@ private fun SettingContent(
                         style = MaterialTheme.typography.bodyLarge,
                     )
                 },
+                onClick = {
+                    handleEvent(SettingEvent.FAQ)
+                }
             )
             PrimaryListTile(
                 modifier = Modifier

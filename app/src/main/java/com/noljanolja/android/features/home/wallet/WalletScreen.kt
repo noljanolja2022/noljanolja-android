@@ -309,7 +309,7 @@ private fun UserAttendance() {
             )
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().background(Color.White)
             ) {
                 SizeBox(height = 17.dp)
                 Box(modifier = Modifier.padding(start = 24.dp, end = 12.dp).fillMaxWidth().wrapContentHeight()) {

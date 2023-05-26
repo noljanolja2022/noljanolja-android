@@ -44,6 +44,10 @@ class SettingViewModel : BaseViewModel() {
                         navigationManager.navigate(NavigationDirections.Auth)
                     }
                 }
+
+                SettingEvent.FAQ -> {
+                    navigationManager.navigate(NavigationDirections.FAQ)
+                }
             }
         }
     }

@@ -6,4 +6,5 @@ sealed interface SettingEvent {
     object ShowLicense : SettingEvent
     object TogglePushNotification : SettingEvent
     object Logout : SettingEvent
+    object FAQ : SettingEvent
 }

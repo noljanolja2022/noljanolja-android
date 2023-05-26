@@ -310,6 +310,12 @@ object NavigationDirections {
         }
     }
 
+    object FAQ : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "faq"
+    }
+
     data class TransactionDetail(
         val transaction: UiLoyaltyPoint = UiLoyaltyPoint(),
     ) : NavigationCommand {
