@@ -46,6 +46,7 @@ import com.noljanolja.android.features.home.chat.components.NewChatDialog
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.EmptyPage
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
+import com.noljanolja.android.ui.theme.darkText
 import com.noljanolja.android.util.findActivity
 import com.noljanolja.android.util.humanReadableDate
 import com.noljanolja.core.conversation.domain.model.Conversation
@@ -386,11 +387,13 @@ private fun NewChatTooltip(
             horizontalArrangement = Arrangement.End
         ) {
             Text(
-                text = "Please tap this button to start a new chat",
+                text = stringResource(id = R.string.chat_new_chat_tooltip),
                 modifier = Modifier
                     .clip(RoundedCornerShape(10.dp))
                     .background(MaterialTheme.colorScheme.primary)
                     .padding(vertical = 13.dp, horizontal = 10.dp),
+                color = MaterialTheme.darkText(),
+                style = MaterialTheme.typography.bodySmall
             )
         }
     }

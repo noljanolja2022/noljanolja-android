@@ -212,6 +212,7 @@
     <string name="chat_action_contacts">Contacts</string>
     <string name="chat_action_file">File</string>
     <string name="chat_action_voice_chat">Voice chat</string>
+    <string name="chat_new_chat_tooltip">Please tap this button to start a new chat</string>
 
     <!--    Failure-->
     <string name="invalid_email_format">Email is not valid</string>
