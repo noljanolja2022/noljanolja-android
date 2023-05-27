@@ -37,6 +37,7 @@ import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SearchBar
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.DeeperGrey
+import com.noljanolja.android.ui.theme.darkText
 import com.noljanolja.android.util.formatMonthAndYear
 import com.noljanolja.android.util.getMonth
 import com.noljanolja.android.util.getYear
@@ -71,7 +72,9 @@ private fun WalletTransactionContent(
         },
     ) {
         val uiData = uiState.data ?: return@ScaffoldWithUiState
-        Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)) {
             SearchBar(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
                 searchText = searchText,
@@ -79,7 +82,9 @@ private fun WalletTransactionContent(
                 background = MaterialTheme.colorScheme.surface
             )
             Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 TransactionFilterType.All.let {
@@ -93,7 +98,9 @@ private fun WalletTransactionContent(
                 }
                 TransactionFilterType.Received.let {
                     TransactionTypeButton(
-                        modifier = Modifier.padding(start = 15.dp).weight(1.3F),
+                        modifier = Modifier
+                            .padding(start = 15.dp)
+                            .weight(1.3F),
                         title = stringResource(id = it.titleId),
                         isSelect = uiState.data.filterType == it
                     ) {
@@ -102,7 +109,9 @@ private fun WalletTransactionContent(
                 }
                 TransactionFilterType.Spent.let {
                     TransactionTypeButton(
-                        modifier = Modifier.padding(start = 15.dp).weight(1.3F),
+                        modifier = Modifier
+                            .padding(start = 15.dp)
+                            .weight(1.3F),
                         title = stringResource(id = it.titleId),
                         isSelect = uiState.data.filterType == it
                     ) {
@@ -135,7 +144,9 @@ private fun WalletTransactionContent(
                             item {
                                 TransactionRow(
                                     transaction = value,
-                                    modifier = Modifier.fillMaxWidth().heightIn(min = 54.dp)
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .heightIn(min = 54.dp)
                                         .clickable {
                                             handleEvent(TransactionsHistoryEvent.Detail(value))
                                         }
@@ -178,7 +189,7 @@ private fun TransactionTypeButton(
         Text(
             text = title,
             style = MaterialTheme.typography.labelSmall,
-            color = if (isSelect) MaterialTheme.colorScheme.onBackground else DeeperGrey
+            color = if (isSelect) MaterialTheme.darkText() else DeeperGrey
         )
     }
 }

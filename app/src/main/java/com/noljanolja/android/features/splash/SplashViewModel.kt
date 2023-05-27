@@ -12,6 +12,7 @@ class SplashViewModel : BaseViewModel() {
     private val authSdk: AuthSdk by inject()
     private val _uiStateFlow = MutableStateFlow(SplashUiState(loading = true))
     val uiStateFlow = _uiStateFlow.asStateFlow()
+    var loadingTime = 0
 
     init {
         reload()
@@ -35,6 +36,7 @@ class SplashViewModel : BaseViewModel() {
 
     private fun reload() {
         launch {
+            loadingTime++
             _uiStateFlow.emit(SplashUiState(loading = true))
             authSdk.getIdToken(true)?.let {
                 coreManager.saveAuthToken(it)
@@ -49,8 +51,13 @@ class SplashViewModel : BaseViewModel() {
                             NavigationDirections.Home
                         )
                     }
-                } ?: _uiStateFlow.emit(SplashUiState(needReload = true))
-            } ?: _uiStateFlow.emit(SplashUiState(loading = false))
+                } ?: let {
+                    _uiStateFlow.emit(SplashUiState(needReload = true)).takeIf { loadingTime < 2 }
+                }
+            } ?: let {
+                coreManager.logout(requireSuccess = false)
+                _uiStateFlow.emit(SplashUiState(loading = false))
+            }
         }
     }
 }

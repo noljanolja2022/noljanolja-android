@@ -21,12 +21,14 @@ import androidx.compose.ui.unit.dp
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.theme.LightBlue
+import com.noljanolja.android.ui.theme.darkText
 import com.noljanolja.android.ui.theme.systemBlue
 
 @Composable
 fun TimeHeader(time: String, onClick: () -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .height(32.dp)
             .background(LightBlue)
             .padding(horizontal = 16.dp),
@@ -35,16 +37,18 @@ fun TimeHeader(time: String, onClick: () -> Unit) {
         Text(
             time,
             style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.darkText()
         )
         Expanded()
         Text(
             stringResource(id = R.string.wallet_history_dashboard),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.systemBlue(),
-            modifier = Modifier.clickable {
-                onClick.invoke()
-            }.padding(end = 5.dp)
+            modifier = Modifier
+                .clickable {
+                    onClick.invoke()
+                }
+                .padding(end = 5.dp)
         )
         IconButton(onClick = onClick, modifier = Modifier.size(24.dp)) {
             Icon(

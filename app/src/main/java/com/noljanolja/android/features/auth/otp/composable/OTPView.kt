@@ -172,11 +172,13 @@ private fun OTPChar(
 
         val underlineColor = when {
             isFillAll -> {
-                MaterialTheme.colorScheme.secondary
+                MaterialTheme.colorScheme.primary
             }
+
             !isFocused -> {
                 MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
             }
+
             else -> {
                 MaterialTheme.colorScheme.onSurface.copy(alpha = 0.87f)
             }

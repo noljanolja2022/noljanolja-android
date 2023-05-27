@@ -198,8 +198,8 @@ class CoreManager : KoinComponent {
         return userRepository.updateUser(name, photo)
     }
 
-    suspend fun logout(): Result<Boolean> {
-        return userRepository.logout()
+    suspend fun logout(requireSuccess: Boolean = true): Result<Boolean> {
+        return userRepository.logout(requireSuccess)
     }
 
     suspend fun getAuthToken(): String? = authRepository.getAuthToken().firstOrNull()

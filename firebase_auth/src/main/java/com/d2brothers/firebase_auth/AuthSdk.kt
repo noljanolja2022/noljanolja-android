@@ -8,6 +8,7 @@ import androidx.activity.result.ActivityResultLauncher
 import co.touchlab.kermit.Logger
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.delay
 import java.util.*
 
 class AuthSdk private constructor(private val context: Context) {
@@ -54,6 +55,7 @@ class AuthSdk private constructor(private val context: Context) {
         var token: String? = ""
         while (time < 3 && token.isNullOrBlank()) {
             Logger.e("TimeToken: $time")
+            if (time != 0) delay(1000) // should delay for some check
             token = auth.getIdToken(forceRefresh)
             time++
         }
