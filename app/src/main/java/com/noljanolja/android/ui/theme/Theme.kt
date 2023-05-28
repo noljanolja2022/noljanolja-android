@@ -135,7 +135,7 @@ fun MaterialTheme.colorMyChatTime(darkTheme: Boolean = isSystemInDarkTheme()) =
 fun MaterialTheme.green300() = Color(0xFF4F6D00)
 
 @Composable
-fun MaterialTheme.darkText() = NeutralDarkGrey
+fun MaterialTheme.darkContent() = NeutralDarkGrey
 
 @Composable
-fun MaterialTheme.lightText() = Color.LightGray
+fun MaterialTheme.lightContent() = Color.LightGray

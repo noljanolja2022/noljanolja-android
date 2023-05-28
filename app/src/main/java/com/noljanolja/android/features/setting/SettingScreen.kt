@@ -18,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.noljanolja.android.BuildConfig
 import com.noljanolja.android.R
 import com.noljanolja.android.features.auth.login.LoginEvent
 import com.noljanolja.android.ui.composable.*
@@ -174,7 +175,10 @@ private fun SettingContent(
                     .padding(vertical = 10.dp, horizontal = 16.dp),
                 title = {
                     Text(
-                        text = stringResource(id = R.string.setting_current_version, "7.15.0"),
+                        text = stringResource(
+                            id = R.string.setting_current_version,
+                            BuildConfig.VERSION_NAME
+                        ),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                 },

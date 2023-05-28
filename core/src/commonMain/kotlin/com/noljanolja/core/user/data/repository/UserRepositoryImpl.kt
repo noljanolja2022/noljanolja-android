@@ -32,6 +32,7 @@ internal class UserRepositoryImpl(
                 currentUser?.let { Result.success(it) }
                     ?: Result.failure(Throwable("Cannot get user"))
             }
+
             forceRefresh || currentUser == null -> {
                 userRemoteDataSource.getMe().also {
                     it.getOrNull()?.let {
@@ -42,6 +43,7 @@ internal class UserRepositoryImpl(
                     }
                 }
             }
+
             else -> Result.success(currentUser)
         }
     }
@@ -97,21 +99,25 @@ internal class UserRepositoryImpl(
     }
 
     // Logout
-    override suspend fun logout(): Result<Boolean> {
+    override suspend fun logout(requireSuccess: Boolean): Result<Boolean> {
         return pushTokens("").also {
-            if (it.isSuccess) {
-                authDataSource.logout().also {
-                    val provider =
-                        client.plugin(Auth).providers.filterIsInstance<BearerAuthProvider>()
-                            .firstOrNull()
-                    provider?.clearToken()
-                    authRepository.saveAuthToken("")
-                    localConversationDataSource.deleteAll()
-                    localConversationDataSource.deleteAllMessages()
-                    localUserDataSource.deleteAllParticipants()
-                    localUserDataSource.deleteAll()
-                }
+            if (it.isSuccess && requireSuccess) {
+                deleteAll()
             }
+        }
+    }
+
+    private suspend fun deleteAll() {
+        authDataSource.logout().also {
+            val provider =
+                client.plugin(Auth).providers.filterIsInstance<BearerAuthProvider>()
+                    .firstOrNull()
+            provider?.clearToken()
+            authRepository.saveAuthToken("")
+            localConversationDataSource.deleteAll()
+            localConversationDataSource.deleteAllMessages()
+            localUserDataSource.deleteAllParticipants()
+            localUserDataSource.deleteAll()
         }
     }
 

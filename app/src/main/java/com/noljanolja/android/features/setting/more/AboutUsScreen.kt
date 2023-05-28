@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.ui.theme.darkText
 import com.noljanolja.android.util.secondaryTextColor
 import org.koin.androidx.compose.getViewModel
 

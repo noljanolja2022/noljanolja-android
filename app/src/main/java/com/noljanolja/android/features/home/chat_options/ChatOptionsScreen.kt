@@ -431,6 +431,7 @@ private fun EditParticipantSheet(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background)
             .padding(28.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

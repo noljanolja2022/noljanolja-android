@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Divider
@@ -33,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.ui.theme.darkText
+import com.noljanolja.android.ui.theme.darkContent
 import com.noljanolja.android.ui.theme.green300
 import com.noljanolja.android.ui.theme.withBold
 import org.koin.androidx.compose.getViewModel
@@ -171,7 +170,11 @@ private fun SelectedQAItem(qa: QA, onClick: () -> Unit) {
             }
         }
         SizeBox(height = 16.dp)
-        Text(text = qa.answer, style = MaterialTheme.typography.bodyLarge)
+        Text(
+            text = qa.answer,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.darkContent()
+        )
     }
 }
 

@@ -31,5 +31,5 @@ internal interface UserRepository {
     ): Result<User>
 
     // logout
-    suspend fun logout(): Result<Boolean>
+    suspend fun logout(requireSuccess: Boolean): Result<Boolean>
 }

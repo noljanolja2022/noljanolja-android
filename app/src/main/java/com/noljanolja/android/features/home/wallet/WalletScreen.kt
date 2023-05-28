@@ -58,6 +58,7 @@ import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.Orange400
+import com.noljanolja.android.ui.theme.darkContent
 import com.noljanolja.android.util.formatDigitsNumber
 import com.noljanolja.android.util.getBackgroundColor
 import com.noljanolja.android.util.getTitle
@@ -85,7 +86,10 @@ private fun WalletContent(
         val user = uiState.data?.user ?: return@ScaffoldWithUiState
         val memberInfo = uiState.data.memberInfo ?: return@ScaffoldWithUiState
         LazyColumn(
-            modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.primary).pullRefresh(state)
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.primary)
+                .pullRefresh(state)
         ) {
             item {
                 UserInformation(
@@ -128,13 +132,15 @@ private fun UserInformation(
     goToRanking: () -> Unit,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .clip(
                 RoundedCornerShape(
                     bottomStart = 24.dp,
                     bottomEnd = 24.dp
                 )
-            ).background(MaterialTheme.colorScheme.background)
+            )
+            .background(MaterialTheme.colorScheme.background)
             .padding(start = 16.dp, end = 16.dp, top = 50.dp, bottom = 24.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -176,13 +182,18 @@ private fun UserPoint(
     point: String,
 ) {
     Card(
-        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth(),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 10.dp
         )
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().height(79.dp).clip(RoundedCornerShape(8.dp))
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(79.dp)
+                .clip(RoundedCornerShape(8.dp))
                 .background(MaterialTheme.colorScheme.background),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
@@ -220,7 +231,10 @@ private fun UserWalletInfo(
     onGoToTransactionHistory: () -> Unit,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().wrapContentHeight().padding(horizontal = 16.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(horizontal = 16.dp)
     ) {
         WalletInfoItem(
             R.drawable.img_coins,
@@ -252,8 +266,12 @@ private fun RowScope.WalletInfoItem(
     onClick: () -> Unit,
 ) {
     Column(
-        modifier = Modifier.weight(1F).wrapContentHeight().clip(RoundedCornerShape(13.dp))
-            .background(MaterialTheme.colorScheme.background).padding(horizontal = 8.dp, vertical = 15.dp),
+        modifier = Modifier
+            .weight(1F)
+            .wrapContentHeight()
+            .clip(RoundedCornerShape(13.dp))
+            .background(MaterialTheme.colorScheme.background)
+            .padding(horizontal = 8.dp, vertical = 15.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -289,7 +307,9 @@ private fun RowScope.WalletInfoItem(
         SizeBox(height = 14.dp)
         Button(
             onClick = onClick,
-            modifier = Modifier.fillMaxWidth().height(34.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(34.dp),
             shape = RoundedCornerShape(5.dp),
             elevation = ButtonDefaults.buttonElevation(),
             contentPadding = PaddingValues(0.dp)
@@ -309,10 +329,15 @@ private fun UserAttendance() {
             )
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().background(Color.White)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White)
             ) {
                 SizeBox(height = 17.dp)
-                Box(modifier = Modifier.padding(start = 24.dp, end = 12.dp).fillMaxWidth().wrapContentHeight()) {
+                Box(modifier = Modifier
+                    .padding(start = 24.dp, end = 12.dp)
+                    .fillMaxWidth()
+                    .wrapContentHeight()) {
                     Image(
                         painter = painterResource(id = R.drawable.attendance_banner),
                         contentDescription = null,
@@ -322,10 +347,14 @@ private fun UserAttendance() {
                 }
                 SizeBox(height = 18.dp)
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 18.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(modifier = Modifier.padding(end = 12.dp).weight(1F)) {
+                    Column(modifier = Modifier
+                        .padding(end = 12.dp)
+                        .weight(1F)) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
@@ -334,7 +363,8 @@ private fun UserAttendance() {
                             Text(
                                 stringResource(id = R.string.wallet_my_attendance),
                                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier.weight(1f),
+                                color = MaterialTheme.darkContent()
                             )
                             Row(verticalAlignment = Alignment.Bottom) {
                                 Text(
@@ -342,7 +372,7 @@ private fun UserAttendance() {
                                     style = TextStyle(
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.onBackground
+                                        color = MaterialTheme.darkContent()
                                     )
                                 )
                                 Text(
@@ -358,14 +388,18 @@ private fun UserAttendance() {
                         SizeBox(height = 4.dp)
                         LinearProgressIndicator(
                             progress = 12f / 30,
-                            modifier = Modifier.clip(RoundedCornerShape(6.dp)).height(6.dp),
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(6.dp))
+                                .height(6.dp),
                             color = MaterialTheme.colorScheme.secondary,
                             trackColor = MaterialTheme.colorScheme.surface,
                         )
                     }
                     Button(
                         onClick = { /*TODO*/ },
-                        modifier = Modifier.padding(start = 18.dp).weight(1F),
+                        modifier = Modifier
+                            .padding(start = 18.dp)
+                            .weight(1F),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF4F6D00)
                         ),
@@ -387,7 +421,10 @@ private fun UserAttendance() {
         Image(
             painterResource(id = R.drawable.ic_light_wallet),
             contentDescription = null,
-            modifier = Modifier.padding(start = 10.dp).size(88.dp).align(Alignment.TopStart)
+            modifier = Modifier
+                .padding(start = 10.dp)
+                .size(88.dp)
+                .align(Alignment.TopStart)
         )
     }
 }
@@ -417,7 +454,9 @@ private fun RankingRow(tier: MemberTier, onClick: () -> Unit) {
         }
     }
     Row(
-        modifier = Modifier.height(26.dp).clip(RoundedCornerShape(20.dp))
+        modifier = Modifier
+            .height(26.dp)
+            .clip(RoundedCornerShape(20.dp))
             .background(containerColor)
             .clickable { onClick() }
             .padding(horizontal = 12.dp),

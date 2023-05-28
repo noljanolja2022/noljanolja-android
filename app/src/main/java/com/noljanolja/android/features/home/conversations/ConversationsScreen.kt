@@ -46,6 +46,7 @@ import com.noljanolja.android.features.home.chat.components.NewChatDialog
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.EmptyPage
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
+import com.noljanolja.android.ui.theme.darkContent
 import com.noljanolja.android.util.findActivity
 import com.noljanolja.android.util.humanReadableDate
 import com.noljanolja.core.conversation.domain.model.Conversation
@@ -179,11 +180,12 @@ fun ConversationsScreenContent(
         visible = showNewChatDialog,
         onDismissRequest = { showNewChatDialog = false },
         onNewSingleChat = { handleEvent(ConversationsEvent.OpenContactPicker(it)) },
-        onNewSecretChat = { handleEvent(ConversationsEvent.OpenContactPicker(it)) },
         onNewGroupChat = { handleEvent(ConversationsEvent.OpenContactPicker(it)) },
     )
     if (showNewChatTooltip) {
-        NewChatTooltip(iconPosition = newChatIconPositions, onDismissRequest = { showNewChatTooltip = false })
+        NewChatTooltip(
+            iconPosition = newChatIconPositions,
+            onDismissRequest = { showNewChatTooltip = false })
     }
 }
 
@@ -219,7 +221,7 @@ fun ConversationRow(
             ),
             type = MessageType.PLAINTEXT
         ).apply { isSeenByMe = true }.takeIf { conversation.type == ConversationType.GROUP }
-            ?: return
+        ?: return
         Box(
             modifier = Modifier
                 .padding(top = 6.dp)
@@ -244,7 +246,10 @@ fun ConversationRow(
             } ?: Icon(
                 Icons.Filled.Group,
                 contentDescription = null,
-                modifier = avatarModifier.background(MaterialTheme.colorScheme.primaryContainer).padding(8.dp)
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = avatarModifier
+                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .padding(8.dp)
             )
         }
 
@@ -375,15 +380,19 @@ private fun NewChatTooltip(
             size = 10.dp
         )
         Row(
-            modifier = Modifier.fillMaxWidth().padding(end = 30.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 30.dp),
             horizontalArrangement = Arrangement.End
         ) {
             Text(
-                text = "Please tap this button to start a new chat",
+                text = stringResource(id = R.string.chat_new_chat_tooltip),
                 modifier = Modifier
                     .clip(RoundedCornerShape(10.dp))
                     .background(MaterialTheme.colorScheme.primary)
                     .padding(vertical = 13.dp, horizontal = 10.dp),
+                color = MaterialTheme.darkContent(),
+                style = MaterialTheme.typography.bodySmall
             )
         }
     }
