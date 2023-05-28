@@ -37,7 +37,7 @@ import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SearchBar
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.DeeperGrey
-import com.noljanolja.android.ui.theme.darkText
+import com.noljanolja.android.ui.theme.darkContent
 import com.noljanolja.android.util.formatMonthAndYear
 import com.noljanolja.android.util.getMonth
 import com.noljanolja.android.util.getYear
@@ -189,7 +189,7 @@ private fun TransactionTypeButton(
         Text(
             text = title,
             style = MaterialTheme.typography.labelSmall,
-            color = if (isSelect) MaterialTheme.darkText() else DeeperGrey
+            color = if (isSelect) MaterialTheme.darkContent() else DeeperGrey
         )
     }
 }

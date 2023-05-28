@@ -128,7 +128,6 @@
     <string name="setting_open_source_licence">Open source license</string>
     <string name="setting_faq">FAQ</string>
     <string name="setting_clear_cache_data">Clear cache data</string>
-    <string name="setting_open_source_license">Open source license</string>
     <string name="setting_current_version">Current version %s</string>
 
     <!--    Menu-->
@@ -296,4 +295,5 @@
     <string name="video_detail_need_youtube_account">You don\'t have a youtube account yet.</string>
     <string name="video_detail_need_youtube_account_description">To comment on youtube you need an account. Click OK to see the tutorial on how to create youtube.</string>
     <string name="video_detail_reward_point">%d point</string>
+    <string name="chat_edit_title_screen">Change nickname</string>
 </resources>

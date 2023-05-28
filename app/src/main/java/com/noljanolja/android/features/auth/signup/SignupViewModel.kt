@@ -11,7 +11,7 @@ import org.koin.core.component.inject
 
 class SignupViewModel : BaseAuthViewModel() {
     private val authSdk: AuthSdk by inject()
-    private val _uiStateFlow = MutableStateFlow<SignupUIState>(SignupUIState.Agreement(AGREEMENTS))
+    private val _uiStateFlow = MutableStateFlow<SignupUIState>(SignupUIState.Agreement(listOf()))
     val uiStateFlow = _uiStateFlow.asStateFlow()
 
     private val _confirmPasswordFlow = MutableStateFlow("")
@@ -39,25 +39,29 @@ class SignupViewModel : BaseAuthViewModel() {
                     }
                 }
             }
+
             is SignupEvent.Back -> {
                 launch {
                     when (_uiStateFlow.value) {
                         is SignupUIState.Agreement -> {
                             navigationManager.navigate(NavigationDirections.Auth)
                         }
+
                         is SignupUIState.SignupForm -> {
                             _uiStateFlow.emit(
                                 SignupUIState.Agreement(
-                                    AGREEMENTS.map { it.copy(checked = true) },
+                                    listOf()
                                 ),
                             )
                         }
+
                         SignupUIState.VerificationEmail -> {
                             _uiStateFlow.emit(SignupUIState.SignupForm())
                         }
                     }
                 }
             }
+
             is SignupEvent.ToggleAgreement -> {
                 launch {
                     val uiState = _uiStateFlow.value as? SignupUIState.Agreement ?: return@launch
@@ -75,6 +79,7 @@ class SignupViewModel : BaseAuthViewModel() {
                     _uiStateFlow.emit(newUIState)
                 }
             }
+
             SignupEvent.ToggleAllAgreement -> {
                 launch {
                     val uiState = _uiStateFlow.value as? SignupUIState.Agreement ?: return@launch
@@ -85,6 +90,7 @@ class SignupViewModel : BaseAuthViewModel() {
                     _uiStateFlow.emit(newUIState)
                 }
             }
+
             is SignupEvent.GoTermsOfService -> {
                 launch {
                     navigationManager.navigate(NavigationDirections.TermsOfService)
@@ -123,35 +129,6 @@ class SignupViewModel : BaseAuthViewModel() {
                 sendError(e)
             }
         }
-    }
-
-    companion object {
-        val AGREEMENTS = listOf(
-            SignupUIState.Agreement.Agreement(
-                id = "1",
-                true,
-                tag = "[Essential]",
-                description = "Subscribe Terms of Service",
-            ),
-            SignupUIState.Agreement.Agreement(
-                id = "2",
-                true,
-                tag = "[Essential]",
-                description = "You are 14 years old or older.",
-            ),
-            SignupUIState.Agreement.Agreement(
-                id = "3",
-                true,
-                tag = "[Essential]",
-                description = "Collection, Use and Third Parties of Personal Information consent to provide",
-            ),
-            SignupUIState.Agreement.Agreement(
-                id = "4",
-                true,
-                tag = "[Select]",
-                description = "Consent to receive marketing information",
-            ),
-        )
     }
 }
 

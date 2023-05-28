@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.theme.LightBlue
-import com.noljanolja.android.ui.theme.darkText
+import com.noljanolja.android.ui.theme.darkContent
 import com.noljanolja.android.ui.theme.systemBlue
 
 @Composable
@@ -37,7 +37,7 @@ fun TimeHeader(time: String, onClick: () -> Unit) {
         Text(
             time,
             style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.darkText()
+            color = MaterialTheme.darkContent()
         )
         Expanded()
         Text(

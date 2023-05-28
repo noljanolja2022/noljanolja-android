@@ -58,7 +58,7 @@ import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.Orange400
-import com.noljanolja.android.ui.theme.darkText
+import com.noljanolja.android.ui.theme.darkContent
 import com.noljanolja.android.util.formatDigitsNumber
 import com.noljanolja.android.util.getBackgroundColor
 import com.noljanolja.android.util.getTitle
@@ -364,7 +364,7 @@ private fun UserAttendance() {
                                 stringResource(id = R.string.wallet_my_attendance),
                                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                                 modifier = Modifier.weight(1f),
-                                color = MaterialTheme.darkText()
+                                color = MaterialTheme.darkContent()
                             )
                             Row(verticalAlignment = Alignment.Bottom) {
                                 Text(
@@ -372,7 +372,7 @@ private fun UserAttendance() {
                                     style = TextStyle(
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.darkText()
+                                        color = MaterialTheme.darkContent()
                                     )
                                 )
                                 Text(

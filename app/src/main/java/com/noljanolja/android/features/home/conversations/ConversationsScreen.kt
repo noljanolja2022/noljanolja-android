@@ -46,7 +46,7 @@ import com.noljanolja.android.features.home.chat.components.NewChatDialog
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.EmptyPage
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
-import com.noljanolja.android.ui.theme.darkText
+import com.noljanolja.android.ui.theme.darkContent
 import com.noljanolja.android.util.findActivity
 import com.noljanolja.android.util.humanReadableDate
 import com.noljanolja.core.conversation.domain.model.Conversation
@@ -180,7 +180,6 @@ fun ConversationsScreenContent(
         visible = showNewChatDialog,
         onDismissRequest = { showNewChatDialog = false },
         onNewSingleChat = { handleEvent(ConversationsEvent.OpenContactPicker(it)) },
-        onNewSecretChat = { handleEvent(ConversationsEvent.OpenContactPicker(it)) },
         onNewGroupChat = { handleEvent(ConversationsEvent.OpenContactPicker(it)) },
     )
     if (showNewChatTooltip) {
@@ -392,7 +391,7 @@ private fun NewChatTooltip(
                     .clip(RoundedCornerShape(10.dp))
                     .background(MaterialTheme.colorScheme.primary)
                     .padding(vertical = 13.dp, horizontal = 10.dp),
-                color = MaterialTheme.darkText(),
+                color = MaterialTheme.darkContent(),
                 style = MaterialTheme.typography.bodySmall
             )
         }

@@ -1,7 +1,6 @@
 package com.noljanolja.android.features.home.chat.components
 
 import android.view.Gravity
-import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -27,6 +26,7 @@ import androidx.compose.ui.window.DialogWindowProvider
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.CommonAppBarTitle
 import com.noljanolja.android.ui.composable.SizeBox
+import com.noljanolja.android.ui.theme.darkContent
 import com.noljanolja.core.conversation.domain.model.ConversationType
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,7 +35,6 @@ fun NewChatDialog(
     visible: Boolean = false,
     onDismissRequest: () -> Unit,
     onNewSingleChat: (String) -> Unit,
-    onNewSecretChat: (String) -> Unit,
     onNewGroupChat: (String) -> Unit,
 ) {
     if (visible) {
@@ -54,14 +53,21 @@ fun NewChatDialog(
                     .background(MaterialTheme.colorScheme.background)
             ) {
                 CenterAlignedTopAppBar(
-                    title = { CommonAppBarTitle(stringResource(id = R.string.contacts_start_chat)) },
+                    title = {
+                        CommonAppBarTitle(
+                            stringResource(id = R.string.contacts_start_chat),
+                            color = MaterialTheme.colorScheme.onBackground,
+                        )
+                    },
                     navigationIcon = {
                         IconButton(onClick = onDismissRequest) {
                             Icon(Icons.Default.Close, contentDescription = null)
                         }
                     },
                     colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background
+                        containerColor = MaterialTheme.colorScheme.background,
+                        titleContentColor = MaterialTheme.colorScheme.onBackground,
+                        navigationIconContentColor = MaterialTheme.colorScheme.onBackground,
                     )
                 )
                 Row(
@@ -116,9 +122,14 @@ private fun RowScope.NewChatItem(
         Icon(
             icon,
             contentDescription = null,
-            modifier = Modifier.size(size)
+            modifier = Modifier.size(size),
+            tint = MaterialTheme.darkContent()
         )
         SizeBox(width = 10.dp)
-        Text(title, style = MaterialTheme.typography.bodyMedium)
+        Text(
+            title,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.darkContent()
+        )
     }
 }

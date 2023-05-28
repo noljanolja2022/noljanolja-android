@@ -24,7 +24,7 @@ import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.ScaffoldWithLogo
 import com.noljanolja.android.ui.theme.NeutralLight
-import com.noljanolja.android.ui.theme.darkText
+import com.noljanolja.android.ui.theme.darkContent
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -55,7 +55,7 @@ fun SplashScreen(
                     .fillMaxWidth(),
                 text = stringResource(id = if (uiState.needReload) R.string.common_reload else R.string.splash_explore),
                 containerColor = NeutralLight,
-                contentColor = MaterialTheme.darkText()
+                contentColor = MaterialTheme.darkContent()
             ) {
                 viewModel.handleEvent(SplashEvent.Continue)
             }
@@ -73,7 +73,7 @@ fun SplashScreen(
             Text(
                 stringResource(id = R.string.splash_wait),
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.darkText()
+                color = MaterialTheme.darkContent()
             )
         }
     }
