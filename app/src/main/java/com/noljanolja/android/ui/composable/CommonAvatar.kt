@@ -47,7 +47,7 @@ fun CircleAvatar(
     val context = LocalContext.current
     SubcomposeAsyncImage(
         ImageRequest.Builder(context = context)
-            .data(user.avatar)
+            .data(user.getAvatarUrl())
             .placeholder(R.drawable.placeholder_avatar)
             .error(R.drawable.placeholder_avatar)
             .fallback(R.drawable.placeholder_avatar)

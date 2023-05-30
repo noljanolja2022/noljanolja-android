@@ -18,7 +18,7 @@ data class User(
     val updatedAt: Instant = Clock.System.now(),
     var isMe: Boolean = false,
 ) {
-    fun getAvatarUrl() = avatar
+    fun getAvatarUrl() = avatar?.replace("storage", "storage-download")
 }
 
 @Serializable
