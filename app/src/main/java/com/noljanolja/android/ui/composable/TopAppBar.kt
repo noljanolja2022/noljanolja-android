@@ -24,8 +24,7 @@ fun CommonTopAppBar(
     containerColor: Color = MaterialTheme.colorScheme.background,
     contentColor: Color = MaterialTheme.colorScheme.onBackground,
     onBack: (() -> Unit)? = null,
-
-    ) {
+) {
     val colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
         containerColor = containerColor,
         titleContentColor = contentColor,

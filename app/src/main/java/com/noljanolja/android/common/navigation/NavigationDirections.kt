@@ -344,6 +344,12 @@ object NavigationDirections {
         }
     }
 
+    object ChatSettings : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "chat_settings"
+    }
+
     // Back
     data class FinishWithResults(
         val data: Map<String, Any>,

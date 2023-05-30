@@ -8,4 +8,6 @@ sealed interface ConversationsEvent {
     data class OpenContactPicker(
         val type: String,
     ) : ConversationsEvent
+
+    object ChatSettings : ConversationsEvent
 }

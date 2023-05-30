@@ -18,6 +18,7 @@ import com.noljanolja.android.features.auth.login_or_signup.LoginOrSignupScreen
 import com.noljanolja.android.features.auth.otp.OTPScreen
 import com.noljanolja.android.features.auth.terms_of_service.TermsOfServiceScreen
 import com.noljanolja.android.features.auth.updateprofile.UpdateProfileScreen
+import com.noljanolja.android.features.chatsettings.ChatSettingsScreen
 import com.noljanolja.android.features.edit_chat_title.EditChatTitleScreen
 import com.noljanolja.android.features.home.chat.ChatScreen
 import com.noljanolja.android.features.home.chat_options.ChatOptionsScreen
@@ -197,6 +198,11 @@ private fun NavGraphBuilder.addChatGraph() {
         ) {
             val conversationId = (it.arguments?.getLong("conversationId") ?: 0)
             EditChatTitleScreen(conversationId = conversationId)
+        }
+    }
+    with(NavigationDirections.ChatSettings) {
+        composable(destination, arguments) {
+            ChatSettingsScreen()
         }
     }
 }

@@ -296,4 +296,7 @@
     <string name="video_detail_need_youtube_account_description">To comment on youtube you need an account. Click OK to see the tutorial on how to create youtube.</string>
     <string name="video_detail_reward_point">%d point</string>
     <string name="chat_edit_title_screen">Change nickname</string>
+
+    <string name="chat_settings_title">Chat Settings</string>
+    <string name="chat_settings_change_avatar">Change avatar</string>
 </resources>

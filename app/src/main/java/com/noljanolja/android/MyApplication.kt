@@ -31,6 +31,7 @@ import com.noljanolja.android.features.auth.otp.OTPViewModel
 import com.noljanolja.android.features.auth.signup.SignupViewModel
 import com.noljanolja.android.features.auth.terms_of_service.TermsOfServiceViewModel
 import com.noljanolja.android.features.auth.updateprofile.UpdateProfileViewModel
+import com.noljanolja.android.features.chatsettings.ChatSettingsViewModel
 import com.noljanolja.android.features.edit_chat_title.EditChatTitleViewModel
 import com.noljanolja.android.features.home.chat.ChatViewModel
 import com.noljanolja.android.features.home.chat_options.ChatOptionsViewModel
@@ -271,6 +272,9 @@ class MyApplication : Application() {
                 }
                 viewModel {
                     AppInfoViewModel()
+                }
+                viewModel {
+                    ChatSettingsViewModel()
                 }
             }
         )

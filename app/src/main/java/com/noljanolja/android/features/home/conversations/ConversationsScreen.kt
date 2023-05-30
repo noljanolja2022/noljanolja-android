@@ -136,7 +136,9 @@ fun ConversationsScreenContent(
                         )
                     }
 
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {
+                        handleEvent(ConversationsEvent.ChatSettings)
+                    }) {
                         Icon(
                             Icons.Outlined.Settings,
                             contentDescription = null,

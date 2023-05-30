@@ -1,6 +1,7 @@
 package com.noljanolja.android.ui.composable
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,8 +17,10 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.noljanolja.android.ui.theme.withMedium
 
 @Composable
 fun TwoButtonInRow(
@@ -86,6 +89,8 @@ fun RoundedButton(
     isEnable: Boolean = true,
     colors: ButtonColors = ButtonDefaults.buttonColors(),
     shape: Shape? = null,
+    contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
+    style: TextStyle = MaterialTheme.typography.bodyMedium,
     onClick: () -> Unit,
 ) {
     val buttonShape = shape ?: RoundedCornerShape(8.dp)
@@ -97,8 +102,9 @@ fun RoundedButton(
             .height(50.dp)
             .shadow(2.dp, shape = buttonShape),
         shape = buttonShape,
+        contentPadding = contentPadding
     ) {
-        Text(text)
+        Text(text, style = style)
     }
 }
 
@@ -141,6 +147,8 @@ fun PrimaryButton(
     disabledContainerColor: Color = MaterialTheme.colorScheme.surface,
     disabledContentColor: Color = MaterialTheme.colorScheme.outline,
     shape: Shape? = null,
+    contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
+    style: TextStyle = MaterialTheme.typography.bodyMedium.withMedium(),
     onClick: () -> Unit,
 ) {
     RoundedButton(
@@ -155,6 +163,8 @@ fun PrimaryButton(
             disabledContentColor = disabledContentColor,
         ),
         onClick = onClick,
+        style = style,
+        contentPadding = contentPadding
     )
 }
 

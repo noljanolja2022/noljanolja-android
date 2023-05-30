@@ -55,6 +55,7 @@ import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.features.home.wallet.composable.TierIcon
 import com.noljanolja.android.ui.composable.CircleAvatar
 import com.noljanolja.android.ui.composable.Expanded
+import com.noljanolja.android.ui.composable.RankingRow
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.Orange400
@@ -334,10 +335,12 @@ private fun UserAttendance() {
                     .background(Color.White)
             ) {
                 SizeBox(height = 17.dp)
-                Box(modifier = Modifier
-                    .padding(start = 24.dp, end = 12.dp)
-                    .fillMaxWidth()
-                    .wrapContentHeight()) {
+                Box(
+                    modifier = Modifier
+                        .padding(start = 24.dp, end = 12.dp)
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                ) {
                     Image(
                         painter = painterResource(id = R.drawable.attendance_banner),
                         contentDescription = null,
@@ -352,9 +355,11 @@ private fun UserAttendance() {
                         .padding(horizontal = 18.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(modifier = Modifier
-                        .padding(end = 12.dp)
-                        .weight(1F)) {
+                    Column(
+                        modifier = Modifier
+                            .padding(end = 12.dp)
+                            .weight(1F)
+                    ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
@@ -425,53 +430,6 @@ private fun UserAttendance() {
                 .padding(start = 10.dp)
                 .size(88.dp)
                 .align(Alignment.TopStart)
-        )
-    }
-}
-
-@Composable
-private fun RankingRow(tier: MemberTier, onClick: () -> Unit) {
-    val containerColor: Color = tier.getBackgroundColor()
-    val contentColor: Color
-    val context = LocalContext.current
-    with(MaterialTheme.colorScheme) {
-        when (tier) {
-            MemberTier.BRONZE -> {
-                contentColor = onBackground
-            }
-
-            MemberTier.SILVER -> {
-                contentColor = background
-            }
-
-            MemberTier.GOLD -> {
-                contentColor = background
-            }
-
-            MemberTier.PREMIUM -> {
-                contentColor = background
-            }
-        }
-    }
-    Row(
-        modifier = Modifier
-            .height(26.dp)
-            .clip(RoundedCornerShape(20.dp))
-            .background(containerColor)
-            .clickable { onClick() }
-            .padding(horizontal = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        TierIcon(tier = tier, width = 20.dp)
-        SizeBox(width = 4.dp)
-        Text(
-            text = tier.getTitle(context),
-            style = TextStyle(
-                fontSize = 11.sp,
-                lineHeight = 16.sp,
-                color = contentColor,
-                fontWeight = FontWeight.Medium
-            ),
         )
     }
 }

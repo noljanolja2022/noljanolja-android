@@ -40,6 +40,8 @@ actual val platformModule: Module = module {
     }
     single(named("Coil")) {
         OkHttpClient.Builder()
+//            .followRedirects(true)
+//            .followSslRedirects(true)
             .addInterceptor(get<Interceptor>(named("Coil")))
             .build()
     }
