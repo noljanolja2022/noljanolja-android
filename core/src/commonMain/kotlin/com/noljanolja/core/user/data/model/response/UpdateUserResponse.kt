@@ -13,3 +13,16 @@ data class UpdateUserResponse(
         val collectAndUsePersonalInfo: Boolean? = null,
     )
 }
+
+data class UpdateAvatarResponse(
+    override val code: Int,
+    override val message: String,
+    override val data: UpdateAvatarData,
+) : BaseResponse<UpdateAvatarResponse.UpdateAvatarData>() {
+    @kotlinx.serialization.Serializable
+    data class UpdateAvatarData(
+        val path: String = "",
+        val size: Long = 0,
+        val md5: String = ""
+    )
+}

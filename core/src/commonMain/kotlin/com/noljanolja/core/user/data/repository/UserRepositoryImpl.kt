@@ -92,16 +92,24 @@ internal class UserRepositoryImpl(
     // Update user
     override suspend fun updateUser(
         name: String,
-        photo: String?,
+        email: String?,
     ): Result<User> {
-        val result = userRemoteDataSource.updateUser(name, photo)
+        val result = userRemoteDataSource.updateUser(name, email)
         return handleResult(result)
+    }
+
+    override suspend fun updateAvatar(
+        name: String,
+        type: String,
+        files: ByteArray
+    ): Result<Boolean> {
+        return userRemoteDataSource.updateAvatar(name, type, files)
     }
 
     // Logout
     override suspend fun logout(requireSuccess: Boolean): Result<Boolean> {
         return pushTokens("").also {
-            if (it.isSuccess && requireSuccess) {
+            if (it.isSuccess || !requireSuccess) {
                 deleteAll()
             }
         }

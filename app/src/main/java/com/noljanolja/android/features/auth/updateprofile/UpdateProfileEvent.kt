@@ -4,14 +4,13 @@ import com.noljanolja.core.user.domain.model.Gender
 import kotlinx.datetime.LocalDate
 
 sealed interface UpdateProfileEvent {
-    data class UploadAvatar(
-        val avatar: ByteArray,
-    ) : UpdateProfileEvent
-
     data class Update(
         val name: String,
         val dob: LocalDate?,
         val gender: Gender?,
+        val fileName: String? = null,
+        val fileType: String = "",
+        val files: ByteArray? = null,
     ) : UpdateProfileEvent
 
     object DismissError : UpdateProfileEvent

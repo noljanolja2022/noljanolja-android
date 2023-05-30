@@ -55,11 +55,11 @@ class AuthSdk private constructor(private val context: Context) {
         var token: String? = ""
         while (time < 3 && token.isNullOrBlank()) {
             Logger.e("TimeToken: $time")
-            if (time != 0) delay(1000) // should delay for some check
+            if (time != 0) delay(500) // should delay for some check
             token = auth.getIdToken(forceRefresh)
             time++
         }
-        return token
+        return token.takeIf { !it.isNullOrBlank() }
     }
 
     suspend fun getExpiration(): Long? {

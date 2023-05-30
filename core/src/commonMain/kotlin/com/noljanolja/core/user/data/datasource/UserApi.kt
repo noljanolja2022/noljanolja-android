@@ -1,16 +1,24 @@
 package com.noljanolja.core.user.data.datasource
 
 import com.noljanolja.core.base.ResponseWithoutData
+import com.noljanolja.core.conversation.domain.model.MessageType
 import com.noljanolja.core.user.data.model.request.PushTokensRequest
 import com.noljanolja.core.user.data.model.request.SyncUserContactsRequest
+import com.noljanolja.core.user.data.model.request.UpdateAvatarRequest
 import com.noljanolja.core.user.data.model.request.UpdateUserRequest
 import com.noljanolja.core.user.data.model.response.GetMeResponse
 import com.noljanolja.core.user.data.model.response.GetUsersResponse
+import com.noljanolja.core.user.data.model.response.UpdateAvatarResponse
 import com.noljanolja.core.user.data.model.response.UpdateUserResponse
 import com.noljanolja.core.utils.Const.BASE_URL
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.client.request.forms.MultiPartFormDataContent
+import io.ktor.client.request.forms.formData
+import io.ktor.http.ContentType
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
 
 class UserApi(private val client: HttpClient) {
 
@@ -33,6 +41,27 @@ class UserApi(private val client: HttpClient) {
     suspend fun updateUser(request: UpdateUserRequest): UpdateUserResponse {
         return client.put("$BASE_URL/users/me") {
             setBody(request)
+        }.body()
+    }
+
+    suspend fun updateAvatar(request: UpdateAvatarRequest): UpdateAvatarResponse {
+        return client.post("$BASE_URL/users/me") {
+            header(HttpHeaders.Accept, ContentType.MultiPart.FormData)
+            setBody(
+                MultiPartFormDataContent(
+                    formData {
+                        append("field", "AVATAR")
+                        append("files", request.files, Headers.build {
+                            append(HttpHeaders.ContentType, request.type)
+                            append(HttpHeaders.ContentLength, request.files.size.toLong())
+                            append(
+                                HttpHeaders.ContentDisposition,
+                                "filename=${request.name}"
+                            )
+                        })
+                    },
+                )
+            )
         }.body()
     }
 

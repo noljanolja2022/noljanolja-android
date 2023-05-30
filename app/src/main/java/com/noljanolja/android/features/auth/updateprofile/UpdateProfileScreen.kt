@@ -31,6 +31,7 @@ import com.noljanolja.android.features.auth.updateprofile.components.NameInput
 import com.noljanolja.android.ui.composable.ErrorDialog
 import com.noljanolja.android.ui.composable.LoadingDialog
 import com.noljanolja.android.ui.composable.PrimaryButton
+import com.noljanolja.android.util.loadFileInfo
 import com.noljanolja.core.user.domain.model.Gender
 import kotlinx.datetime.toKotlinLocalDate
 import org.koin.androidx.compose.getViewModel
@@ -86,13 +87,13 @@ fun UpdateProfileContent(
 //        }
 //    }
 
-    LaunchedEffect(avatar) {
-        avatar?.let {
-            context.contentResolver.openInputStream(it)?.let {
-                handleEvent(UpdateProfileEvent.UploadAvatar(it.readBytes()))
-            }
-        }
-    }
+//    LaunchedEffect(avatar) {
+//        avatar?.let {
+//            context.contentResolver.openInputStream(it)?.let {
+//                handleEvent(UpdateProfileEvent.UploadAvatar(it.readBytes()))
+//            }
+//        }
+//    }
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Scaffold(
@@ -191,11 +192,15 @@ fun UpdateProfileContent(
                 Spacer(modifier = Modifier.height(54.dp))
                 PrimaryButton(
                     onClick = {
+                        val fileInfo = avatar?.let { context.loadFileInfo(it) }
                         handleEvent(
                             UpdateProfileEvent.Update(
                                 name.trim(),
                                 dob?.toKotlinLocalDate(),
-                                gender?.let { Gender.valueOf(it) }
+                                gender?.let { Gender.valueOf(it) },
+                                files = fileInfo?.contents,
+                                fileName = fileInfo?.name,
+                                fileType = fileInfo?.contentType.orEmpty()
                             )
                         )
                     },

@@ -5,6 +5,7 @@ CREATE TABLE `user` (
   email TEXT NOT NULL,
   gender TEXT,
   dob TEXT,
+  avatar TEXT,
   isMe INTEGER AS Boolean NOT NULL DEFAULT 0,
   created_at INTEGER NOT NULL DEFAULT 0,
   updated_at INTEGER NOT NULL DEFAULT 0
@@ -39,6 +40,7 @@ upsert {
       email = :email,
       gender = :gender,
       dob = :dob,
+      avatar= :avatar,
       created_at = :created_at,
       updated_at = :updated_at
   WHERE id = :id;
@@ -50,6 +52,7 @@ upsert {
     email,
     gender,
     dob,
+    avatar,
     isMe,
     created_at,
     updated_at
@@ -61,6 +64,7 @@ upsert {
     :email,
     :gender,
     :dob,
+    :avatar,
     :isMe,
     :created_at,
     :updated_at

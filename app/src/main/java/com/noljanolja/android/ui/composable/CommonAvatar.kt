@@ -1,5 +1,7 @@
 package com.noljanolja.android.ui.composable
 
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -45,7 +47,7 @@ fun CircleAvatar(
     val context = LocalContext.current
     SubcomposeAsyncImage(
         ImageRequest.Builder(context = context)
-            .data(user.getAvatarUrl())
+            .data(user.avatar)
             .placeholder(R.drawable.placeholder_avatar)
             .error(R.drawable.placeholder_avatar)
             .fallback(R.drawable.placeholder_avatar)

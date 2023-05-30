@@ -1,9 +1,11 @@
 package com.noljanolja.core.user.data.datasource
 
+import co.touchlab.kermit.Logger
 import com.noljanolja.core.contacts.domain.model.Contact
 import com.noljanolja.core.user.data.model.request.DeviceType
 import com.noljanolja.core.user.data.model.request.PushTokensRequest
 import com.noljanolja.core.user.data.model.request.SyncUserContactsRequest
+import com.noljanolja.core.user.data.model.request.UpdateAvatarRequest
 import com.noljanolja.core.user.data.model.request.UpdateUserRequest
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.utils.toDomainUser
@@ -14,6 +16,8 @@ interface UserRemoteDataSource {
     suspend fun pushToken(userId: String, token: String): Result<Boolean>
 
     suspend fun updateUser(name: String?, email: String?): Result<Boolean>
+
+    suspend fun updateAvatar(field: String, type: String, files: ByteArray): Result<Boolean>
 
     suspend fun syncUserContacts(contacts: List<Contact>): Result<List<User>>
 
@@ -74,6 +78,30 @@ class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSou
                 UpdateUserRequest(
                     name = name,
                     email = email
+                )
+            )
+            if (response.isSuccessful()) {
+                Result.success(true)
+            } else {
+                Result.failure(Throwable(response.message))
+            }
+        } catch (e: Throwable) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun updateAvatar(
+        name: String,
+        type: String,
+        files: ByteArray
+    ): Result<Boolean> {
+        return try {
+            Logger.d("Update avatar: $files")
+            val response = userApi.updateAvatar(
+                UpdateAvatarRequest(
+                    name = name,
+                    type = type,
+                    files = files
                 )
             )
             if (response.isSuccessful()) {

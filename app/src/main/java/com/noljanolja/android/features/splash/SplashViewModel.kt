@@ -51,8 +51,6 @@ class SplashViewModel : BaseViewModel() {
                             NavigationDirections.Home
                         )
                     }
-                } ?: let {
-                    _uiStateFlow.emit(SplashUiState(needReload = true)).takeIf { loadingTime < 2 }
                 }
             } ?: let {
                 coreManager.logout(requireSuccess = false)

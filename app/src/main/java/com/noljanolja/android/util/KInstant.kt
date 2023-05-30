@@ -5,6 +5,7 @@ import com.noljanolja.android.R
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
@@ -96,3 +97,8 @@ private fun createInstantFromMonthYear(month: Int, year: Int): Instant {
 
 fun formatMonthYear(month: Int, year: Int): String =
     createInstantFromMonthYear(month, year).customFormatTime("MMMM yyyy").capitalizeFirstLetter()
+
+fun LocalDate.formatTime(format: String): String {
+    return DateTimeFormatter.ofPattern(format)
+        .format(this.toJavaLocalDate())
+}

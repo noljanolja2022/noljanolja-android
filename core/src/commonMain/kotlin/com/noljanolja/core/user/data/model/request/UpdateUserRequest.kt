@@ -15,3 +15,9 @@ data class UpdateUserRequest(
         val collectAndUsePersonalInfo: Boolean? = null,
     )
 }
+
+data class UpdateAvatarRequest(
+    val name: String,
+    val type: String,
+    val files: ByteArray,
+)

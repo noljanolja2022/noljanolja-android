@@ -27,8 +27,14 @@ internal interface UserRepository {
 
     suspend fun updateUser(
         name: String,
-        photo: String?,
+        email: String?,
     ): Result<User>
+
+    suspend fun updateAvatar(
+        name: String,
+        type: String,
+        files: ByteArray,
+    ): Result<Boolean>
 
     // logout
     suspend fun logout(requireSuccess: Boolean): Result<Boolean>
