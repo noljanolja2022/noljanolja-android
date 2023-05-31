@@ -31,7 +31,9 @@ actual val platformModule: Module = module {
                 request.newBuilder()
                     .apply {
                         runBlocking { authRepo.getToken() }?.let {
-                            header("Authorization", "Bearer $it")
+                            if (!request.url.toString().contains("googleapis")) {
+                                header("Authorization", "Bearer $it")
+                            }
                         }
                     }
                     .build()
@@ -40,8 +42,6 @@ actual val platformModule: Module = module {
     }
     single(named("Coil")) {
         OkHttpClient.Builder()
-//            .followRedirects(true)
-//            .followSslRedirects(true)
             .addInterceptor(get<Interceptor>(named("Coil")))
             .build()
     }
