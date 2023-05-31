@@ -14,6 +14,7 @@ data class UpdateUserResponse(
     )
 }
 
+@kotlinx.serialization.Serializable
 data class UpdateAvatarResponse(
     override val code: Int,
     override val message: String,
@@ -23,6 +24,6 @@ data class UpdateAvatarResponse(
     data class UpdateAvatarData(
         val path: String = "",
         val size: Long = 0,
-        val md5: String = ""
+        val md5: String = "",
     )
 }

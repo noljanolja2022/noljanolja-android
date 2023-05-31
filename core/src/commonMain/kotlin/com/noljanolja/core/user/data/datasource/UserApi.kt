@@ -1,7 +1,6 @@
 package com.noljanolja.core.user.data.datasource
 
 import com.noljanolja.core.base.ResponseWithoutData
-import com.noljanolja.core.conversation.domain.model.MessageType
 import com.noljanolja.core.user.data.model.request.PushTokensRequest
 import com.noljanolja.core.user.data.model.request.SyncUserContactsRequest
 import com.noljanolja.core.user.data.model.request.UpdateAvatarRequest
@@ -51,14 +50,18 @@ class UserApi(private val client: HttpClient) {
                 MultiPartFormDataContent(
                     formData {
                         append("field", "AVATAR")
-                        append("files", request.files, Headers.build {
-                            append(HttpHeaders.ContentType, request.type)
-                            append(HttpHeaders.ContentLength, request.files.size.toLong())
-                            append(
-                                HttpHeaders.ContentDisposition,
-                                "filename=${request.name}"
-                            )
-                        })
+                        append(
+                            "files",
+                            request.files,
+                            Headers.build {
+                                append(HttpHeaders.ContentType, request.type)
+                                append(HttpHeaders.ContentLength, request.files.size.toLong())
+                                append(
+                                    HttpHeaders.ContentDisposition,
+                                    "filename=${request.name}"
+                                )
+                            }
+                        )
                     },
                 )
             )
