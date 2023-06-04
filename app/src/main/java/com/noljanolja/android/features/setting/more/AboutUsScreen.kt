@@ -23,7 +23,7 @@ import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun AboutUsScreen(
-    viewModel: AppInfoViewModel = getViewModel()
+    viewModel: AppInfoViewModel = getViewModel(),
 ) {
     val items by remember {
         mutableStateOf(
@@ -31,14 +31,16 @@ fun AboutUsScreen(
                 AboutUsItem("Company Name", "PNP&YY Co., Ltd."),
                 AboutUsItem("Representative", "Seungdae Park"),
                 AboutUsItem(
-                    "Address", "Room 809, Ace Gasan Tower, 121 Digital-ro, Geumcheon-gu, Seoul"
+                    "Address",
+                    "Room 809, Ace Gasan Tower, 121 Digital-ro, Geumcheon-gu, Seoul"
                 ),
                 AboutUsItem("Phone call", "070-7733-1193")
             )
         )
     }
     AboutUsContent(
-        aboutUsItems = items, handleEvent = viewModel::handleEvent
+        aboutUsItems = items,
+        handleEvent = viewModel::handleEvent
     )
 }
 
@@ -49,13 +51,15 @@ private fun AboutUsContent(
     handleEvent: (AppInfoEvent) -> Unit,
 ) {
     Scaffold(topBar = {
-        CommonTopAppBar(centeredTitle = true,
+        CommonTopAppBar(
+            centeredTitle = true,
             title = stringResource(id = R.string.setting_about_us_title),
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             onBack = {
                 handleEvent(AppInfoEvent.Back)
-            })
+            }
+        )
     }) { padding ->
         LazyColumn(
             modifier = Modifier

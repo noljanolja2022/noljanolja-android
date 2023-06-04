@@ -140,6 +140,14 @@ dependencies {
     // chart
     implementation("com.patrykandpatrick.vico:core:1.6.5")
     implementation("com.patrykandpatrick.vico:compose-m3:1.6.5")
+
+    // Qr
+    implementation("com.google.zxing:core:3.4.1")
+    implementation("com.google.mlkit:barcode-scanning:17.1.0")
+    // CameraX
+    implementation("androidx.camera:camera-camera2:1.2.3")
+    implementation("androidx.camera:camera-lifecycle:1.2.3")
+    implementation("androidx.camera:camera-view:1.3.0-alpha07")
 }
 
 kapt {

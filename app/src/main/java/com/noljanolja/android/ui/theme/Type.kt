@@ -82,4 +82,6 @@ val Typography = Typography(
 
 fun TextStyle.withBold() = this.copy(fontWeight = FontWeight.Bold)
 fun TextStyle.withMedium() = this.copy(fontWeight = FontWeight.Medium)
+fun TextStyle.withSemiBold() = this.copy(fontWeight = FontWeight.SemiBold)
+
 fun TextStyle.withRegular() = this.copy(fontWeight = FontWeight.Normal)

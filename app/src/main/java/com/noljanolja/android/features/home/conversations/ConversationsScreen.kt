@@ -99,7 +99,7 @@ fun ConversationsScreenContent(
             CommonTopAppBar(
                 title = stringResource(R.string.chats_title),
                 actions = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = { handleEvent(ConversationsEvent.AddFriend) }) {
                         Icon(
                             Icons.Filled.PersonAdd,
                             contentDescription = null,
@@ -187,7 +187,8 @@ fun ConversationsScreenContent(
     if (showNewChatTooltip) {
         NewChatTooltip(
             iconPosition = newChatIconPositions,
-            onDismissRequest = { showNewChatTooltip = false })
+            onDismissRequest = { showNewChatTooltip = false }
+        )
     }
 }
 
@@ -223,7 +224,7 @@ fun ConversationRow(
             ),
             type = MessageType.PLAINTEXT
         ).apply { isSeenByMe = true }.takeIf { conversation.type == ConversationType.GROUP }
-        ?: return
+            ?: return
         Box(
             modifier = Modifier
                 .padding(top = 6.dp)

@@ -59,8 +59,7 @@ private val DarkColorScheme = darkColorScheme(
     surface = Color(0xFF45483C),
     surfaceVariant = Color(0xFF45483C),
     onSurfaceVariant = Color(0xFFC6C8B9),
-
-    )
+)
 
 @Composable
 fun NoljanoljaTheme(
@@ -139,3 +138,11 @@ fun MaterialTheme.darkContent() = NeutralDarkGrey
 
 @Composable
 fun MaterialTheme.lightContent() = Color.LightGray
+
+@Composable
+fun MaterialTheme.disableBackgroundColor(darkTheme: Boolean = isSystemInDarkTheme()) =
+    if (darkTheme) {
+        NeutralDeepGrey
+    } else {
+        NeutralLightGrey
+    }

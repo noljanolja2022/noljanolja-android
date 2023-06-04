@@ -23,6 +23,13 @@ class PermissionChecker(
         ) == PackageManager.PERMISSION_GRANTED
     }
 
+    fun canOpenCamera(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
     companion object {
         val IMAGE_PERMISSION = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             Manifest.permission.READ_EXTERNAL_STORAGE

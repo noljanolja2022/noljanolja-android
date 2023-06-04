@@ -1,6 +1,8 @@
 package com.noljanolja.core.user.data.datasource
 
 import com.noljanolja.core.base.ResponseWithoutData
+import com.noljanolja.core.user.data.model.request.FindContactRequest
+import com.noljanolja.core.user.data.model.request.InviteFriendRequest
 import com.noljanolja.core.user.data.model.request.PushTokensRequest
 import com.noljanolja.core.user.data.model.request.SyncUserContactsRequest
 import com.noljanolja.core.user.data.model.request.UpdateAvatarRequest
@@ -72,7 +74,22 @@ class UserApi(private val client: HttpClient) {
         return client.get("$BASE_URL/users/me/contacts?page=$page").body()
     }
 
-    suspend fun findContacts(text: String): GetUsersResponse {
-        return client.get("$BASE_URL/users?phoneNumber=$text").body()
+    suspend fun findContacts(request: FindContactRequest): GetUsersResponse {
+        return client.get("$BASE_URL/users") {
+            url {
+                request.friendId?.let {
+                    parameters.append("friendId", it)
+                }
+                request.phoneNumber?.let {
+                    parameters.append("phoneNumber", it)
+                }
+            }
+        }.body()
+    }
+
+    suspend fun inviteFriend(request: InviteFriendRequest): ResponseWithoutData {
+        return client.post("$BASE_URL/users/me/contacts/invite") {
+            setBody(request)
+        }.body()
     }
 }

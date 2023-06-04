@@ -20,6 +20,7 @@ class ChatSettingsViewModel : BaseViewModel() {
 
     init {
         launch {
+            _uiStateFlow.emit(UiState(loading = true))
             val user = coreManager.getCurrentUser().getOrDefault(User())
             val memberInfo = coreManager.getMemberInfo().getOrDefault(MemberInfo())
             _uiStateFlow.emit(

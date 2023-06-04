@@ -13,7 +13,10 @@ import coil.Coil
 import coil.memory.MemoryCache
 import com.noljanolja.android.BuildConfig
 import com.noljanolja.android.R
+import com.noljanolja.android.common.error.PhoneNotAvailable
+import com.noljanolja.android.common.error.QrNotValid
 import com.noljanolja.android.common.error.ValidEmailFailed
+import com.noljanolja.android.common.error.ValidPhoneFailed
 import com.noljanolja.core.file.model.FileInfo
 import okio.Path.Companion.toPath
 import java.io.File
@@ -105,5 +108,14 @@ fun Context.openUrl(url: String) {
     } else {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://$url"))
         startActivity(intent)
+    }
+}
+
+fun Context.getErrorDescription(error: Throwable): String {
+    return when (error) {
+        ValidPhoneFailed -> getString(R.string.error_phone_invalid)
+        PhoneNotAvailable -> getString(R.string.error_phone_is_not_available)
+        QrNotValid -> getString(R.string.error_qr_not_valid)
+        else -> error.message?.takeIf { it.isNotBlank() } ?: getString(R.string.error_unexpected)
     }
 }

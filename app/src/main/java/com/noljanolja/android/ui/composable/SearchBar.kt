@@ -26,7 +26,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -39,7 +38,8 @@ fun SearchBar(
     onSearchButton: () -> Unit = {},
 ) {
     Row(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
             .widthIn(36.dp, 50.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(background)
@@ -52,7 +52,9 @@ fun SearchBar(
             tint = MaterialTheme.colorScheme.outline,
         )
         Box(
-            modifier = Modifier.weight(1f).padding(start = 12.dp),
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 12.dp),
             contentAlignment = Alignment.CenterStart,
         ) {
             BasicTextField(
@@ -79,21 +81,12 @@ fun SearchBar(
             Icon(
                 Icons.Filled.Close,
                 contentDescription = null,
-                modifier = Modifier.padding(start = 12.dp)
+                modifier = Modifier
+                    .padding(start = 12.dp)
                     .clip(CircleShape)
                     .clickable { onSearch("") },
                 tint = MaterialTheme.colorScheme.secondary,
             )
         }
     }
-}
-
-@Preview
-@Composable
-fun SearchBarPreview() {
-    SearchBar(
-        modifier = Modifier,
-        searchText = "Search",
-        hint = "hint"
-    ) {}
 }

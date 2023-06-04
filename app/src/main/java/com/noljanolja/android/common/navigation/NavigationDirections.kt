@@ -289,6 +289,24 @@ object NavigationDirections {
         override val destination: String = "my_ranking"
     }
 
+    object AddFriend : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "add_friend"
+    }
+
+    object SearchFriend : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "search_friend"
+    }
+
+    object SearchFriendResult : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "search_friend_result"
+    }
+
     data class Dashboard(
         val month: Int = 0,
         val year: Int = 0,
@@ -348,6 +366,12 @@ object NavigationDirections {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options = null
         override val destination: String = "chat_settings"
+    }
+
+    object ScanQrCode : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "scan_qr_code"
     }
 
     // Back

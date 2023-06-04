@@ -3,7 +3,6 @@ package com.noljanolja.android.features.home.wallet
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,7 +40,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -52,7 +50,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
-import com.noljanolja.android.features.home.wallet.composable.TierIcon
 import com.noljanolja.android.ui.composable.CircleAvatar
 import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.RankingRow
@@ -61,10 +58,7 @@ import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.Orange400
 import com.noljanolja.android.ui.theme.darkContent
 import com.noljanolja.android.util.formatDigitsNumber
-import com.noljanolja.android.util.getBackgroundColor
-import com.noljanolja.android.util.getTitle
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
-import com.noljanolja.core.loyalty.domain.model.MemberTier
 import com.noljanolja.core.user.domain.model.User
 import org.koin.androidx.compose.getViewModel
 

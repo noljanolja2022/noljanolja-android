@@ -14,7 +14,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.d2brothers.firebase_auth.AuthSdk
@@ -177,10 +176,4 @@ fun OTPScreenContent(
         description = error?.message ?: stringResource(R.string.common_error_description),
         onDismiss = { handleEvent(OTPEvent.DismissError) }
     )
-}
-
-@Preview
-@Composable
-private fun OTPScreenPreview() {
-    OTPScreen(phone = "+84392222170")
 }

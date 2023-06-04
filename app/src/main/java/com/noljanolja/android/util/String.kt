@@ -31,3 +31,5 @@ fun String.capitalizeLetterAt(index: Int): String {
     val capitalizedReplaceChar = replaceChar.uppercaseChar()
     return substring(0, index) + capitalizedReplaceChar + this.substring(index + 1)
 }
+
+fun String.parseUserIdFromQr() = this.split(":").last()

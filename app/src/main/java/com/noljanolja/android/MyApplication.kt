@@ -23,6 +23,7 @@ import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.common.sharedpreference.SharedPreferenceHelper
 import com.noljanolja.android.common.user.data.AuthDataSourceImpl
 import com.noljanolja.android.common.user.data.TokenRepoImpl
+import com.noljanolja.android.features.addfriend.AddFriendViewModel
 import com.noljanolja.android.features.auth.countries.CountriesViewModel
 import com.noljanolja.android.features.auth.forget.ForgotViewModel
 import com.noljanolja.android.features.auth.login.LoginViewModel
@@ -49,6 +50,7 @@ import com.noljanolja.android.features.home.wallet.dashboard.WalletDashboardView
 import com.noljanolja.android.features.home.wallet.detail.TransactionDetailViewModel
 import com.noljanolja.android.features.home.wallet.myranking.MyRankingViewModel
 import com.noljanolja.android.features.home.wallet.transaction.TransactionHistoryViewModel
+import com.noljanolja.android.features.qrcode.ScanQrCodeViewModel
 import com.noljanolja.android.features.setting.SettingViewModel
 import com.noljanolja.android.features.setting.more.AppInfoViewModel
 import com.noljanolja.android.features.splash.SplashViewModel
@@ -275,6 +277,12 @@ class MyApplication : Application() {
                 }
                 viewModel {
                     ChatSettingsViewModel()
+                }
+                viewModel {
+                    AddFriendViewModel()
+                }
+                viewModel {
+                    ScanQrCodeViewModel()
                 }
             }
         )

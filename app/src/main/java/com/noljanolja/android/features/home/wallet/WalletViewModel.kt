@@ -6,7 +6,6 @@ import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
 import com.noljanolja.core.user.domain.model.User
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -43,15 +42,14 @@ class WalletViewModel : BaseViewModel() {
                             loading = true
                         )
                     )
-                    delay(300)
-                    refreshMemberInfo()
+                    refreshMemberInfo(forceRefresh = true)
                 }
             }
         }
     }
 
-    private suspend fun refreshMemberInfo() {
-        val user = coreManager.getCurrentUser().getOrNull()
+    private suspend fun refreshMemberInfo(forceRefresh: Boolean = false) {
+        val user = coreManager.getCurrentUser(forceRefresh = forceRefresh).getOrNull()
         val memberInfo = coreManager.getMemberInfo().getOrNull()
         _uiStateFlow.emit(UiState(data = WalletUIData(user = user, memberInfo = memberInfo)))
     }

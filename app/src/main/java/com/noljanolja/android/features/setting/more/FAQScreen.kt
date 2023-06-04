@@ -129,7 +129,8 @@ private fun QAItem(qa: QA, onClick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                qa.question, style = MaterialTheme
+                qa.question,
+                style = MaterialTheme
                     .typography
                     .bodyLarge
                     .withBold()
@@ -141,17 +142,18 @@ private fun QAItem(qa: QA, onClick: () -> Unit) {
         }
         Divider()
     }
-
 }
 
 @Composable
 private fun SelectedQAItem(qa: QA, onClick: () -> Unit) {
-    Column(modifier = Modifier
-        .clickable {
-            onClick.invoke()
-        }
-        .background(Color(0xFFFFFAD0))
-        .padding(vertical = 30.dp, horizontal = 16.dp)) {
+    Column(
+        modifier = Modifier
+            .clickable {
+                onClick.invoke()
+            }
+            .background(Color(0xFFFFFAD0))
+            .padding(vertical = 30.dp, horizontal = 16.dp)
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -177,7 +179,6 @@ private fun SelectedQAItem(qa: QA, onClick: () -> Unit) {
         )
     }
 }
-
 
 private data class QA(
     val question: String,

@@ -34,6 +34,10 @@ class ConversationsViewModel : BaseViewModel() {
                 ConversationsEvent.ChatSettings -> {
                     navigationManager.navigate(NavigationDirections.ChatSettings)
                 }
+
+                ConversationsEvent.AddFriend -> {
+                    navigationManager.navigate(NavigationDirections.AddFriend)
+                }
             }
         }
     }

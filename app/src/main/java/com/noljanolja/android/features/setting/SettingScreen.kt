@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.BuildConfig
 import com.noljanolja.android.R
-import com.noljanolja.android.features.auth.login.LoginEvent
 import com.noljanolja.android.ui.composable.*
 import com.noljanolja.android.ui.theme.withBold
 import org.koin.androidx.compose.getViewModel
@@ -201,7 +200,7 @@ private fun SettingContent(
     if (isShowLogoutDialog) {
         WarningDialog(
             title = null,
-            content = "Do you want to Log out",
+            content = stringResource(id = R.string.ask_to_logout),
             dismissText = stringResource(R.string.common_cancel),
             confirmText = stringResource(R.string.common_yes),
             isWarning = isShowLogoutDialog,

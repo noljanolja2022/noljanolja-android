@@ -299,4 +299,25 @@
 
     <string name="chat_settings_title">Chat Settings</string>
     <string name="chat_settings_change_avatar">Change avatar</string>
+    <string name="video_earn_point">+ Earn %s</string>
+    <string name="add_friend_chat_now">Chat now</string>
+    <string name="add_friend_scan_qr_to_add">Scan this QR code to add me</string>
+    <string name="add_friend_title">Add friend</string>
+    <string name="add_friend_search_by_phone">Search by phone number</string>
+    <string name="add_friend_search_by_qr">Search QR code</string>
+    <string name="add_friend_add_by_contact">Add by contact</string>
+    <string name="ask_to_logout">Do you want to Log out?</string>
+    <string name="enter_phone_number">Enter phone number</string>
+    <string name="error_unexpected">Unexpected Error</string>
+    <string name="error_phone_invalid">Phone is not valid</string>
+    <string name="error_phone_is_not_available">Phone is not available</string>
+    <string name="error_qr_not_valid">Sorry! This QR code is invalid</string>
+    <string name="scan_qr_code_title">Scan QR code</string>
+    <string name="chat_setting_friend_management">Friends management</string>
+    <string name="chat_setting_auto_add_friend">Automatically add friends</string>
+    <string name="chat_setting_auto_add_description">Users who use Noja Noja app in your Directory will be synchronized automatically with friendlist in Nolja Nolja.</string>
+    <string name="chat_setting_all_friends">All friends</string>
+    <string name="chat_setting_hide_friends">Hiden friends</string>
+    <string name="chat_setting_blocked_friends">Blocked friends</string>
+
 </resources>

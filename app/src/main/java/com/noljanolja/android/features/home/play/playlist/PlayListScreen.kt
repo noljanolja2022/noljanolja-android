@@ -82,9 +82,11 @@ private fun PlayListContent(
         )
     }) {
         val data = uiState.data ?: return@ScaffoldWithUiState
-        LazyColumn(modifier = Modifier
-            .fillMaxSize()
-            .pullRefresh(state)) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .pullRefresh(state)
+        ) {
             item {
                 HighlightVideos(
                     videos = data.todayVideos,

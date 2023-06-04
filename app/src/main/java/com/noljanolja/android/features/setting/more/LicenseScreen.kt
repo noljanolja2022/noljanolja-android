@@ -21,7 +21,7 @@ import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun LicenseScreen(
-    viewModel: AppInfoViewModel = getViewModel()
+    viewModel: AppInfoViewModel = getViewModel(),
 ) {
     LicenseContent(handleEvent = viewModel::handleEvent)
 }

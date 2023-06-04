@@ -72,9 +72,11 @@ private fun WalletTransactionContent(
         },
     ) {
         val uiData = uiState.data ?: return@ScaffoldWithUiState
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
             SearchBar(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
                 searchText = searchText,

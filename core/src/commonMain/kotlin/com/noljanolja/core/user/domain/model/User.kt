@@ -19,6 +19,7 @@ data class User(
     var isMe: Boolean = false,
 ) {
     fun getAvatarUrl() = avatar?.replace("storage", "storage-download")
+    fun getQrUrl() = "nolljanollja:id:$id"
 }
 
 @Serializable

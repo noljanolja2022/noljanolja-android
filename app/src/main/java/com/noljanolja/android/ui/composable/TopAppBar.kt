@@ -86,7 +86,7 @@ fun CommonAppBarTitle(
             text = title,
             style = TextStyle(
                 fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Bold,
                 lineHeight = 24.sp,
                 color = color
             ),

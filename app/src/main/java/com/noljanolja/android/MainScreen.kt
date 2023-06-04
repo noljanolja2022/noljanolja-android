@@ -5,14 +5,23 @@ import android.net.Uri
 import android.provider.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModel
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
 import com.noljanolja.android.common.navigation.NavObject
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
+import com.noljanolja.android.features.addfriend.AddFriendViewModel
+import com.noljanolja.android.features.addfriend.SearchFriendResultScreen
+import com.noljanolja.android.features.addfriend.SearchFriendScreen
 import com.noljanolja.android.features.auth.countries.CountriesScreen
 import com.noljanolja.android.features.auth.login_or_signup.LoginOrSignupScreen
 import com.noljanolja.android.features.auth.otp.OTPScreen
@@ -31,6 +40,7 @@ import com.noljanolja.android.features.home.wallet.detail.TransactionDetailScree
 import com.noljanolja.android.features.home.wallet.model.UiLoyaltyPoint
 import com.noljanolja.android.features.home.wallet.myranking.MyRankingScreen
 import com.noljanolja.android.features.home.wallet.transaction.TransactionsHistoryScreen
+import com.noljanolja.android.features.qrcode.ScanQrCodeScreen
 import com.noljanolja.android.features.setting.SettingScreen
 import com.noljanolja.android.features.setting.more.AboutUsScreen
 import com.noljanolja.android.features.setting.more.FAQScreen
@@ -41,6 +51,7 @@ import com.noljanolja.android.util.showToast
 import com.noljanolja.core.CoreManager
 import com.noljanolja.core.conversation.domain.model.ConversationType
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun MainScreen(
@@ -102,6 +113,7 @@ fun MainScreen(
         addChatGraph()
         addVideoGraph()
         addWalletGraph()
+        addAddFriendGraph(navController)
     }
 }
 
@@ -205,6 +217,14 @@ private fun NavGraphBuilder.addChatGraph() {
             ChatSettingsScreen()
         }
     }
+    with(NavigationDirections.ScanQrCode) {
+        composable(
+            destination,
+            arguments
+        ) {
+            ScanQrCodeScreen()
+        }
+    }
 }
 
 private fun NavGraphBuilder.addVideoGraph() {
@@ -257,4 +277,40 @@ private fun NavGraphBuilder.addWalletGraph() {
             AboutUsScreen()
         }
     }
+}
+
+private fun NavGraphBuilder.addAddFriendGraph(navController: NavHostController) {
+    navigation(
+        route = NavigationDirections.AddFriend.destination,
+        startDestination = NavigationDirections.SearchFriend.destination,
+    ) {
+        with(NavigationDirections.SearchFriend) {
+            composable(destination, arguments) { entry ->
+                val addFriendViewModel = entry.sharedViewModel<AddFriendViewModel>(
+                    navController = navController
+                )
+                SearchFriendScreen(
+                    addFriendViewModel = addFriendViewModel,
+                    savedStateHandle = entry.savedStateHandle
+                )
+            }
+        }
+        with(NavigationDirections.SearchFriendResult) {
+            composable(destination, arguments) { entry ->
+                val addFriendViewModel = entry.sharedViewModel<AddFriendViewModel>(
+                    navController = navController
+                )
+                SearchFriendResultScreen(addFriendViewModel = addFriendViewModel)
+            }
+        }
+    }
+}
+
+@Composable
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(navController: NavController): T {
+    val navGraphRoute = destination.parent?.route ?: return getViewModel()
+    val parentEntry = remember(this) {
+        navController.getBackStackEntry(navGraphRoute)
+    }
+    return getViewModel(viewModelStoreOwner = parentEntry)
 }

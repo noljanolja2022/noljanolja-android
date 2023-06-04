@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,6 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
@@ -31,8 +33,13 @@ import com.noljanolja.android.features.auth.updateprofile.components.AvatarInput
 import com.noljanolja.android.features.chatsettings.composable.ChatProfile
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.ComposeToast
+import com.noljanolja.android.ui.composable.ListTileWithToggleButton
+import com.noljanolja.android.ui.composable.PrimaryListTile
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
+import com.noljanolja.android.ui.composable.SizeBox
+import com.noljanolja.android.ui.theme.withSemiBold
 import com.noljanolja.android.util.loadFileInfo
+import com.noljanolja.android.util.secondaryTextColor
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -69,7 +76,8 @@ fun ChatSettingsScreen(
                 Icon(
                     Icons.Default.Check,
                     contentDescription = null,
-                    modifier = Modifier.size(64.dp)
+                    modifier = Modifier
+                        .size(64.dp)
                         .align(Alignment.Center),
                     tint = MaterialTheme.colorScheme.background
                 )
@@ -99,7 +107,7 @@ private fun ChatSettingsContent(
         uiState = uiState,
         topBar = {
             CommonTopAppBar(
-                title = stringResource(id = R.string.chat_settings_title),
+                title = stringResource(id = R.string.common_setting),
                 centeredTitle = true,
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -119,6 +127,59 @@ private fun ChatSettingsContent(
                 onChangeAvatar = {
                     showAvatarInputDialog = true
                 }
+            )
+            SizeBox(height = 10.dp)
+            Text(
+                stringResource(id = R.string.chat_setting_friend_management),
+                modifier = Modifier.padding(vertical = 9.dp),
+                style = MaterialTheme.typography.bodyLarge.withSemiBold()
+            )
+            ListTileWithToggleButton(
+                title = {
+                    Text(
+                        text = stringResource(id = R.string.chat_setting_auto_add_friend),
+                        fontSize = 13.sp
+                    )
+                },
+                checked = true,
+                onCheckedChange = {}
+            )
+            SizeBox(height = 10.dp)
+            Text(
+                stringResource(id = R.string.chat_setting_auto_add_description),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.secondaryTextColor()
+            )
+            SizeBox(height = 20.dp)
+            PrimaryListTile(
+                title = {
+                    Text(
+                        text = stringResource(id = R.string.chat_setting_all_friends),
+                        fontSize = 13.sp
+                    )
+                },
+                trailingDrawable = R.drawable.ic_forward
+            )
+            SizeBox(height = 20.dp)
+            PrimaryListTile(
+                title = {
+                    Text(
+                        text = stringResource(id = R.string.chat_setting_hide_friends),
+                        fontSize = 13.sp
+                    )
+                },
+                trailingDrawable = R.drawable.ic_forward
+            )
+            SizeBox(height = 20.dp)
+            PrimaryListTile(
+                title = {
+                    Text(
+                        text = stringResource(id = R.string.chat_setting_blocked_friends),
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                },
+                trailingDrawable = R.drawable.ic_forward
             )
         }
     }

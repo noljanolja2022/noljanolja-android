@@ -16,7 +16,11 @@ internal class ContactsRepositoryImpl(
         return userRemoteDataSource.getContacts(page)
     }
 
-    override suspend fun findContacts(phoneNumber: String): Result<List<User>> {
-        return userRemoteDataSource.findContacts(phoneNumber)
+    override suspend fun findContacts(phoneNumber: String?, friendId: String?): Result<List<User>> {
+        return userRemoteDataSource.findContacts(phoneNumber, friendId)
+    }
+
+    override suspend fun inviteFriend(friendId: String): Result<Boolean> {
+        return userRemoteDataSource.inviteFriend(friendId)
     }
 }

@@ -37,7 +37,7 @@ class UpdateProfileViewModel : BaseViewModel() {
         dob: String?,
         fileName: String?,
         fileType: String = "",
-        files: ByteArray?
+        files: ByteArray?,
     ) {
         _uiStateFlow.emit(UpdateProfileUiState(loading = true))
         if (fileName != null && files != null) {

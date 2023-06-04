@@ -52,8 +52,15 @@ class CoreManager : KoinComponent {
         return contactsRepository.getContacts(page)
     }
 
-    suspend fun findContacts(phoneNumber: String): Result<List<User>> {
-        return contactsRepository.findContacts(phoneNumber)
+    suspend fun findContacts(
+        phoneNumber: String? = null,
+        friendId: String? = null
+    ): Result<List<User>> {
+        return contactsRepository.findContacts(phoneNumber, friendId)
+    }
+
+    suspend fun inviteFriend(friendId: String): Result<Boolean> {
+        return contactsRepository.inviteFriend(friendId)
     }
 
     suspend fun findConversationWithUsers(userIds: List<String>): Conversation? {
