@@ -18,8 +18,8 @@ android {
         applicationId = "com.noljanolja.app.android"
         minSdk = 21
         targetSdk = 33
-        versionCode = 19
-        versionName = "1.0.14"
+        versionCode = 20
+        versionName = "1.0.16"
         testInstrumentationRunner = "com.noljanolja.android.InstrumentationTestRunner"
         multiDexEnabled = true
     }
@@ -61,7 +61,7 @@ android {
                 serviceCredentialsFile = "key/key_distributor.json"
                 releaseNotes = notes
                 testers =
-                    "doduchieu.kstn@gmail.com, itanchi.dev@gmail.com, sangjin.d.han@gmail.com, sangjin.han@ppnyy.com, tiaddeeps@gmail.com"
+                    "doduchieu.kstn@gmail.com, itanchi.dev@gmail.com, sangjin.d.han@gmail.com, sangjin.han@ppnyy.com, tiaddeeps@gmail.com, taduydoan123.dng@gmail.com"
             }
         }
         debug {
@@ -70,7 +70,7 @@ android {
                 serviceCredentialsFile = "key/key_distributor.json"
                 releaseNotes = notes
                 testers =
-                    "doduchieu.kstn@gmail.com, itanchi.dev@gmail.com, sangjin.d.han@gmail.com, sangjin.han@ppnyy.com, tiaddeeps@gmail.com"
+                    "doduchieu.kstn@gmail.com, itanchi.dev@gmail.com, sangjin.d.han@gmail.com, sangjin.han@ppnyy.com, tiaddeeps@gmail.com, taduydoan123.dng@gmail.com"
             }
         }
     }

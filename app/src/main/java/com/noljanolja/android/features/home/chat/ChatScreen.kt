@@ -107,7 +107,7 @@ fun ChatScreenContent(
     }
     LaunchedEffect(true) {
         scrollToNewMessageEvent.collect {
-            scrollState.animateScrollToItem(0)
+            scrollState.scrollToItem(0)
         }
     }
 
@@ -134,7 +134,10 @@ fun ChatScreenContent(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(stringResource(id = R.string.common_all), style = MaterialTheme.typography.titleMedium)
+                Text(
+                    stringResource(id = R.string.common_all),
+                    style = MaterialTheme.typography.titleMedium
+                )
                 IconButton(onClick = {
                     scope.launch {
                         bottomSheetState.bottomSheetState.collapse()
@@ -162,7 +165,11 @@ fun ChatScreenContent(
                     title = conversation.getDisplayTitle(),
                     leadingTitle = conversation.getSingleReceiver()?.let {
                         {
-                            OvalAvatar(user = it, size = 34.dp, modifier = Modifier.padding(end = 10.dp))
+                            OvalAvatar(
+                                user = it,
+                                size = 34.dp,
+                                modifier = Modifier.padding(end = 10.dp)
+                            )
                         }
                     },
                     centeredTitle = conversation.type == ConversationType.GROUP,
@@ -349,7 +356,7 @@ private fun MessageList(
                     }
                 }
 
-                item(key = "${message.id} ${message.localId}") {
+                item() {
                     MessageRow(
                         conversationId = conversationId,
                         message = message,
