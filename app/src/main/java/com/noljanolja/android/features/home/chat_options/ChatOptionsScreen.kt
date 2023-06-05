@@ -151,11 +151,13 @@ fun ChatOptionsContent(
                         item {
                             Divider(thickness = 1.dp)
                         }
-                        setting(
-                            onChangeTitle = {
-                                handleEvent(ChatOptionsEvent.EditTitle)
-                            }
-                        )
+                        if (conversation.type == ConversationType.GROUP) {
+                            setting(
+                                onChangeTitle = {
+                                    handleEvent(ChatOptionsEvent.EditTitle)
+                                }
+                            )
+                        }
                     }
                     LeaveChatRow {
                         showLeaveChatDialog = true

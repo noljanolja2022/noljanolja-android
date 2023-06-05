@@ -99,6 +99,7 @@ class ChatViewModel(
         // call with main scope to avoid cancel when back
         launchInMain {
             withContext(Dispatchers.IO) {
+                _scrollToNewMessageEvent.emit(Unit)
                 coreManager.sendConversationMessage(
                     title = title,
                     conversationId = conversationId,
