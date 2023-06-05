@@ -146,3 +146,10 @@ fun MaterialTheme.disableBackgroundColor(darkTheme: Boolean = isSystemInDarkThem
     } else {
         NeutralLightGrey
     }
+
+@Composable
+fun MaterialTheme.helpIconColor(darkTheme: Boolean = isSystemInDarkTheme()) = if (darkTheme) {
+    colorScheme.primary
+} else {
+    NeutralDarkGrey
+}

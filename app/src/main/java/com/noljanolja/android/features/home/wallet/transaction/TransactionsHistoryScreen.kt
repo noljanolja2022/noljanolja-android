@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,7 +57,7 @@ private fun WalletTransactionContent(
     uiState: UiState<TransactionHistoryUiData>,
     handleEvent: (TransactionsHistoryEvent) -> Unit,
 ) {
-    val searchText by remember { mutableStateOf("") }
+    var searchText by remember { mutableStateOf("") }
     ScaffoldWithUiState(
         uiState = uiState,
         topBar = {
@@ -81,7 +82,10 @@ private fun WalletTransactionContent(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
                 searchText = searchText,
                 hint = stringResource(id = R.string.transaction_history_search_hint),
-                background = MaterialTheme.colorScheme.surface
+                background = MaterialTheme.colorScheme.surface,
+                onSearch = {
+                    searchText = it
+                }
             )
             Row(
                 modifier = Modifier

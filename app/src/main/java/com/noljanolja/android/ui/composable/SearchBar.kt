@@ -33,8 +33,9 @@ fun SearchBar(
     modifier: Modifier,
     searchText: String,
     hint: String,
+    enabled: Boolean = true,
     background: Color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.04f),
-    onSearch: (String) -> Unit = {},
+    onSearch: (String) -> Unit,
     onSearchButton: () -> Unit = {},
 ) {
     Row(
@@ -65,6 +66,7 @@ fun SearchBar(
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 keyboardActions = KeyboardActions(onSearch = { onSearchButton() }),
                 cursorBrush = SolidColor(LocalContentColor.current),
+                enabled = enabled,
                 textStyle = MaterialTheme.typography.bodyLarge.copy(
                     color = MaterialTheme.colorScheme.onSurface
                 )

@@ -55,6 +55,7 @@ import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.RankingRow
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SizeBox
+import com.noljanolja.android.ui.composable.UserPoint
 import com.noljanolja.android.ui.theme.Orange400
 import com.noljanolja.android.ui.theme.darkContent
 import com.noljanolja.android.util.formatDigitsNumber
@@ -99,7 +100,7 @@ private fun WalletContent(
                 )
             }
             item {
-                UserPoint(memberInfo.point.formatDigitsNumber())
+                UserPoint(memberInfo.point.formatDigitsNumber(), modifier = Modifier.padding(16.dp))
             }
             item {
                 UserWalletInfo(
@@ -145,7 +146,7 @@ private fun UserInformation(
             verticalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxHeight(),
 
-        ) {
+            ) {
             Text(
                 text = user.name,
                 style = TextStyle(
@@ -172,53 +173,6 @@ private fun UserInformation(
     }
 }
 
-@Composable
-private fun UserPoint(
-    point: String,
-) {
-    Card(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 10.dp
-        )
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(79.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(MaterialTheme.colorScheme.background),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = stringResource(id = R.string.wallet_my_point),
-                style = MaterialTheme.typography.titleMedium
-            )
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_coin),
-                    contentDescription = null,
-                    modifier = Modifier.size(37.dp)
-                )
-                SizeBox(width = 10.dp)
-                Text(
-                    text = point,
-                    style = TextStyle(
-                        fontSize = 28.sp,
-                        lineHeight = 36.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Orange400
-                    )
-                )
-            }
-        }
-    }
-}
 
 @Composable
 private fun UserWalletInfo(

@@ -26,6 +26,7 @@ import com.noljanolja.android.features.home.play.playlist.PlayListScreen
 import com.noljanolja.android.features.home.utils.click
 import com.noljanolja.android.features.home.utils.isNavItemSelect
 import com.noljanolja.android.features.home.wallet.WalletScreen
+import com.noljanolja.android.features.shop.ShopScreen
 import com.noljanolja.android.ui.composable.FullSizeUnderConstruction
 import com.noljanolja.android.ui.theme.colorBackground
 import com.noljanolja.android.util.getErrorMessage
@@ -78,7 +79,7 @@ private fun NavGraphBuilder.addNavigationGraph() {
         WalletScreen()
     }
     composable(HomeNavigationItem.StoreItem.route) {
-        FullSizeUnderConstruction()
+        ShopScreen()
     }
     composable(HomeNavigationItem.NewsItem.route) {
         FullSizeUnderConstruction()
@@ -109,18 +110,29 @@ fun HomeBottomBar(
                     if (
                         index != 0 || isReadAllConversations
                     ) {
-                        Icon(item.icon, label, modifier = Modifier.padding(2.dp).size(24.dp))
+                        Icon(
+                            item.icon, label, modifier = Modifier
+                                .padding(2.dp)
+                                .size(24.dp)
+                        )
                     } else {
                         Box {
                             Icon(item.icon, label)
                             Box(
                                 modifier = Modifier
-                                    .align(Alignment.TopEnd).size(10.dp).clip(CircleShape).background(
+                                    .align(Alignment.TopEnd)
+                                    .size(10.dp)
+                                    .clip(CircleShape)
+                                    .background(
                                         MaterialTheme.colorScheme.error.copy(alpha = 0.5F)
                                     )
                             )
                             Box(
-                                modifier = Modifier.align(Alignment.TopEnd).padding(2.dp).size(6.dp).clip(CircleShape)
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .padding(2.dp)
+                                    .size(6.dp)
+                                    .clip(CircleShape)
                                     .background(
                                         MaterialTheme.colorScheme.error
                                     )
