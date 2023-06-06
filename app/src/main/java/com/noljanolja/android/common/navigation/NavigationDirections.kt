@@ -374,6 +374,12 @@ object NavigationDirections {
         override val destination: String = "scan_qr_code"
     }
 
+    object SearchProduct : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "search_product"
+    }
+
     // Back
     data class FinishWithResults(
         val data: Map<String, Any>,

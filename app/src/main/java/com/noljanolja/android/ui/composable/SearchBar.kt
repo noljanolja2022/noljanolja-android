@@ -20,9 +20,14 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.FocusState
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.ImeAction
@@ -37,6 +42,8 @@ fun SearchBar(
     background: Color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.04f),
     onSearch: (String) -> Unit,
     onSearchButton: () -> Unit = {},
+    onFocusChange: (FocusState) -> Unit = {},
+    focusRequester: FocusRequester = remember { FocusRequester() },
 ) {
     Row(
         modifier = modifier
@@ -59,7 +66,10 @@ fun SearchBar(
             contentAlignment = Alignment.CenterStart,
         ) {
             BasicTextField(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester)
+                    .onFocusChanged(onFocusChange),
                 value = searchText,
                 onValueChange = onSearch,
                 maxLines = 1,

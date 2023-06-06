@@ -45,6 +45,7 @@ import com.noljanolja.android.features.setting.SettingScreen
 import com.noljanolja.android.features.setting.more.AboutUsScreen
 import com.noljanolja.android.features.setting.more.FAQScreen
 import com.noljanolja.android.features.setting.more.LicenseScreen
+import com.noljanolja.android.features.shop.search.SearchProductScreen
 import com.noljanolja.android.features.splash.SplashScreen
 import com.noljanolja.android.util.orZero
 import com.noljanolja.android.util.showToast
@@ -114,6 +115,7 @@ fun MainScreen(
         addVideoGraph()
         addWalletGraph()
         addAddFriendGraph(navController)
+        addShopGraph()
     }
 }
 
@@ -275,6 +277,14 @@ private fun NavGraphBuilder.addWalletGraph() {
     with(NavigationDirections.AboutUs) {
         composable(destination, arguments) {
             AboutUsScreen()
+        }
+    }
+}
+
+private fun NavGraphBuilder.addShopGraph() {
+    with(NavigationDirections.SearchProduct) {
+        composable(destination, arguments) {
+            SearchProductScreen()
         }
     }
 }

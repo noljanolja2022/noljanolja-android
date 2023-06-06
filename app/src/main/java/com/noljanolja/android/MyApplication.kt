@@ -53,7 +53,8 @@ import com.noljanolja.android.features.home.wallet.transaction.TransactionHistor
 import com.noljanolja.android.features.qrcode.ScanQrCodeViewModel
 import com.noljanolja.android.features.setting.SettingViewModel
 import com.noljanolja.android.features.setting.more.AppInfoViewModel
-import com.noljanolja.android.features.shop.ShopViewModel
+import com.noljanolja.android.features.shop.main.ShopViewModel
+import com.noljanolja.android.features.shop.search.SearchProductViewModel
 import com.noljanolja.android.features.splash.SplashViewModel
 import com.noljanolja.android.services.PermissionChecker
 import com.noljanolja.android.services.analytics.AppAnalytics
@@ -287,6 +288,9 @@ class MyApplication : Application() {
                 }
                 viewModel {
                     ShopViewModel()
+                }
+                viewModel {
+                    SearchProductViewModel()
                 }
             }
         )

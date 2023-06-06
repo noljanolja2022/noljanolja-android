@@ -11,6 +11,7 @@ import com.noljanolja.core.conversation.domain.repository.ConversationRepository
 import com.noljanolja.core.loyalty.domain.model.LoyaltyType
 import com.noljanolja.core.loyalty.domain.repository.LoyaltyRepository
 import com.noljanolja.core.media.domain.repository.MediaRepository
+import com.noljanolja.core.shop.domain.repository.ShopRepository
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.user.domain.repository.UserRepository
 import com.noljanolja.core.video.data.model.request.VideoProgressEvent
@@ -36,6 +37,7 @@ class CoreManager : KoinComponent {
     private val mediaRepository: MediaRepository by inject()
     private val videoRepository: VideoRepository by inject()
     private val loyaltyRepository: LoyaltyRepository by inject()
+    private val shopRepository: ShopRepository by inject()
     private val socketManager: SocketManager by inject()
 
     private val scope = CoroutineScope(Dispatchers.Default)
@@ -54,7 +56,7 @@ class CoreManager : KoinComponent {
 
     suspend fun findContacts(
         phoneNumber: String? = null,
-        friendId: String? = null
+        friendId: String? = null,
     ): Result<List<User>> {
         return contactsRepository.findContacts(phoneNumber, friendId)
     }
@@ -270,4 +272,8 @@ class CoreManager : KoinComponent {
     fun cancelTrackVideo() {
         socketManager.cancelTrackVideo()
     }
+
+    fun getLocalSearchs() = shopRepository.getLocalSearchs()
+
+    fun insertSearchKey(text: String) = shopRepository.insertKey(text)
 }

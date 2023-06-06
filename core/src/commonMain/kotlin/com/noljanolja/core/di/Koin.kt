@@ -16,6 +16,9 @@ import com.noljanolja.core.loyalty.domain.repository.LoyaltyRepository
 import com.noljanolja.core.media.data.datasource.MediaApi
 import com.noljanolja.core.media.data.repository.MediaRepositoryImpl
 import com.noljanolja.core.media.domain.repository.MediaRepository
+import com.noljanolja.core.shop.data.datasource.ShopLocalDatasource
+import com.noljanolja.core.shop.data.repository.ShopRepositoryImpl
+import com.noljanolja.core.shop.domain.repository.ShopRepository
 import com.noljanolja.core.user.data.datasource.LocalUserDataSource
 import com.noljanolja.core.user.data.datasource.UserApi
 import com.noljanolja.core.user.data.datasource.UserRemoteDataSource
@@ -51,6 +54,11 @@ expect val platformModule: Module
 private val coreModule = module {
     single {
         with(get<Noljanolja>()) {
+            ShopLocalDatasource(searchTextQueries, Dispatchers.Default)
+        }
+    }
+    single {
+        with(get<Noljanolja>()) {
             LocalUserDataSource(userQueries, participantQueries, Dispatchers.Default)
         }
     }
@@ -74,6 +82,9 @@ private val coreModule = module {
                 Dispatchers.Default
             )
         }
+    }
+    single<ShopRepository> {
+        ShopRepositoryImpl(get())
     }
 
     single<UserRepository> {

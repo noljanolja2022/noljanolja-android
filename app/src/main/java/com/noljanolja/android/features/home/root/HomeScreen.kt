@@ -26,7 +26,7 @@ import com.noljanolja.android.features.home.play.playlist.PlayListScreen
 import com.noljanolja.android.features.home.utils.click
 import com.noljanolja.android.features.home.utils.isNavItemSelect
 import com.noljanolja.android.features.home.wallet.WalletScreen
-import com.noljanolja.android.features.shop.ShopScreen
+import com.noljanolja.android.features.shop.main.ShopScreen
 import com.noljanolja.android.ui.composable.FullSizeUnderConstruction
 import com.noljanolja.android.ui.theme.colorBackground
 import com.noljanolja.android.util.getErrorMessage
@@ -111,7 +111,9 @@ fun HomeBottomBar(
                         index != 0 || isReadAllConversations
                     ) {
                         Icon(
-                            item.icon, label, modifier = Modifier
+                            item.icon,
+                            label,
+                            modifier = Modifier
                                 .padding(2.dp)
                                 .size(24.dp)
                         )

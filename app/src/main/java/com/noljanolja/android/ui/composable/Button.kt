@@ -1,16 +1,22 @@
 package com.noljanolja.android.ui.composable
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -82,29 +88,34 @@ private fun ButtonInRow(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RoundedButton(
     modifier: Modifier = Modifier,
     text: String,
     isEnable: Boolean = true,
-    colors: ButtonColors = ButtonDefaults.buttonColors(),
+    colors: CardColors = CardDefaults.cardColors(),
     shape: Shape? = null,
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
     style: TextStyle = MaterialTheme.typography.bodyMedium,
     onClick: () -> Unit,
 ) {
     val buttonShape = shape ?: RoundedCornerShape(8.dp)
-    Button(
+    Card(
         onClick = onClick,
-        enabled = isEnable,
         colors = colors,
         modifier = modifier
-            .height(50.dp)
-            .shadow(2.dp, shape = buttonShape),
+            .height(50.dp),
         shape = buttonShape,
-        contentPadding = contentPadding
+        enabled = isEnable,
     ) {
-        Text(text, style = style)
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(text, style = style)
+        }
     }
 }
 
@@ -156,7 +167,7 @@ fun PrimaryButton(
         text = text,
         isEnable = isEnable,
         shape = shape,
-        colors = ButtonDefaults.buttonColors(
+        colors = CardDefaults.cardColors(
             containerColor = containerColor,
             disabledContainerColor = disabledContainerColor,
             contentColor = contentColor,

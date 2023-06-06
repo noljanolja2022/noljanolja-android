@@ -56,7 +56,6 @@ import com.noljanolja.android.ui.composable.RankingRow
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.composable.UserPoint
-import com.noljanolja.android.ui.theme.Orange400
 import com.noljanolja.android.ui.theme.darkContent
 import com.noljanolja.android.util.formatDigitsNumber
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
@@ -146,7 +145,7 @@ private fun UserInformation(
             verticalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxHeight(),
 
-            ) {
+        ) {
             Text(
                 text = user.name,
                 style = TextStyle(
@@ -172,7 +171,6 @@ private fun UserInformation(
         }
     }
 }
-
 
 @Composable
 private fun UserWalletInfo(
