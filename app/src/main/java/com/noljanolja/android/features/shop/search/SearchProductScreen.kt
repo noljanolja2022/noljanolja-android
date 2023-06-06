@@ -7,9 +7,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,6 +29,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.SearchBar
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.withMedium
@@ -64,9 +68,7 @@ private fun SearchProductContent(
             }
         )
         if (isSearchFocus) {
-            searchKeys.forEach {
-                Text(text = it)
-            }
+            SearchHistory(searchKeys = searchKeys)
         } else {
             Text(text = "4567")
         }
@@ -138,6 +140,43 @@ private fun SearchProductHeader(
                 },
                 focusRequester = focusRequester
             )
+        }
+    }
+}
+
+@Composable
+fun SearchHistory(
+    searchKeys: List<String>,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+    ) {
+        SizeBox(height = 10.dp)
+        Text(
+            "Clear all",
+            modifier = Modifier.align(Alignment.End),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
+        searchKeys.forEach {
+            SizeBox(height = 10.dp)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    Icons.Default.AccessTime,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+                SizeBox(width = 10.dp)
+                Text(text = it)
+                Expanded()
+                Icon(
+                    Icons.Rounded.Close,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
         }
     }
 }
