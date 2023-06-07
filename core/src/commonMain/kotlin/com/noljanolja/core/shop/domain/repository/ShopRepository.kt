@@ -4,6 +4,10 @@ import com.noljanolja.core.shop.domain.model.SearchKey
 import kotlinx.coroutines.flow.Flow
 
 interface ShopRepository {
-    fun getLocalSearchs(): Flow<List<SearchKey>>
+    fun getSearchHistories(): Flow<List<SearchKey>>
     fun insertKey(text: String)
+
+    suspend fun clearText(text: String)
+
+    suspend fun clearAll()
 }

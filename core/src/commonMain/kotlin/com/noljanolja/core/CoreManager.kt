@@ -273,7 +273,10 @@ class CoreManager : KoinComponent {
         socketManager.cancelTrackVideo()
     }
 
-    fun getLocalSearchs() = shopRepository.getLocalSearchs()
+    fun getSearchHistories() = shopRepository.getSearchHistories()
 
     fun insertSearchKey(text: String) = shopRepository.insertKey(text)
+
+    suspend fun clearAllSearch() = shopRepository.clearAll()
+    suspend fun clearTextSearch(text: String) = shopRepository.clearText(text)
 }

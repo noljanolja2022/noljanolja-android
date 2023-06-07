@@ -10,9 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Cancel
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,12 +25,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.SearchBar
 import com.noljanolja.android.ui.composable.SizeBox
+import com.noljanolja.android.ui.theme.NeutralGrey
 import com.noljanolja.android.ui.theme.withMedium
 import org.koin.androidx.compose.getViewModel
 
@@ -68,7 +71,13 @@ private fun SearchProductContent(
             }
         )
         if (isSearchFocus) {
-            SearchHistory(searchKeys = searchKeys)
+            SearchHistory(
+                searchKeys = searchKeys,
+                onClear = {
+                    handleEvent(SearchProductEvent.Clear(it))
+                },
+                onClearAll = { handleEvent(SearchProductEvent.ClearAll) }
+            )
         } else {
             Text(text = "4567")
         }
@@ -147,6 +156,8 @@ private fun SearchProductHeader(
 @Composable
 fun SearchHistory(
     searchKeys: List<String>,
+    onClear: (String) -> Unit,
+    onClearAll: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -156,7 +167,9 @@ fun SearchHistory(
         SizeBox(height = 10.dp)
         Text(
             "Clear all",
-            modifier = Modifier.align(Alignment.End),
+            modifier = Modifier
+                .align(Alignment.End)
+                .clickable { onClearAll.invoke() },
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.primary
         )
@@ -164,17 +177,21 @@ fun SearchHistory(
             SizeBox(height = 10.dp)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    Icons.Default.AccessTime,
+                    ImageVector.vectorResource(R.drawable.ic_schedule),
                     contentDescription = null,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(20.dp),
+                    tint = NeutralGrey
                 )
                 SizeBox(width = 10.dp)
                 Text(text = it)
                 Expanded()
                 Icon(
-                    Icons.Rounded.Close,
+                    Icons.Rounded.Cancel,
                     contentDescription = null,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable { onClear.invoke(it) },
+                    tint = NeutralGrey
                 )
             }
         }

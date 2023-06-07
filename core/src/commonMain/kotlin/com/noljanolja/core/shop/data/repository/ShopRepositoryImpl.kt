@@ -8,11 +8,19 @@ import kotlinx.coroutines.flow.Flow
 internal class ShopRepositoryImpl(
     private val shopLocalDatasource: ShopLocalDatasource,
 ) : ShopRepository {
-    override fun getLocalSearchs(): Flow<List<SearchKey>> {
+    override fun getSearchHistories(): Flow<List<SearchKey>> {
         return shopLocalDatasource.findAll()
     }
 
     override fun insertKey(text: String) {
         shopLocalDatasource.insertKey(text = text)
+    }
+
+    override suspend fun clearText(text: String) {
+        shopLocalDatasource.deleteByText(text)
+    }
+
+    override suspend fun clearAll() {
+        shopLocalDatasource.clearAll()
     }
 }

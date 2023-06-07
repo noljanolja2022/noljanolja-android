@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 class SearchProductViewModel : BaseViewModel() {
-    val searchKeys = coreManager.getLocalSearchs().map {
+    val searchKeys = coreManager.getSearchHistories().map {
         it.sortedByDescending { it.updatedAt }.map { it.text }
     }.stateIn(
         scope = viewModelScope,
@@ -21,6 +21,13 @@ class SearchProductViewModel : BaseViewModel() {
             when (event) {
                 SearchProductEvent.Back -> back()
                 is SearchProductEvent.Search -> coreManager.insertSearchKey(event.text)
+                SearchProductEvent.ClearAll -> {
+                    coreManager.clearAllSearch()
+                }
+
+                is SearchProductEvent.Clear -> {
+                    coreManager.clearTextSearch(event.text)
+                }
             }
         }
     }

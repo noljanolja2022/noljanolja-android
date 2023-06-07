@@ -25,6 +25,11 @@ upsert {
 deleteAll:
 DELETE FROM `search`;
 
+deleteByText:
+DELETE FROM `search`
+WHERE text = :text;
+
+
 findAll:
 SELECT *
 FROM `search`
