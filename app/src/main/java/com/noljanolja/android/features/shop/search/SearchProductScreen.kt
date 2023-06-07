@@ -5,9 +5,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -27,15 +30,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
+import com.noljanolja.android.features.shop.composable.ProductItem
 import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.SearchBar
 import com.noljanolja.android.ui.composable.SizeBox
+import com.noljanolja.android.ui.composable.UserPoint
 import com.noljanolja.android.ui.theme.NeutralGrey
 import com.noljanolja.android.ui.theme.withMedium
+import com.noljanolja.android.util.formatDigitsNumber
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -57,17 +64,34 @@ private fun SearchProductContent(
     var isSearchFocus by remember {
         mutableStateOf(false)
     }
+    val focusManager = LocalFocusManager.current
+    var searchText by remember {
+        mutableStateOf("")
+    }
 
-    Column {
+    val backgroundColor = if (isSearchFocus) {
+        MaterialTheme.colorScheme.background
+    } else {
+        MaterialTheme.colorScheme.primary
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(backgroundColor)
+    ) {
         SearchProductHeader(
-            onSearch = {
-                handleEvent(SearchProductEvent.Search(it))
+            searchText = searchText,
+            onSearchChange = {
+                searchText = it
             },
             onFocusChange = {
                 isSearchFocus = it
             },
             onBack = {
                 handleEvent(SearchProductEvent.Back)
+            },
+            onSubmit = {
+                handleEvent(SearchProductEvent.Search(searchText))
             }
         )
         if (isSearchFocus) {
@@ -76,25 +100,30 @@ private fun SearchProductContent(
                 onClear = {
                     handleEvent(SearchProductEvent.Clear(it))
                 },
-                onClearAll = { handleEvent(SearchProductEvent.ClearAll) }
+                onClearAll = { handleEvent(SearchProductEvent.ClearAll) },
+                onSearch = {
+                    handleEvent(SearchProductEvent.Search(it))
+                    searchText = it
+                    focusManager.clearFocus()
+                }
             )
         } else {
-            Text(text = "4567")
+            SearchResult()
         }
     }
 }
 
 @Composable
 private fun SearchProductHeader(
-    onSearch: (String) -> Unit,
+    searchText: String,
+    onSearchChange: (String) -> Unit,
     onFocusChange: (Boolean) -> Unit,
     onBack: () -> Unit,
+    onSubmit: () -> Unit,
 ) {
-    val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
-    var searchText by remember {
-        mutableStateOf("")
-    }
+    val focusRequester = remember { FocusRequester() }
+
     LaunchedEffect(true) {
         focusRequester.requestFocus()
     }
@@ -115,7 +144,7 @@ private fun SearchProductHeader(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Welcome to Nolja shop!",
+                text = stringResource(id = R.string.shop_welcome_nolja_shop),
                 style = MaterialTheme.typography.titleSmall.withMedium(),
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
@@ -135,17 +164,17 @@ private fun SearchProductHeader(
                 modifier = Modifier
                     .fillMaxWidth(),
                 searchText = searchText,
-                hint = "Search products",
-                onSearch = {
-                    searchText = it
-                },
+                hint = stringResource(id = R.string.shop_search_products),
+                onSearch = onSearchChange,
                 background = MaterialTheme.colorScheme.background,
                 onFocusChange = {
                     onFocusChange.invoke(it.isFocused)
                 },
                 onSearchButton = {
-                    onSearch(searchText)
-                    focusManager.clearFocus()
+                    if (searchText.isNotBlank()) {
+                        onSubmit()
+                        focusManager.clearFocus()
+                    }
                 },
                 focusRequester = focusRequester
             )
@@ -156,6 +185,7 @@ private fun SearchProductHeader(
 @Composable
 fun SearchHistory(
     searchKeys: List<String>,
+    onSearch: (String) -> Unit,
     onClear: (String) -> Unit,
     onClearAll: () -> Unit,
 ) {
@@ -166,7 +196,7 @@ fun SearchHistory(
     ) {
         SizeBox(height = 10.dp)
         Text(
-            "Clear all",
+            text = stringResource(id = R.string.shop_clear_all),
             modifier = Modifier
                 .align(Alignment.End)
                 .clickable { onClearAll.invoke() },
@@ -175,7 +205,12 @@ fun SearchHistory(
         )
         searchKeys.forEach {
             SizeBox(height = 10.dp)
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clickable {
+                    onSearch(it)
+                }
+            ) {
                 Icon(
                     ImageVector.vectorResource(R.drawable.ic_schedule),
                     contentDescription = null,
@@ -193,6 +228,27 @@ fun SearchHistory(
                         .clickable { onClear.invoke(it) },
                     tint = NeutralGrey
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SearchResult() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(vertical = 10.dp, horizontal = 16.dp)
+    ) {
+        UserPoint(point = 1000.formatDigitsNumber())
+        SizeBox(height = 16.dp)
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(11) {
+                ProductItem(index = it, modifier = Modifier.weight(1F))
             }
         }
     }

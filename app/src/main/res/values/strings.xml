@@ -320,4 +320,12 @@
     <string name="chat_setting_hide_friends">Hiden friends</string>
     <string name="chat_setting_blocked_friends">Blocked friends</string>
 
+    <string name="shop_welcome_nolja_shop">Welcome to Nolja shop!</string>
+    <string name="shop_search_products">Search products</string>
+    <string name="shop_clear_all">Clear all</string>
+    <string name="shop_view_all">View all</string>
+    <string name="shop_exchanged_coupons">Exchanged Coupons</string>
+    <string name="common_shop">Shop</string>
+    <string name="shop_help_description">You can use Points to exchange Coupons. Then you can bring them to the local stores to get products.</string>
+    <string name="shop_got_it">Got it</string>
 </resources>

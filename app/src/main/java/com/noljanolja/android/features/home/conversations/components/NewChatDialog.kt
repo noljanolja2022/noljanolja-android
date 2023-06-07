@@ -1,4 +1,4 @@
-package com.noljanolja.android.features.home.chat.components
+package com.noljanolja.android.features.home.conversations.components
 
 import android.view.Gravity
 import androidx.compose.foundation.background

@@ -23,20 +23,28 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.features.shop.composable.CouponItem
+import com.noljanolja.android.features.shop.composable.HelpDialog
 import com.noljanolja.android.features.shop.composable.ProductItem
 import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SearchBar
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.composable.UserPoint
-import com.noljanolja.android.ui.theme.helpIconColor
 import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.ui.theme.withMedium
 import com.noljanolja.android.util.formatDigitsNumber
@@ -62,7 +70,7 @@ private fun ShopContent(
                 .background(MaterialTheme.colorScheme.primaryContainer)
         ) {
             SearchProductHeader(
-                goToSearch = { handleEvent(ShopEvent.Search) }
+                goToSearch = { handleEvent(ShopEvent.Search) },
             )
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 item {
@@ -89,6 +97,11 @@ private fun ShopContent(
 private fun SearchProductHeader(
     goToSearch: () -> Unit,
 ) {
+    var isShowHelp by remember {
+        mutableStateOf(false)
+    }
+    var topHelpPosition by remember { mutableStateOf(0F) }
+
     Column(
         modifier = Modifier
             .clip(
@@ -106,14 +119,25 @@ private fun SearchProductHeader(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Welcome to Nolja shop!",
+                text = stringResource(id = R.string.shop_welcome_nolja_shop),
                 style = MaterialTheme.typography.titleSmall.withMedium()
             )
             Icon(
                 Icons.Default.Help,
                 contentDescription = null,
-                tint = MaterialTheme.helpIconColor(),
-                modifier = Modifier.size(16.dp)
+                tint = if (isShowHelp) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onBackground
+                },
+                modifier = Modifier
+                    .size(16.dp)
+                    .clickable {
+                        isShowHelp = true
+                    }.onGloballyPositioned { coordinates ->
+                        val y = coordinates.positionInRoot().y
+                        topHelpPosition = y
+                    }
             )
         }
         SizeBox(height = 5.dp)
@@ -122,10 +146,16 @@ private fun SearchProductHeader(
                 .fillMaxWidth()
                 .clickable { goToSearch.invoke() },
             searchText = "",
-            hint = "Search products",
+            hint = stringResource(id = R.string.shop_search_products),
             onSearch = {},
             enabled = false,
         )
+    }
+    HelpDialog(
+        visible = isShowHelp,
+        topPosition = topHelpPosition
+    ) {
+        isShowHelp = false
     }
 }
 
@@ -138,13 +168,13 @@ private fun ExchangeCoupons() {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Exchanged Coupons",
+            text = stringResource(id = R.string.shop_exchanged_coupons),
             style = MaterialTheme.typography.bodyLarge.withBold(),
             color = MaterialTheme.colorScheme.onPrimaryContainer
         )
         Expanded()
         Text(
-            text = "View all",
+            text = stringResource(id = R.string.shop_view_all),
             style = MaterialTheme.typography.bodyLarge.withBold(),
             color = Color.White
         )
@@ -168,7 +198,7 @@ fun LazyListScope.shop() {
     val items = listOf(1, 2, 3, 4, 5, 6, 7)
     item {
         Text(
-            text = "Shop",
+            text = stringResource(id = R.string.common_shop),
             style = MaterialTheme.typography.bodyLarge.withBold(),
             modifier = Modifier.padding(horizontal = 16.dp)
         )

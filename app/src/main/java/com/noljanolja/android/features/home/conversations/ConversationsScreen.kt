@@ -42,7 +42,7 @@ import com.noljanolja.android.MainActivity.Companion.removeConversationId
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.sharedpreference.SharedPreferenceHelper
-import com.noljanolja.android.features.home.chat.components.NewChatDialog
+import com.noljanolja.android.features.home.conversations.components.NewChatDialog
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.EmptyPage
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
