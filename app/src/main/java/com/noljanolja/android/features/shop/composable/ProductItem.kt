@@ -2,7 +2,8 @@ package com.noljanolja.android.features.shop.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,13 +15,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.util.secondaryTextColor
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ProductItem(modifier: Modifier = Modifier, index: Int) {
     Column(
@@ -48,21 +55,26 @@ fun ProductItem(modifier: Modifier = Modifier, index: Int) {
             style = MaterialTheme.typography.titleSmall
         )
         SizeBox(height = 10.dp)
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        FlowRow(verticalAlignment = Alignment.CenterVertically) {
             Text("4800", style = MaterialTheme.typography.labelMedium)
             SizeBox(width = 10.dp)
             Text(
-                text = "3800",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.W800,
-                    color = MaterialTheme.colorScheme.secondary
-                )
-            )
-            Text(
-                text = "Points",
-                style = MaterialTheme.typography.bodyLarge,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                text = buildAnnotatedString {
+                    withStyle(
+                        SpanStyle(
+                            fontWeight = FontWeight.W800,
+                            fontSize = 16.sp,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    ) {
+                        append("3800 ")
+                    }
+                    withStyle(
+                        SpanStyle(fontSize = 16.sp)
+                    ) {
+                        append(stringResource(id = R.string.common_points))
+                    }
+                },
             )
         }
     }

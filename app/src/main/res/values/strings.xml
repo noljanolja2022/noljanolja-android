@@ -328,4 +328,9 @@
     <string name="common_shop">Shop</string>
     <string name="shop_help_description">You can use Points to exchange Coupons. Then you can bring them to the local stores to get products.</string>
     <string name="shop_got_it">Got it</string>
+    <string name="common_points">Points</string>
+    <string name="common_success">Success</string>
+    <string name="shop_later">Later</string>
+    <string name="common_use">Use</string>
+    <string name="shop_order_coupon_success">"Your order has been completed. Check in Exchanged Coupon."</string>
 </resources>

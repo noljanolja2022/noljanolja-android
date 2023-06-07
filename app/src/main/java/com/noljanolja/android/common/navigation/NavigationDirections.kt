@@ -380,6 +380,12 @@ object NavigationDirections {
         override val destination: String = "search_product"
     }
 
+    object GiftDetail : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "gift_detail"
+    }
+
     // Back
     data class FinishWithResults(
         val data: Map<String, Any>,

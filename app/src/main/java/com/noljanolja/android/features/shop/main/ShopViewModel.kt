@@ -10,6 +10,7 @@ class ShopViewModel : BaseViewModel() {
         launch {
             when (event) {
                 ShopEvent.Search -> navigationManager.navigate(NavigationDirections.SearchProduct)
+                ShopEvent.GiftDetail -> navigationManager.navigate(NavigationDirections.GiftDetail)
             }
         }
     }

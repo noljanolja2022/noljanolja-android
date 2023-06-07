@@ -87,7 +87,9 @@ private fun ShopContent(
                 item {
                     SizeBox(height = 30.dp)
                 }
-                shop()
+                shop(onItemClick = {
+                    handleEvent(ShopEvent.GiftDetail)
+                })
             }
         }
     }
@@ -194,13 +196,16 @@ private fun ExchangeCoupons() {
     }
 }
 
-fun LazyListScope.shop() {
+fun LazyListScope.shop(
+    onItemClick: () -> Unit,
+) {
     val items = listOf(1, 2, 3, 4, 5, 6, 7)
     item {
         Text(
             text = stringResource(id = R.string.common_shop),
             style = MaterialTheme.typography.bodyLarge.withBold(),
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp),
+            color = MaterialTheme.colorScheme.onPrimaryContainer
         )
         SizeBox(height = 10.dp)
     }
@@ -210,12 +215,22 @@ fun LazyListScope.shop() {
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         ) {
-            ProductItem(index = row * 2, modifier = Modifier.weight(1F))
+            ProductItem(
+                index = row * 2,
+                modifier = Modifier.weight(1F)
+                    .clickable {
+                        onItemClick.invoke()
+                    }
+            )
             SizeBox(width = 12.dp)
             if (items.getOrNull(row * 2 + 1) != null) {
                 ProductItem(index = row * 2 + 1, modifier = Modifier.weight(1F))
             } else {
-                Box(modifier = Modifier.weight(1F))
+                Box(
+                    modifier = Modifier.weight(1F).clickable {
+                        onItemClick.invoke()
+                    }
+                )
             }
         }
         SizeBox(height = 20.dp)

@@ -153,3 +153,10 @@ fun MaterialTheme.helpIconColor(darkTheme: Boolean = isSystemInDarkTheme()) = if
 } else {
     NeutralDarkGrey
 }
+
+@Composable
+fun MaterialTheme.green300(darkTheme: Boolean = isSystemInDarkTheme()) = if (darkTheme) {
+    LightGreen
+} else {
+    Green300
+}
