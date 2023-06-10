@@ -2,7 +2,7 @@ package com.noljanolja.android.features.auth.common
 
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
-import com.noljanolja.android.common.error.ValidEmailFailed
+import com.noljanolja.android.common.error.ValidEmailFailure
 import com.noljanolja.android.util.RegexExt
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -50,7 +50,7 @@ open class BaseAuthViewModel : BaseViewModel() {
         try {
             require(RegexExt.isEmailValid(emailFlow.value))
         } catch (e: IllegalArgumentException) {
-            throw ValidEmailFailed
+            throw ValidEmailFailure
         }
     }
 }

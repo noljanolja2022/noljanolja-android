@@ -97,7 +97,7 @@ class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSou
     override suspend fun updateAvatar(
         name: String,
         type: String,
-        files: ByteArray
+        files: ByteArray,
     ): Result<Boolean> {
         return try {
             Logger.d("Update avatar: $files")

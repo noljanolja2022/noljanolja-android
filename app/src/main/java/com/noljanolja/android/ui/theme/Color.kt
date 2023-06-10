@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.Color
 val YellowMain = Color(0xFFF8DF00)
 val Yellow00 = Color(0xFFFFFAD0)
 val Yellow01 = Color(0xFFFFF490)
-val Orange400 = Color(0xFFFFA800)
+val Orange300 = Color(0xFFFFA800)
 val Orange00 = Color(0xFFFFC700)
 val Orange01 = Color(0xFFE58A00)
 val BlueMain = Color(0xFF007AFF)

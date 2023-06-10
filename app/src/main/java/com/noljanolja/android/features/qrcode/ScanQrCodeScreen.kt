@@ -48,7 +48,7 @@ import com.google.zxing.MultiFormatReader
 import com.google.zxing.RGBLuminanceSource
 import com.google.zxing.common.HybridBinarizer
 import com.noljanolja.android.R
-import com.noljanolja.android.common.error.QrNotValid
+import com.noljanolja.android.common.error.QrNotValidFailure
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.ErrorDialog
 import com.noljanolja.android.ui.composable.Expanded
@@ -98,7 +98,7 @@ fun ScanQrCodeScreen(
                 if (result != null) {
                     viewModel.handleEvent(ScanQrCodeEvent.ParseQRSuccess(result))
                 } else {
-                    error = QrNotValid
+                    error = QrNotValidFailure
                 }
             }
         }

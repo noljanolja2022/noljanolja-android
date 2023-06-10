@@ -380,10 +380,22 @@ object NavigationDirections {
         override val destination: String = "search_product"
     }
 
-    object GiftDetail : NavigationCommand {
+    data class GiftDetail(val giftId: Long = 0) : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf(
+            navArgument("giftId") {
+                defaultValue = 0
+                type = NavType.LongType
+            },
+        )
+        override val options = null
+        override val destination: String = "gift_detail?giftId={giftId}"
+        override fun createDestination() = "gift_detail?giftId=$giftId"
+    }
+
+    object Coupons : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options = null
-        override val destination: String = "gift_detail"
+        override val destination: String = "coupons"
     }
 
     // Back

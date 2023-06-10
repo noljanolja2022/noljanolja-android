@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -35,6 +36,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
+import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.features.shop.composable.ProductItem
 import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.SearchBar
@@ -43,6 +45,8 @@ import com.noljanolja.android.ui.composable.UserPoint
 import com.noljanolja.android.ui.theme.NeutralGrey
 import com.noljanolja.android.ui.theme.withMedium
 import com.noljanolja.android.util.formatDigitsNumber
+import com.noljanolja.core.loyalty.domain.model.MemberInfo
+import com.noljanolja.core.shop.domain.model.Gift
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -50,8 +54,10 @@ fun SearchProductScreen(
     viewModel: SearchProductViewModel = getViewModel(),
 ) {
     val searchKeys by viewModel.searchKeys.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     SearchProductContent(
         searchKeys = searchKeys,
+        uiState = uiState,
         handleEvent = viewModel::handleEvent
     )
 }
@@ -59,6 +65,7 @@ fun SearchProductScreen(
 @Composable
 private fun SearchProductContent(
     searchKeys: List<String>,
+    uiState: UiState<SearchGiftUiData>,
     handleEvent: (SearchProductEvent) -> Unit,
 ) {
     var isSearchFocus by remember {
@@ -108,7 +115,14 @@ private fun SearchProductContent(
                 }
             )
         } else {
-            SearchResult()
+            val data = uiState.data ?: return@Column
+            SearchResult(
+                memberInfo = data.memberInfo,
+                gifts = data.gifts,
+                onItemClick = {
+                    handleEvent(SearchProductEvent.GiftDetail(it))
+                }
+            )
         }
     }
 }
@@ -189,6 +203,7 @@ fun SearchHistory(
     onClear: (String) -> Unit,
     onClearAll: () -> Unit,
 ) {
+    if (searchKeys.isEmpty()) return
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -234,21 +249,31 @@ fun SearchHistory(
 }
 
 @Composable
-private fun SearchResult() {
+private fun SearchResult(
+    memberInfo: MemberInfo,
+    gifts: List<Gift>,
+    onItemClick: (Gift) -> Unit,
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(vertical = 10.dp, horizontal = 16.dp)
     ) {
-        UserPoint(point = 1000.formatDigitsNumber())
+        UserPoint(point = memberInfo.point.formatDigitsNumber())
         SizeBox(height = 16.dp)
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(11) {
-                ProductItem(index = it, modifier = Modifier.weight(1F))
+            items(gifts) {
+                ProductItem(
+                    gift = it,
+                    modifier = Modifier.weight(1F),
+                    onClick = {
+                        onItemClick.invoke(it)
+                    }
+                )
             }
         }
     }

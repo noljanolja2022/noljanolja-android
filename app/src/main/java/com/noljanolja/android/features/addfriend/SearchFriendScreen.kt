@@ -62,7 +62,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
-import com.noljanolja.android.common.error.ValidPhoneFailed
+import com.noljanolja.android.common.error.ValidPhoneFailure
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.ErrorDialog
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
@@ -251,7 +251,7 @@ private fun SearchPhone(
         IconButton(
             onClick = {
                 if (formattedPhoneNumber == null) {
-                    onError(ValidPhoneFailed)
+                    onError(ValidPhoneFailure)
                 } else {
                     onSubmit(formattedPhoneNumber)
                 }

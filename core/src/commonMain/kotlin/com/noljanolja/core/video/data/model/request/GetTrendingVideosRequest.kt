@@ -6,4 +6,3 @@ data class GetTrendingVideosRequest(
     val duration: TrendingVideoDuration = TrendingVideoDuration.Day,
     val limit: Int = 100,
 )
-

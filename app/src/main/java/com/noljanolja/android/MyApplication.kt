@@ -53,6 +53,7 @@ import com.noljanolja.android.features.home.wallet.transaction.TransactionHistor
 import com.noljanolja.android.features.qrcode.ScanQrCodeViewModel
 import com.noljanolja.android.features.setting.SettingViewModel
 import com.noljanolja.android.features.setting.more.AppInfoViewModel
+import com.noljanolja.android.features.shop.coupons.CouponsViewModel
 import com.noljanolja.android.features.shop.giftdetail.GiftDetailViewModel
 import com.noljanolja.android.features.shop.main.ShopViewModel
 import com.noljanolja.android.features.shop.search.SearchProductViewModel
@@ -294,7 +295,10 @@ class MyApplication : Application() {
                     SearchProductViewModel()
                 }
                 viewModel {
-                    GiftDetailViewModel()
+                    GiftDetailViewModel(get())
+                }
+                viewModel {
+                    CouponsViewModel()
                 }
             }
         )

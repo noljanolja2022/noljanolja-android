@@ -101,7 +101,7 @@ internal class UserRepositoryImpl(
     override suspend fun updateAvatar(
         name: String,
         type: String,
-        files: ByteArray
+        files: ByteArray,
     ): Result<Boolean> {
         return userRemoteDataSource.updateAvatar(name, type, files)
     }

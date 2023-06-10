@@ -13,10 +13,10 @@ import coil.Coil
 import coil.memory.MemoryCache
 import com.noljanolja.android.BuildConfig
 import com.noljanolja.android.R
-import com.noljanolja.android.common.error.PhoneNotAvailable
-import com.noljanolja.android.common.error.QrNotValid
-import com.noljanolja.android.common.error.ValidEmailFailed
-import com.noljanolja.android.common.error.ValidPhoneFailed
+import com.noljanolja.android.common.error.PhoneNotAvailableFailure
+import com.noljanolja.android.common.error.QrNotValidFailure
+import com.noljanolja.android.common.error.ValidEmailFailure
+import com.noljanolja.android.common.error.ValidPhoneFailure
 import com.noljanolja.core.file.model.FileInfo
 import okio.Path.Companion.toPath
 import java.io.File
@@ -28,7 +28,7 @@ fun Context.showToast(
 ) = Toast.makeText(this, text, time).show()
 
 fun Context.getErrorMessage(error: Throwable) = when (error) {
-    is ValidEmailFailed -> getString(R.string.invalid_email_format)
+    is ValidEmailFailure -> getString(R.string.invalid_email_format)
     else -> error.message.orEmpty()
 }
 
@@ -113,9 +113,9 @@ fun Context.openUrl(url: String) {
 
 fun Context.getErrorDescription(error: Throwable): String {
     return when (error) {
-        ValidPhoneFailed -> getString(R.string.error_phone_invalid)
-        PhoneNotAvailable -> getString(R.string.error_phone_is_not_available)
-        QrNotValid -> getString(R.string.error_qr_not_valid)
+        ValidPhoneFailure -> getString(R.string.error_phone_invalid)
+        PhoneNotAvailableFailure -> getString(R.string.error_phone_is_not_available)
+        QrNotValidFailure -> getString(R.string.error_qr_not_valid)
         else -> error.message?.takeIf { it.isNotBlank() } ?: getString(R.string.error_unexpected)
     }
 }

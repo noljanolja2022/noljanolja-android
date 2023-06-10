@@ -15,6 +15,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,6 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -42,23 +44,51 @@ import com.noljanolja.android.ui.theme.green300
 import com.noljanolja.android.ui.theme.systemRed100
 import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.util.secondaryTextColor
+import io.ktor.http.parametersOf
 import org.koin.androidx.compose.getViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun GiftDetailScreen(
-    viewModel: GiftDetailViewModel = getViewModel(),
+    giftId: Long,
+    viewModel: GiftDetailViewModel = getViewModel { parametersOf(giftId) },
 ) {
+    var showPurchaseDialog by remember { mutableStateOf(false) }
+    var isPurchased by remember { mutableStateOf(false) }
+    LaunchedEffect(viewModel.buyGiftSuccessEvent) {
+        viewModel.buyGiftSuccessEvent.collect {
+            showPurchaseDialog = true
+        }
+    }
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    GiftDetailContent(uiState = uiState, handleEvent = viewModel::handleEvent)
+    GiftDetailContent(
+        uiState = uiState,
+        isPurchased = isPurchased,
+        handleEvent = viewModel::handleEvent
+    )
+    WarningDialog(
+        isWarning = showPurchaseDialog,
+        title = stringResource(id = R.string.common_success),
+        content = stringResource(id = R.string.shop_order_coupon_success),
+        dismissText = stringResource(id = R.string.shop_later).uppercase(),
+        confirmText = stringResource(id = R.string.common_use).uppercase(),
+        onDismiss = {
+            showPurchaseDialog = false
+            viewModel.handleEvent(GiftDetailEvent.Back)
+        },
+        onConfirm = {
+            showPurchaseDialog = false
+            isPurchased = true
+        }
+    )
 }
 
 @Composable
 private fun GiftDetailContent(
     uiState: UiState<GiftDetailUiData>,
+    isPurchased: Boolean,
     handleEvent: (GiftDetailEvent) -> Unit,
 ) {
-    var showPurchaseDialog by remember { mutableStateOf(false) }
-    var isPurchased by remember { mutableStateOf(false) }
     ScaffoldWithUiState(
         uiState = uiState,
         topBar = {
@@ -69,9 +99,15 @@ private fun GiftDetailContent(
             )
         }
     ) {
-        Column(Modifier.padding(16.dp).verticalScroll(rememberScrollState())) {
+        val data = uiState.data ?: return@ScaffoldWithUiState
+        val gift = data.gift
+        Column(
+            Modifier
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState())
+        ) {
             AsyncImage(
-                model = "https://media.vov.vn/sites/default/files/styles/large/public/2022-03/cf.png",
+                model = gift.image,
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -79,10 +115,10 @@ private fun GiftDetailContent(
                 contentScale = ContentScale.FillBounds
             )
             SizeBox(height = 20.dp)
-            Text(text = "Starbuck", fontSize = 22.sp, color = MaterialTheme.secondaryTextColor())
-            Text(text = "Ice tea", style = MaterialTheme.typography.titleLarge)
+            Text(text = gift.name, fontSize = 22.sp, color = MaterialTheme.secondaryTextColor())
+            Text(text = gift.brand.name, style = MaterialTheme.typography.titleLarge)
             Text(
-                text = "1 shot Arabica Espresso with milk",
+                text = gift.description,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.secondaryTextColor()
             )
@@ -91,24 +127,11 @@ private fun GiftDetailContent(
                 PurchasedInfo()
             } else {
                 PurchaseInfo(onPurchase = {
-                    showPurchaseDialog = true
+                    handleEvent(GiftDetailEvent.Purchase)
                 })
             }
         }
     }
-
-    WarningDialog(
-        isWarning = showPurchaseDialog,
-        title = stringResource(id = R.string.common_success),
-        content = stringResource(id = R.string.shop_order_coupon_success),
-        dismissText = stringResource(id = R.string.shop_later).uppercase(),
-        confirmText = stringResource(id = R.string.common_use).uppercase(),
-        onDismiss = { showPurchaseDialog = false },
-        onConfirm = {
-            showPurchaseDialog = false
-            isPurchased = true
-        }
-    )
 }
 
 @Composable
@@ -165,7 +188,9 @@ private fun ColumnScope.PurchaseInfo(
     Expanded()
     PrimaryButton(
         text = "Purchase".uppercase(),
-        modifier = Modifier.fillMaxWidth().height(48.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),
         onClick = onPurchase
     )
 }
@@ -175,12 +200,16 @@ private fun ColumnScope.PurchasedInfo() {
     Image(
         painter = rememberQrBitmapPainter("1234"),
         contentDescription = null,
-        modifier = Modifier.fillMaxWidth(0.5F).align(Alignment.CenterHorizontally),
+        modifier = Modifier
+            .fillMaxWidth(0.5F)
+            .align(Alignment.CenterHorizontally),
     )
     SizeBox(height = 15.dp)
     Text(
         text = "Give this Code to the cashier to get products",
         style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.green300()
+        color = MaterialTheme.green300(),
+        modifier = Modifier.fillMaxWidth(),
+        textAlign = TextAlign.Center
     )
 }

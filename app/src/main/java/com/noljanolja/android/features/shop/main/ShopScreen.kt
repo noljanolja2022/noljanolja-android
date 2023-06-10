@@ -35,6 +35,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.features.shop.composable.CouponItem
@@ -48,22 +49,29 @@ import com.noljanolja.android.ui.composable.UserPoint
 import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.ui.theme.withMedium
 import com.noljanolja.android.util.formatDigitsNumber
+import com.noljanolja.core.shop.domain.model.Gift
 import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun ShopScreen(
     viewModel: ShopViewModel = getViewModel(),
 ) {
-    ShopContent(handleEvent = viewModel::handleEvent)
+    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    ShopContent(
+        uiState = uiState,
+        handleEvent = viewModel::handleEvent
+    )
 }
 
 @Composable
 private fun ShopContent(
+    uiState: UiState<ShopUiData>,
     handleEvent: (ShopEvent) -> Unit,
 ) {
     ScaffoldWithUiState(
-        uiState = UiState<Any>()
+        uiState = uiState
     ) {
+        val data = uiState.data ?: return@ScaffoldWithUiState
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -76,20 +84,26 @@ private fun ShopContent(
                 item {
                     SizeBox(height = 10.dp)
                     UserPoint(
-                        point = 100000.formatDigitsNumber(),
+                        point = data.memberInfo.point.formatDigitsNumber(),
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                     SizeBox(height = 16.dp)
                 }
                 item {
-                    ExchangeCoupons()
+                    ExchangeCoupons(
+                        coupons = data.myGifts,
+                        onItemClick = { handleEvent(ShopEvent.GiftDetail(it.id)) },
+                        viewAllCoupons = {
+                            handleEvent(ShopEvent.ViewAllCoupons)
+                        }
+                    )
                 }
-                item {
-                    SizeBox(height = 30.dp)
-                }
-                shop(onItemClick = {
-                    handleEvent(ShopEvent.GiftDetail)
-                })
+                shop(
+                    gifts = data.gifts,
+                    onItemClick = {
+                        handleEvent(ShopEvent.GiftDetail(it.id))
+                    }
+                )
             }
         }
     }
@@ -136,7 +150,8 @@ private fun SearchProductHeader(
                     .size(16.dp)
                     .clickable {
                         isShowHelp = true
-                    }.onGloballyPositioned { coordinates ->
+                    }
+                    .onGloballyPositioned { coordinates ->
                         val y = coordinates.positionInRoot().y
                         topHelpPosition = y
                     }
@@ -162,7 +177,12 @@ private fun SearchProductHeader(
 }
 
 @Composable
-private fun ExchangeCoupons() {
+private fun ExchangeCoupons(
+    coupons: List<Gift>,
+    onItemClick: (Gift) -> Unit,
+    viewAllCoupons: () -> Unit,
+) {
+    if (coupons.isEmpty()) return
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -178,28 +198,40 @@ private fun ExchangeCoupons() {
         Text(
             text = stringResource(id = R.string.shop_view_all),
             style = MaterialTheme.typography.bodyLarge.withBold(),
-            color = Color.White
+            color = Color.White,
+            modifier = Modifier.clickable {
+                viewAllCoupons.invoke()
+            }
         )
         Icon(
             Icons.Default.ChevronRight,
             contentDescription = null,
             tint = Color.White,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier
+                .size(24.dp)
+                .clickable {
+                    viewAllCoupons.invoke()
+                }
         )
     }
     SizeBox(height = 10.dp)
     LazyRow(modifier = Modifier.padding(start = 16.dp)) {
-        items(count = 10) { index ->
-            CouponItem(modifier = Modifier.width(130.dp))
+        items(coupons.size) { index ->
+            CouponItem(
+                gift = coupons[index],
+                modifier = Modifier.width(130.dp),
+                onUse = { onItemClick.invoke(coupons[index]) }
+            )
             SizeBox(width = 12.dp)
         }
     }
+    SizeBox(height = 30.dp)
 }
 
 fun LazyListScope.shop(
-    onItemClick: () -> Unit,
+    gifts: List<Gift>,
+    onItemClick: (Gift) -> Unit,
 ) {
-    val items = listOf(1, 2, 3, 4, 5, 6, 7)
     item {
         Text(
             text = stringResource(id = R.string.common_shop),
@@ -209,29 +241,37 @@ fun LazyListScope.shop(
         )
         SizeBox(height = 10.dp)
     }
-    items(count = (items.size + 1) / 2) { row ->
+    items(count = (gifts.size + 1) / 2) { row ->
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         ) {
-            ProductItem(
-                index = row * 2,
-                modifier = Modifier.weight(1F)
-                    .clickable {
-                        onItemClick.invoke()
-                    }
-            )
-            SizeBox(width = 12.dp)
-            if (items.getOrNull(row * 2 + 1) != null) {
-                ProductItem(index = row * 2 + 1, modifier = Modifier.weight(1F))
-            } else {
-                Box(
-                    modifier = Modifier.weight(1F).clickable {
-                        onItemClick.invoke()
+            gifts[row * 2].let {
+                ProductItem(
+                    gift = it,
+                    modifier = Modifier
+                        .weight(1F),
+                    onClick = {
+                        onItemClick.invoke(it)
                     }
                 )
             }
+
+            SizeBox(width = 12.dp)
+            gifts.getOrNull(row * 2 + 1)?.let {
+                ProductItem(
+                    gift = it,
+                    modifier = Modifier
+                        .weight(1F),
+                    onClick = {
+                        onItemClick.invoke(it)
+                    }
+                )
+            } ?: Box(
+                modifier = Modifier
+                    .weight(1F)
+            )
         }
         SizeBox(height = 20.dp)
     }

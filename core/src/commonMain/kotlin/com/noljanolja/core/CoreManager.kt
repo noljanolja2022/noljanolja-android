@@ -279,4 +279,8 @@ class CoreManager : KoinComponent {
 
     suspend fun clearAllSearch() = shopRepository.clearAll()
     suspend fun clearTextSearch(text: String) = shopRepository.clearText(text)
+    suspend fun getGifts() = shopRepository.getGifts()
+    suspend fun getMyGifts() = shopRepository.getMyGifts()
+    suspend fun getGiftDetail(giftId: Long) = shopRepository.getGiftDetail(giftId)
+    suspend fun buyGift(giftId: Long) = shopRepository.buyGift(giftId)
 }

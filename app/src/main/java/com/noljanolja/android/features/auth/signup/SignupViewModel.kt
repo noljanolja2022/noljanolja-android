@@ -2,7 +2,7 @@ package com.noljanolja.android.features.auth.signup
 
 import com.d2brothers.firebase_auth.AuthSdk
 import com.noljanolja.android.common.base.launch
-import com.noljanolja.android.common.error.ValidEmailFailed
+import com.noljanolja.android.common.error.ValidEmailFailure
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.features.auth.common.BaseAuthViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -121,7 +121,7 @@ class SignupViewModel : BaseAuthViewModel() {
                     authSdk.sendEmailVerification()
                     _uiStateFlow.emit(SignupUIState.VerificationEmail)
                 }
-            } catch (e: ValidEmailFailed) {
+            } catch (e: ValidEmailFailure) {
                 _uiStateFlow.emit(SignupUIState.SignupForm())
                 sendEmailError(e)
             } catch (e: Throwable) {

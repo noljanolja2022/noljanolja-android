@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.theme.Bronze
 import com.noljanolja.android.ui.theme.NeutralGrey
-import com.noljanolja.android.ui.theme.Orange400
+import com.noljanolja.android.ui.theme.Orange300
 import com.noljanolja.core.loyalty.domain.model.MemberTier
 
 @Composable
@@ -35,7 +35,7 @@ fun TierIcon(tier: MemberTier, width: Dp = 24.dp) {
             }
 
             MemberTier.PREMIUM -> {
-                iconColor = Orange400
+                iconColor = Orange300
             }
         }
     }

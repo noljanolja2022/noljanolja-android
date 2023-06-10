@@ -3,8 +3,8 @@ package com.noljanolja.android.features.addfriend
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
-import com.noljanolja.android.common.error.CannotFindUsers
-import com.noljanolja.android.common.error.PhoneNotAvailable
+import com.noljanolja.android.common.error.CannotFindUsersFailure
+import com.noljanolja.android.common.error.PhoneNotAvailableFailure
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.core.user.domain.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,10 +40,10 @@ class AddFriendViewModel : BaseViewModel() {
             _searchUsersResultFlow.emit(result.getOrNull()!!)
             navigationManager.navigate(NavigationDirections.SearchFriendResult)
         } else {
-            sendError(PhoneNotAvailable)
+            sendError(PhoneNotAvailableFailure)
             _searchFriendUiStateFlow.emit(
                 UiState(
-                    error = result.exceptionOrNull() ?: PhoneNotAvailable
+                    error = result.exceptionOrNull() ?: PhoneNotAvailableFailure
                 )
             )
         }
@@ -59,7 +59,7 @@ class AddFriendViewModel : BaseViewModel() {
         } else {
             _searchFriendUiStateFlow.emit(
                 UiState(
-                    error = result.exceptionOrNull() ?: CannotFindUsers
+                    error = result.exceptionOrNull() ?: CannotFindUsersFailure
                 )
             )
         }

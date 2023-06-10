@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class InviteFriendRequest(
-    val friendId: String
+    val friendId: String,
 )

@@ -39,7 +39,7 @@ import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.composable.VerticalDivider
 import com.noljanolja.android.ui.composable.WarningDialog
 import com.noljanolja.android.ui.composable.youtube.YoutubeView
-import com.noljanolja.android.ui.theme.Orange400
+import com.noljanolja.android.ui.theme.Orange300
 import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.util.formatFullTime
 import com.noljanolja.android.util.lightTextColor
@@ -218,7 +218,7 @@ private fun VideoParameters(video: Video) {
     ) {
         VideoParameter(
             title = stringResource(id = R.string.video_detail_views),
-            value = video.likeCount.toString()
+            value = video.viewCount.toString()
         )
         SizeBox(width = 10.dp)
         VideoParameter(
@@ -229,7 +229,7 @@ private fun VideoParameters(video: Video) {
         VideoParameter(
             title = stringResource(id = R.string.video_detail_reward),
             value = stringResource(id = R.string.video_detail_reward_point, video.totalPoints),
-            valueColor = Orange400
+            valueColor = Orange300
         )
     }
 }

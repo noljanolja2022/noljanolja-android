@@ -16,6 +16,7 @@ import com.noljanolja.core.loyalty.domain.repository.LoyaltyRepository
 import com.noljanolja.core.media.data.datasource.MediaApi
 import com.noljanolja.core.media.data.repository.MediaRepositoryImpl
 import com.noljanolja.core.media.domain.repository.MediaRepository
+import com.noljanolja.core.shop.data.datasource.ShopApi
 import com.noljanolja.core.shop.data.datasource.ShopLocalDatasource
 import com.noljanolja.core.shop.data.repository.ShopRepositoryImpl
 import com.noljanolja.core.shop.domain.repository.ShopRepository
@@ -83,8 +84,11 @@ private val coreModule = module {
             )
         }
     }
+    single {
+        ShopApi(get())
+    }
     single<ShopRepository> {
-        ShopRepositoryImpl(get())
+        ShopRepositoryImpl(get(), get())
     }
 
     single<UserRepository> {

@@ -1,6 +1,7 @@
 package com.noljanolja.android.features.shop.composable
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -19,44 +20,56 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.noljanolja.android.R
+import com.noljanolja.android.ui.composable.CustomText
 import com.noljanolja.android.ui.composable.SizeBox
+import com.noljanolja.android.ui.theme.Orange300
 import com.noljanolja.android.util.secondaryTextColor
+import com.noljanolja.core.shop.domain.model.Gift
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun ProductItem(modifier: Modifier = Modifier, index: Int) {
+fun ProductItem(
+    gift: Gift,
+    modifier: Modifier = Modifier,
+    onClick: (Gift) -> Unit,
+) {
     Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(10.dp))
+        modifier = modifier.clickable { onClick.invoke(gift) }.clip(RoundedCornerShape(10.dp))
             .background(MaterialTheme.colorScheme.background)
             .padding(vertical = 10.dp, horizontal = 8.5.dp)
     ) {
         AsyncImage(
-            model = "https://media.vov.vn/sites/default/files/styles/large/public/2022-03/cf.png",
+            model = gift.image,
             contentDescription = null,
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1F)
-                .clip(RoundedCornerShape(10.dp)),
+            modifier = Modifier.fillMaxWidth().aspectRatio(1F).clip(RoundedCornerShape(10.dp)),
             contentScale = ContentScale.FillBounds
         )
-        Text(
-            text = "Statbuck $index",
+        SizeBox(height = 5.dp)
+        CustomText(
+            text = gift.name,
             style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.secondaryTextColor()
+            color = MaterialTheme.secondaryTextColor(),
+            lines = 2
         )
         Text(
-            "Ice latte",
+            gift.brand.name,
             style = MaterialTheme.typography.titleSmall
         )
         SizeBox(height = 10.dp)
         FlowRow(verticalAlignment = Alignment.CenterVertically) {
-            Text("4800", style = MaterialTheme.typography.labelMedium)
+            Text(
+                "4800",
+                style = MaterialTheme.typography.labelMedium.copy(
+                    textDecoration = TextDecoration.LineThrough
+                ),
+                color = MaterialTheme.secondaryTextColor()
+            )
             SizeBox(width = 10.dp)
             Text(
                 text = buildAnnotatedString {
@@ -64,7 +77,7 @@ fun ProductItem(modifier: Modifier = Modifier, index: Int) {
                         SpanStyle(
                             fontWeight = FontWeight.W800,
                             fontSize = 16.sp,
-                            color = MaterialTheme.colorScheme.secondary
+                            color = Orange300
                         )
                     ) {
                         append("3800 ")

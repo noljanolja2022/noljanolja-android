@@ -24,7 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.noljanolja.android.R
-import com.noljanolja.android.ui.theme.Orange400
+import com.noljanolja.android.ui.theme.Orange300
 
 @Composable
 fun UserPoint(
@@ -66,7 +66,7 @@ fun UserPoint(
                         fontSize = 28.sp,
                         lineHeight = 36.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Orange400
+                        color = Orange300
                     )
                 )
             }

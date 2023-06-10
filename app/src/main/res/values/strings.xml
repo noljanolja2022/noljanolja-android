@@ -332,5 +332,6 @@
     <string name="common_success">Success</string>
     <string name="shop_later">Later</string>
     <string name="common_use">Use</string>
+    <string name="common_use_now">Use now</string>
     <string name="shop_order_coupon_success">"Your order has been completed. Check in Exchanged Coupon."</string>
 </resources>
