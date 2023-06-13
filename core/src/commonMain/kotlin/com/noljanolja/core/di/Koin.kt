@@ -60,7 +60,12 @@ private val coreModule = module {
     }
     single {
         with(get<Noljanolja>()) {
-            LocalUserDataSource(userQueries, participantQueries, Dispatchers.Default)
+            LocalUserDataSource(
+                userQueries,
+                participantQueries,
+                memberInfoQueries,
+                Dispatchers.Default
+            )
         }
     }
     single {
@@ -128,7 +133,7 @@ private val coreModule = module {
         LoyaltyApi(get())
     }
     single<LoyaltyRepository> {
-        LoyaltyRepositoryImpl(get())
+        LoyaltyRepositoryImpl(get(), get())
     }
     single {
         Noljanolja(get())

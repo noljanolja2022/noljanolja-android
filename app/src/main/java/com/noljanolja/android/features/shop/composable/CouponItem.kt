@@ -19,6 +19,7 @@ import coil.compose.AsyncImage
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.SizeBox
+import com.noljanolja.android.ui.theme.Orange300
 import com.noljanolja.android.util.secondaryTextColor
 import com.noljanolja.core.shop.domain.model.Gift
 
@@ -56,7 +57,7 @@ fun CouponItem(
         SizeBox(height = 5.dp)
         PrimaryButton(
             text = stringResource(id = R.string.common_use_now).uppercase(),
-            containerColor = MaterialTheme.colorScheme.secondary,
+            containerColor = Orange300,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(30.dp),

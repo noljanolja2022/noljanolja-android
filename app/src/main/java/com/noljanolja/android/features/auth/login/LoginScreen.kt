@@ -22,15 +22,16 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.handleError
+import com.noljanolja.android.common.country.Countries
+import com.noljanolja.android.common.country.Country
+import com.noljanolja.android.common.country.DEFAULT_CODE
+import com.noljanolja.android.common.country.getFlagEmoji
 import com.noljanolja.android.features.auth.common.component.VerifyEmail
 import com.noljanolja.android.features.auth.login.component.LoginButton
 import com.noljanolja.android.ui.composable.ErrorDialog
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.SecondaryButton
 import com.noljanolja.android.ui.composable.WarningDialog
-import com.noljanolja.core.country.domain.model.Countries
-import com.noljanolja.core.country.domain.model.Country
-import com.noljanolja.core.country.domain.model.getFlagEmoji
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -72,7 +73,7 @@ private fun LoginContent(
     val country by remember {
         mutableStateOf(
             Countries.first {
-                it.nameCode == (countryCode ?: "vn")
+                it.nameCode == (countryCode ?: DEFAULT_CODE)
             }
         )
     }

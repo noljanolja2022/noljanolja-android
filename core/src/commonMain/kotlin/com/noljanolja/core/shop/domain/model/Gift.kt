@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 data class Gift(
     val brand: Brand = Brand(),
     val category: Category = Category(),
+    val code: String = "",
     val codes: List<String> = emptyList(),
     val description: String = "",
     val endTime: String = "",

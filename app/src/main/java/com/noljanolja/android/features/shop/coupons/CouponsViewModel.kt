@@ -3,6 +3,7 @@ package com.noljanolja.android.features.shop.coupons
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
+import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.core.shop.domain.model.Gift
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,6 +28,12 @@ class CouponsViewModel : BaseViewModel() {
         launch {
             when (event) {
                 CouponsEvent.Back -> back()
+                is CouponsEvent.GiftDetail -> navigationManager.navigate(
+                    NavigationDirections.GiftDetail(
+                        event.giftId,
+                        event.code
+                    )
+                )
             }
         }
     }

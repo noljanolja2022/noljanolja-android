@@ -29,9 +29,9 @@ internal class ShopRepositoryImpl(
         shopLocalDatasource.clearAll()
     }
 
-    override suspend fun getGifts(): Result<List<Gift>> {
+    override suspend fun getGifts(searchText: String): Result<List<Gift>> {
         return try {
-            val response = shopApi.getGifts()
+            val response = shopApi.getGifts(searchText)
             if (response.isSuccessful()) {
                 Result.success(response.data)
             } else {
@@ -59,7 +59,7 @@ internal class ShopRepositoryImpl(
         return try {
             val response = shopApi.getGiftDetail(GetGiftRequest(id))
             if (response.isSuccessful()) {
-                Result.success(response.data.first())
+                Result.success(response.data!!)
             } else {
                 Result.failure(Throwable(response.message))
             }
@@ -68,11 +68,11 @@ internal class ShopRepositoryImpl(
         }
     }
 
-    override suspend fun buyGift(id: Long): Result<Boolean> {
+    override suspend fun buyGift(id: Long): Result<Gift> {
         return try {
             val response = shopApi.buyGift(BuildGiftRequest(id))
             if (response.isSuccessful()) {
-                Result.success(true)
+                Result.success(response.data!!)
             } else {
                 Result.failure(Throwable(response.message))
             }

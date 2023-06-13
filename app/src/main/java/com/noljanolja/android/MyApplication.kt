@@ -295,7 +295,7 @@ class MyApplication : Application() {
                     SearchProductViewModel()
                 }
                 viewModel {
-                    GiftDetailViewModel(get())
+                    GiftDetailViewModel(get(), get())
                 }
                 viewModel {
                     CouponsViewModel()

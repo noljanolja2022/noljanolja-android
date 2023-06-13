@@ -245,4 +245,5 @@
     // need update
     <string name="chat_edit_title_screen">닉네임 변경</string>
 
+    <string name="country_kr">한국</string>
 </resources>

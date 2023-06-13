@@ -252,7 +252,9 @@ class CoreManager : KoinComponent {
         youtubeToken: String,
     ) = videoRepository.commentVideo(videoId = id, comment = comment, youtubeToken = youtubeToken)
 
-    suspend fun getMemberInfo() = loyaltyRepository.getMemberInfo()
+    fun getMemberInfo() = loyaltyRepository.getMemberInfo()
+
+    suspend fun refreshMemberInfo() = loyaltyRepository.refreshMemberInfo()
 
     suspend fun getLoyaltyPoints(
         filter: LoyaltyType? = null,
@@ -279,7 +281,7 @@ class CoreManager : KoinComponent {
 
     suspend fun clearAllSearch() = shopRepository.clearAll()
     suspend fun clearTextSearch(text: String) = shopRepository.clearText(text)
-    suspend fun getGifts() = shopRepository.getGifts()
+    suspend fun getGifts(searchText: String = "") = shopRepository.getGifts(searchText)
     suspend fun getMyGifts() = shopRepository.getMyGifts()
     suspend fun getGiftDetail(giftId: Long) = shopRepository.getGiftDetail(giftId)
     suspend fun buyGift(giftId: Long) = shopRepository.buyGift(giftId)

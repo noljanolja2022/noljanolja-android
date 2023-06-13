@@ -11,12 +11,20 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class AddFriendViewModel : BaseViewModel() {
-    private val _searchFriendUiStateFlow = MutableStateFlow<UiState<Nothing>>(UiState())
+    private val _searchFriendUiStateFlow = MutableStateFlow<UiState<AddFriendUiData>>(UiState())
     val searchFriendUiStateFlow = _searchFriendUiStateFlow.asStateFlow()
     private val _searchUsersResultFlow = MutableStateFlow<List<User>>(emptyList())
     val searchUsersResultFlow = _searchUsersResultFlow.asStateFlow()
     private val _isProcessingInvite = MutableStateFlow(false)
     val isProcessingInvite = _isProcessingInvite.asStateFlow()
+
+    init {
+        launch {
+            val user = coreManager.getCurrentUser().getOrDefault(User())
+            _searchFriendUiStateFlow.emit(UiState(data = AddFriendUiData(user = user)))
+        }
+    }
+
     fun handleEvent(event: AddFriendEvent) {
         launch {
             when (event) {
@@ -84,3 +92,7 @@ class AddFriendViewModel : BaseViewModel() {
         _isProcessingInvite.emit(false)
     }
 }
+
+data class AddFriendUiData(
+    val user: User = User(),
+)

@@ -10,8 +10,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.features.shop.composable.CouponItem
 import com.noljanolja.android.ui.composable.CommonTopAppBar
@@ -19,7 +21,9 @@ import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun CouponsScreen(viewModel: CouponsViewModel = getViewModel()) {
+fun CouponsScreen(
+    viewModel: CouponsViewModel = getViewModel(),
+) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     CouponsContent(
         uiState = uiState,
@@ -36,7 +40,7 @@ private fun CouponsContent(
         uiState = uiState,
         topBar = {
             CommonTopAppBar(
-                title = "Coupon",
+                title = stringResource(id = R.string.shop_coupon),
                 onBack = {
                     handleEvent(CouponsEvent.Back)
                 },
@@ -58,7 +62,9 @@ private fun CouponsContent(
             items(data.myGifts) {
                 CouponItem(
                     gift = it,
-                    onUse = {}
+                    onUse = {
+                        handleEvent(CouponsEvent.GiftDetail(it.id, it.code))
+                    }
                 )
             }
         }

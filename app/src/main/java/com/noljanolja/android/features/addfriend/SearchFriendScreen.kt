@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -62,6 +62,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
+import com.noljanolja.android.common.country.Countries
+import com.noljanolja.android.common.country.DEFAULT_CODE
+import com.noljanolja.android.common.country.getFlagEmoji
 import com.noljanolja.android.common.error.ValidPhoneFailure
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.ErrorDialog
@@ -72,8 +75,6 @@ import com.noljanolja.android.ui.theme.disableBackgroundColor
 import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.util.getErrorDescription
 import com.noljanolja.android.util.parseUserIdFromQr
-import com.noljanolja.core.country.domain.model.Countries
-import com.noljanolja.core.country.domain.model.getFlagEmoji
 import com.noljanolja.core.user.domain.model.User
 
 @Composable
@@ -115,7 +116,7 @@ fun SearchFriendScreen(
 
 @Composable
 private fun SearchFriendContent(
-    uiState: UiState<*>,
+    uiState: UiState<AddFriendUiData>,
     countryCode: String?,
     handleEvent: (AddFriendEvent) -> Unit,
 ) {
@@ -128,10 +129,9 @@ private fun SearchFriendContent(
             centeredTitle = true,
         )
     }) {
+        val data = uiState.data ?: return@ScaffoldWithUiState
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
                 .padding(vertical = 12.dp, horizontal = 16.dp)
         ) {
             SearchPhone(
@@ -149,7 +149,7 @@ private fun SearchFriendContent(
                 handleEvent(AddFriendEvent.ScanQrCode)
             })
             SizeBox(height = 20.dp)
-            QrInformation(User(name = "14H"))
+            QrInformation(data.user)
         }
     }
 }
@@ -170,7 +170,7 @@ private fun SearchPhone(
     val country by remember {
         mutableStateOf(
             Countries.first {
-                it.nameCode == (countryCode ?: "vn")
+                it.nameCode == (countryCode ?: DEFAULT_CODE)
             }
         )
     }
@@ -179,14 +179,11 @@ private fun SearchPhone(
         PhoneNumberUtils.formatNumberToE164(phone.trim(), country.nameCode.uppercase())
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Row(
-            modifier = Modifier
-                .weight(1f)
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.outline,
-                    shape = RoundedCornerShape(10.dp)
-                )
-                .padding(6.dp),
+            modifier = Modifier.weight(1f).border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outline,
+                shape = RoundedCornerShape(10.dp)
+            ).padding(6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
@@ -198,10 +195,8 @@ private fun SearchPhone(
                 Text(
                     country.getFlagEmoji(),
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(3.dp))
-                        .background(MaterialTheme.disableBackgroundColor())
-                        .padding(5.dp)
+                    modifier = Modifier.clip(RoundedCornerShape(3.dp))
+                        .background(MaterialTheme.disableBackgroundColor()).padding(5.dp)
                 )
                 SizeBox(width = 6.dp)
                 Text("+${country.phoneCode}", style = MaterialTheme.typography.bodyMedium)
@@ -209,9 +204,7 @@ private fun SearchPhone(
                 Icon(
                     Icons.Default.KeyboardArrowDown,
                     contentDescription = null,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .padding(2.dp),
+                    modifier = Modifier.size(24.dp).padding(2.dp),
                     tint = MaterialTheme.colorScheme.onBackground
                 )
             }
@@ -257,9 +250,7 @@ private fun SearchPhone(
                 }
             },
             enabled = phone.isNotBlank(),
-            modifier = Modifier
-                .clip(CircleShape)
-                .size(36.dp),
+            modifier = Modifier.clip(CircleShape).size(36.dp),
             colors = IconButtonDefaults.iconButtonColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -288,8 +279,7 @@ private fun SearchQrAndContact(
             title = stringResource(id = R.string.add_friend_add_by_contact),
             icon = Icons.Default.Contacts,
             modifier = Modifier.weight(1f),
-            onClick = {
-            }
+            onClick = {}
         )
     }
 }
@@ -308,9 +298,7 @@ private fun SearchItem(
         elevation = CardDefaults.cardElevation(10.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 12.dp),
+            modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
@@ -329,28 +317,19 @@ private fun SearchItem(
 private fun QrInformation(user: User) {
     Box(modifier = Modifier.fillMaxWidth()) {
         Box(
-            modifier = Modifier
-                .padding(start = 42.dp, end = 42.dp, top = 75.dp)
-                .clip(RoundedCornerShape(20.dp))
-                .matchParentSize()
-                .align(Alignment.BottomCenter)
+            modifier = Modifier.padding(start = 42.dp, end = 42.dp, top = 75.dp)
+                .clip(RoundedCornerShape(20.dp)).matchParentSize().align(Alignment.BottomCenter)
                 .background(MaterialTheme.colorScheme.primary)
         )
         Image(
             painter = painterResource(id = R.drawable.bg_qrfriend),
             contentDescription = null,
-            modifier = Modifier
-                .padding(end = 42.dp)
-                .fillMaxWidth()
-                .align(Alignment.TopStart),
+            modifier = Modifier.padding(end = 42.dp).fillMaxWidth().align(Alignment.TopStart),
             contentScale = ContentScale.FillWidth
         )
         Column(
-            modifier = Modifier
-                .matchParentSize()
-                .align(Alignment.BottomCenter)
-                .padding(top = 95.dp, bottom = 20.dp)
-                .fillMaxWidth(),
+            modifier = Modifier.matchParentSize().align(Alignment.BottomCenter)
+                .padding(top = 95.dp, bottom = 20.dp).fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -358,32 +337,26 @@ private fun QrInformation(user: User) {
                 text = user.name,
                 style = MaterialTheme.typography.bodyMedium.withBold(),
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier
-                    .align(Alignment.End)
-                    .padding(end = 88.dp)
+                modifier = Modifier.align(Alignment.End).padding(end = 88.dp)
             )
             SizeBox(height = 8.dp)
             Box(
-                modifier = Modifier
-                    .weight(1F)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(Color.White)
-                    .padding(5.dp)
+                modifier = Modifier.weight(1F),
+                contentAlignment = Alignment.Center
             ) {
                 Image(
                     painter = rememberQrBitmapPainter(user.getQrUrl()),
                     contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxHeight(),
+                    modifier = Modifier.aspectRatio(1f)
+                        .clip(RoundedCornerShape(20.dp)).background(Color.White).padding(10.dp),
                 )
             }
 
             Image(
                 painter = painterResource(id = R.drawable.ic_ppyy),
                 contentDescription = null,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .width(40.dp)
+                modifier = Modifier.padding(8.dp).width(40.dp),
+                contentScale = ContentScale.FillWidth
             )
             Text(
                 text = stringResource(id = R.string.add_friend_scan_qr_to_add),

@@ -40,6 +40,7 @@ import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.withSemiBold
 import com.noljanolja.android.util.loadFileInfo
 import com.noljanolja.android.util.secondaryTextColor
+import com.noljanolja.core.loyalty.domain.model.MemberInfo
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -47,6 +48,7 @@ fun ChatSettingsScreen(
     viewModel: ChatSettingsViewModel = getViewModel(),
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val memberInfo by viewModel.memberInfoFlow.collectAsStateWithLifecycle()
     var isShowSuccessToast by remember {
         mutableStateOf(false)
     }
@@ -58,6 +60,7 @@ fun ChatSettingsScreen(
 
     ChatSettingsContent(
         uiState = uiState,
+        memberInfo = memberInfo,
         handleEvent = viewModel::handleEvent
     )
     ComposeToast(
@@ -89,6 +92,7 @@ fun ChatSettingsScreen(
 @Composable
 private fun ChatSettingsContent(
     uiState: UiState<ChatSettingsUiData>,
+    memberInfo: MemberInfo,
     handleEvent: (ChatSettingsEvent) -> Unit,
 ) {
     val context = LocalContext.current
@@ -118,7 +122,6 @@ private fun ChatSettingsContent(
         }
     ) {
         val user = uiState.data?.user ?: return@ScaffoldWithUiState
-        val memberInfo = uiState.data.memberInfo
         Column(modifier = Modifier.padding(16.dp)) {
             ChatProfile(
                 user = user,

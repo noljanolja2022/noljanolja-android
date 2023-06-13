@@ -17,10 +17,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.noljanolja.android.R
+import com.noljanolja.android.common.country.Countries
+import com.noljanolja.android.common.country.Country
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.SearchBar
-import com.noljanolja.core.country.domain.model.Countries
-import com.noljanolja.core.country.domain.model.Country
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -104,8 +104,9 @@ private fun CountryRow(
     country: Country,
     onClick: (Country) -> Unit,
 ) {
+    val name = country.nameId?.let { stringResource(id = it) } ?: country.name
     Text(
-        country.name,
+        text = name,
         modifier = modifier.fillMaxWidth().clickable { onClick(country) }.padding(vertical = 12.dp),
         style = MaterialTheme.typography.bodyLarge,
     )

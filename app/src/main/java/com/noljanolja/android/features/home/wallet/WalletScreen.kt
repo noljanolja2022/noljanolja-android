@@ -67,19 +67,24 @@ fun WalletScreen(
     viewModel: WalletViewModel = getViewModel(),
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    WalletContent(uiState = uiState, handleEvent = viewModel::handleEvent)
+    val memberInfo by viewModel.memberInfoFlow.collectAsStateWithLifecycle()
+    WalletContent(
+        uiState = uiState,
+        memberInfo = memberInfo,
+        handleEvent = viewModel::handleEvent
+    )
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun WalletContent(
     uiState: UiState<WalletUIData>,
+    memberInfo: MemberInfo,
     handleEvent: (WalletEvent) -> Unit,
 ) {
     val state = rememberPullRefreshState(uiState.loading, { handleEvent(WalletEvent.Refresh) })
     ScaffoldWithUiState(uiState = uiState) {
         val user = uiState.data?.user ?: return@ScaffoldWithUiState
-        val memberInfo = uiState.data.memberInfo ?: return@ScaffoldWithUiState
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()

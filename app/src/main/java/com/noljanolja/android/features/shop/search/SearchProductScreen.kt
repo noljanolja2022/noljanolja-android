@@ -55,9 +55,11 @@ fun SearchProductScreen(
 ) {
     val searchKeys by viewModel.searchKeys.collectAsStateWithLifecycle()
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val memberInfo by viewModel.memberInfoFlow.collectAsStateWithLifecycle()
     SearchProductContent(
         searchKeys = searchKeys,
         uiState = uiState,
+        memberInfo = memberInfo,
         handleEvent = viewModel::handleEvent
     )
 }
@@ -65,6 +67,7 @@ fun SearchProductScreen(
 @Composable
 private fun SearchProductContent(
     searchKeys: List<String>,
+    memberInfo: MemberInfo,
     uiState: UiState<SearchGiftUiData>,
     handleEvent: (SearchProductEvent) -> Unit,
 ) {
@@ -117,7 +120,7 @@ private fun SearchProductContent(
         } else {
             val data = uiState.data ?: return@Column
             SearchResult(
-                memberInfo = data.memberInfo,
+                memberInfo = memberInfo,
                 gifts = data.gifts,
                 onItemClick = {
                     handleEvent(SearchProductEvent.GiftDetail(it))
@@ -269,6 +272,7 @@ private fun SearchResult(
             items(gifts) {
                 ProductItem(
                     gift = it,
+                    memberPoint = memberInfo.point,
                     modifier = Modifier.weight(1F),
                     onClick = {
                         onItemClick.invoke(it)

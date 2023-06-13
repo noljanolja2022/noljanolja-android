@@ -1,14 +1,19 @@
 package com.noljanolja.core.user.data.datasource
 
+import com.noljanolija.core.db.MemberInfoQueries
 import com.noljanolija.core.db.ParticipantQueries
 import com.noljanolija.core.db.UserQueries
+import com.noljanolja.core.loyalty.domain.model.MemberInfo
+import com.noljanolja.core.loyalty.domain.model.MemberTier
 import com.noljanolja.core.user.domain.model.Gender
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.utils.transactionWithContext
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
+import com.squareup.sqldelight.runtime.coroutines.mapToOneOrDefault
 import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.datetime.Clock
@@ -18,6 +23,7 @@ import kotlinx.datetime.LocalDate
 class LocalUserDataSource(
     private val userQueries: UserQueries,
     private val participantQueries: ParticipantQueries,
+    private val memberInfoQueries: MemberInfoQueries,
     private val backgroundDispatcher: CoroutineDispatcher,
 ) {
     private val userMapper = {
@@ -46,6 +52,31 @@ class LocalUserDataSource(
         )
     }
 
+    private val memberMapper = {
+            memberId: String,
+            currentTier: String,
+            currentTierMinPoint: Long,
+            nextTier: String?,
+            nextTierMinPoint: Long?,
+            point: Long,
+            accumulatedPointsToday: Long,
+            exchangeablePoints: Long,
+            created_at: Long,
+            updated_at: Long,
+
+        ->
+        MemberInfo(
+            memberId = memberId,
+            currentTier = MemberTier.valueOf(currentTier),
+            currentTierMinPoint = currentTierMinPoint,
+            nextTier = nextTier?.let { MemberTier.valueOf(it) },
+            nextTierMinPoint = nextTierMinPoint ?: 0,
+            point = point,
+            accumulatedPointsToday = accumulatedPointsToday,
+            exchangeablePoints = exchangeablePoints,
+        )
+    }
+
     suspend fun findById(
         id: String,
     ): User? = userQueries.findById(id, userMapper)
@@ -57,6 +88,27 @@ class LocalUserDataSource(
         .asFlow()
         .mapToOneOrNull(backgroundDispatcher)
         .firstOrNull()
+
+    fun getMemberInfo(): Flow<MemberInfo> = memberInfoQueries.findMe(memberMapper)
+        .asFlow()
+        .mapToOneOrDefault(MemberInfo(), backgroundDispatcher)
+
+    suspend fun upsertMemberInfo(memberInfo: MemberInfo) {
+        memberInfoQueries.transactionWithContext(backgroundDispatcher) {
+            memberInfoQueries.upsert(
+                memberId = memberInfo.memberId,
+                currentTier = memberInfo.currentTier.name,
+                currentTierMinPoint = memberInfo.currentTierMinPoint,
+                exchangeablePoints = memberInfo.exchangeablePoints,
+                nextTier = memberInfo.nextTier?.name,
+                nextTierMinPoint = memberInfo.nextTierMinPoint,
+                accumulatedPointsToday = memberInfo.accumulatedPointsToday,
+                point = memberInfo.point,
+                created_at = Clock.System.now().toEpochMilliseconds(),
+                updated_at = Clock.System.now().toEpochMilliseconds(),
+            )
+        }
+    }
 
     suspend fun findConversationParticipants(
         conversationId: Long,

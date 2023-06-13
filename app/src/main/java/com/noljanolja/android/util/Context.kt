@@ -27,6 +27,10 @@ fun Context.showToast(
     time: Int = Toast.LENGTH_SHORT,
 ) = Toast.makeText(this, text, time).show()
 
+fun Context.showError(error: Throwable, time: Int = Toast.LENGTH_SHORT) {
+    Toast.makeText(this, getErrorMessage(error), time).show()
+}
+
 fun Context.getErrorMessage(error: Throwable) = when (error) {
     is ValidEmailFailure -> getString(R.string.invalid_email_format)
     else -> error.message.orEmpty()

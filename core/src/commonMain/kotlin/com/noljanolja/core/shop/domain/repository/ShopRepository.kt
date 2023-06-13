@@ -9,8 +9,8 @@ interface ShopRepository {
     fun insertKey(text: String)
     suspend fun clearText(text: String)
     suspend fun clearAll()
-    suspend fun getGifts(): Result<List<Gift>>
+    suspend fun getGifts(searchText: String): Result<List<Gift>>
     suspend fun getMyGifts(): Result<List<Gift>>
     suspend fun getGiftDetail(id: Long): Result<Gift>
-    suspend fun buyGift(id: Long): Result<Boolean>
+    suspend fun buyGift(id: Long): Result<Gift>
 }

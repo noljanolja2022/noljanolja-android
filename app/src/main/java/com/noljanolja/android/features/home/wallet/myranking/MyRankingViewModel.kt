@@ -8,14 +8,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class MyRankingViewModel : BaseViewModel() {
-    private val _uiStateFlow = MutableStateFlow<UiState<MyRankingUiData>>(UiState())
+    private val _uiStateFlow = MutableStateFlow<UiState<MyRankingUiData>>(UiState(loading = true))
     val uiStateFlow = _uiStateFlow.asStateFlow()
 
     init {
         launch {
-            val memberInfo = coreManager.getMemberInfo().getOrNull()
-            memberInfo?.let {
-                _uiStateFlow.emit(UiState(data = MyRankingUiData(memberInfo = memberInfo)))
+            coreManager.getMemberInfo().collect {
+                _uiStateFlow.emit(UiState(data = MyRankingUiData(memberInfo = it)))
             }
         }
     }

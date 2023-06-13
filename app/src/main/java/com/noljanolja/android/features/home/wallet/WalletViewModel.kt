@@ -1,5 +1,6 @@
 package com.noljanolja.android.features.home.wallet
 
+import androidx.lifecycle.viewModelScope
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
@@ -7,15 +8,23 @@ import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
 import com.noljanolja.core.user.domain.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 
 class WalletViewModel : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow<UiState<WalletUIData>>(UiState())
     val uiStateFlow = _uiStateFlow.asStateFlow()
 
+    val memberInfoFlow = coreManager.getMemberInfo().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = MemberInfo()
+    )
+
     init {
         launch {
-            refreshMemberInfo()
+            refresh()
         }
     }
 
@@ -42,21 +51,19 @@ class WalletViewModel : BaseViewModel() {
                             loading = true
                         )
                     )
-                    refreshMemberInfo(forceRefresh = true)
+                    refresh(forceRefresh = true)
                 }
             }
         }
     }
 
-    private suspend fun refreshMemberInfo(forceRefresh: Boolean = false) {
+    private suspend fun refresh(forceRefresh: Boolean = false) {
         val user = coreManager.getCurrentUser(forceRefresh = forceRefresh).getOrNull()
-        val memberInfo = coreManager.getMemberInfo().getOrNull()
-        _uiStateFlow.emit(UiState(data = WalletUIData(user = user, memberInfo = memberInfo)))
+        _uiStateFlow.emit(UiState(data = WalletUIData(user = user)))
     }
 }
 
 data class WalletUIData(
     val user: User?,
-    val memberInfo: MemberInfo?,
     val friendNumber: Int = 100,
 )

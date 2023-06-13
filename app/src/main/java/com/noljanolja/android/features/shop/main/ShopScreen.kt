@@ -16,9 +16,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Help
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -49,6 +52,7 @@ import com.noljanolja.android.ui.composable.UserPoint
 import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.ui.theme.withMedium
 import com.noljanolja.android.util.formatDigitsNumber
+import com.noljanolja.core.loyalty.domain.model.MemberInfo
 import com.noljanolja.core.shop.domain.model.Gift
 import org.koin.androidx.compose.getViewModel
 
@@ -57,25 +61,33 @@ fun ShopScreen(
     viewModel: ShopViewModel = getViewModel(),
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val memberInfo by viewModel.memberInfoFlow.collectAsStateWithLifecycle()
     ShopContent(
         uiState = uiState,
+        memberInfo = memberInfo,
         handleEvent = viewModel::handleEvent
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun ShopContent(
     uiState: UiState<ShopUiData>,
+    memberInfo: MemberInfo,
     handleEvent: (ShopEvent) -> Unit,
 ) {
     ScaffoldWithUiState(
         uiState = uiState
     ) {
+        val state = rememberPullRefreshState(uiState.loading, { handleEvent(ShopEvent.Refresh) })
+
         val data = uiState.data ?: return@ScaffoldWithUiState
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.primaryContainer)
+                .pullRefresh(state)
         ) {
             SearchProductHeader(
                 goToSearch = { handleEvent(ShopEvent.Search) },
@@ -84,7 +96,7 @@ private fun ShopContent(
                 item {
                     SizeBox(height = 10.dp)
                     UserPoint(
-                        point = data.memberInfo.point.formatDigitsNumber(),
+                        point = memberInfo.point.formatDigitsNumber(),
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                     SizeBox(height = 16.dp)
@@ -92,7 +104,7 @@ private fun ShopContent(
                 item {
                     ExchangeCoupons(
                         coupons = data.myGifts,
-                        onItemClick = { handleEvent(ShopEvent.GiftDetail(it.id)) },
+                        onItemClick = { handleEvent(ShopEvent.GiftDetail(it.id, it.code)) },
                         viewAllCoupons = {
                             handleEvent(ShopEvent.ViewAllCoupons)
                         }
@@ -100,8 +112,9 @@ private fun ShopContent(
                 }
                 shop(
                     gifts = data.gifts,
+                    memberInfo = memberInfo,
                     onItemClick = {
-                        handleEvent(ShopEvent.GiftDetail(it.id))
+                        handleEvent(ShopEvent.GiftDetail(it.id, it.code))
                     }
                 )
             }
@@ -229,6 +242,7 @@ private fun ExchangeCoupons(
 }
 
 fun LazyListScope.shop(
+    memberInfo: MemberInfo,
     gifts: List<Gift>,
     onItemClick: (Gift) -> Unit,
 ) {
@@ -252,6 +266,7 @@ fun LazyListScope.shop(
                     gift = it,
                     modifier = Modifier
                         .weight(1F),
+                    memberPoint = memberInfo.point,
                     onClick = {
                         onItemClick.invoke(it)
                     }
@@ -264,6 +279,7 @@ fun LazyListScope.shop(
                     gift = it,
                     modifier = Modifier
                         .weight(1F),
+                    memberPoint = memberInfo.point,
                     onClick = {
                         onItemClick.invoke(it)
                     }

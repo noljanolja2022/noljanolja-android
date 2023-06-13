@@ -29,6 +29,7 @@ import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.CustomText
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.Orange300
+import com.noljanolja.android.util.formatDigitsNumber
 import com.noljanolja.android.util.secondaryTextColor
 import com.noljanolja.core.shop.domain.model.Gift
 
@@ -36,6 +37,7 @@ import com.noljanolja.core.shop.domain.model.Gift
 @Composable
 fun ProductItem(
     gift: Gift,
+    memberPoint: Long,
     modifier: Modifier = Modifier,
     onClick: (Gift) -> Unit,
 ) {
@@ -64,7 +66,7 @@ fun ProductItem(
         SizeBox(height = 10.dp)
         FlowRow(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                "4800",
+                memberPoint.formatDigitsNumber(),
                 style = MaterialTheme.typography.labelMedium.copy(
                     textDecoration = TextDecoration.LineThrough
                 ),
@@ -80,7 +82,7 @@ fun ProductItem(
                             color = Orange300
                         )
                     ) {
-                        append("3800 ")
+                        append("${(memberPoint - gift.price).formatDigitsNumber()} ")
                     }
                     withStyle(
                         SpanStyle(fontSize = 16.sp)

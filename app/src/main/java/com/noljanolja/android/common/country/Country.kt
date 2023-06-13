@@ -1,10 +1,16 @@
-package com.noljanolja.core.country.domain.model
+package com.noljanolja.android.common.country
+
+import androidx.annotation.StringRes
+import com.noljanolja.android.R
 
 data class Country(
     val nameCode: String,
     val phoneCode: String,
     val name: String,
+    @StringRes val nameId: Int? = null,
 )
+
+const val DEFAULT_CODE = "kr"
 
 val Countries = listOf(
     Country("ad", "376", "Andorra"),
@@ -122,7 +128,7 @@ val Countries = listOf(
     Country("km", "269", "Comoros"),
     Country("kn", "1", "Saint Kitts and Nevis"),
     Country("kp", "850", "North Korea"),
-    Country("kr", "82", "South Korea"),
+    Country("kr", "82", "South Korea", R.string.country_kr),
     Country("kw", "965", "Kuwait"),
     Country("ky", "1", "Cayman Islands"),
     Country("kz", "7", "Kazakhstan"),

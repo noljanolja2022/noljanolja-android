@@ -16,11 +16,17 @@ import kotlinx.coroutines.flow.stateIn
 class SearchProductViewModel : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow(
         UiState(
-            loading = true,
+            loading = false,
             data = SearchGiftUiData()
         )
     )
     val uiStateFlow = _uiStateFlow.asStateFlow()
+
+    val memberInfoFlow = coreManager.getMemberInfo().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = MemberInfo()
+    )
 
     val searchKeys = coreManager.getSearchHistories().map {
         it.sortedByDescending { it.updatedAt }.map { it.text }
@@ -29,19 +35,6 @@ class SearchProductViewModel : BaseViewModel() {
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
-
-    init {
-        launch {
-            val memberInfo = coreManager.getMemberInfo().getOrDefault(MemberInfo())
-            _uiStateFlow.emit(
-                UiState(
-                    data = SearchGiftUiData(
-                        memberInfo = memberInfo
-                    )
-                )
-            )
-        }
-    }
 
     fun handleEvent(event: SearchProductEvent) {
         launch {
@@ -57,7 +50,12 @@ class SearchProductViewModel : BaseViewModel() {
                 }
 
                 is SearchProductEvent.GiftDetail -> {
-                    navigationManager.navigate(NavigationDirections.GiftDetail(event.gift.id))
+                    navigationManager.navigate(
+                        NavigationDirections.GiftDetail(
+                            event.gift.id,
+                            event.gift.code
+                        )
+                    )
                 }
             }
         }
@@ -67,12 +65,11 @@ class SearchProductViewModel : BaseViewModel() {
         val currentUiValue = _uiStateFlow.value.data
         coreManager.insertSearchKey(text)
         _uiStateFlow.emit(UiState(loading = true, data = currentUiValue))
-        val gifts = coreManager.getGifts().getOrDefault(emptyList())
+        val gifts = coreManager.getGifts(text).getOrDefault(emptyList())
         _uiStateFlow.emit(UiState(data = currentUiValue!!.copy(gifts = gifts)))
     }
 }
 
 data class SearchGiftUiData(
     val gifts: List<Gift> = emptyList(),
-    val memberInfo: MemberInfo = MemberInfo(),
 )

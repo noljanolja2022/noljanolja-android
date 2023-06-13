@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -43,7 +44,11 @@ import com.noljanolja.android.ui.composable.rememberQrBitmapPainter
 import com.noljanolja.android.ui.theme.green300
 import com.noljanolja.android.ui.theme.systemRed100
 import com.noljanolja.android.ui.theme.withBold
+import com.noljanolja.android.util.formatDigitsNumber
 import com.noljanolja.android.util.secondaryTextColor
+import com.noljanolja.android.util.showError
+import com.noljanolja.core.loyalty.domain.model.MemberInfo
+import com.noljanolja.core.shop.domain.model.Gift
 import io.ktor.http.parametersOf
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
@@ -51,19 +56,28 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun GiftDetailScreen(
     giftId: Long,
-    viewModel: GiftDetailViewModel = getViewModel { parametersOf(giftId) },
+    code: String,
+    viewModel: GiftDetailViewModel = getViewModel { parametersOf(giftId, code) },
 ) {
+    val context = LocalContext.current
     var showPurchaseDialog by remember { mutableStateOf(false) }
-    var isPurchased by remember { mutableStateOf(false) }
+    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val memberInfo by viewModel.memberInfoFlow.collectAsStateWithLifecycle()
+
     LaunchedEffect(viewModel.buyGiftSuccessEvent) {
         viewModel.buyGiftSuccessEvent.collect {
-            showPurchaseDialog = true
+            showPurchaseDialog = it
         }
     }
-    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    LaunchedEffect(viewModel.errorFlow) {
+        viewModel.errorFlow.collect {
+            context.showError(it)
+        }
+    }
+
     GiftDetailContent(
         uiState = uiState,
-        isPurchased = isPurchased,
+        memberInfo = memberInfo,
         handleEvent = viewModel::handleEvent
     )
     WarningDialog(
@@ -78,7 +92,6 @@ fun GiftDetailScreen(
         },
         onConfirm = {
             showPurchaseDialog = false
-            isPurchased = true
         }
     )
 }
@@ -86,7 +99,7 @@ fun GiftDetailScreen(
 @Composable
 private fun GiftDetailContent(
     uiState: UiState<GiftDetailUiData>,
-    isPurchased: Boolean,
+    memberInfo: MemberInfo,
     handleEvent: (GiftDetailEvent) -> Unit,
 ) {
     ScaffoldWithUiState(
@@ -123,12 +136,16 @@ private fun GiftDetailContent(
                 color = MaterialTheme.secondaryTextColor()
             )
             Divider(modifier = Modifier.padding(vertical = 30.dp))
-            if (isPurchased) {
-                PurchasedInfo()
+            if (gift.code.isNotBlank()) {
+                PurchasedInfo(gift)
             } else {
-                PurchaseInfo(onPurchase = {
-                    handleEvent(GiftDetailEvent.Purchase)
-                })
+                PurchaseInfo(
+                    memberInfo = memberInfo,
+                    gift = gift,
+                    onPurchase = {
+                        handleEvent(GiftDetailEvent.Purchase)
+                    }
+                )
             }
         }
     }
@@ -136,6 +153,8 @@ private fun GiftDetailContent(
 
 @Composable
 private fun ColumnScope.PurchaseInfo(
+    memberInfo: MemberInfo,
+    gift: Gift,
     onPurchase: () -> Unit,
 ) {
     Row(
@@ -144,11 +163,17 @@ private fun ColumnScope.PurchaseInfo(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "Holding points",
+            text = stringResource(id = R.string.gift_holding_point),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.secondaryTextColor()
         )
-        Text(text = "982,350 P", style = MaterialTheme.typography.bodyLarge.withBold())
+        Text(
+            text = stringResource(
+                id = R.string.gift_value_point,
+                memberInfo.point.formatDigitsNumber()
+            ),
+            style = MaterialTheme.typography.bodyLarge.withBold()
+        )
     }
     SizeBox(height = 8.dp)
     Row(
@@ -157,12 +182,12 @@ private fun ColumnScope.PurchaseInfo(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "Deduction point",
+            text = stringResource(id = R.string.gift_deduction_point),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.secondaryTextColor()
         )
         Text(
-            text = "3,800 P",
+            text = stringResource(id = R.string.gift_value_point, gift.price.formatDigitsNumber()),
             style = MaterialTheme.typography.bodyLarge.withBold(),
             color = MaterialTheme.systemRed100()
         )
@@ -174,12 +199,15 @@ private fun ColumnScope.PurchaseInfo(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "Remaining points",
+            text = stringResource(id = R.string.gift_remaining_point),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.secondaryTextColor()
         )
         Text(
-            text = "978,550 P",
+            text = stringResource(
+                id = R.string.gift_value_point,
+                (memberInfo.point - gift.price).formatDigitsNumber()
+            ),
             style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.secondary
         )
@@ -187,7 +215,7 @@ private fun ColumnScope.PurchaseInfo(
     SizeBox(height = 50.dp)
     Expanded()
     PrimaryButton(
-        text = "Purchase".uppercase(),
+        text = stringResource(id = R.string.gift_purchase).uppercase(),
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp),
@@ -196,9 +224,11 @@ private fun ColumnScope.PurchaseInfo(
 }
 
 @Composable
-private fun ColumnScope.PurchasedInfo() {
+private fun ColumnScope.PurchasedInfo(
+    gift: Gift,
+) {
     Image(
-        painter = rememberQrBitmapPainter("1234"),
+        painter = rememberQrBitmapPainter(gift.code),
         contentDescription = null,
         modifier = Modifier
             .fillMaxWidth(0.5F)
@@ -206,7 +236,7 @@ private fun ColumnScope.PurchasedInfo() {
     )
     SizeBox(height = 15.dp)
     Text(
-        text = "Give this Code to the cashier to get products",
+        text = stringResource(id = R.string.gift_give_code_to_cashier),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.green300(),
         modifier = Modifier.fillMaxWidth(),
