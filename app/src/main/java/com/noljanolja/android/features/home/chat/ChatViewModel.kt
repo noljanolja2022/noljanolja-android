@@ -2,6 +2,7 @@ package com.noljanolja.android.features.home.chat
 
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.noljanolja.android.MyApplication
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
@@ -16,11 +17,10 @@ import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.utils.isNormalType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 import org.koin.core.component.inject
@@ -44,8 +44,11 @@ class ChatViewModel(
     private val _loadedMediaFlow = MutableStateFlow<List<Pair<Uri, Long?>>>(emptyList())
     val loadedMediaFlow = _loadedMediaFlow.asStateFlow()
 
-    private val _scrollToNewMessageEvent = MutableSharedFlow<Unit>()
-    val scrollToNewMessageEvent = _scrollToNewMessageEvent.asSharedFlow()
+    val reactIconsFlow = coreManager.getReactIcons().stateIn(
+        scope = viewModelScope,
+        initialValue = emptyList(),
+        started = SharingStarted.WhileSubscribed(5000)
+    )
 
     init {
         launch {
@@ -91,6 +94,10 @@ class ChatViewModel(
                 ChatEvent.ChatOptions -> {
                     navigationManager.navigate(NavigationDirections.ChatOptions(conversationId))
                 }
+
+                is ChatEvent.React -> {
+                    coreManager.reactMessage(conversationId, event.messageId, event.reactId)
+                }
             }
         }
     }
@@ -99,7 +106,6 @@ class ChatViewModel(
         // call with main scope to avoid cancel when back
         launchInMain {
             withContext(Dispatchers.IO) {
-                _scrollToNewMessageEvent.emit(Unit)
                 coreManager.sendConversationMessage(
                     title = title,
                     conversationId = conversationId,
@@ -110,8 +116,6 @@ class ChatViewModel(
                     conversationId = it
                     fetchConversation(onlyLocalData = true)
                 }
-                delay(100)
-                _scrollToNewMessageEvent.emit(Unit)
             }
         }
     }

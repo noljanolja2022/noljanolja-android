@@ -128,7 +128,7 @@ dependencies {
     implementation("com.airbnb.android:lottie-compose:6.0.0")
 
     implementation("com.google.accompanist:accompanist-permissions:0.29.1-alpha")
-    implementation("com.google.accompanist:accompanist-insets:0.29.1-alpha")
+//    implementation("com.google.accompanist:accompanist-insets:0.29.1-alpha")
     implementation("com.googlecode.libphonenumber:libphonenumber:8.12.39")
 
     // koin

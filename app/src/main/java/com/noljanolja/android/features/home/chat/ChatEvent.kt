@@ -29,4 +29,5 @@ sealed interface ChatEvent {
     object OpenPhoneSettings : ChatEvent
 
     object ChatOptions : ChatEvent
+    data class React(val messageId: Long, val reactId: Long) : ChatEvent
 }

@@ -2,7 +2,6 @@ package com.noljanolja.android.features.home.chat.components
 
 import android.net.Uri
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,8 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.SyncProblem
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -39,12 +36,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.ClipboardManager
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -58,15 +52,14 @@ import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import coil.compose.SubcomposeAsyncImageScope
 import coil.request.ImageRequest
-import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.CombineClickableText
 import com.noljanolja.android.ui.theme.NeutralLight
 import com.noljanolja.android.ui.theme.colorMyChatText
 import com.noljanolja.android.util.chatMessageBubbleTime
+import com.noljanolja.android.util.clicks
 import com.noljanolja.android.util.openImageFromCache
 import com.noljanolja.android.util.openUrl
 import com.noljanolja.android.util.setAnimated
-import com.noljanolja.android.util.showToast
 import com.noljanolja.android.util.toUri
 import com.noljanolja.core.conversation.domain.model.Message
 import com.noljanolja.core.conversation.domain.model.MessageAttachment
@@ -78,15 +71,15 @@ import com.noljanolja.core.utils.Const
 fun ClickableMessage(
     conversationId: Long,
     message: Message,
-    onMessageClick: (Message) -> Unit,
+    onMessageLongClick: (Message) -> Unit,
 ) {
     when (message.type) {
         MessageType.PLAINTEXT -> {
             ClickableTextMessage(
                 message = message,
                 modifier = Modifier
-                    .clickable { onMessageClick(message) }
                     .padding(vertical = 5.dp, horizontal = 10.dp),
+                onMessageLongClick = onMessageLongClick,
             )
         }
 
@@ -95,14 +88,18 @@ fun ClickableMessage(
                 message = message,
                 conversationId = conversationId,
                 modifier = Modifier,
-                onMessageClick = onMessageClick
+                onMessageLongClick = onMessageLongClick
             )
         }
 
         MessageType.STICKER -> {
             ClickableStickerMessage(
                 message = message,
-                modifier = Modifier.clickable { onMessageClick(message) },
+                modifier = Modifier.clicks(
+                    onLongClick = {
+                        onMessageLongClick.invoke(message)
+                    }
+                ),
             )
         }
 
@@ -120,11 +117,10 @@ fun ClickableMessage(
 private fun ClickableTextMessage(
     message: Message,
     modifier: Modifier,
+    onMessageLongClick: (Message) -> Unit,
 ) {
     val context = LocalContext.current
-    val clipboardManager: ClipboardManager = LocalClipboardManager.current
     val isMe = message.sender.isMe
-    var showMenu by remember { mutableStateOf(false) }
     val styledMessage = AnnotatedString.Builder().apply {
         append(
             messageFormatter(
@@ -156,7 +152,7 @@ private fun ClickableTextMessage(
                     }
             },
             onLongClick = {
-                showMenu = true
+                onMessageLongClick.invoke(message)
             }
         )
         Text(
@@ -173,22 +169,6 @@ private fun ClickableTextMessage(
                 .align(Alignment.BottomEnd)
                 .padding(bottom = 5.dp, end = 10.dp)
         )
-    }
-
-    if (showMenu) {
-        DropdownMenu(
-            expanded = showMenu,
-            onDismissRequest = { showMenu = false }
-        ) {
-            DropdownMenuItem(
-                text = { Text(stringResource(id = R.string.common_copy)) },
-                onClick = {
-                    clipboardManager.setText(AnnotatedString(message.message))
-                    context.showToast(context.getString(R.string.common_copy_success))
-                    showMenu = false
-                }
-            )
-        }
     }
 }
 
@@ -216,13 +196,14 @@ fun ClickablePhotoMessage(
     message: Message,
     conversationId: Long,
     modifier: Modifier,
-    onMessageClick: (Message) -> Unit,
+    onMessageLongClick: (Message) -> Unit,
 ) {
     val backgroundColor = if (message.sender.isMe) {
         MaterialTheme.colorScheme.primaryContainer
     } else {
         MaterialTheme.colorScheme.surface
     }
+
     Box(
         modifier = Modifier
             .wrapContentWidth()
@@ -236,14 +217,16 @@ fun ClickablePhotoMessage(
                 Column {
                     PhotoPreview(
                         modifier = modifier
-                            .clip(RoundedCornerShape(6.dp))
-                            .clickable { onMessageClick(message.copy(attachments = listOf(attachment))) },
+                            .clip(RoundedCornerShape(6.dp)),
                         uri = attachment.getPhotoUri(conversationId).toUri(),
                         key = "${message.localId}/${attachment.originalName}",
                         contentScale = ContentScale.FillWidth,
                         isMe = message.sender.isMe,
                         time = message.createdAt.chatMessageBubbleTime(),
                         timeAlign = TextAlign.End,
+                        onLongClick = {
+                            onMessageLongClick.invoke(message)
+                        }
                     )
                 }
             }
@@ -251,12 +234,10 @@ fun ClickablePhotoMessage(
             else -> {
                 val maxAttachmentPerRow = if (size == 3) 3 else 2
                 val attachmentRows = if (size < 4) 1 else 2
-//                    size / maxAttachmentPerRow + 1.takeIf { size % maxAttachmentPerRow > 0 }.orZero()
                 Column(
                     modifier = modifier
                         .fillMaxWidth()
                         .wrapContentHeight(),
-//                    horizontalAlignment = if (message.sender.isMe) Alignment.End else Alignment.Start
                 ) {
                     repeat(attachmentRows) { row ->
                         if (row > 0) {
@@ -267,8 +248,10 @@ fun ClickablePhotoMessage(
                             conversationId = conversationId,
                             attachments = message.attachments.filterIndexed { index, _ -> index >= row * maxAttachmentPerRow && index < (row + 1) * maxAttachmentPerRow },
                             maxAttachmentPerRow = maxAttachmentPerRow,
-                            onMessageClick = onMessageClick,
-                            notShowImages = (size - 3).takeIf { it > 0 && row > 0 }
+                            notShowImages = (size - 3).takeIf { it > 0 && row > 0 },
+                            onLongClick = {
+                                onMessageLongClick.invoke(message)
+                            }
                         )
                     }
                 }
@@ -285,7 +268,7 @@ fun AttachmentRow(
     notShowImages: Int? = null,
     attachments: List<MessageAttachment>,
     maxAttachmentPerRow: Int,
-    onMessageClick: (Message) -> Unit,
+    onLongClick: () -> Unit,
 ) {
     val isMe = message.sender.isMe
     CompositionLocalProvider(LocalLayoutDirection provides if (message.sender.isMe) LayoutDirection.Rtl else LayoutDirection.Ltr) {
@@ -308,13 +291,13 @@ fun AttachmentRow(
                         PhotoPreview(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .clip(RoundedCornerShape(10.dp))
-                                .clickable { onMessageClick(message.copy(attachments = listOf(attachment))) },
+                                .clip(RoundedCornerShape(10.dp)),
                             uri = attachment.getPhotoUri(conversationId).toUri(),
                             key = "${message.localId}/${attachment.originalName}",
                             isMe = message.sender.isMe,
                             time = message.createdAt.chatMessageBubbleTime(),
-                            timeAlign = if (isMe) TextAlign.Start else TextAlign.End
+                            timeAlign = if (isMe) TextAlign.Start else TextAlign.End,
+                            onLongClick = onLongClick,
                         )
                         if ((index == 1 && !isMe) || (index == 0 && isMe)) {
                             notShowImages?.let {
@@ -352,6 +335,7 @@ private fun PhotoPreview(
     isMe: Boolean,
     timeAlign: TextAlign = TextAlign.End,
     contentScale: ContentScale = ContentScale.Crop,
+    onLongClick: () -> Unit,
 ) {
     val context = LocalContext.current
     var boxWidth by remember {
@@ -359,9 +343,12 @@ private fun PhotoPreview(
     }
     val density = LocalDensity.current
     Box(
-        modifier = modifier.clickable {
-            context.openImageFromCache(key)
-        },
+        modifier = modifier.clicks(
+            onClick = {
+                context.openImageFromCache(key)
+            },
+            onLongClick = onLongClick
+        ),
         contentAlignment = if (isMe) Alignment.BottomEnd else Alignment.BottomStart,
     ) {
         SubcomposeAsyncImage(

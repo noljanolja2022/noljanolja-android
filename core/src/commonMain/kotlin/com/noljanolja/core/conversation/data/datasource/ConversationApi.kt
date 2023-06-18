@@ -169,4 +169,13 @@ class ConversationApi(
             )
         }.body()
     }
+
+    suspend fun getReactIcons(): GetReactIconsResponse {
+        return client.get("$BASE_URL/conversations/react-icons").body()
+    }
+
+    suspend fun reactMessage(request: ReactRequest): ResponseWithoutData {
+        return client.put("$BASE_URL/conversations/${request.conversationId}/messages/${request.messageId}/reactions/${request.reactId}")
+            .body()
+    }
 }

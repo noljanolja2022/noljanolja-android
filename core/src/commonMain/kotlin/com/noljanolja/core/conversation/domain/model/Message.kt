@@ -23,6 +23,7 @@ data class Message(
     val type: MessageType = MessageType.UNDEFINED,
     val status: MessageStatus = MessageStatus.SENDING,
     val seenBy: List<String> = emptyList(),
+    val reactions: List<MessageReaction> = emptyList(),
     val createdAt: Instant = Clock.System.now(),
     val updatedAt: Instant = Clock.System.now(),
 ) {
@@ -51,6 +52,15 @@ data class MessageAttachment(
             conversationId
         )
 }
+
+@Serializable
+data class MessageReaction(
+    val reactionId: Long,
+    val reactionCode: String,
+    val reactionDescription: String,
+    val userId: String,
+    val userName: String,
+)
 
 @Serializable
 enum class MessageStatus {

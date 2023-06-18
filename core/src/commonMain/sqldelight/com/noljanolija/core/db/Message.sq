@@ -11,6 +11,7 @@ CREATE TABLE `message` (
   seenBy TEXT NOT NULL,
   leftParticipants TEXT NOT NULL,
   joinParticipants TEXT NOT NULL,
+  reactions TEXT NOT NULL,
   created_at INTEGER NOT NULL DEFAULT 0,
   updated_at INTEGER NOT NULL DEFAULT 0,
 
@@ -46,6 +47,8 @@ upsert {
       seenBy= :seenBy,
       leftParticipants=: leftParticipants,
       joinParticipants=:joinParticipants,
+      reactions=:reactions,
+      created_at=:created_at,
       updated_at = :updated_at
   WHERE (id != 0 AND id = :id) OR (id = 0 AND localId = :localId);
 
@@ -62,6 +65,7 @@ upsert {
     seenBy,
     leftParticipants,
     joinParticipants,
+    reactions,
     created_at,
     updated_at
   )
@@ -78,6 +82,7 @@ upsert {
     :seenBy,
     :leftParticipants,
     :joinParticipants,
+    :reactions,
     :created_at,
     :updated_at
   );

@@ -11,11 +11,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
-import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.noljanolja.android.R
 import com.noljanolja.core.user.domain.model.User
-import kotlin.random.Random
 
 @Composable
 fun OvalAvatar(
@@ -27,7 +25,6 @@ fun OvalAvatar(
     SubcomposeAsyncImage(
         ImageRequest.Builder(context = context)
             .data(user.getAvatarUrl())
-            .memoryCacheKey(Random.nextInt(1000).toString())
             .placeholder(R.drawable.placeholder_avatar)
             .error(R.drawable.placeholder_avatar)
             .fallback(R.drawable.placeholder_avatar)
@@ -49,8 +46,6 @@ fun CircleAvatar(
     SubcomposeAsyncImage(
         ImageRequest.Builder(context = context)
             .data(user.getAvatarUrl())
-            .memoryCachePolicy(CachePolicy.DISABLED)
-            .diskCachePolicy(CachePolicy.DISABLED)
             .placeholder(R.drawable.placeholder_avatar)
             .error(R.drawable.placeholder_avatar)
             .fallback(R.drawable.placeholder_avatar)

@@ -2,6 +2,7 @@ package com.noljanolja.core.conversation.domain.repository
 
 import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.Message
+import com.noljanolja.core.conversation.domain.model.ReactIcon
 import com.noljanolja.core.video.data.model.request.VideoProgressEvent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
@@ -65,6 +66,10 @@ internal interface ConversationRepository {
     suspend fun makeConversationAdmin(conversationId: Long, userId: String): Result<Boolean>
 
     suspend fun updateConversation(conversationId: Long, title: String): Result<Conversation>
+
+    fun getReactIcons(): Flow<List<ReactIcon>>
+
+    suspend fun reactMessage(conversationId: Long, messageId: Long, reactId: Long): Result<Boolean>
 
     fun onDestroy()
 }

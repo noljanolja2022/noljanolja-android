@@ -3,6 +3,7 @@ package com.noljanolja.android.features.home.chat
 import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,6 +21,7 @@ import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -28,15 +30,23 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.EmojiSupportMatch
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
@@ -45,6 +55,7 @@ import coil.request.ImageRequest
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.features.home.chat.components.ChatInput
+import com.noljanolja.android.features.home.chat.components.ChatMessageMenu
 import com.noljanolja.android.features.home.chat.components.ClickableMessage
 import com.noljanolja.android.features.home.chat.components.GridContent
 import com.noljanolja.android.ui.composable.CommonTopAppBar
@@ -58,7 +69,8 @@ import com.noljanolja.android.util.*
 import com.noljanolja.core.conversation.domain.model.*
 import com.noljanolja.core.media.domain.model.Sticker
 import com.noljanolja.core.user.domain.model.User
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
@@ -84,10 +96,11 @@ fun ChatScreen(
     }
     val chatUiState by viewModel.chatUiStateFlow.collectAsStateWithLifecycle()
     val loadedMedia by viewModel.loadedMediaFlow.collectAsStateWithLifecycle()
+    val reactIcons by viewModel.reactIconsFlow.collectAsStateWithLifecycle()
     ChatScreenContent(
         chatUiState = chatUiState,
         mediaList = loadedMedia,
-        scrollToNewMessageEvent = viewModel.scrollToNewMessageEvent,
+        reactIcons = reactIcons,
         handleEvent = viewModel::handleEvent,
     )
 }
@@ -96,8 +109,8 @@ fun ChatScreen(
 @Composable
 fun ChatScreenContent(
     chatUiState: UiState<Conversation>,
+    reactIcons: List<ReactIcon>,
     mediaList: List<Pair<Uri, Long?>>,
-    scrollToNewMessageEvent: SharedFlow<Unit>,
     handleEvent: (ChatEvent) -> Unit,
 ) {
     val scrollState = rememberLazyListState()
@@ -105,12 +118,17 @@ fun ChatScreenContent(
     var stickerSelected by remember {
         mutableStateOf<Sticker?>(null)
     }
-    LaunchedEffect(true) {
-        scrollToNewMessageEvent.collect {
-            scrollState.scrollToItem(0)
-        }
-    }
 
+    var menuOffset by remember { mutableStateOf(0F) }
+    var selectMessage by remember {
+        mutableStateOf<Message?>(null)
+    }
+    var selectMessageIsFirst by remember {
+        mutableStateOf(false)
+    }
+    var selectMessageIsLast by remember {
+        mutableStateOf(false)
+    }
     val context = LocalContext.current
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -205,7 +223,14 @@ fun ChatScreenContent(
                             },
                             modifier = Modifier.fillMaxSize(),
                             scrollState = scrollState,
-                            onMessageClick = { handleEvent(ChatEvent.ClickMessage(it)) }
+                            onMessageLongClick = { message, isFirst, isLast ->
+                                selectMessage = message
+                                selectMessageIsFirst = isFirst
+                                selectMessageIsLast = isLast
+                            },
+                            onPosition = {
+                                menuOffset = it
+                            }
                         )
                         if (firstItemVisible.value != 0) {
                             ScrollToNewestMessageButton(onClick = {
@@ -303,6 +328,26 @@ fun ChatScreenContent(
             }
         )
     }
+
+    ChatMessageMenu(
+        bottomPosition = menuOffset,
+        selectedMessage = selectMessage,
+        conversationId = conversation.id,
+        conversationType = conversation.type,
+        isFirstMessageByAuthorSameDay = selectMessageIsFirst,
+        isLastMessageByAuthorSameDay = false,
+        reactIcons = reactIcons,
+        onReact = { mesId, reactId ->
+            handleEvent(
+                ChatEvent.React(
+                    messageId = mesId,
+                    reactId = reactId
+                )
+            )
+        }
+    ) {
+        selectMessage = null
+    }
 }
 
 @Composable
@@ -312,6 +357,7 @@ fun ChatBarActions(onChatOption: () -> Unit) {
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun MessageList(
     conversationId: Long,
@@ -321,14 +367,36 @@ private fun MessageList(
     navigateToProfile: (User) -> Unit,
     scrollState: LazyListState,
     modifier: Modifier = Modifier,
-    onMessageClick: (Message) -> Unit,
+    onMessageLongClick: (Message, Boolean, Boolean) -> Unit,
+    onPosition: (Float) -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
+    val density = LocalDensity.current
+    LaunchedEffect(messages) {
+        // Wait for the LazyColumn to recompose with the new data
+        snapshotFlow { scrollState.layoutInfo.visibleItemsInfo }
+            .filter { it.isNotEmpty() }
+            .first()
+        if (messages.firstOrNull()?.sender?.isMe == true) {
+            scrollState.scrollToItem(0)
+        }
+    }
+    val screenHeight = with(density) { LocalConfiguration.current.screenHeightDp.dp.toPx() }
+
+    var topOffset by remember { mutableStateOf(0F) }
+    var height by remember { mutableStateOf(0F) }
+    val keyboardHeight = keyboardHeightState()
     Box(modifier = modifier) {
         LazyColumn(
             reverseLayout = true,
             state = scrollState,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .onSizeChanged {
+                    height = it.height.toFloat()
+                }
+                .onGloballyPositioned { coordinates ->
+                    topOffset = coordinates.positionInRoot().y
+                }
         ) {
             for (index in messages.indices) {
                 val prevMessage = messages.getOrNull(index - 1)
@@ -356,15 +424,30 @@ private fun MessageList(
                     }
                 }
 
-                item() {
+                item(key = message.localId) {
                     MessageRow(
                         conversationId = conversationId,
                         message = message,
                         conversationType = conversationType,
                         isFirstMessageByAuthorSameDay = isFirstMessageByAuthorSameDay,
                         isLastMessageByAuthorSameDay = isLastMessageByAuthorSameDay,
-                        onMessageClick = onMessageClick,
-                        onSenderClick = { user -> navigateToProfile(user) },
+                        onSenderClick = { user ->
+                            navigateToProfile(user)
+                        },
+                        onMessageLongClick = {
+                            scrollState.layoutInfo.visibleItemsInfo.find { it.key == message.localId }
+                                ?.let {
+                                    val offset = it.offset
+                                    onPosition.invoke(
+                                        offset + (screenHeight - height - topOffset) - keyboardHeight.value
+                                    )
+                                }
+                            onMessageLongClick.invoke(
+                                message,
+                                isFirstMessageBySender,
+                                isLastMessageBySender
+                            )
+                        }
                     )
                 }
 
@@ -407,14 +490,14 @@ private fun DayHeader(dayString: String) {
 }
 
 @Composable
-private fun MessageRow(
+fun MessageRow(
     conversationId: Long,
     message: Message,
     conversationType: ConversationType,
     isFirstMessageByAuthorSameDay: Boolean,
     isLastMessageByAuthorSameDay: Boolean,
-    onMessageClick: (Message) -> Unit,
     onSenderClick: (User) -> Unit,
+    onMessageLongClick: (Message) -> Unit,
 ) {
     val context = LocalContext.current
     val spaceBetweenAuthors =
@@ -473,10 +556,10 @@ private fun MessageRow(
                     conversationType = conversationType,
                     isFirstMessageByAuthorSameDay = isFirstMessageByAuthorSameDay,
                     isLastMessageByAuthorSameDay = isLastMessageByAuthorSameDay,
+                    onMessageLongClick = onMessageLongClick,
                     modifier = Modifier
                         .padding(end = 4.dp)
                         .weight(1f),
-                    onMessageClick = onMessageClick,
                 )
                 val modifier = Modifier
                     .width(20.dp)
@@ -526,7 +609,7 @@ private fun AuthorAndTextMessage(
     isFirstMessageByAuthorSameDay: Boolean,
     isLastMessageByAuthorSameDay: Boolean,
     modifier: Modifier = Modifier,
-    onMessageClick: (Message) -> Unit,
+    onMessageLongClick: (Message) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -560,7 +643,7 @@ private fun AuthorAndTextMessage(
                     conversationType = conversationType,
                     isFirstMessageByAuthorSameDay = isFirstMessageByAuthorSameDay,
                     isLastMessageByAuthorSameDay = isLastMessageByAuthorSameDay,
-                    onMessageClick = onMessageClick,
+                    onMessageLongClick = onMessageLongClick,
                 )
             }
         }
@@ -646,15 +729,16 @@ private fun ChatItemBubble(
     conversationType: ConversationType,
     isFirstMessageByAuthorSameDay: Boolean,
     isLastMessageByAuthorSameDay: Boolean,
-    onMessageClick: (Message) -> Unit,
+    onMessageLongClick: (Message) -> Unit,
 ) {
+    val isMe = message.sender.isMe
     var backgroundBubbleShape: Shape = MessageChatBubbleShape.getChatBubbleShape(
         isFirstMessageByAuthorSameDay,
         isLastMessageByAuthorSameDay,
-        message.sender.isMe
+        isMe
     )
     var backgroundBubbleColor: Color = MaterialTheme.colorScheme.surfaceVariant
-    if (message.sender.isMe) {
+    if (isMe) {
         backgroundBubbleColor = MaterialTheme.colorScheme.primaryContainer
     }
     when (message.type) {
@@ -675,47 +759,90 @@ private fun ChatItemBubble(
 
         else -> {}
     }
+    val hasReaction = message.reactions.isNotEmpty()
+    val paddingBottom = if (hasReaction) 15.dp else 0.dp
+    val alignment = if (isMe) Alignment.BottomEnd else Alignment.BottomStart
 
-    Box {
-        if (isLastMessageByAuthorSameDay && (message.type == MessageType.PHOTO || message.type == MessageType.PLAINTEXT)) {
-            if (message.sender.isMe) {
-                Icon(
-                    painterResource(id = R.drawable.ic_chat_arrow_mine),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .align(
-                            Alignment.BottomEnd
-                        )
-                        .size(12.dp),
-                    tint = backgroundBubbleColor
-                )
-            } else if (conversationType == ConversationType.SINGLE) {
-                Icon(
-                    painterResource(id = R.drawable.ic_chat_arrow),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .align(
-                            Alignment.BottomStart
-                        )
-                        .size(12.dp),
-                    tint = backgroundBubbleColor
-                )
+    Box(contentAlignment = alignment) {
+        Box(modifier = Modifier.padding(bottom = paddingBottom)) {
+            if (isLastMessageByAuthorSameDay && (message.type == MessageType.PHOTO || message.type == MessageType.PLAINTEXT)) {
+                if (isMe) {
+                    Icon(
+                        painterResource(id = R.drawable.ic_chat_arrow_mine),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .align(
+                                Alignment.BottomEnd
+                            )
+                            .size(12.dp),
+                        tint = backgroundBubbleColor
+                    )
+                } else if (conversationType == ConversationType.SINGLE) {
+                    Icon(
+                        painterResource(id = R.drawable.ic_chat_arrow),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .align(
+                                Alignment.BottomStart
+                            )
+                            .size(12.dp),
+                        tint = backgroundBubbleColor
+                    )
+                }
             }
-        }
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(horizontal = 6.dp)
-        ) {
+
             Surface(
                 color = backgroundBubbleColor,
                 contentColor = MaterialTheme.colorScheme.background,
                 shape = backgroundBubbleShape,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(horizontal = 6.dp)
             ) {
                 ClickableMessage(
                     conversationId = conversationId,
                     message = message,
-                    onMessageClick = onMessageClick,
+                    onMessageLongClick = onMessageLongClick
+                )
+            }
+        }
+
+        message.reactions.distinctBy { it.reactionCode }.take(3).takeIf { it.isNotEmpty() }?.let {
+            Row(
+                modifier = Modifier
+                    .align(alignment)
+                    .padding(horizontal = 16.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .border(
+                        width = 2.dp,
+                        color = MaterialTheme.colorScheme.background,
+                        shape = RoundedCornerShape(20.dp)
+                    )
+                    .background(
+                        if (isMe) {
+                            MaterialTheme.colorScheme.primaryContainer
+                        } else {
+                            MaterialTheme.colorScheme.surfaceVariant
+                        }
+                    )
+                    .padding(horizontal = 8.dp, vertical = 3.dp)
+            ) {
+                it.forEach {
+                    Text(
+                        text = it.reactionCode,
+                        style = TextStyle(
+                            platformStyle = PlatformTextStyle(
+                                emojiSupportMatch = EmojiSupportMatch.None
+                            ),
+                            lineHeight = 15.sp
+                        ),
+                    )
+                }
+                Text(
+                    text = message.reactions.size.toString(),
+                    style = TextStyle(
+                        lineHeight = 15.sp
+                    ),
                 )
             }
         }

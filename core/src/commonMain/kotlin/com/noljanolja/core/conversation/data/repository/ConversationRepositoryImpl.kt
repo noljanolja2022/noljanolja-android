@@ -3,6 +3,7 @@ package com.noljanolja.core.conversation.data.repository
 import co.touchlab.kermit.Logger
 import com.noljanolja.core.conversation.data.datasource.ConversationApi
 import com.noljanolja.core.conversation.data.datasource.LocalConversationDataSource
+import com.noljanolja.core.conversation.data.datasource.LocalReactDataSource
 import com.noljanolja.core.conversation.data.model.request.*
 import com.noljanolja.core.conversation.domain.model.*
 import com.noljanolja.core.conversation.domain.repository.ConversationRepository
@@ -23,11 +24,13 @@ internal class ConversationRepositoryImpl(
     private val userRepository: UserRepository,
     private val localConversationDataSource: LocalConversationDataSource,
     private val localUserDataSource: LocalUserDataSource,
+    private val reactDataSource: LocalReactDataSource,
 ) : ConversationRepository {
 
     private val scope = CoroutineScope(Dispatchers.Default)
     private var streamJob: Job? = null
     private var trackJob: Job? = null
+    private var reactJob: Job? = null
 
     private val _removedConversationEvent = MutableSharedFlow<Conversation>()
     override val removedConversationEvent: SharedFlow<Conversation>
@@ -336,7 +339,11 @@ internal class ConversationRepositoryImpl(
     private suspend fun onTrackError(error: Throwable, failData: String, newToken: String?) {
         trackJob?.cancel()
         trackJob = scope.launch {
-            conversationApi.trackVideoProgress(token = newToken, data = failData, onError = ::onTrackError)
+            conversationApi.trackVideoProgress(
+                token = newToken,
+                data = failData,
+                onError = ::onTrackError
+            )
         }
     }
 
@@ -463,6 +470,46 @@ internal class ConversationRepositoryImpl(
             )
         } catch (e: Throwable) {
             e.printStackTrace()
+        }
+    }
+
+    override fun getReactIcons(): Flow<List<ReactIcon>> {
+        reactJob?.cancel()
+        reactJob = scope.launch {
+            try {
+                val response = conversationApi.getReactIcons()
+                if (response.isSuccessful()) {
+                    response.data.forEach {
+                        reactDataSource.upsert(it)
+                    }
+                }
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+        }
+        return reactDataSource.findAll()
+    }
+
+    override suspend fun reactMessage(
+        conversationId: Long,
+        messageId: Long,
+        reactId: Long,
+    ): Result<Boolean> {
+        return try {
+            val response = conversationApi.reactMessage(
+                ReactRequest(
+                    conversationId = conversationId,
+                    messageId = messageId,
+                    reactId = reactId
+                )
+            )
+            if (response.isSuccessful()) {
+                Result.success(true)
+            } else {
+                throw Throwable(response.message)
+            }
+        } catch (e: Throwable) {
+            Result.failure(e)
         }
     }
 

@@ -60,6 +60,7 @@ class LocalConversationDataSource(
             seenBy: String,
             leftParticipants: String,
             joinParticipants: String,
+            reactions: String,
             created_at: Long,
             updated_at: Long,
         ->
@@ -76,6 +77,7 @@ class LocalConversationDataSource(
                 .map { User(name = it) },
             joinParticipants = Json.decodeFromString<List<String>>(joinParticipants)
                 .map { User(name = it) },
+            reactions = Json.decodeFromString<List<MessageReaction>>(reactions),
             seenBy = Json.decodeFromString(seenBy),
             createdAt = Instant.fromEpochMilliseconds(created_at),
             updatedAt = Instant.fromEpochMilliseconds(updated_at),
@@ -178,6 +180,7 @@ class LocalConversationDataSource(
                 seenBy = json.encodeToString(message.seenBy),
                 leftParticipants = json.encodeToString(message.leftParticipants.map { it.name }),
                 joinParticipants = json.encodeToString(message.joinParticipants.map { it.name }),
+                reactions = json.encodeToString(message.reactions),
                 created_at = message.createdAt.toEpochMilliseconds(),
                 updated_at = message.updatedAt.toEpochMilliseconds(),
             )

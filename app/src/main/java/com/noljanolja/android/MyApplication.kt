@@ -111,6 +111,9 @@ class MyApplication : Application() {
                 }
             })
         }
+        launchInMainIO {
+            coreManager.getReactIcons()
+        }
     }
 
     fun launchIfLogin(block: suspend () -> Unit) = launchInMainIO {

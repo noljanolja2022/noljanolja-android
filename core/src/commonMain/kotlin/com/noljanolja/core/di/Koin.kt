@@ -7,6 +7,7 @@ import com.noljanolja.core.contacts.data.repository.ContactsRepositoryImpl
 import com.noljanolja.core.contacts.domain.repository.ContactsRepository
 import com.noljanolja.core.conversation.data.datasource.ConversationApi
 import com.noljanolja.core.conversation.data.datasource.LocalConversationDataSource
+import com.noljanolja.core.conversation.data.datasource.LocalReactDataSource
 import com.noljanolja.core.conversation.data.repository.ConversationRepositoryImpl
 import com.noljanolja.core.conversation.domain.repository.ConversationRepository
 import com.noljanolja.core.db.Noljanolja
@@ -70,6 +71,14 @@ private val coreModule = module {
     }
     single {
         with(get<Noljanolja>()) {
+            LocalReactDataSource(
+                reactQueries,
+                Dispatchers.Default
+            )
+        }
+    }
+    single {
+        with(get<Noljanolja>()) {
             LocalVideoDataSource(
                 videoQueries,
                 videoCategoryQueries,
@@ -115,7 +124,7 @@ private val coreModule = module {
         )
     }
     single<ConversationRepository> {
-        ConversationRepositoryImpl(get(), get(), get(), get())
+        ConversationRepositoryImpl(get(), get(), get(), get(), get())
     }
     single {
         MediaApi(get())

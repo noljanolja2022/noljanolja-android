@@ -47,6 +47,9 @@
     <string name="common_all">All</string>
     <string name="common_download">Download</string>
 
+    <!--    countries-->
+    <string name="country_kr">South Korea</string>
+
     <string name="welcome_noljanolja">Welcome to Noja Noja. Watch videos,play and earn.</string>
 
     <string name="splash_explore">EXPLORE NOW</string>
@@ -341,5 +344,9 @@
     <string name="gift_purchase">Purchase</string>
     <string name="gift_give_code_to_cashier">Give this Code to the cashier to get products</string>
     <string name="shop_coupon">Coupon</string>
-    <string name="country_kr">South Korea</string>
+    <string name="chat_action_reply">Reply</string>
+    <string name="chat_action_forward">Forward</string>
+    <string name="chat_action_copy">Copy</string>
+    <string name="chat_action_delete">Delete</string>
+
 </resources>

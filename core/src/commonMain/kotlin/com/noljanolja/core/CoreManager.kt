@@ -24,7 +24,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.time.Duration.Companion.minutes
@@ -41,8 +40,6 @@ class CoreManager : KoinComponent {
     private val socketManager: SocketManager by inject()
 
     private val scope = CoroutineScope(Dispatchers.Default)
-
-    var timeSaveToken: Instant? = null
 
     fun getRemovedConversationEvent() = conversationRepository.removedConversationEvent
 
@@ -187,6 +184,18 @@ class CoreManager : KoinComponent {
         }
     }
 
+    fun getReactIcons() = conversationRepository.getReactIcons()
+
+    suspend fun reactMessage(
+        conversationId: Long,
+        messageId: Long,
+        reactId: Long,
+    ) = conversationRepository.reactMessage(
+        conversationId = conversationId,
+        messageId = messageId,
+        reactId = reactId
+    )
+
     suspend fun getCurrentUser(
         forceRefresh: Boolean = false,
         onlyLocal: Boolean = false,
@@ -220,7 +229,6 @@ class CoreManager : KoinComponent {
     suspend fun saveAuthToken(
         authToken: String,
     ) {
-        timeSaveToken = Clock.System.now()
         authRepository.saveAuthToken(authToken)
     }
 
