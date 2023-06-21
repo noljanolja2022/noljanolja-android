@@ -38,6 +38,7 @@ class CoreManager : KoinComponent {
     private val loyaltyRepository: LoyaltyRepository by inject()
     private val shopRepository: ShopRepository by inject()
     private val socketManager: SocketManager by inject()
+    private val clearManager: ClearManager by inject()
 
     private val scope = CoroutineScope(Dispatchers.Default)
 
@@ -221,7 +222,9 @@ class CoreManager : KoinComponent {
     }
 
     suspend fun logout(requireSuccess: Boolean = true): Result<Boolean> {
-        return userRepository.logout(requireSuccess)
+        return userRepository.logout(requireSuccess).also {
+            clearManager.clearAll()
+        }
     }
 
     suspend fun getAuthToken(): String? = authRepository.getAuthToken().firstOrNull()

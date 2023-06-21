@@ -22,3 +22,6 @@ findById:
 SELECT `video_category`.*
 FROM `video_category`
 WHERE id = :category_id;
+
+deleteAll:
+DELETE FROM `video_category`;

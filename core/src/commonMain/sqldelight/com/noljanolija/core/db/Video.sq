@@ -54,3 +54,6 @@ updateCommentCount:
 UPDATE `video`
 SET comment_count = comment_count+1
 WHERE  id = :videoId;
+
+deleteAll:
+DELETE FROM `video`;

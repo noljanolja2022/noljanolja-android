@@ -116,17 +116,7 @@ internal class UserRepositoryImpl(
     }
 
     private suspend fun deleteAll() {
-        authDataSource.logout().also {
-            val provider =
-                client.plugin(Auth).providers.filterIsInstance<BearerAuthProvider>()
-                    .firstOrNull()
-            provider?.clearToken()
-            authRepository.saveAuthToken("")
-            localConversationDataSource.deleteAll()
-            localConversationDataSource.deleteAllMessages()
-            localUserDataSource.deleteAllParticipants()
-            localUserDataSource.deleteAll()
-        }
+        authDataSource.logout()
     }
 
     private suspend fun <T> handleResult(result: Result<T>): Result<User> {

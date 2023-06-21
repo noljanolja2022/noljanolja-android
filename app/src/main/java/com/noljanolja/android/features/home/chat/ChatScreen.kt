@@ -371,7 +371,7 @@ private fun MessageList(
     onPosition: (Float) -> Unit,
 ) {
     val density = LocalDensity.current
-    LaunchedEffect(messages) {
+    LaunchedEffect(messages.firstOrNull()?.localId.orEmpty()) {
         // Wait for the LazyColumn to recompose with the new data
         snapshotFlow { scrollState.layoutInfo.visibleItemsInfo }
             .filter { it.isNotEmpty() }

@@ -26,3 +26,6 @@ findById:
 SELECT `video_channel`.*
 FROM `video_channel`
 WHERE id = :channel_id;
+
+deleteAll:
+DELETE FROM `video_channel`;

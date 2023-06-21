@@ -1,5 +1,6 @@
 package com.noljanolja.core.di
 
+import com.noljanolja.core.ClearManager
 import com.noljanolja.core.CoreManager
 import com.noljanolja.core.auth.data.AuthRepositoryImpl
 import com.noljanolja.core.auth.domain.repository.AuthRepository
@@ -54,6 +55,7 @@ fun initKoin(appModule: Module): KoinApplication {
 expect val platformModule: Module
 
 private val coreModule = module {
+    single { ClearManager(get<Noljanolja>(), get()) }
     single {
         with(get<Noljanolja>()) {
             ShopLocalDatasource(searchTextQueries, Dispatchers.Default)

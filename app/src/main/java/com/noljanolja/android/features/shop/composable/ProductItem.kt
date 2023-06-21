@@ -20,7 +20,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -66,14 +65,6 @@ fun ProductItem(
         SizeBox(height = 10.dp)
         FlowRow(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                memberPoint.formatDigitsNumber(),
-                style = MaterialTheme.typography.labelMedium.copy(
-                    textDecoration = TextDecoration.LineThrough
-                ),
-                color = MaterialTheme.secondaryTextColor()
-            )
-            SizeBox(width = 10.dp)
-            Text(
                 text = buildAnnotatedString {
                     withStyle(
                         SpanStyle(
@@ -82,8 +73,9 @@ fun ProductItem(
                             color = Orange300
                         )
                     ) {
-                        append("${(memberPoint - gift.price).formatDigitsNumber()} ")
+                        append(gift.price.formatDigitsNumber())
                     }
+                    SizeBox(width = 10.dp)
                     withStyle(
                         SpanStyle(fontSize = 16.sp)
                     ) {

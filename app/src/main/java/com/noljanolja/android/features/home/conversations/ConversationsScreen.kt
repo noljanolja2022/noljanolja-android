@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import co.touchlab.kermit.Logger
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.noljanolja.android.MainActivity.Companion.getConversationId
@@ -49,6 +50,7 @@ import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.theme.darkContent
 import com.noljanolja.android.util.findActivity
 import com.noljanolja.android.util.humanReadableDate
+import com.noljanolja.android.util.isSeen
 import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.ConversationType
 import com.noljanolja.core.conversation.domain.model.Message
@@ -344,7 +346,8 @@ fun ConversationRow(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
             )
-            if (!message.isSeenByMe) {
+            Logger.d("Conversationnn ${message.isSeenByMe}")
+            if (!conversation.isSeen()) {
                 Text(
                     "1",
                     modifier = Modifier
