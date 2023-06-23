@@ -248,7 +248,7 @@ fun ClickablePhotoMessage(
                             conversationId = conversationId,
                             attachments = message.attachments.filterIndexed { index, _ -> index >= row * maxAttachmentPerRow && index < (row + 1) * maxAttachmentPerRow },
                             maxAttachmentPerRow = maxAttachmentPerRow,
-                            notShowImages = (size - 3).takeIf { it > 0 && row > 0 },
+                            notShowImages = (size - 4).takeIf { it > 0 && row > 0 },
                             onLongClick = {
                                 onMessageLongClick.invoke(message)
                             }
