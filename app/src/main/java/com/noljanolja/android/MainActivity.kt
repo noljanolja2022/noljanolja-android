@@ -18,10 +18,13 @@ import androidx.lifecycle.lifecycleScope
 import com.d2brothers.firebase_auth.AuthSdk
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.noljanolja.android.common.base.launchInMain
 import com.noljanolja.android.common.base.launchInMainIO
 import com.noljanolja.android.common.mobiledata.data.ContactsLoader
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
+import com.noljanolja.android.common.network.ConnectivityObserver
+import com.noljanolja.android.common.network.NetworkConnectivityObserver
 import com.noljanolja.android.ui.theme.NoljanoljaTheme
 import com.noljanolja.core.CoreManager
 import kotlinx.coroutines.Dispatchers
@@ -36,10 +39,12 @@ class MainActivity : ComponentActivity() {
     private val coreManager: CoreManager by inject()
     private val contactsLoader: ContactsLoader by inject()
     private val authSdk: AuthSdk by inject()
+    private lateinit var connectivityObserver: ConnectivityObserver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+        connectivityObserver = NetworkConnectivityObserver(this)
         syncContacts()
         setContent {
             RequestPermissions() {
@@ -55,6 +60,17 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.primary,
                 ) {
                     MainScreen(navigationManager)
+                }
+            }
+        }
+        launchInMain {
+            connectivityObserver.observe().collect {
+                when (it) {
+                    ConnectivityObserver.Status.Available -> {
+                        coreManager.fetchConversations()
+                    }
+
+                    else -> Unit
                 }
             }
         }

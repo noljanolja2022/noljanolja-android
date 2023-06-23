@@ -42,9 +42,11 @@ class SocketManager(
         data: String,
         onError: suspend (error: Throwable, failData: String, newToken: String?) -> Unit,
     ) {
-        val rSocket = videoRSocket ?: getDefaultSocket(engine, tokenRepo, userAgent).rSocket(BASE_SOCKET_URL).also {
-            videoRSocket = it
-        }
+        val rSocket =
+            videoRSocket ?: getDefaultSocket(engine, tokenRepo, userAgent).rSocket(BASE_SOCKET_URL)
+                .also {
+                    videoRSocket = it
+                }
         val streamToken = token ?: tokenRepo.getToken().takeIf { !it.isNullOrBlank() }
         try {
             rSocket.fireAndForget(
@@ -83,36 +85,41 @@ class SocketManager(
         token: String? = null,
         onError: suspend (error: Throwable, newToken: String?) -> Unit,
     ): Flow<String> {
-        val rSocket: RSocket = getDefaultSocket(engine, tokenRepo, userAgent).rSocket(BASE_SOCKET_URL)
-        // request stream
-        val streamToken = token ?: tokenRepo.getToken().takeIf { !it.isNullOrBlank() }
-        return streamToken?.let { streamToken ->
-            val stream: Flow<Payload> = rSocket.requestStream(
-                buildPayload {
-                    data("""{ "data": "hello world" }""")
-                    metadata(
-                        CompositeMetadata(
-                            RoutingMetadata("v1/conversations"),
-                            BearerAuthMetadata("Bearer $streamToken")
+        try {
+            val rSocket: RSocket =
+                getDefaultSocket(engine, tokenRepo, userAgent).rSocket(BASE_SOCKET_URL)
+            // request stream
+            val streamToken = token ?: tokenRepo.getToken().takeIf { !it.isNullOrBlank() }
+            return streamToken?.let { streamToken ->
+                val stream: Flow<Payload> = rSocket.requestStream(
+                    buildPayload {
+                        data("""{ "data": "hello world" }""")
+                        metadata(
+                            CompositeMetadata(
+                                RoutingMetadata("v1/conversations"),
+                                BearerAuthMetadata("Bearer $streamToken")
+                            )
                         )
-                    )
+                    }
+                ).catch { error ->
+                    Logger.e(error) {
+                        "Stream error catch $error ${error.message}"
+                    }
+                    val newToken = if (error.message?.contains("Unauthorized") == true) {
+                        tokenRepo.refreshToken()
+                    } else {
+                        null
+                    }
+                    onError.invoke(error, newToken)
                 }
-            ).catch { error ->
-                Logger.e(error) {
-                    "Stream error catch $error"
+                stream.map {
+                    Logger.d("Stream success}")
+                    it.data.readText()
                 }
-                val newToken = if (error.message?.contains("Unauthorized") == true) {
-                    tokenRepo.refreshToken()
-                } else {
-                    null
-                }
-                onError.invoke(error, newToken)
-            }
-            stream.map {
-                Logger.d("Stream success}")
-                it.data.readText()
-            }
-        } ?: flow { }
+            } ?: throw Throwable()
+        } catch (e: Throwable) {
+            return flow { }
+        }
     }
 
     companion object {
@@ -120,7 +127,11 @@ class SocketManager(
     }
 }
 
-private fun getDefaultSocket(engine: HttpClientEngine, tokenRepo: TokenRepo, userAgent: SocketUserAgent) =
+private fun getDefaultSocket(
+    engine: HttpClientEngine,
+    tokenRepo: TokenRepo,
+    userAgent: SocketUserAgent,
+) =
     HttpClient(engine) {
         WebSockets {}
         install(RSocketSupport) {
