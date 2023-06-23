@@ -1,5 +1,6 @@
 package com.noljanolja.android.features.home.chat.components
 
+import android.Manifest
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -39,10 +40,14 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.rememberPermissionState
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.BackPressHandler
 import com.noljanolja.android.util.getFileName
 import com.noljanolja.android.util.getTmpFileUri
+import com.noljanolja.android.util.showToast
 import com.noljanolja.core.conversation.domain.model.MessageType
 import com.noljanolja.core.media.domain.model.Sticker
 
@@ -585,19 +590,41 @@ private fun GallerySelector(
     }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 private fun CameraSelector(
     onTakePhoto: () -> Unit,
     onTakeVideo: () -> Unit,
     onDismiss: () -> Unit,
 ) {
+    val context = LocalContext.current
+    var isPhoto by remember {
+        mutableStateOf(false)
+    }
+    val cameraPermissionsState = rememberPermissionState(
+        Manifest.permission.CAMERA,
+        onPermissionResult = {
+            when {
+                !it -> context.showToast(context.getString(R.string.permission_camera))
+                isPhoto -> onTakePhoto.invoke()
+                else -> onTakeVideo.invoke()
+            }
+        }
+    )
     AlertDialog(
         text = {
             Column(modifier = Modifier.fillMaxWidth()) {
                 CameraSelectorRow(
                     modifier = Modifier.fillMaxWidth(),
                     label = stringResource(R.string.chat_camera_take_photo),
-                    onClick = onTakePhoto,
+                    onClick = {
+                        isPhoto = true
+                        if (cameraPermissionsState.status != PermissionStatus.Granted) {
+                            cameraPermissionsState.launchPermissionRequest()
+                        } else {
+                            onTakePhoto.invoke()
+                        }
+                    },
                 )
 //                CameraSelectorRow(
 //                    modifier = Modifier.fillMaxWidth(),
