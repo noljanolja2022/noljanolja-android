@@ -16,9 +16,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -149,15 +146,7 @@ private fun OTPChar(
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(focusRequester)
-                .onFocusChanged { isFocused = it.isFocused }
-                .onKeyEvent {
-                    if (it.key.keyCode == Key.Backspace.keyCode && code.isEmpty()) {
-                        leftFocusRequester?.requestFocus()
-                        true
-                    } else {
-                        false
-                    }
-                },
+                .onFocusChanged { isFocused = it.isFocused },
             textStyle = MaterialTheme.typography.titleLarge.copy(
                 color = textColor,
                 textAlign = TextAlign.Center,
