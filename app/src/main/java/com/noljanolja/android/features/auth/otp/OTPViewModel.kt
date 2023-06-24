@@ -22,8 +22,12 @@ class OTPViewModel : BaseViewModel() {
                         emit(value.copy(error = null))
                     }
                 }
+
                 is OTPEvent.VerifyOTP -> {
-                    coreManager.verifyOTPCode(event.verificationId, event.otp)
+                    coreManager.verifyOTPCode(event.verificationId, event.otp).exceptionOrNull()
+                        ?.let {
+                            sendError(it)
+                        }
                     authSdk.getIdToken(true)?.let {
                         coreManager.saveAuthToken(it)
                         handleAuthResult()
