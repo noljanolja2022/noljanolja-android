@@ -6,6 +6,7 @@ import com.noljanolja.android.common.base.launchInMain
 import com.noljanolja.android.common.mobiledata.data.StickersLoader
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.util.isSeen
+import com.noljanolja.core.event.domain.model.EventBanner
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -21,6 +22,9 @@ class HomeViewModel : BaseViewModel() {
     private val _readAllConversations = MutableStateFlow(true)
     val readAllConversations = _readAllConversations.asStateFlow()
 
+    private val _eventBannersFlow = MutableStateFlow<List<EventBanner>>(emptyList())
+    val eventBannersFlow = _eventBannersFlow.asStateFlow()
+
     init {
         launchInMain {
             stickersLoader.loadAllRemoteStickerPackages()
@@ -30,11 +34,19 @@ class HomeViewModel : BaseViewModel() {
                 _readAllConversations.emit(conversations.all { it.isSeen() })
             }
         }
+        launch {
+            coreManager.getEventBanners().getOrNull()?.let {
+                _eventBannersFlow.emit(it)
+            }
+        }
     }
 
     fun handleEvent(event: HomeEvent) {
-        when (event) {
-            HomeEvent.LoginOrVerifyEmail -> loginOrVerifyEmail()
+        launch {
+            when (event) {
+                HomeEvent.LoginOrVerifyEmail -> loginOrVerifyEmail()
+                HomeEvent.CancelBanner -> _eventBannersFlow.emit(emptyList())
+            }
         }
     }
 

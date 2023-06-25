@@ -12,6 +12,9 @@ import com.noljanolja.core.conversation.data.datasource.LocalReactDataSource
 import com.noljanolja.core.conversation.data.repository.ConversationRepositoryImpl
 import com.noljanolja.core.conversation.domain.repository.ConversationRepository
 import com.noljanolja.core.db.Noljanolja
+import com.noljanolja.core.event.data.datasource.BannerApi
+import com.noljanolja.core.event.data.repository.EventBannerRepositoryImpl
+import com.noljanolja.core.event.domain.repository.EventBannerRepository
 import com.noljanolja.core.loyalty.data.datasource.LoyaltyApi
 import com.noljanolja.core.loyalty.data.repository.LoyaltyRepositoryImpl
 import com.noljanolja.core.loyalty.domain.repository.LoyaltyRepository
@@ -151,6 +154,12 @@ private val coreModule = module {
     }
     single<AuthRepository> {
         AuthRepositoryImpl(get<Noljanolja>().authQueries, Dispatchers.Default)
+    }
+    single {
+        BannerApi(get())
+    }
+    single<EventBannerRepository> {
+        EventBannerRepositoryImpl(get())
     }
     single {
         CoreManager()

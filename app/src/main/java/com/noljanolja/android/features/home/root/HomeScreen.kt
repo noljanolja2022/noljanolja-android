@@ -23,6 +23,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.noljanolja.android.features.home.conversations.ConversationsScreen
 import com.noljanolja.android.features.home.play.playlist.PlayListScreen
+import com.noljanolja.android.features.home.root.banner.EventBannerDialog
 import com.noljanolja.android.features.home.utils.click
 import com.noljanolja.android.features.home.utils.isNavItemSelect
 import com.noljanolja.android.features.home.wallet.WalletScreen
@@ -40,6 +41,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = getViewModel(),
 ) {
     val context = LocalContext.current
+    val showBanners by viewModel.eventBannersFlow.collectAsStateWithLifecycle()
     LaunchedEffect(key1 = viewModel.errorFlow) {
         launch {
             viewModel.errorFlow.collect {
@@ -47,6 +49,7 @@ fun HomeScreen(
             }
         }
     }
+
     val navController = rememberNavController()
     val readAllConversations by viewModel.readAllConversations.collectAsStateWithLifecycle()
 
@@ -65,6 +68,14 @@ fun HomeScreen(
         ) {
             addNavigationGraph()
         }
+    }
+    showBanners.takeIf { it.isNotEmpty() }?.let {
+        EventBannerDialog(
+            eventBanners = it,
+            onDismissRequest = {
+                viewModel.handleEvent(HomeEvent.CancelBanner)
+            }
+        )
     }
 }
 
