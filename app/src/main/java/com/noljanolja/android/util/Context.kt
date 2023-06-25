@@ -24,10 +24,10 @@ import java.io.FileOutputStream
 
 fun Context.showToast(
     text: String?,
-    time: Int = Toast.LENGTH_SHORT,
+    time: Int = Toast.LENGTH_LONG,
 ) = Toast.makeText(this, text, time).show()
 
-fun Context.showError(error: Throwable, time: Int = Toast.LENGTH_SHORT) {
+fun Context.showError(error: Throwable, time: Int = Toast.LENGTH_LONG) {
     Toast.makeText(this, getErrorMessage(error), time).show()
 }
 

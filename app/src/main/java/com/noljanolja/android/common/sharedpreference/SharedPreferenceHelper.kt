@@ -2,9 +2,11 @@ package com.noljanolja.android.common.sharedpreference
 
 import android.content.Context
 import com.noljanolja.android.BuildConfig
+import kotlinx.datetime.Clock
 
 class SharedPreferenceHelper(private val context: Context) {
-    private val sharePreference = context.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE)
+    private val sharePreference =
+        context.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE)
 
     fun setString(key: String, value: String) {
         sharePreference.run {
@@ -32,9 +34,23 @@ class SharedPreferenceHelper(private val context: Context) {
             }
         }
 
+    var loginOtpTime: Long
+        get() = let {
+            val now = Clock.System.now().toEpochMilliseconds()
+            val loggedTime = now - sharePreference.getLong(KEY_LOGIN_OTP_TIME, 0L)
+            (90_000 - loggedTime).takeIf { it > 0L } ?: 90_000
+        }
+        set(_) {
+            val now = Clock.System.now().toEpochMilliseconds()
+            sharePreference.run {
+                edit().putLong(KEY_LOGIN_OTP_TIME, now).apply()
+            }
+        }
+
     companion object {
         const val YOUTUBE_TOKEN = "youtube_token"
         const val SHOW_NEW_CHAT_DIALOG = "show_new_chat_dialog"
         const val REQUEST_LOGIN_GOOGLE = "request_login_google"
+        const val KEY_LOGIN_OTP_TIME = "key_login_otp_time"
     }
 }

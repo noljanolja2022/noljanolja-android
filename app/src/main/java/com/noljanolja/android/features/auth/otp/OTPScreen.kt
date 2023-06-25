@@ -18,15 +18,17 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.d2brothers.firebase_auth.AuthSdk
 import com.noljanolja.android.R
+import com.noljanolja.android.common.sharedpreference.SharedPreferenceHelper
 import com.noljanolja.android.features.auth.otp.composable.OTPRow
 import com.noljanolja.android.ui.composable.ErrorDialog
 import com.noljanolja.android.ui.composable.LoadingDialog
 import com.noljanolja.android.util.showToast
 import kotlinx.coroutines.delay
+import org.koin.androidx.compose.get
 import org.koin.androidx.compose.getViewModel
 
-private const val BLOCK_RESEND_TIME = 90_000
-private const val ONE_MILI_SECOND = 1_000
+private const val BLOCK_RESEND_TIME = 90_000L
+private const val ONE_MILI_SECOND = 1_000L
 
 @Composable
 fun OTPScreen(
@@ -54,13 +56,21 @@ fun OTPScreenContent(
     phone: String,
     handleEvent: (OTPEvent) -> Unit,
 ) {
+    val sharedPreferenceHelper: SharedPreferenceHelper = get()
     val context = LocalContext.current
     var otp by rememberSaveable { mutableStateOf(CharArray(6)) }
     var otpVerificationId by rememberSaveable { mutableStateOf("") }
     val error = otpUIState.error
     val loading = otpUIState.loading
 
-    var currentTime by rememberSaveable { mutableStateOf(BLOCK_RESEND_TIME) }
+    var currentTime by rememberSaveable {
+        mutableStateOf(
+            minOf(
+                BLOCK_RESEND_TIME,
+                sharedPreferenceHelper.loginOtpTime
+            )
+        )
+    }
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(currentTime) {
@@ -68,13 +78,14 @@ fun OTPScreenContent(
             AuthSdk.loginWithPhone(
                 context = context as Activity,
                 phone = phone,
-                timeout = (BLOCK_RESEND_TIME / ONE_MILI_SECOND).toLong(),
+                timeout = (BLOCK_RESEND_TIME / ONE_MILI_SECOND),
                 onVerificationCompleted = { smsCode ->
                     val newOTP = otp.clone()
                     smsCode?.toCharArray()?.forEachIndexed { index, char ->
                         newOTP[index] = char
                     }
                     otp = newOTP
+                    sharedPreferenceHelper.loginOtpTime = 0L
                 },
                 onError = {
                     context.showToast(it.message)
