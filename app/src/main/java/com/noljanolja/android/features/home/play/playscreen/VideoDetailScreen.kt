@@ -42,7 +42,6 @@ import com.noljanolja.android.ui.composable.youtube.YoutubeView
 import com.noljanolja.android.ui.theme.Orange300
 import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.util.formatFullTime
-import com.noljanolja.android.util.lightTextColor
 import com.noljanolja.android.util.showToast
 import com.noljanolja.core.Failure
 import com.noljanolja.core.user.domain.model.User
@@ -138,9 +137,9 @@ private fun VideoDetailContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = stringResource(id = R.string.video_earn_point, video.earnedPoints),
+                        text = stringResource(id = R.string.video_earn_point, video.totalPoints),
                         style = MaterialTheme.typography.bodyMedium.withBold(),
-                        color = MaterialTheme.lightTextColor(),
+                        color = Color.White,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 5.dp)
                     )
                     Image(
@@ -228,7 +227,7 @@ private fun VideoParameters(video: Video) {
         SizeBox(width = 10.dp)
         VideoParameter(
             title = stringResource(id = R.string.video_detail_reward),
-            value = stringResource(id = R.string.video_detail_reward_point, video.totalPoints),
+            value = stringResource(id = R.string.video_detail_reward_point, video.earnedPoints),
             valueColor = Orange300
         )
     }

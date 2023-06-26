@@ -65,13 +65,15 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun WalletScreen(
     viewModel: WalletViewModel = getViewModel(),
+    onUseNow: () -> Unit,
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     val memberInfo by viewModel.memberInfoFlow.collectAsStateWithLifecycle()
     WalletContent(
         uiState = uiState,
         memberInfo = memberInfo,
-        handleEvent = viewModel::handleEvent
+        handleEvent = viewModel::handleEvent,
+        onUseNow = onUseNow
     )
 }
 
@@ -81,6 +83,7 @@ private fun WalletContent(
     uiState: UiState<WalletUIData>,
     memberInfo: MemberInfo,
     handleEvent: (WalletEvent) -> Unit,
+    onUseNow: () -> Unit,
 ) {
     val state = rememberPullRefreshState(uiState.loading, { handleEvent(WalletEvent.Refresh) })
     ScaffoldWithUiState(uiState = uiState) {
@@ -111,7 +114,8 @@ private fun WalletContent(
                     memberInfo = memberInfo,
                     onGoToTransactionHistory = {
                         handleEvent(WalletEvent.TransactionHistory)
-                    }
+                    },
+                    onUseNow = onUseNow
                 )
             }
             item {
@@ -181,6 +185,7 @@ private fun UserInformation(
 private fun UserWalletInfo(
     memberInfo: MemberInfo,
     onGoToTransactionHistory: () -> Unit,
+    onUseNow: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -203,7 +208,7 @@ private fun UserWalletInfo(
             memberInfo.exchangeablePoints,
             valueColor = Color(0xFF007AFF),
             stringResource(id = R.string.wallet_exchange_money),
-            {}
+            onClick = onUseNow
         )
     }
 }

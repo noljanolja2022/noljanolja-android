@@ -49,11 +49,11 @@ sealed class HomeNavigationItem(
         Icons.Outlined.Store,
         R.string.home_shop,
     )
-
-    object NewsItem : HomeNavigationItem(
-        NavigationDirections.UserItem.destination,
-        Icons.Filled.Event,
-        Icons.Outlined.Event,
-        R.string.home_news,
-    )
+//
+//    object NewsItem : HomeNavigationItem(
+//        NavigationDirections.UserItem.destination,
+//        Icons.Filled.Event,
+//        Icons.Outlined.Event,
+//        R.string.home_news,
+//    )
 }

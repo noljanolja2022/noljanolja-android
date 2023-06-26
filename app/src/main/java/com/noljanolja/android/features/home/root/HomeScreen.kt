@@ -28,7 +28,6 @@ import com.noljanolja.android.features.home.utils.click
 import com.noljanolja.android.features.home.utils.isNavItemSelect
 import com.noljanolja.android.features.home.wallet.WalletScreen
 import com.noljanolja.android.features.shop.main.ShopScreen
-import com.noljanolja.android.ui.composable.FullSizeUnderConstruction
 import com.noljanolja.android.ui.theme.colorBackground
 import com.noljanolja.android.util.getErrorMessage
 import com.noljanolja.android.util.showToast
@@ -66,7 +65,7 @@ fun HomeScreen(
             startDestination = HomeNavigationItem.ChatItem.route,
             modifier = Modifier.padding(contentPadding),
         ) {
-            addNavigationGraph()
+            addNavigationGraph(navController)
         }
     }
     showBanners.takeIf { it.isNotEmpty() }?.let {
@@ -79,7 +78,9 @@ fun HomeScreen(
     }
 }
 
-private fun NavGraphBuilder.addNavigationGraph() {
+private fun NavGraphBuilder.addNavigationGraph(
+    navController: NavHostController,
+) {
     composable(HomeNavigationItem.ChatItem.route) {
         ConversationsScreen()
     }
@@ -87,14 +88,18 @@ private fun NavGraphBuilder.addNavigationGraph() {
         PlayListScreen()
     }
     composable(HomeNavigationItem.WalletItem.route) {
-        WalletScreen()
+        WalletScreen(
+            onUseNow = {
+                HomeNavigationItem.StoreItem.click(navController)
+            }
+        )
     }
     composable(HomeNavigationItem.StoreItem.route) {
         ShopScreen()
     }
-    composable(HomeNavigationItem.NewsItem.route) {
-        FullSizeUnderConstruction()
-    }
+//    composable(HomeNavigationItem.NewsItem.route) {
+//        FullSizeUnderConstruction()
+//    }
 }
 
 @Composable
@@ -107,7 +112,6 @@ fun HomeBottomBar(
         HomeNavigationItem.WatchItem,
         HomeNavigationItem.WalletItem,
         HomeNavigationItem.StoreItem,
-        HomeNavigationItem.NewsItem,
     )
     NavigationBar(
         tonalElevation = 0.dp,
