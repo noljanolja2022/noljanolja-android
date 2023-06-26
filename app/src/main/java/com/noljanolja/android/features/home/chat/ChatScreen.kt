@@ -65,6 +65,7 @@ import com.noljanolja.android.ui.composable.OvalAvatar
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.BlueGray
+import com.noljanolja.android.ui.theme.colorMyChatText
 import com.noljanolja.android.util.*
 import com.noljanolja.core.conversation.domain.model.*
 import com.noljanolja.core.media.domain.model.Sticker
@@ -825,7 +826,8 @@ private fun ChatItemBubble(
                             MaterialTheme.colorScheme.surfaceVariant
                         }
                     )
-                    .padding(horizontal = 8.dp, vertical = 3.dp)
+                    .padding(horizontal = 8.dp, vertical = 3.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 it.forEach {
                     Text(
@@ -834,16 +836,26 @@ private fun ChatItemBubble(
                             platformStyle = PlatformTextStyle(
                                 emojiSupportMatch = EmojiSupportMatch.None
                             ),
-                            lineHeight = 15.sp
+                            lineHeight = 12.sp,
+                            fontSize = 12.sp,
                         ),
                     )
                 }
-                Text(
-                    text = message.reactions.size.toString(),
-                    style = TextStyle(
-                        lineHeight = 15.sp
-                    ),
-                )
+                if (message.reactions.size != message.reactions.distinctBy { it.reactionCode }.size) {
+                    SizeBox(width = 3.dp)
+                    Text(
+                        text = message.reactions.size.toString(),
+                        style = TextStyle(
+                            lineHeight = 10.sp,
+                            fontSize = 10.sp,
+                            color = if (isMe) {
+                                MaterialTheme.colorMyChatText()
+                            } else {
+                                MaterialTheme.colorScheme.onBackground
+                            }
+                        ),
+                    )
+                }
             }
         }
     }
