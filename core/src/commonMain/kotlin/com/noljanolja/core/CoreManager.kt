@@ -8,6 +8,7 @@ import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.Message
 import com.noljanolja.core.conversation.domain.model.MessageStatus
 import com.noljanolja.core.conversation.domain.repository.ConversationRepository
+import com.noljanolja.core.event.domain.repository.EventBannerRepository
 import com.noljanolja.core.loyalty.domain.model.LoyaltyType
 import com.noljanolja.core.loyalty.domain.repository.LoyaltyRepository
 import com.noljanolja.core.media.domain.repository.MediaRepository
@@ -37,6 +38,7 @@ class CoreManager : KoinComponent {
     private val videoRepository: VideoRepository by inject()
     private val loyaltyRepository: LoyaltyRepository by inject()
     private val shopRepository: ShopRepository by inject()
+    private val eventBannerRepository: EventBannerRepository by inject()
     private val socketManager: SocketManager by inject()
     private val clearManager: ClearManager by inject()
 
@@ -276,6 +278,8 @@ class CoreManager : KoinComponent {
         month = month,
         year = year
     )
+
+    suspend fun getEventBanners() = eventBannerRepository.getEventBanners()
 
     fun onDestroy() {
         conversationRepository.onDestroy()
