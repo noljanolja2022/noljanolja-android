@@ -36,7 +36,7 @@ class HomeViewModel : BaseViewModel() {
         }
         launch {
             coreManager.getEventBanners().getOrNull()?.let {
-                _eventBannersFlow.emit(it)
+                _eventBannersFlow.emit(it.filter { it.isActive })
             }
         }
     }

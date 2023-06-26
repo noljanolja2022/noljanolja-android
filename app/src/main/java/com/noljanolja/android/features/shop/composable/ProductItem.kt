@@ -62,7 +62,6 @@ fun ProductItem(
             gift.brand.name,
             style = MaterialTheme.typography.titleSmall
         )
-        SizeBox(height = 10.dp)
         FlowRow(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = buildAnnotatedString {
@@ -75,7 +74,7 @@ fun ProductItem(
                     ) {
                         append(gift.price.formatDigitsNumber())
                     }
-                    SizeBox(width = 10.dp)
+                    append(" ")
                     withStyle(
                         SpanStyle(fontSize = 16.sp)
                     ) {
