@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.noljanolja.android.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,7 +31,7 @@ fun NameInput(
             modifier = Modifier.fillMaxWidth(),
             value = name,
             onValueChange = onNameChange,
-            label = { Text(label) },
+            label = { Text(label, fontSize = 16.sp) },
             textStyle = MaterialTheme.typography.bodyLarge.copy(
                 color = LocalContentColor.current,
             ),
@@ -49,7 +50,7 @@ fun NameInput(
         )
 
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 2.dp)
+            modifier = Modifier.fillMaxWidth().padding(top = 10.dp)
         ) {
             Text(
                 stringResource(R.string.update_profile_name_required),
