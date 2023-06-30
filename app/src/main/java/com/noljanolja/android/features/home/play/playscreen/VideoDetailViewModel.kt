@@ -9,6 +9,7 @@ import com.noljanolja.android.common.sharedpreference.SharedPreferenceHelper
 import com.noljanolja.android.ui.composable.youtube.YoutubeViewWithFullScreen
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.video.data.model.request.VideoProgressEvent
+import com.noljanolja.core.video.domain.model.Comment
 import com.noljanolja.core.video.domain.model.Video
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
@@ -28,7 +29,8 @@ class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
 
     private val _uiStateFlow = MutableStateFlow(UiState<VideoDetailUiData>())
     val uiStateFlow = _uiStateFlow.asStateFlow()
-    private val videoStateFlow = MutableStateFlow<PlayerConstants.PlayerState>(PlayerConstants.PlayerState.UNKNOWN)
+    private val videoStateFlow =
+        MutableStateFlow<PlayerConstants.PlayerState>(PlayerConstants.PlayerState.UNKNOWN)
     private val videoDurationSecondFlow = MutableStateFlow<Float>(0F)
     private var lastTrackEvent: Pair<VideoProgressEvent, Long>? = null
     private val _eventForceLoginGoogle = MutableSharedFlow<String>()
@@ -80,7 +82,10 @@ class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
         player.loadVideo(videoId, ((video?.currentProgressMs ?: 0) / 1000).toFloat())
         player.addListener(
             listener = object : AbstractYouTubePlayerListener() {
-                override fun onStateChange(youTubePlayer: YouTubePlayer, state: PlayerConstants.PlayerState) {
+                override fun onStateChange(
+                    youTubePlayer: YouTubePlayer,
+                    state: PlayerConstants.PlayerState,
+                ) {
                     super.onStateChange(youTubePlayer, state)
                     launch {
                         videoStateFlow.emit(state)
@@ -99,11 +104,29 @@ class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
 
     private fun commentVideo(comment: String, token: String) {
         launch {
+            val data = _uiStateFlow.value.data ?: return@launch
             val result = coreManager.commentVideo(videoId, comment, token)
             if (result.isFailure) {
                 sendError(result.exceptionOrNull()!!)
+            } else {
+                _uiStateFlow.emit(
+                    UiState(
+                        data = data.copy(
+                            user = data.user,
+                            video = addCommentToVideo(data.video, result.getOrNull())
+                        )
+                    )
+                )
             }
         }
+    }
+
+    private fun addCommentToVideo(video: Video, comment: Comment?): Video {
+        if (comment == null) return video
+        return video.copy(
+            commentCount = video.commentCount + 1,
+            comments = listOf(comment) + video.comments
+        )
     }
 
     private suspend fun trackVideoProgress(state: PlayerConstants.PlayerState, durationMs: Long) {

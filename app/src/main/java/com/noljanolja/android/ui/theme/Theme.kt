@@ -160,3 +160,10 @@ fun MaterialTheme.green300(darkTheme: Boolean = isSystemInDarkTheme()) = if (dar
 } else {
     Green300
 }
+
+@Composable
+fun MaterialTheme.backgroundInPopup(darkTheme: Boolean = isSystemInDarkTheme()) = if (darkTheme) {
+    NeutralDeepGrey
+} else {
+    colorScheme.background
+}
