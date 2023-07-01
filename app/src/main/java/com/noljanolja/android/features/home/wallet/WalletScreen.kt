@@ -56,6 +56,7 @@ import com.noljanolja.android.ui.composable.RankingRow
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.composable.UserPoint
+import com.noljanolja.android.ui.theme.Orange300
 import com.noljanolja.android.ui.theme.darkContent
 import com.noljanolja.android.util.formatDigitsNumber
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
@@ -352,7 +353,7 @@ private fun UserAttendance() {
                             modifier = Modifier
                                 .clip(RoundedCornerShape(6.dp))
                                 .height(6.dp),
-                            color = MaterialTheme.colorScheme.secondary,
+                            color = Orange300,
                             trackColor = MaterialTheme.colorScheme.surface,
                         )
                     }
@@ -362,7 +363,7 @@ private fun UserAttendance() {
                             .padding(start = 18.dp)
                             .weight(1F),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF4F6D00)
+                            containerColor = Orange300
                         ),
                         shape = RoundedCornerShape(4.dp),
                         contentPadding = PaddingValues(0.dp),
