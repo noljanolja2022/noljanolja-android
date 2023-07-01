@@ -300,11 +300,13 @@ private fun LazyListScope.recentTransactions(transactions: List<UiLoyaltyPoint>)
         ) {
             Text(
                 "${transaction.createdAt.getDayOfWeek()}",
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
             )
             Text(
                 transaction.createdAt.formatTransactionShortTime(),
-                style = MaterialTheme.typography.bodyMedium.withBold()
+                style = MaterialTheme.typography.bodyMedium.withBold(),
+                color = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
         Row(
