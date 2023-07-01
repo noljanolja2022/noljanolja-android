@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -137,7 +138,7 @@ private fun VideoDetailContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = stringResource(id = R.string.video_earn_point, video.totalPoints),
+                        text = stringResource(id = R.string.video_earn_point, video.earnedPoints),
                         style = MaterialTheme.typography.bodyMedium.withBold(),
                         color = Color.White,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 5.dp)
@@ -151,15 +152,29 @@ private fun VideoDetailContent(
                     )
                 }
             }
-            YoutubeView(
-                modifier = Modifier
+            val videoModifier = if (isFullScreen) {
+                Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight(),
-                onReady = { player -> handleEvent(VideoDetailEvent.ReadyVideo(player)) },
-                toggleFullScreen = {
-                    isFullScreen = it
-                }
-            )
+                    .wrapContentHeight()
+            } else {
+                val configuration = LocalConfiguration.current
+                Modifier
+                    .widthIn(max = (configuration.screenHeightDp * 0.6).dp)
+            }
+            Column(
+                modifier = Modifier.fillMaxWidth()
+                    .background(Color.Black),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                YoutubeView(
+                    modifier = videoModifier,
+                    onReady = { player -> handleEvent(VideoDetailEvent.ReadyVideo(player)) },
+                    toggleFullScreen = {
+                        isFullScreen = it
+                    }
+                )
+            }
+
             uiState.data?.video?.takeIf { !isFullScreen }?.let { video ->
                 LazyColumn(modifier = Modifier.weight(1F)) {
                     item {
@@ -227,7 +242,7 @@ private fun VideoParameters(video: Video) {
         SizeBox(width = 10.dp)
         VideoParameter(
             title = stringResource(id = R.string.video_detail_reward),
-            value = stringResource(id = R.string.video_detail_reward_point, video.earnedPoints),
+            value = stringResource(id = R.string.video_detail_reward_point, video.totalPoints),
             valueColor = Orange300
         )
     }

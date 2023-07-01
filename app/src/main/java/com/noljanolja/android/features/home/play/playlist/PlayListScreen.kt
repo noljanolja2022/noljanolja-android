@@ -1,5 +1,6 @@
 package com.noljanolja.android.features.home.play.playlist
 
+import android.content.res.Configuration
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -34,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -72,6 +75,7 @@ private fun PlayListContent(
     uiState: UiState<PlayListUIData>,
     handleEvent: (PlayListEvent) -> Unit,
 ) {
+    val configuration = LocalConfiguration.current
     val state = rememberPullRefreshState(uiState.loading, { handleEvent(PlayListEvent.Refresh) })
     ScaffoldWithUiState(uiState = uiState, topBar = {
         CommonTopAppBar(
@@ -88,32 +92,23 @@ private fun PlayListContent(
                 .pullRefresh(state)
         ) {
             item {
-                HighlightVideos(
-                    videos = data.todayVideos,
-                    onClick = {
-                        handleEvent(PlayListEvent.PlayVideo(it.id))
-                    }
-                )
+                HighlightVideos(videos = data.todayVideos, onClick = {
+                    handleEvent(PlayListEvent.PlayVideo(it.id))
+                })
                 SizeBox(height = 12.dp)
             }
-            watchingVideos(
-                videos = data.watchingVideos,
-                onClick = {
-                    handleEvent(PlayListEvent.PlayVideo(it.id))
-                }
-            )
+            watchingVideos(videos = data.watchingVideos, onClick = {
+                handleEvent(PlayListEvent.PlayVideo(it.id))
+            })
             item {
                 if (data.watchingVideos.isNotEmpty() && data.todayVideos.isNotEmpty()) {
                     Divider(thickness = 1.dp, modifier = Modifier.padding(vertical = 16.dp))
                 }
             }
 
-            trendingVideos(
-                videos = data.todayVideos,
-                onClick = {
-                    handleEvent(PlayListEvent.PlayVideo(it.id))
-                }
-            )
+            trendingVideos(videos = data.todayVideos, configuration = configuration, onClick = {
+                handleEvent(PlayListEvent.PlayVideo(it.id))
+            })
         }
     }
 }
@@ -146,15 +141,13 @@ private fun HighlightVideos(
         state = bannerState,
         modifier = Modifier
             .fillMaxWidth()
-            .height(164.dp)
+            .aspectRatio(16 / 9f)
     ) { page ->
         val video = videos[page]
         SubcomposeAsyncImage(
             ImageRequest.Builder(context = LocalContext.current)
-                .data(video.thumbnail)
-                .memoryCacheKey("video${video.id}")
-                .diskCacheKey("video${video.id}")
-                .build(),
+                .data(video.thumbnail).memoryCacheKey("video${video.id}")
+                .diskCacheKey("video${video.id}").build(),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -185,6 +178,8 @@ private fun HighlightVideos(
 private fun LazyListScope.trendingVideos(
     videos: List<Video>,
     onClick: (Video) -> Unit,
+    configuration: Configuration,
+
 ) {
     if (videos.isEmpty()) return
     item {
@@ -195,45 +190,26 @@ private fun LazyListScope.trendingVideos(
         )
         SizeBox(height = 10.dp)
     }
-    videos.forEach { video ->
-        item(key = "trending${video.id}") {
-            val context = LocalContext.current
-            SubcomposeAsyncImage(
-                ImageRequest.Builder(context = LocalContext.current)
-                    .data(video.thumbnail)
-                    .memoryCacheKey("video${video.id}")
-                    .diskCacheKey("video${video.id}")
-                    .build(),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .height(182.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .clickable {
-                        onClick(video)
+    if (configuration.screenWidthDp < 400) {
+        videos.forEach { video ->
+            item(key = "trending${video.id}") {
+                TrendingVideo(video = video, onClick = { onClick(video) })
+            }
+        }
+    } else {
+        items((videos.size + 1) / 2) { index ->
+            Row {
+                videos[index * 2].let {
+                    Column(modifier = Modifier.weight(1f)) {
+                        TrendingVideo(video = it, onClick = { onClick(it) })
                     }
-            )
-            SizeBox(height = 16.dp)
-            Text(
-                text = video.title,
-                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                modifier = Modifier.padding(horizontal = 16.dp),
-            )
-            SizeBox(height = 2.dp)
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                text = video.category.title,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.tertiary
-            )
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                text = video.getShortDescription(context),
-                style = TextStyle(fontSize = 10.sp, color = MaterialTheme.colorScheme.outline)
-            )
-            SizeBox(height = 40.dp)
+                }
+                videos.getOrNull(index * 2 + 1)?.let {
+                    Column(modifier = Modifier.weight(1f)) {
+                        TrendingVideo(video = it, onClick = { onClick(it) })
+                    }
+                } ?: Box(modifier = Modifier.weight(1f))
+            }
         }
     }
 }
@@ -268,16 +244,14 @@ private fun LazyListScope.watchingVideos(
                         }
                 ) {
                     SubcomposeAsyncImage(
-                        ImageRequest.Builder(context = LocalContext.current)
-                            .data(video.thumbnail)
-                            .memoryCacheKey("video${video.id}")
-                            .diskCacheKey("video${video.id}")
+                        ImageRequest.Builder(context = LocalContext.current).data(video.thumbnail)
+                            .memoryCacheKey("video${video.id}").diskCacheKey("video${video.id}")
                             .build(),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .width(142.dp)
-                            .height(79.dp)
+                            .aspectRatio(16 / 9f)
 
                     )
                     LinearProgressIndicator(
@@ -304,4 +278,45 @@ private fun LazyListScope.watchingVideos(
             }
         }
     }
+}
+
+@Composable
+private fun TrendingVideo(
+    video: Video,
+    onClick: (Video) -> Unit,
+) {
+    val context = LocalContext.current
+    SubcomposeAsyncImage(
+        ImageRequest.Builder(context = LocalContext.current).data(video.thumbnail)
+            .memoryCacheKey("video${video.id}").diskCacheKey("video${video.id}").build(),
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .aspectRatio(16 / 9f)
+            .clip(RoundedCornerShape(10.dp))
+            .clickable {
+                onClick(video)
+            }
+    )
+    SizeBox(height = 16.dp)
+    Text(
+        text = video.title,
+        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+        modifier = Modifier.padding(horizontal = 16.dp),
+    )
+    SizeBox(height = 2.dp)
+    Text(
+        modifier = Modifier.padding(horizontal = 16.dp),
+        text = video.category.title,
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.tertiary
+    )
+    Text(
+        modifier = Modifier.padding(horizontal = 16.dp),
+        text = video.getShortDescription(context),
+        style = TextStyle(fontSize = 10.sp, color = MaterialTheme.colorScheme.outline)
+    )
+    SizeBox(height = 40.dp)
 }

@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
-import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
@@ -27,19 +26,16 @@ fun YoutubeView(
     onReady: (YouTubePlayer) -> Unit,
     toggleFullScreen: (Boolean) -> Unit,
 ) {
-    Box(
-        modifier = modifier
-    ) {
-        AndroidView(
-            factory = { context ->
-                YoutubeViewWithFullScreen.getInstance(
-                    context,
-                    onReady = onReady,
-                    toggleFullScreen = toggleFullScreen
-                )
-            },
-        )
-    }
+    AndroidView(
+        modifier = modifier,
+        factory = { context ->
+            YoutubeViewWithFullScreen.getInstance(
+                context,
+                onReady = onReady,
+                toggleFullScreen = toggleFullScreen
+            )
+        },
+    )
 }
 
 @SuppressLint("StaticFieldLeak")
