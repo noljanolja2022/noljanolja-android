@@ -236,7 +236,12 @@ fun SearchHistory(
                     tint = NeutralGrey
                 )
                 SizeBox(width = 10.dp)
-                Text(text = it)
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                )
                 Expanded()
                 Icon(
                     Icons.Rounded.Cancel,
