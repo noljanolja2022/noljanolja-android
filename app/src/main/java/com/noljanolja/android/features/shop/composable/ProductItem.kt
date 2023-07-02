@@ -60,7 +60,8 @@ fun ProductItem(
         )
         Text(
             gift.brand.name,
-            style = MaterialTheme.typography.titleSmall
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
         )
         FlowRow(verticalAlignment = Alignment.CenterVertically) {
             Text(
@@ -76,7 +77,10 @@ fun ProductItem(
                     }
                     append(" ")
                     withStyle(
-                        SpanStyle(fontSize = 16.sp)
+                        SpanStyle(
+                            fontSize = 16.sp,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
                     ) {
                         append(stringResource(id = R.string.common_points))
                     }
