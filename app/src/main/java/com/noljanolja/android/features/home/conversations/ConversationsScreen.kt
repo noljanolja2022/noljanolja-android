@@ -1,6 +1,8 @@
 package com.noljanolja.android.features.home.conversations
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -47,6 +49,7 @@ import com.noljanolja.android.features.home.conversations.components.NewChatDial
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.EmptyPage
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
+import com.noljanolja.android.ui.composable.SearchBar
 import com.noljanolja.android.ui.theme.darkContent
 import com.noljanolja.android.util.findActivity
 import com.noljanolja.android.util.humanReadableDate
@@ -55,6 +58,8 @@ import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.ConversationType
 import com.noljanolja.core.conversation.domain.model.Message
 import com.noljanolja.core.conversation.domain.model.MessageType
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
 import org.koin.androidx.compose.get
 import org.koin.androidx.compose.getViewModel
 
@@ -95,69 +100,107 @@ fun ConversationsScreenContent(
         mutableStateOf(Pair(0f, 0f))
     }
 
+    var showSearch by remember {
+        mutableStateOf(false)
+    }
+
+    var searchText by remember {
+        mutableStateOf("")
+    }
+    var searchValue by remember {
+        mutableStateOf("")
+    }
+    LaunchedEffect(key1 = searchText) {
+        snapshotFlow { searchText }.debounce(300).collectLatest {
+            searchValue = it
+        }
+    }
     ScaffoldWithUiState(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            CommonTopAppBar(
-                title = stringResource(R.string.chats_title),
-                actions = {
-                    IconButton(onClick = { handleEvent(ConversationsEvent.AddFriend) }) {
-                        Icon(
-                            Icons.Filled.PersonAdd,
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp),
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
+            AnimatedVisibility(
+                visible = showSearch,
+                enter = slideInHorizontally(
+                    initialOffsetX = { it * 2 / 3 }
+                )
+            ) {
+                SearchBar(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp),
+                    searchText = searchText,
+                    hint = stringResource(id = R.string.common_search),
+                    onSearch = {
+                        searchText = it
+                    },
+                    onSearchButton = {
+                        showSearch = false
                     }
-                    IconButton(onClick = { }) {
-                        Icon(
-                            Icons.Outlined.Search,
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp),
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                    IconButton(onClick = {
-                        showNewChatDialog = true
-                        showNewChatTooltip = false
-                        sharedPreferenceHelper.showNewChatDialog = false
-                    }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.chat_add),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .padding(bottom = 2.dp)
-                                .size(21.dp)
-                                .onGloballyPositioned { coordinates ->
-                                    val x = coordinates.positionInRoot().x
+                )
+            }
+            if (!showSearch) {
+                CommonTopAppBar(
+                    title = stringResource(R.string.chats_title),
+                    actions = {
+                        IconButton(onClick = { handleEvent(ConversationsEvent.AddFriend) }) {
+                            Icon(
+                                Icons.Filled.PersonAdd,
+                                contentDescription = null,
+                                modifier = Modifier.size(24.dp),
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                        IconButton(onClick = {
+                            showSearch = true
+                        }) {
+                            Icon(
+                                Icons.Outlined.Search,
+                                contentDescription = null,
+                                modifier = Modifier.size(24.dp),
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                        IconButton(onClick = {
+                            showNewChatDialog = true
+                            showNewChatTooltip = false
+                            sharedPreferenceHelper.showNewChatDialog = false
+                        }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.chat_add),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .padding(bottom = 2.dp)
+                                    .size(21.dp)
+                                    .onGloballyPositioned { coordinates ->
+                                        val x = coordinates.positionInRoot().x
 
-                                    val y = coordinates.positionInRoot().y
-                                    newChatIconPositions = Pair(x, y)
-                                },
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
+                                        val y = coordinates.positionInRoot().y
+                                        newChatIconPositions = Pair(x, y)
+                                    },
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
 
-                    IconButton(onClick = {
-                        handleEvent(ConversationsEvent.ChatSettings)
-                    }) {
-                        Icon(
-                            Icons.Outlined.Settings,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .padding(bottom = 2.dp)
-                                .size(21.dp),
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
+                        IconButton(onClick = {
+                            handleEvent(ConversationsEvent.ChatSettings)
+                        }) {
+                            Icon(
+                                Icons.Outlined.Settings,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .padding(bottom = 2.dp)
+                                    .size(21.dp),
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
                     }
-                }
-            )
+                )
+            }
         },
         uiState = uiState,
         showContentWithLoading = false,
         error = {}
     ) {
-        if (uiState.data.isNullOrEmpty()) {
+        val showConversation = uiState.data?.filter { it.getDisplayTitle().contains(searchValue) }
+        if (showConversation.isNullOrEmpty()) {
             EmptyPage(
                 stringResource(id = R.string.conversation_empty),
                 icon = {
@@ -170,7 +213,7 @@ fun ConversationsScreenContent(
                 }
             )
         } else {
-            ConversationList(uiState.data) { conversation ->
+            ConversationList(showConversation) { conversation ->
                 handleEvent(
                     ConversationsEvent.OpenConversation(
                         conversation.id,
@@ -200,7 +243,7 @@ fun ConversationList(
     onItemClick: (Conversation) -> Unit,
 ) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(conversations, key = { it.id }) { conversation ->
+        items(conversations) { conversation ->
             ConversationRow(conversation) { onItemClick(it) }
         }
     }
