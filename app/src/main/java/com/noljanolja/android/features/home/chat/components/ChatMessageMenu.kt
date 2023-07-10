@@ -64,6 +64,9 @@ fun ChatMessageMenuDialog(
     conversationType: ConversationType,
     reactIcons: List<ReactIcon>,
     onReact: (Long, Long) -> Unit,
+    onReply: () -> Unit,
+    onDelete: () -> Unit,
+    onShare: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     val clipboardManager = LocalClipboardManager.current
@@ -123,11 +126,9 @@ fun ChatMessageMenuDialog(
                         conversationType = conversationType,
                         isFirstMessageByAuthorSameDay = false,
                         isLastMessageByAuthorSameDay = false,
-                        onSenderClick = { user ->
-                        },
-                        onMessageReaction = onReact,
                         reactIcons = reactIcons,
-                        showReaction = false
+                        showReaction = false,
+                        handleEvent = {}
                     )
                 }
 
@@ -144,12 +145,14 @@ fun ChatMessageMenuDialog(
                         title = stringResource(id = R.string.chat_action_reply),
                         icon = Icons.Default.Reply
                     ) {
+                        onReply()
                         onDismissRequest()
                     }
                     MessageAction(
                         title = stringResource(id = R.string.chat_action_forward),
                         icon = ImageVector.vectorResource(id = R.drawable.ic_forward)
                     ) {
+                        onShare()
                         onDismissRequest()
                     }
                     MessageAction(
@@ -164,6 +167,7 @@ fun ChatMessageMenuDialog(
                         title = stringResource(id = R.string.chat_action_delete),
                         icon = Icons.Default.Delete
                     ) {
+                        onDelete()
                         onDismissRequest()
                     }
                 }

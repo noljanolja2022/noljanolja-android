@@ -26,6 +26,8 @@ internal interface ConversationRepository {
         conversationId: Long,
         userIds: List<String>,
         message: Message,
+        replyToMessageId: Long?,
+        shareMessageId: Long?,
     ): Long
 
     suspend fun createConversation(title: String, userIds: List<String>): Long
@@ -35,6 +37,8 @@ internal interface ConversationRepository {
         messageBefore: Long? = null,
         messageAfter: Long? = null,
     ): List<Message>
+
+    suspend fun getMessageById(messageId: Long): Message?
 
     suspend fun updateMessageStatus(
         conversationId: Long,
@@ -70,6 +74,12 @@ internal interface ConversationRepository {
     fun getReactIcons(): Flow<List<ReactIcon>>
 
     suspend fun reactMessage(conversationId: Long, messageId: Long, reactId: Long): Result<Boolean>
+
+    suspend fun deleteMessage(
+        conversationId: Long,
+        messageId: Long,
+        removeForSelfOnly: Boolean,
+    ): Result<Boolean>
 
     fun onDestroy()
 }

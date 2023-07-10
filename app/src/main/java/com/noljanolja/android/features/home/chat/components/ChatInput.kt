@@ -75,6 +75,7 @@ fun ChatInput(
     resetScroll: () -> Unit = {},
     mediaList: List<Pair<Uri, Long?>>,
     loadMedia: () -> Unit,
+    focusRequester: FocusRequester,
     openPhoneSetting: () -> Unit,
     onChangeSelectMedia: (List<Uri>) -> Unit,
     onHandleBottomSheetBackPress: () -> Unit = {},
@@ -84,7 +85,6 @@ fun ChatInput(
     var currentInputSelector by rememberSaveable { mutableStateOf(InputSelector.NONE) }
     // when gif BottomSheet is expanding, if back button is pressed, collapse bottom sheet instead of
     // close selector expand
-    val focusRequester = remember { FocusRequester() }
     val context = LocalContext.current
 
     val dismissKeyboard = {

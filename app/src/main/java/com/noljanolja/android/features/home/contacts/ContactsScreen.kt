@@ -76,6 +76,7 @@ fun ContactsScreenContent(
                                     R.string.contacts_title_group
                                 }
                             }
+
                             else -> R.string.contacts_title_secret
                         }
                     ),
@@ -113,6 +114,7 @@ fun ContactsScreenContent(
                             }
                         )
                     }
+
                     !uiState.loading -> {
                         Column(
                             modifier = Modifier
@@ -189,7 +191,7 @@ fun ContactsScreenContent(
 }
 
 @Composable
-fun ContactList(
+private fun ContactList(
     type: ConversationType,
     contacts: List<User>,
     scrollState: LazyListState,
@@ -212,7 +214,7 @@ fun ContactList(
 }
 
 @Composable
-fun ContactRow(
+private fun ContactRow(
     type: ConversationType,
     contact: User,
     selected: Boolean = false,

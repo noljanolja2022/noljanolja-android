@@ -15,6 +15,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Instant
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -61,6 +62,8 @@ class LocalConversationDataSource(
             leftParticipants: String,
             joinParticipants: String,
             reactions: String,
+            replyToMessage: String?,
+            isDeleted: Boolean,
             created_at: Long,
             updated_at: Long,
         ->
@@ -79,6 +82,8 @@ class LocalConversationDataSource(
                 .map { User(name = it) },
             reactions = Json.decodeFromString<List<MessageReaction>>(reactions),
             seenBy = Json.decodeFromString(seenBy),
+            replyToMessage = replyToMessage?.let { Json.decodeFromString(it) },
+            isDeleted = isDeleted,
             createdAt = Instant.fromEpochMilliseconds(created_at),
             updatedAt = Instant.fromEpochMilliseconds(updated_at),
         )
@@ -143,14 +148,16 @@ class LocalConversationDataSource(
 
     // Message
 
-    suspend fun findConversationMessages(
+    fun findConversationMessages(
         conversationId: Long,
         limit: Long = 0,
     ): Flow<List<Message>> = if (limit > 0) {
         messageQueries.findByConversation(conversationId, limit, messageMapper)
     } else {
         messageQueries.findAllByConversation(conversationId, messageMapper)
-    }.asFlow().mapToList().flowOn(backgroundDispatcher)
+    }.asFlow().mapToList()
+        .map { it.filter { message -> !(message.message.isEmpty() && message.type == MessageType.PLAINTEXT || message.isDeleted) } }
+        .flowOn(backgroundDispatcher)
 
     suspend fun findConversationMessageById(
         messageId: Long,
@@ -160,37 +167,51 @@ class LocalConversationDataSource(
     suspend fun upsertConversationMessages(
         conversationId: Long,
         messages: List<Message>,
-    ) = messageQueries.transactionWithContext(backgroundDispatcher) {
-        messages.forEach { message ->
-            val existing = if (message.id != 0L) {
-                messageQueries.findById(message.id, messageMapper).executeAsOneOrNull()
-            } else {
-                null
+    ) {
+        messageQueries.transactionWithContext(backgroundDispatcher) {
+            messages.forEach { message ->
+                val existing = if (message.id != 0L) {
+                    messageQueries.findById(message.id, messageMapper).executeAsOneOrNull()
+                } else {
+                    null
+                }
+                messageQueries.upsert(
+                    id = message.id,
+                    localId = existing?.localId ?: message.localId,
+                    conversation = conversationId,
+                    sender = message.sender.id,
+                    message = message.message,
+                    stickerUrl = message.stickerUrl,
+                    attachments = json.encodeToString(message.attachments),
+                    type = message.type.name,
+                    status = message.status.name,
+                    seenBy = json.encodeToString(message.seenBy),
+                    leftParticipants = json.encodeToString(message.leftParticipants.map { it.name }),
+                    joinParticipants = json.encodeToString(message.joinParticipants.map { it.name }),
+                    reactions = json.encodeToString(message.reactions),
+                    replyToMessage = message.replyToMessage?.let { json.encodeToString(it) },
+                    isDeleted = message.isDeleted,
+                    created_at = message.createdAt.toEpochMilliseconds(),
+                    updated_at = message.updatedAt.toEpochMilliseconds(),
+                )
             }
-            messageQueries.upsert(
-                id = message.id,
-                localId = existing?.localId ?: message.localId,
-                conversation = conversationId,
-                sender = message.sender.id,
-                message = message.message,
-                stickerUrl = message.stickerUrl,
-                attachments = json.encodeToString(message.attachments),
-                type = message.type.name,
-                status = message.status.name,
-                seenBy = json.encodeToString(message.seenBy),
-                leftParticipants = json.encodeToString(message.leftParticipants.map { it.name }),
-                joinParticipants = json.encodeToString(message.joinParticipants.map { it.name }),
-                reactions = json.encodeToString(message.reactions),
-                created_at = message.createdAt.toEpochMilliseconds(),
-                updated_at = message.updatedAt.toEpochMilliseconds(),
-            )
         }
     }
+
+    suspend fun getMessageById(messageId: Long): Message? =
+        messageQueries.getMessageById(id = messageId, limit = 1, mapper = messageMapper).asFlow()
+            .flowOn(backgroundDispatcher).mapToOne().firstOrNull()
 
     suspend fun deleteConversationMessages(
         conversationId: Long,
     ) = messageQueries.transactionWithContext(backgroundDispatcher) {
         messageQueries.deleteAllByConversation(conversationId)
+    }
+
+    suspend fun deleteConversationMessageById(
+        messageId: Long,
+    ) = messageQueries.transactionWithContext(backgroundDispatcher) {
+        messageQueries.deleteById(messageId)
     }
 
     suspend fun deleteAllMessages() = messageQueries.transactionWithContext(backgroundDispatcher) {

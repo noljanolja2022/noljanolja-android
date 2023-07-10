@@ -24,6 +24,8 @@ data class Message(
     val status: MessageStatus = MessageStatus.SENDING,
     val seenBy: List<String> = emptyList(),
     val reactions: List<MessageReaction> = emptyList(),
+    val replyToMessage: Message? = null,
+    val isDeleted: Boolean = false,
     val createdAt: Instant = Clock.System.now(),
     val updatedAt: Instant = Clock.System.now(),
 ) {

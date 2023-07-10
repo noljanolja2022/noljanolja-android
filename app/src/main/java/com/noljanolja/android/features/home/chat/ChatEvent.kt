@@ -12,6 +12,7 @@ sealed interface ChatEvent {
 
     data class SendMessage(
         val message: Message,
+        val replyToMessageId: Long? = null,
     ) : ChatEvent
 
     data class ClickMessage(
@@ -30,4 +31,13 @@ sealed interface ChatEvent {
 
     object ChatOptions : ChatEvent
     data class React(val messageId: Long, val reactId: Long) : ChatEvent
+
+    data class DeleteMessage(val messageId: Long, val removeForSelfOnly: Boolean) : ChatEvent
+
+    data class ShareMessage(
+        val conversationIds: List<Long>? = emptyList(),
+        val userIds: List<String>? = emptyList(),
+    ) : ChatEvent
+
+    data class SelectShareMessage(val message: Message) : ChatEvent
 }

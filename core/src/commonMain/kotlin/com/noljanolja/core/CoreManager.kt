@@ -92,12 +92,16 @@ class CoreManager : KoinComponent {
         conversationId: Long,
         userIds: List<String>,
         message: Message,
+        replyToMessageId: Long?,
+        shareMessageId: Long? = null,
     ): Long {
         return conversationRepository.sendConversationMessage(
             title = title,
             conversationId = conversationId,
             userIds = userIds,
-            message = message
+            message = message,
+            replyToMessageId = replyToMessageId,
+            shareMessageId = shareMessageId
         )
     }
 
@@ -115,6 +119,10 @@ class CoreManager : KoinComponent {
             messageBefore = messageBefore,
             messageAfter = messageAfter
         )
+    }
+
+    suspend fun getMessageById(messageId: Long): Message? {
+        return conversationRepository.getMessageById(messageId)
     }
 
     private suspend fun streamConversations(
@@ -197,6 +205,16 @@ class CoreManager : KoinComponent {
         conversationId = conversationId,
         messageId = messageId,
         reactId = reactId
+    )
+
+    suspend fun deleteMessage(
+        conversationId: Long,
+        messageId: Long,
+        removeForSelfOnly: Boolean,
+    ) = conversationRepository.deleteMessage(
+        conversationId = conversationId,
+        messageId = messageId,
+        removeForSelfOnly = removeForSelfOnly
     )
 
     suspend fun getCurrentUser(

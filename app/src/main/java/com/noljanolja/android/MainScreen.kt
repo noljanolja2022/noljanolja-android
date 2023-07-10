@@ -45,6 +45,7 @@ import com.noljanolja.android.features.setting.SettingScreen
 import com.noljanolja.android.features.setting.more.AboutUsScreen
 import com.noljanolja.android.features.setting.more.FAQScreen
 import com.noljanolja.android.features.setting.more.LicenseScreen
+import com.noljanolja.android.features.sharemessage.SelectShareMessageScreen
 import com.noljanolja.android.features.shop.coupons.CouponsScreen
 import com.noljanolja.android.features.shop.giftdetail.GiftDetailScreen
 import com.noljanolja.android.features.shop.search.SearchProductScreen
@@ -227,6 +228,16 @@ private fun NavGraphBuilder.addChatGraph() {
             arguments
         ) {
             ScanQrCodeScreen()
+        }
+    }
+    with(NavigationDirections.SelectShareMessage(selectMessageId = 0L, fromConversationId = 0L)) {
+        composable(
+            destination,
+            arguments
+        ) {
+            val selectMessageId = (it.arguments?.getLong("selectMessageId") ?: 0)
+            val fromConversationId = (it.arguments?.getLong("fromConversationId") ?: 0)
+            SelectShareMessageScreen(selectMessageId, fromConversationId)
         }
     }
 }

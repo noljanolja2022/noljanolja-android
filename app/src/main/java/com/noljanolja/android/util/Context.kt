@@ -83,25 +83,29 @@ fun Context.getName(uri: Uri): String {
 }
 
 fun Context.openImageFromCache(key: String) {
+    val imageUri = getUriFromCache(key)
+    val intent = Intent(Intent.ACTION_VIEW)
+    intent.setDataAndType(imageUri, "image/*")
+    intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+    startActivity(intent)
+}
+
+fun Context.getUriFromCache(key: String): Uri? {
     val tmpFile = File.createTempFile("temp_photo", ".png", cacheDir).apply {
         createNewFile()
         deleteOnExit()
     }
     val cache = Coil.imageLoader(this).memoryCache
-    val bitmap = cache?.get(MemoryCache.Key(key))?.bitmap ?: return
+    val bitmap = cache?.get(MemoryCache.Key(key))?.bitmap ?: return null
     val out = FileOutputStream(tmpFile)
     bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
     out.flush()
     out.close()
-    val imageUri = FileProvider.getUriForFile(
+    return FileProvider.getUriForFile(
         this,
         "${BuildConfig.APPLICATION_ID}.provider",
         tmpFile
     )
-    val intent = Intent(Intent.ACTION_VIEW)
-    intent.setDataAndType(imageUri, "image/*")
-    intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-    startActivity(intent)
 }
 
 fun Context.openUrl(url: String) {

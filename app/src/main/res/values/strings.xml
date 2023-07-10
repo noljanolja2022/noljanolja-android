@@ -348,5 +348,7 @@
     <string name="chat_action_forward">Forward</string>
     <string name="chat_action_copy">Copy</string>
     <string name="chat_action_delete">Delete</string>
-
+    <string name="common_undefined">[Undefined]</string>
+    <string name="common_image">[Image]</string>
+    <string name="common_sticker">[Sticker]</string>
 </resources>

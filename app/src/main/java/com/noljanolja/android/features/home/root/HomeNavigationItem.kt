@@ -4,12 +4,10 @@ import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.ChatBubble
-import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.OndemandVideo
 import androidx.compose.material.icons.filled.Store
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.ChatBubble
-import androidx.compose.material.icons.outlined.Event
 import androidx.compose.material.icons.outlined.OndemandVideo
 import androidx.compose.material.icons.outlined.Store
 import androidx.compose.ui.graphics.vector.ImageVector

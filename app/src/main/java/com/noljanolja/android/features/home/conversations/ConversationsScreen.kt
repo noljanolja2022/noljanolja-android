@@ -295,18 +295,18 @@ fun ConversationRow(
                 }
 
                 MessageType.PHOTO -> {
-                    val attachment = message.attachments.last()
+                    val attachment = message.attachments.lastOrNull()
                     if (message.sender.isMe) {
-                        if (attachment.type.startsWith("video")) {
-                            stringResource(R.string.chats_message_my_video)
-                        } else {
-                            stringResource(R.string.chats_message_my_photo)
+                        when {
+                            attachment == null -> stringResource(id = R.string.chats_message_my_video)
+                            attachment.type.startsWith("video") -> stringResource(R.string.chats_message_my_video)
+                            else -> stringResource(R.string.chats_message_my_photo)
                         }
                     } else {
-                        if (attachment.type.startsWith("video")) {
-                            stringResource(R.string.chats_message_video)
-                        } else {
-                            stringResource(R.string.chats_message_photo)
+                        when {
+                            attachment == null -> stringResource(id = R.string.chats_message_video)
+                            attachment.type.startsWith("video") -> stringResource(R.string.chats_message_video)
+                            else -> stringResource(R.string.chats_message_photo)
                         }
                     }
                 }

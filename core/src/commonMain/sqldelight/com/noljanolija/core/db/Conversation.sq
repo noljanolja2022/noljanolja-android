@@ -69,6 +69,10 @@ upsert {
   );
 }
 
+updateTime:
+UPDATE `conversation` SET updated_at=:updated_at
+WHERE id = :id;
+
 deleteById:
 DELETE FROM `conversation`
 WHERE id = :id;

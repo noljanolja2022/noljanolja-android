@@ -7,4 +7,6 @@ import kotlinx.serialization.Serializable
 data class SendConversationMessageRequest(
     val conversationId: Long,
     val message: Message,
+    val replyToMessageId: Long?,
+    val shareMessageId: Long?,
 )

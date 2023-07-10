@@ -15,6 +15,7 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
+import io.ktor.util.InternalAPI
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.decodeFromString
@@ -35,6 +36,7 @@ class ConversationApi(
         return client.get("$BASE_URL/conversations/${request.conversationId}").body()
     }
 
+    @OptIn(InternalAPI::class)
     suspend fun sendConversationMessage(
         request: SendConversationMessageRequest,
     ): SendConversationMessageResponse {
@@ -46,6 +48,13 @@ class ConversationApi(
                         append("message", request.message.message)
                         append("type", request.message.type.name)
                         append("localId", request.message.localId)
+                        request.replyToMessageId?.let {
+                            append("replyToMessageId", it)
+                        }
+                        request.shareMessageId?.let {
+                            append("shareMessageId", it)
+                        }
+
                         when (request.message.type) {
                             MessageType.PHOTO,
                             MessageType.DOCUMENT,
@@ -176,6 +185,17 @@ class ConversationApi(
 
     suspend fun reactMessage(request: ReactRequest): ResponseWithoutData {
         return client.put("$BASE_URL/conversations/${request.conversationId}/messages/${request.messageId}/reactions/${request.reactId}")
+            .body()
+    }
+
+    suspend fun deleteMessage(
+        conversationId: Long,
+        messageId: Long,
+        removeForSelfOnly: Boolean,
+    ): ResponseWithoutData {
+        return client.delete("$BASE_URL/conversations/$conversationId/messages/$messageId") {
+            parameter("removeForSelfOnly", removeForSelfOnly)
+        }
             .body()
     }
 }

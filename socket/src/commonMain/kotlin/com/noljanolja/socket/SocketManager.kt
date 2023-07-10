@@ -113,7 +113,6 @@ class SocketManager(
                     onError.invoke(error, newToken)
                 }
                 stream.map {
-                    Logger.d("Stream success}")
                     it.data.readText()
                 }
             } ?: throw Throwable()

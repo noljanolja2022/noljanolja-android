@@ -416,6 +416,28 @@ object NavigationDirections {
         override val options: NavOptions? = null
         override val destination: String = "phone_settings"
     }
+
+    data class SelectShareMessage(
+        val selectMessageId: Long,
+        val fromConversationId: Long,
+    ) : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf(
+            navArgument("selectMessageId") {
+                defaultValue = 0
+                type = NavType.LongType
+            },
+            navArgument("fromConversationId") {
+                defaultValue = 0
+                type = NavType.LongType
+            },
+        )
+        override val options: NavOptions? = null
+        override val destination: String =
+            "select_share_message?selectMessageId={selectMessageId}&fromConversationId={fromConversationId}"
+
+        override fun createDestination() =
+            "select_share_message?selectMessageId=$selectMessageId&fromConversationId=$fromConversationId"
+    }
 }
 
 private inline fun <reified T> parseSerializableArgs(data: T): String {

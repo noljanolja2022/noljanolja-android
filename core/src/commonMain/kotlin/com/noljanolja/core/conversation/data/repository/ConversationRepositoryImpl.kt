@@ -98,6 +98,8 @@ internal class ConversationRepositoryImpl(
         conversationId: Long,
         userIds: List<String>,
         message: Message,
+        replyToMessageId: Long?,
+        shareMessageId: Long?,
     ): Long {
         val sentConversationId =
             if (conversationId == 0L) createConversation(title, userIds) else conversationId
@@ -117,20 +119,15 @@ internal class ConversationRepositoryImpl(
                         SendConversationMessageRequest(
                             conversationId = sentConversationId,
                             message = sendingMessage,
+                            replyToMessageId = replyToMessageId,
+                            shareMessageId = shareMessageId,
                         )
                     )
 
                 Logger.e("Receive: send response ${response.data}")
 
                 if (!response.isSuccessful() || response.data == null) {
-                    localConversationDataSource.upsertConversationMessages(
-                        sentConversationId,
-                        listOf(
-                            sendingMessage.copy(
-                                status = MessageStatus.FAILED,
-                            )
-                        )
-                    )
+                    throw Throwable(response.message)
                 } else {
                     localConversationDataSource.upsertConversationMessages(
                         sentConversationId,
@@ -143,6 +140,14 @@ internal class ConversationRepositoryImpl(
                     )
                 }
             } catch (e: Throwable) {
+                localConversationDataSource.upsertConversationMessages(
+                    sentConversationId,
+                    listOf(
+                        sendingMessage.copy(
+                            status = MessageStatus.FAILED,
+                        )
+                    )
+                )
                 e.printStackTrace()
             }
 
@@ -174,14 +179,25 @@ internal class ConversationRepositoryImpl(
         streamJob = scope.launch {
             val me = localUserDataSource.findMe() ?: return@launch
             conversationApi.streamConversations(token, ::onStreamError)
-                .collect {
-                    if (me.isRemoveFromConversation(it)) {
-                        localConversationDataSource.deleteById(it.id)
-                        _removedConversationEvent.emit(it)
-                    } else {
-                        updateLocalConversation(
-                            it,
-                        )
+                .collect { conversation ->
+                    val message = conversation.messages.firstOrNull()
+                    Logger.d("Stream success: ${conversation.id}")
+
+                    when {
+                        me.isRemoveFromConversation(conversation) -> {
+                            localConversationDataSource.deleteById(conversation.id)
+                            _removedConversationEvent.emit(conversation)
+                        }
+
+                        message?.isDeleted == true -> {
+                            localConversationDataSource.deleteConversationMessageById(message.id)
+                        }
+
+                        else -> {
+                            updateLocalConversation(
+                                conversation,
+                            )
+                        }
                     }
                 }
         }
@@ -356,30 +372,26 @@ internal class ConversationRepositoryImpl(
                         creator = it.findById(conversation.creator.id)
                             ?: conversation.creator,
                         participants = participants,
-                        messages = messages.mapNotNull { message ->
-                            if (message.message.isEmpty() && message.type == MessageType.PLAINTEXT) {
-                                null
-                            } else {
-                                val sender = it.findById(message.sender.id) ?: message.sender
-                                val myId = it.findMe()?.id ?: 0L
-                                val textMessage =
-                                    if (message.type == MessageType.EVENT_JOINED) {
-                                        message.message.convertIdsToNames(
-                                            participants
-                                        )
-                                    } else {
-                                        message.message
-                                    }
-                                message.copy(
-                                    sender = sender,
-                                    message = textMessage
-                                ).apply {
-                                    if (seenBy.any { it.isNotBlank() }) {
-                                        seenUsers =
-                                            seenBy.mapNotNull { id -> participants.find { it.id == id } }
-                                    }
-                                    isSeenByMe = sender.isMe || seenBy.contains(myId)
+                        messages = messages.map { message ->
+                            val sender = it.findById(message.sender.id) ?: message.sender
+                            val myId = it.findMe()?.id ?: 0L
+                            val textMessage =
+                                if (message.type == MessageType.EVENT_JOINED) {
+                                    message.message.convertIdsToNames(
+                                        participants
+                                    )
+                                } else {
+                                    message.message
                                 }
+                            message.copy(
+                                sender = sender,
+                                message = textMessage
+                            ).apply {
+                                if (seenBy.any { it.isNotBlank() }) {
+                                    seenUsers =
+                                        seenBy.mapNotNull { id -> participants.find { it.id == id } }
+                                }
+                                isSeenByMe = sender.isMe || seenBy.contains(myId)
                             }
                         }
                     )
@@ -463,6 +475,10 @@ internal class ConversationRepositoryImpl(
         )
     }
 
+    override suspend fun getMessageById(messageId: Long): Message? {
+        return localConversationDataSource.getMessageById(messageId)
+    }
+
     override suspend fun updateMessageStatus(conversationId: Long, messageId: Long) {
         try {
             conversationApi.updateMessageStatus(
@@ -504,6 +520,28 @@ internal class ConversationRepositoryImpl(
                 )
             )
             if (response.isSuccessful()) {
+                Result.success(true)
+            } else {
+                throw Throwable(response.message)
+            }
+        } catch (e: Throwable) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun deleteMessage(
+        conversationId: Long,
+        messageId: Long,
+        removeForSelfOnly: Boolean,
+    ): Result<Boolean> {
+        return try {
+            val response = conversationApi.deleteMessage(
+                conversationId = conversationId,
+                messageId = messageId,
+                removeForSelfOnly = removeForSelfOnly
+            )
+            if (response.isSuccessful()) {
+                localConversationDataSource.deleteConversationMessageById(messageId)
                 Result.success(true)
             } else {
                 throw Throwable(response.message)

@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 import org.koin.core.component.inject
+import java.util.UUID.randomUUID
 
 class ChatViewModel(
     savedStateHandle: SavedStateHandle,
@@ -37,6 +38,7 @@ class ChatViewModel(
     private var lastMessageId: String = ""
     private var job: Job? = null
     private var seenJob: Job? = null
+    private var selectShareMessage: Message? = null
 
     private val _chatUiStateFlow = MutableStateFlow(UiState<Conversation>())
     val chatUiStateFlow = _chatUiStateFlow.asStateFlow()
@@ -86,7 +88,7 @@ class ChatViewModel(
                 is ChatEvent.NavigateToProfile -> {}
                 is ChatEvent.ReloadConversation -> {}
                 is ChatEvent.SendMessage -> {
-                    sendMessage(event.message)
+                    sendMessage(event.message, event.replyToMessageId)
                 }
 
                 ChatEvent.LoadMedia -> loadMedia()
@@ -98,11 +100,22 @@ class ChatViewModel(
                 is ChatEvent.React -> {
                     coreManager.reactMessage(conversationId, event.messageId, event.reactId)
                 }
+
+                is ChatEvent.DeleteMessage -> deleteMessage(
+                    event.messageId,
+                    event.removeForSelfOnly
+                )
+
+                is ChatEvent.SelectShareMessage -> selectShareMessage(event.message)
+                is ChatEvent.ShareMessage -> shareMessage(event.conversationIds, event.userIds)
             }
         }
     }
 
-    private suspend fun sendMessage(message: Message) {
+    private suspend fun sendMessage(
+        message: Message,
+        replyToMessageId: Long?,
+    ) {
         // call with main scope to avoid cancel when back
         launchInMain {
             withContext(Dispatchers.IO) {
@@ -110,7 +123,8 @@ class ChatViewModel(
                     title = title,
                     conversationId = conversationId,
                     userIds = userIds,
-                    message = message
+                    message = message,
+                    replyToMessageId = replyToMessageId,
                 )
                     .takeIf { it > 0L && conversationId == 0L }?.let {
                     conversationId = it
@@ -185,6 +199,47 @@ class ChatViewModel(
             val localImages =
                 mediaLoader.loadMedia().toList()
             _loadedMediaFlow.emit(localImages)
+        }
+    }
+
+    private suspend fun deleteMessage(messageId: Long, removeForSelfOnly: Boolean) {
+        coreManager.deleteMessage(
+            conversationId = conversationId,
+            messageId = messageId,
+            removeForSelfOnly = removeForSelfOnly
+        ).exceptionOrNull()?.let {
+            sendError(it)
+        }
+    }
+
+    private suspend fun selectShareMessage(message: Message) {
+        selectShareMessage = message
+        navigationManager.navigate(
+            NavigationDirections.SelectShareMessage(
+                selectMessageId = message.id,
+                fromConversationId = conversationId
+            )
+        )
+    }
+
+    private fun shareMessage(conversationsIds: List<Long>?, userIds: List<String>?) {
+        val message = selectShareMessage?.copy(
+            id = 0L,
+            _localId = randomUUID().toString()
+        ) ?: return
+        launchInMain {
+            withContext(Dispatchers.IO) {
+                conversationsIds?.forEach { conversationId ->
+                    // call with main scope to avoid cancel when back
+                    coreManager.sendConversationMessage(
+                        conversationId = conversationId,
+                        userIds = userIds.orEmpty(),
+                        message = message,
+                        replyToMessageId = null,
+                        shareMessageId = selectShareMessage!!.id,
+                    )
+                }
+            }
         }
     }
 
