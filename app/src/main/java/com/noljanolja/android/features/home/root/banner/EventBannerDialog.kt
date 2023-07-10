@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -36,6 +37,7 @@ import com.noljanolja.android.ui.theme.NeutralDarkGrey
 import com.noljanolja.android.util.openUrl
 import com.noljanolja.core.event.domain.model.EventAction
 import com.noljanolja.core.event.domain.model.EventBanner
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalPagerApi::class)
 @Composable
@@ -45,6 +47,17 @@ fun EventBannerDialog(
 ) {
     val state = rememberPagerState()
     val context = LocalContext.current
+    LaunchedEffect(key1 = true) {
+        while (eventBanners.isNotEmpty()) {
+            delay(4000)
+            val currentPage = state.currentPage
+            if (currentPage != eventBanners.size - 1) {
+                state.animateScrollToPage(currentPage + 1)
+            } else {
+                state.animateScrollToPage(0)
+            }
+        }
+    }
     Popup(
         onDismissRequest = onDismissRequest,
         properties = PopupProperties(

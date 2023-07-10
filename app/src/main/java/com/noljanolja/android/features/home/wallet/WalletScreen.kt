@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -34,6 +35,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,6 +53,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.ui.composable.CircleAvatar
@@ -62,8 +65,10 @@ import com.noljanolja.android.ui.composable.UserPoint
 import com.noljanolja.android.ui.theme.Orange300
 import com.noljanolja.android.ui.theme.darkContent
 import com.noljanolja.android.util.formatDigitsNumber
+import com.noljanolja.core.event.domain.model.EventBanner
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
 import com.noljanolja.core.user.domain.model.User
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -90,6 +95,7 @@ private fun WalletContent(
     onUseNow: () -> Unit,
 ) {
     val state = rememberPullRefreshState(uiState.loading, { handleEvent(WalletEvent.Refresh) })
+
     ScaffoldWithUiState(uiState = uiState) {
         val user = uiState.data?.user ?: return@ScaffoldWithUiState
         val banners = uiState.data.banners
@@ -104,20 +110,7 @@ private fun WalletContent(
                     contentAlignment = Alignment.BottomCenter,
                     modifier = Modifier.padding(bottom = 16.dp)
                 ) {
-                    HorizontalPager(
-                        count = banners.size,
-                        modifier = Modifier.padding(bottom = 47.dp)
-                    ) { page ->
-                        val eventBanner = banners[page]
-                        AsyncImage(
-                            model = eventBanner.image,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .height(150.dp)
-                                .align(Alignment.Center),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
+                    WalletBanners(banners = banners)
                     UserInformation(
                         user = user,
                         memberInfo = memberInfo,
@@ -300,6 +293,38 @@ private fun RowScope.WalletInfoItem(
         ) {
             Text(textButton.uppercase(), style = MaterialTheme.typography.labelLarge)
         }
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+private fun BoxScope.WalletBanners(banners: List<EventBanner>) {
+    val bannerState = rememberPagerState()
+    LaunchedEffect(key1 = true) {
+        while (banners.isNotEmpty()) {
+            delay(4000)
+            val currentPage = bannerState.currentPage
+            if (currentPage != banners.size - 1) {
+                bannerState.animateScrollToPage(currentPage + 1)
+            } else {
+                bannerState.animateScrollToPage(0)
+            }
+        }
+    }
+    HorizontalPager(
+        state = bannerState,
+        count = banners.size,
+        modifier = Modifier.padding(bottom = 47.dp)
+    ) { page ->
+        val eventBanner = banners[page]
+        AsyncImage(
+            model = eventBanner.image,
+            contentDescription = null,
+            modifier = Modifier
+                .height(150.dp)
+                .align(Alignment.Center),
+            contentScale = ContentScale.Crop
+        )
     }
 }
 
