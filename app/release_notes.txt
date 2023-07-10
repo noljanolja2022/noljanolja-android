@@ -1,3 +1,4 @@
+- 1.0.21: Reply, delete, forward messages
 - 1.0.20: Update reactions, fold UI
 - 1.0.19: Release banners, fix bug ui, otp
 - 1.0.18: Release reaction message
