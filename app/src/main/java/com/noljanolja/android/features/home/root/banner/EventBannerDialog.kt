@@ -43,6 +43,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun EventBannerDialog(
     eventBanners: List<EventBanner>,
+    onCheckIn: (EventBanner) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     val state = rememberPagerState()
@@ -81,7 +82,18 @@ fun EventBannerDialog(
             ) {
                 HorizontalPager(count = eventBanners.size, state = state) { page ->
                     val eventBanner = eventBanners[page]
-                    Box() {
+                    Box(
+                        modifier = Modifier.clickable(enabled = eventBanner.action != EventAction.LINK) {
+                            when (eventBanner.action) {
+                                EventAction.CHECKIN -> {
+                                    onDismissRequest()
+                                    onCheckIn(eventBanner)
+                                }
+
+                                else -> Unit
+                            }
+                        }
+                    ) {
                         AsyncImage(
                             model = eventBanner.image,
                             contentDescription = null,
@@ -93,7 +105,8 @@ fun EventBannerDialog(
                         if (eventBanner.action == EventAction.LINK) {
                             PrimaryButton(
                                 text = "OPEN LINK",
-                                modifier = Modifier.align(Alignment.BottomCenter)
+                                modifier = Modifier.align(Alignment.BottomCenter),
+                                shape = RoundedCornerShape(bottomEnd = 18.dp, bottomStart = 18.dp)
                             ) {
                                 context.openUrl(eventBanner.content)
                             }
@@ -128,7 +141,8 @@ fun EventBannerDialog(
                             MaterialTheme.colorScheme.outline
                         }
                         Box(
-                            modifier = Modifier.padding(horizontal = 3.dp)
+                            modifier = Modifier
+                                .padding(horizontal = 3.dp)
                                 .size(6.dp)
                                 .clip(RoundedCornerShape(6.dp))
                                 .background(dotColor)

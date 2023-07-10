@@ -71,6 +71,9 @@ fun HomeScreen(
     showBanners.takeIf { it.isNotEmpty() }?.let {
         EventBannerDialog(
             eventBanners = it,
+            onCheckIn = {
+                HomeNavigationItem.WalletItem.click(navController)
+            },
             onDismissRequest = {
                 viewModel.handleEvent(HomeEvent.CancelBanner)
             }
