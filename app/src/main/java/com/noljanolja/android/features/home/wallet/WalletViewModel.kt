@@ -5,6 +5,7 @@ import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
+import com.noljanolja.core.event.domain.model.EventBanner
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
 import com.noljanolja.core.user.domain.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -58,12 +59,16 @@ class WalletViewModel : BaseViewModel() {
     }
 
     private suspend fun refresh(forceRefresh: Boolean = false) {
+        val currentValue = _uiStateFlow.value.data
+        _uiStateFlow.emit(UiState(loading = true, data = currentValue))
         val user = coreManager.getCurrentUser(forceRefresh = forceRefresh).getOrNull()
-        _uiStateFlow.emit(UiState(data = WalletUIData(user = user)))
+        val banners = coreManager.getEventBanners().getOrNull().orEmpty()
+        _uiStateFlow.emit(UiState(data = WalletUIData(user = user, banners = banners)))
     }
 }
 
 data class WalletUIData(
     val user: User?,
     val friendNumber: Int = 100,
+    val banners: List<EventBanner> = emptyList(),
 )

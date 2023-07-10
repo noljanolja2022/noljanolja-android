@@ -48,6 +48,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.ui.composable.CircleAvatar
@@ -78,7 +81,7 @@ fun WalletScreen(
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalPagerApi::class)
 @Composable
 private fun WalletContent(
     uiState: UiState<WalletUIData>,
@@ -89,6 +92,7 @@ private fun WalletContent(
     val state = rememberPullRefreshState(uiState.loading, { handleEvent(WalletEvent.Refresh) })
     ScaffoldWithUiState(uiState = uiState) {
         val user = uiState.data?.user ?: return@ScaffoldWithUiState
+        val banners = uiState.data.banners
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -96,19 +100,40 @@ private fun WalletContent(
                 .pullRefresh(state)
         ) {
             item {
-                UserInformation(
-                    user = user,
-                    memberInfo = memberInfo,
-                    goToSetting = {
-                        handleEvent(WalletEvent.Setting)
-                    },
-                    goToRanking = {
-                        handleEvent(WalletEvent.Ranking)
+                Box(
+                    contentAlignment = Alignment.BottomCenter,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                ) {
+                    HorizontalPager(
+                        count = banners.size,
+                        modifier = Modifier.padding(bottom = 47.dp)
+                    ) { page ->
+                        val eventBanner = banners[page]
+                        AsyncImage(
+                            model = eventBanner.image,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .height(150.dp)
+                                .align(Alignment.Center),
+                            contentScale = ContentScale.Crop
+                        )
                     }
-                )
-            }
-            item {
-                UserPoint(memberInfo.point.formatDigitsNumber(), modifier = Modifier.padding(16.dp))
+                    UserInformation(
+                        user = user,
+                        memberInfo = memberInfo,
+                        goToSetting = {
+                            handleEvent(WalletEvent.Setting)
+                        },
+                        goToRanking = {
+                            handleEvent(WalletEvent.Ranking)
+                        },
+                        modifier = Modifier.padding(bottom = 180.dp)
+                    )
+                    UserPoint(
+                        memberInfo.point.formatDigitsNumber(),
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
             }
             item {
                 UserWalletInfo(
@@ -135,9 +160,10 @@ private fun UserInformation(
     memberInfo: MemberInfo?,
     goToSetting: () -> Unit,
     goToRanking: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(
                 RoundedCornerShape(
