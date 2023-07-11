@@ -1,7 +1,6 @@
 package com.noljanolja.android.features.home.wallet
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -42,7 +42,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -64,6 +63,7 @@ import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.composable.UserPoint
 import com.noljanolja.android.ui.theme.Orange300
 import com.noljanolja.android.ui.theme.darkContent
+import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.util.formatDigitsNumber
 import com.noljanolja.core.event.domain.model.EventBanner
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
@@ -342,21 +342,23 @@ private fun UserAttendance() {
                     .fillMaxWidth()
                     .background(Color.White)
             ) {
-                SizeBox(height = 17.dp)
-                Box(
+                Row(
                     modifier = Modifier
-                        .padding(start = 24.dp, end = 12.dp)
                         .fillMaxWidth()
-                        .wrapContentHeight()
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.attendance_banner),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxWidth(),
-                        contentScale = ContentScale.FillWidth
+                    AttendeeInformationItem(
+                        modifier = Modifier.weight(1f)
+                            .padding(18.dp),
+                        firstText = "To get",
+                        secondText = "Benefit".uppercase()
+                    )
+                    AttendeeInformationItem(
+                        modifier = Modifier.weight(1f)
+                            .padding(18.dp),
+                        firstText = "Check in",
+                        secondText = "Everyday".uppercase()
                     )
                 }
-                SizeBox(height = 18.dp)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -431,13 +433,28 @@ private fun UserAttendance() {
                 SizeBox(height = 14.dp)
             }
         }
-        Image(
-            painterResource(id = R.drawable.ic_light_wallet),
-            contentDescription = null,
-            modifier = Modifier
-                .padding(start = 10.dp)
-                .size(88.dp)
-                .align(Alignment.TopStart)
+    }
+}
+
+@Composable
+private fun AttendeeInformationItem(
+    firstText: String,
+    secondText: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier) {
+        Icon(
+            Icons.Default.Check,
+            tint = Orange300,
+            contentDescription = null
+        )
+        Text(
+            text = firstText,
+            style = MaterialTheme.typography.bodyLarge
+        )
+        Text(
+            text = secondText,
+            style = MaterialTheme.typography.headlineMedium.withBold()
         )
     }
 }
