@@ -5,6 +5,7 @@ import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.base.launchInMain
 import com.noljanolja.android.common.mobiledata.data.StickersLoader
 import com.noljanolja.android.common.navigation.NavigationDirections
+import com.noljanolja.android.common.sharedpreference.SharedPreferenceHelper
 import com.noljanolja.android.util.isSeen
 import com.noljanolja.core.event.domain.model.EventBanner
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -13,7 +14,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.koin.core.component.inject
 
-class HomeViewModel : BaseViewModel() {
+class HomeViewModel(private val sharedPreferenceHelper: SharedPreferenceHelper) : BaseViewModel() {
     private val _showRequireLoginPopupEvent = MutableSharedFlow<Boolean>()
     val showRequireLoginPopupEvent = _showRequireLoginPopupEvent.asSharedFlow()
 
@@ -35,8 +36,9 @@ class HomeViewModel : BaseViewModel() {
             }
         }
         launch {
+            val seenBanners = sharedPreferenceHelper.seenBanners
             coreManager.getEventBanners().getOrNull()?.let {
-                _eventBannersFlow.emit(it.filter { it.isActive })
+                _eventBannersFlow.emit(it.filter { banner -> banner.isActive && seenBanners.none { it == banner.id } })
             }
         }
     }
@@ -46,6 +48,7 @@ class HomeViewModel : BaseViewModel() {
             when (event) {
                 HomeEvent.LoginOrVerifyEmail -> loginOrVerifyEmail()
                 HomeEvent.CancelBanner -> _eventBannersFlow.emit(emptyList())
+                is HomeEvent.CloseBanner -> sharedPreferenceHelper.seenBanners = listOf(event.id)
             }
         }
     }

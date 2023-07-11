@@ -47,10 +47,24 @@ class SharedPreferenceHelper(private val context: Context) {
             }
         }
 
+    var seenBanners: List<Long>
+        get() = let {
+            val arrayString = sharePreference.getString(KEY_SEEN_BANNERS, "").orEmpty()
+            arrayString.split(",").mapNotNull { it.toLongOrNull() }
+        }
+        set(value) {
+            sharePreference.run {
+                val arrayString = sharePreference.getString(KEY_SEEN_BANNERS, "").orEmpty()
+                val seenBanners = arrayString.split(",").mapNotNull { it.toLongOrNull() }
+                edit().putString(KEY_SEEN_BANNERS, (seenBanners + value).joinToString(",")).apply()
+            }
+        }
+
     companion object {
         const val YOUTUBE_TOKEN = "youtube_token"
         const val SHOW_NEW_CHAT_DIALOG = "show_new_chat_dialog"
         const val REQUEST_LOGIN_GOOGLE = "request_login_google"
         const val KEY_LOGIN_OTP_TIME = "key_login_otp_time"
+        const val KEY_SEEN_BANNERS = "key_seen_banners"
     }
 }

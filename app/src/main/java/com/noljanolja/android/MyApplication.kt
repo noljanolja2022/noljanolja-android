@@ -215,7 +215,7 @@ class MyApplication : Application() {
                     ForgotViewModel()
                 }
                 viewModel {
-                    HomeViewModel()
+                    HomeViewModel(get())
                 }
                 viewModel {
                     LoginOrSignupViewModel()
