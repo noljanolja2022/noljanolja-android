@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -210,7 +211,7 @@ private fun UserWalletInfo(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight()
+            .height(IntrinsicSize.Min)
             .padding(horizontal = 16.dp)
     ) {
         WalletInfoItem(
@@ -219,7 +220,8 @@ private fun UserWalletInfo(
             memberInfo.accumulatedPointsToday,
             valueColor = Color(0xFF623B00),
             stringResource(id = R.string.wallet_view_history),
-            onGoToTransactionHistory,
+            onClick = onGoToTransactionHistory,
+            modifier = Modifier.fillMaxHeight(),
         )
         SizeBox(width = 12.dp)
         WalletInfoItem(
@@ -228,7 +230,8 @@ private fun UserWalletInfo(
             memberInfo.exchangeablePoints,
             valueColor = Color(0xFF007AFF),
             stringResource(id = R.string.wallet_exchange_money),
-            onClick = onUseNow
+            onClick = onUseNow,
+            modifier = Modifier.fillMaxHeight(),
         )
     }
 }
@@ -241,11 +244,11 @@ private fun RowScope.WalletInfoItem(
     valueColor: Color,
     textButton: String,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .weight(1F)
-            .wrapContentHeight()
             .clip(RoundedCornerShape(13.dp))
             .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 8.dp, vertical = 15.dp),

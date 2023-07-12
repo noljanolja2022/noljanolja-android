@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -162,7 +163,7 @@ private fun ColumnScope.LoginPhoneContent(
 
     Row(modifier = Modifier.fillMaxWidth()) {
         TextField(
-            modifier = Modifier.width(80.dp),
+            modifier = Modifier.widthIn(1.dp, 120.dp),
             value = "${country.getFlagEmoji()} +${country.phoneCode}",
             onValueChange = { },
             singleLine = true,
@@ -175,7 +176,7 @@ private fun ColumnScope.LoginPhoneContent(
         )
 
         TextField(
-            modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
+            modifier = Modifier.weight(1f).padding(start = 16.dp),
             value = phone,
             onValueChange = onChangePhone,
             textStyle = MaterialTheme.typography.bodyMedium,
