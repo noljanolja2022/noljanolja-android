@@ -1,5 +1,6 @@
 package com.noljanolja.android.features.home.chat_options
 
+import co.touchlab.kermit.Logger
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
@@ -45,6 +46,7 @@ class ChatOptionsViewModel(private val conversationId: Long) : BaseViewModel() {
                         )
                     )
                 }
+
                 ChatOptionsEvent.EditTitle -> {
                     navigationManager.navigate(
                         NavigationDirections.EditChatTitle(
@@ -52,6 +54,7 @@ class ChatOptionsViewModel(private val conversationId: Long) : BaseViewModel() {
                         )
                     )
                 }
+
                 ChatOptionsEvent.LeaveConversation -> {
                     coreManager.leaveConversation(conversationId).let {
                         if (it.isSuccess) {
@@ -63,11 +66,17 @@ class ChatOptionsViewModel(private val conversationId: Long) : BaseViewModel() {
                         }
                     }
                 }
+
                 is ChatOptionsEvent.RemoveParticipant -> {
                     removeParticipants(listOf(event.id))
                 }
+
                 is ChatOptionsEvent.MakeAdminConversation -> {
                     makeConversationAdmin(event.id)
+                }
+
+                is ChatOptionsEvent.BlockUser -> {
+                    Logger.e("Block user ${event.id}")
                 }
             }
         }
