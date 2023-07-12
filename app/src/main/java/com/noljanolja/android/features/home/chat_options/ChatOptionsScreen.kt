@@ -29,6 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.ui.composable.*
+import com.noljanolja.android.ui.theme.withSemiBold
 import com.noljanolja.android.util.showToast
 import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.ConversationType
@@ -135,28 +136,25 @@ fun ChatOptionsContent(
                     LazyColumn(
                         modifier = Modifier.weight(1F)
                     ) {
-                        chatParticipants(
-                            conversation = conversation,
-                            isAdmin = isAdmin,
-                            onUserClick = {
-                                scope.launch {
-                                    selectParticipant = it
-                                    bottomSheetState.bottomSheetState.expand()
-                                }
-                            },
-                            onAddParticipant = {
-                                handleEvent(ChatOptionsEvent.AddContact)
-                            }
-                        )
-                        item {
-                            Divider(thickness = 1.dp)
-                        }
                         if (conversation.type == ConversationType.GROUP) {
-                            setting(
+                            groupContent(
+                                conversation = conversation,
+                                isAdmin = isAdmin,
+                                onUserClick = {
+                                    scope.launch {
+                                        selectParticipant = it
+                                        bottomSheetState.bottomSheetState.expand()
+                                    }
+                                },
+                                onAddParticipant = {
+                                    handleEvent(ChatOptionsEvent.AddContact)
+                                },
                                 onChangeTitle = {
                                     handleEvent(ChatOptionsEvent.EditTitle)
                                 }
                             )
+                        } else {
+                            singleContent(conversation = conversation)
                         }
                     }
                     LeaveChatRow {
@@ -225,73 +223,109 @@ fun ChatOptionsContent(
     )
 }
 
+private fun LazyListScope.groupContent(
+    conversation: Conversation,
+    isAdmin: Boolean,
+    onUserClick: (User) -> Unit,
+    onAddParticipant: () -> Unit,
+    onChangeTitle: () -> Unit,
+) {
+    chatParticipants(
+        conversation = conversation,
+        isAdmin = isAdmin,
+        onUserClick = onUserClick,
+        onAddParticipant = onAddParticipant
+    )
+    item {
+        Divider(thickness = 1.dp)
+    }
+    groupSettings(
+        onChangeTitle = onChangeTitle
+    )
+}
+
+private fun LazyListScope.singleContent(conversation: Conversation) {
+    val participant = conversation.participants.firstOrNull { !it.isMe } ?: return
+    item {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            OvalAvatar(user = participant, size = 64.dp, modifier = Modifier.padding(top = 35.dp))
+            SizeBox(height = 12.dp)
+            Text(participant.name, style = MaterialTheme.typography.bodyLarge.withSemiBold())
+            SizeBox(height = 25.dp)
+        }
+    }
+    item {
+        Divider(thickness = 8.dp, color = MaterialTheme.colorScheme.surface)
+    }
+    item {
+        SettingRow(text = "Block user", icon = Icons.Default.Block) {
+        }
+    }
+}
+
 fun LazyListScope.chatParticipants(
     conversation: Conversation,
     isAdmin: Boolean,
     onUserClick: (User) -> Unit,
     onAddParticipant: () -> Unit,
 ) {
-    when (conversation.type) {
-        ConversationType.GROUP -> {
-            item {
+    item {
+        Text(
+            stringResource(id = R.string.common_members),
+            modifier = Modifier.padding(
+                top = 12.dp,
+                start = 16.dp,
+            ),
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
+    if (isAdmin) {
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable {
+                        onAddParticipant.invoke()
+                    }
+                    .padding(vertical = 10.dp, horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .border(
+                            width = 1.dp,
+                            MaterialTheme.colorScheme.outline,
+                            shape = RoundedCornerShape(14.dp)
+                        )
+                        .padding(8.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    stringResource(id = R.string.common_members),
-                    modifier = Modifier.padding(
-                        top = 12.dp,
-                        start = 16.dp,
-                    ),
-                    style = MaterialTheme.typography.bodyLarge
+                    text = stringResource(id = R.string.edit_chat_add_members),
+                    style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.primary)
                 )
             }
-            if (isAdmin) {
-                item {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clickable {
-                                onAddParticipant.invoke()
-                            }
-                            .padding(vertical = 10.dp, horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            Icons.Default.Add,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .border(
-                                    width = 1.dp,
-                                    MaterialTheme.colorScheme.outline,
-                                    shape = RoundedCornerShape(14.dp)
-                                )
-                                .padding(8.dp)
-                        )
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = stringResource(id = R.string.edit_chat_add_members),
-                            style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.primary)
-                        )
-                    }
-                }
-            }
-            conversation.participants.forEach {
-                item {
-                    ParticipantRow(
-                        participant = it,
-                        isAdmin = it.isAdminOfConversation(conversation),
-                        onClick = onUserClick
-                    )
-                }
-            }
         }
-
-        ConversationType.SINGLE -> {
+    }
+    conversation.participants.forEach {
+        item {
+            ParticipantRow(
+                participant = it,
+                isAdmin = it.isAdminOfConversation(conversation),
+                onClick = onUserClick
+            )
         }
     }
 }
 
-fun LazyListScope.setting(
+fun LazyListScope.groupSettings(
     onChangeTitle: () -> Unit,
 ) {
     item {

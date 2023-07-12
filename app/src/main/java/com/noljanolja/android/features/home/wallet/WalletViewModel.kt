@@ -45,13 +45,6 @@ class WalletViewModel : BaseViewModel() {
                 }
 
                 WalletEvent.Refresh -> {
-                    val data = _uiStateFlow.value.data
-                    _uiStateFlow.emit(
-                        UiState(
-                            data = data,
-                            loading = true
-                        )
-                    )
                     refresh(forceRefresh = true)
                 }
             }
@@ -59,8 +52,13 @@ class WalletViewModel : BaseViewModel() {
     }
 
     private suspend fun refresh(forceRefresh: Boolean = false) {
-        val currentValue = _uiStateFlow.value.data
-        _uiStateFlow.emit(UiState(loading = true, data = currentValue))
+        val data = _uiStateFlow.value.data
+        _uiStateFlow.emit(
+            UiState(
+                data = data,
+                loading = true
+            )
+        )
         val user = coreManager.getCurrentUser(forceRefresh = forceRefresh).getOrNull()
         val banners = coreManager.getEventBanners().getOrNull().orEmpty()
         _uiStateFlow.emit(UiState(data = WalletUIData(user = user, banners = banners)))
