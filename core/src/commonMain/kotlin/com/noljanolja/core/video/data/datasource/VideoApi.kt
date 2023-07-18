@@ -11,6 +11,7 @@ import com.noljanolja.core.video.data.model.response.GetVideosResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 
@@ -21,7 +22,14 @@ internal class VideoApi(private val client: HttpClient) {
     }
 
     suspend fun getVideos(request: GetVideosRequest): GetVideosResponse {
-        return client.get("${Const.BASE_URL}/media/videos?isHighlighted=${request.isHighlight}")
+        return client.get("${Const.BASE_URL}/media/videos") {
+            request.isHighlight?.let {
+                parameter("isHighlighted", it)
+            }
+            request.query?.let {
+                parameter("query", it)
+            }
+        }
             .body()
     }
 

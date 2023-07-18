@@ -1,7 +1,7 @@
 package com.noljanolja.core.shop.data.repository
 
+import com.noljanolja.core.shop.data.datasource.SearchLocalDatasource
 import com.noljanolja.core.shop.data.datasource.ShopApi
-import com.noljanolja.core.shop.data.datasource.ShopLocalDatasource
 import com.noljanolja.core.shop.data.model.request.BuildGiftRequest
 import com.noljanolja.core.shop.data.model.request.GetGiftRequest
 import com.noljanolja.core.shop.domain.model.Gift
@@ -10,23 +10,23 @@ import com.noljanolja.core.shop.domain.repository.ShopRepository
 import kotlinx.coroutines.flow.Flow
 
 internal class ShopRepositoryImpl(
-    private val shopLocalDatasource: ShopLocalDatasource,
+    private val shopLocalDatasource: SearchLocalDatasource,
     private val shopApi: ShopApi,
 ) : ShopRepository {
     override fun getSearchHistories(): Flow<List<SearchKey>> {
-        return shopLocalDatasource.findAll()
+        return shopLocalDatasource.findAllByScreen(screen = SCREEN)
     }
 
     override fun insertKey(text: String) {
-        shopLocalDatasource.insertKey(text = text)
+        shopLocalDatasource.insertKey(text = text, screen = SCREEN)
     }
 
     override suspend fun clearText(text: String) {
-        shopLocalDatasource.deleteByText(text)
+        shopLocalDatasource.deleteByText(text, screen = SCREEN)
     }
 
     override suspend fun clearAll() {
-        shopLocalDatasource.clearAll()
+        shopLocalDatasource.deleteByScreen(SCREEN)
     }
 
     override suspend fun getGifts(searchText: String): Result<List<Gift>> {
@@ -79,5 +79,9 @@ internal class ShopRepositoryImpl(
         } catch (e: Throwable) {
             Result.failure(e)
         }
+    }
+
+    companion object {
+        private const val SCREEN = "SHOP"
     }
 }

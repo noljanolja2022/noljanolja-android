@@ -1,6 +1,8 @@
 package com.noljanolja.core.video.data.repository
 
 import com.noljanolja.core.Failure
+import com.noljanolja.core.shop.data.datasource.SearchLocalDatasource
+import com.noljanolja.core.shop.domain.model.SearchKey
 import com.noljanolja.core.video.data.datasource.LocalVideoDataSource
 import com.noljanolja.core.video.data.datasource.VideoApi
 import com.noljanolja.core.video.data.model.request.CommentVideoRequest
@@ -21,6 +23,7 @@ import kotlinx.coroutines.flow.mapNotNull
 internal class VideoRepositoryImpl(
     private val videoApi: VideoApi,
     private val localVideoDataSource: LocalVideoDataSource,
+    private val searchLocalDatasource: SearchLocalDatasource,
 ) : VideoRepository {
 
     private val scope = CoroutineScope(Dispatchers.Default)
@@ -35,8 +38,11 @@ internal class VideoRepositoryImpl(
         }
     }
 
-    override fun getVideos(isHighlight: Boolean): Flow<List<Video>> = flow {
+    override fun getVideos(isHighlight: Boolean?, query: String?): Flow<List<Video>> = flow {
         try {
+            query?.let {
+                searchLocalDatasource.insertKey(it, screen = SCREEN)
+            }
             val videos =
                 videoApi.getVideos(GetVideosRequest(isHighlight = isHighlight)).data.orEmpty()
             emit(videos)
@@ -115,5 +121,21 @@ internal class VideoRepositoryImpl(
                 comments = comments
             )
         }
+    }
+
+    override suspend fun clearSearchHistories() {
+        searchLocalDatasource.deleteByScreen(SCREEN)
+    }
+
+    override suspend fun clearSearchText(text: String) {
+        searchLocalDatasource.deleteByText(text, screen = SCREEN)
+    }
+
+    override fun getSearchVideoHistories(): Flow<List<SearchKey>> {
+        return searchLocalDatasource.findAllByScreen(SCREEN)
+    }
+
+    companion object {
+        private const val SCREEN = "VIDEO"
     }
 }

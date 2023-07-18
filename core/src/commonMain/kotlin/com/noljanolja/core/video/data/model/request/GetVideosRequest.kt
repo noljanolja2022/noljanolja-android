@@ -4,5 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GetVideosRequest(
-    val isHighlight: Boolean,
+    val query: String? = null,
+    val isHighlight: Boolean? = null,
 )

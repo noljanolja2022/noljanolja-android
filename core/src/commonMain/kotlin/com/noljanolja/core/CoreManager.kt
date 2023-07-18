@@ -271,9 +271,18 @@ class CoreManager : KoinComponent {
         duration: TrendingVideoDuration,
     ) = videoRepository.getTrendingVideo(duration)
 
-    suspend fun getVideos(isHighlight: Boolean) = videoRepository.getVideos(isHighlight)
+    fun getVideos(
+        isHighlight: Boolean? = null,
+        query: String? = null,
+    ) = videoRepository.getVideos(isHighlight = isHighlight, query = query)
 
     suspend fun getWatchingVideos() = videoRepository.getWatchingVideos()
+
+    suspend fun clearSearchVideoHistories() = videoRepository.clearSearchHistories()
+
+    suspend fun clearSearchVideoText(text: String) = videoRepository.clearSearchText(text)
+
+    fun getSearchVideoHistories() = videoRepository.getSearchVideoHistories()
 
     suspend fun getVideoDetail(id: String) = videoRepository.getVideoDetail(id)
 
