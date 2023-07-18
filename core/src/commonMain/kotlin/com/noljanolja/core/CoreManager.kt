@@ -241,6 +241,8 @@ class CoreManager : KoinComponent {
         return userRepository.updateAvatar(name, type, files)
     }
 
+    suspend fun checkin() = userRepository.checkin()
+
     suspend fun logout(requireSuccess: Boolean = true): Result<Boolean> {
         return userRepository.logout(requireSuccess).also {
             clearManager.clearAll()

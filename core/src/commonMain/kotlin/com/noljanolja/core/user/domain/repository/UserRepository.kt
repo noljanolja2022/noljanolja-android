@@ -38,4 +38,6 @@ internal interface UserRepository {
 
     // logout
     suspend fun logout(requireSuccess: Boolean): Result<Boolean>
+
+    suspend fun checkin(): Result<Boolean>
 }

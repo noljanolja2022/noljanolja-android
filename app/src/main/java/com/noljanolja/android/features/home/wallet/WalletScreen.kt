@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -43,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -66,10 +66,13 @@ import com.noljanolja.android.ui.theme.Orange300
 import com.noljanolja.android.ui.theme.darkContent
 import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.util.formatDigitsNumber
+import com.noljanolja.android.util.showError
+import com.noljanolja.android.util.showToast
 import com.noljanolja.core.event.domain.model.EventBanner
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
 import com.noljanolja.core.user.domain.model.User
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -77,8 +80,19 @@ fun WalletScreen(
     viewModel: WalletViewModel = getViewModel(),
     onUseNow: () -> Unit,
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     val memberInfo by viewModel.memberInfoFlow.collectAsStateWithLifecycle()
+    LaunchedEffect(key1 = viewModel.checkinSuccessEvent) {
+        viewModel.checkinSuccessEvent.collectLatest {
+            context.showToast(context.getString(R.string.wallet_checkin_success))
+        }
+    }
+    LaunchedEffect(key1 = viewModel.errorFlow) {
+        viewModel.errorFlow.collectLatest {
+            context.showError(it)
+        }
+    }
     WalletContent(
         uiState = uiState,
         memberInfo = memberInfo,
@@ -87,7 +101,7 @@ fun WalletScreen(
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalPagerApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun WalletContent(
     uiState: UiState<WalletUIData>,
@@ -139,7 +153,9 @@ private fun WalletContent(
                 )
             }
             item {
-                UserAttendance()
+                UserAttendance(
+                    onCheckin = { handleEvent(WalletEvent.CheckIn) }
+                )
             }
             item {
                 SizeBox(height = 24.dp)
@@ -332,7 +348,9 @@ private fun BoxScope.WalletBanners(banners: List<EventBanner>) {
 }
 
 @Composable
-private fun UserAttendance() {
+private fun UserAttendance(
+    onCheckin: () -> Unit,
+) {
     Box(modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp)) {
         Card(
             modifier = Modifier.padding(top = 7.dp),
@@ -414,7 +432,7 @@ private fun UserAttendance() {
                         )
                     }
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = onCheckin,
                         modifier = Modifier
                             .padding(start = 18.dp)
                             .weight(1F),
