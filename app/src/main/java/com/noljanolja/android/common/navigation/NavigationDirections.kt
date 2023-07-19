@@ -277,6 +277,12 @@ object NavigationDirections {
         }
     }
 
+    object SearchVideos : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "search_videos"
+    }
+
     object TransactionHistory : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options = null

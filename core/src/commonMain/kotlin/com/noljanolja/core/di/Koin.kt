@@ -21,8 +21,8 @@ import com.noljanolja.core.loyalty.domain.repository.LoyaltyRepository
 import com.noljanolja.core.media.data.datasource.MediaApi
 import com.noljanolja.core.media.data.repository.MediaRepositoryImpl
 import com.noljanolja.core.media.domain.repository.MediaRepository
+import com.noljanolja.core.shop.data.datasource.SearchLocalDatasource
 import com.noljanolja.core.shop.data.datasource.ShopApi
-import com.noljanolja.core.shop.data.datasource.ShopLocalDatasource
 import com.noljanolja.core.shop.data.repository.ShopRepositoryImpl
 import com.noljanolja.core.shop.domain.repository.ShopRepository
 import com.noljanolja.core.user.data.datasource.LocalUserDataSource
@@ -61,7 +61,7 @@ private val coreModule = module {
     single { ClearManager(get<Noljanolja>(), get()) }
     single {
         with(get<Noljanolja>()) {
-            ShopLocalDatasource(searchTextQueries, Dispatchers.Default)
+            SearchLocalDatasource(searchTextQueries, Dispatchers.Default)
         }
     }
     single {
@@ -141,7 +141,7 @@ private val coreModule = module {
         VideoApi(get())
     }
     single<VideoRepository> {
-        VideoRepositoryImpl(get(), get())
+        VideoRepositoryImpl(get(), get(), get())
     }
     single {
         LoyaltyApi(get())

@@ -1,17 +1,18 @@
-package com.noljanolja.android.features.shop.search
+package com.noljanolja.android.features.home.play.search
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -37,39 +39,30 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
-import com.noljanolja.android.features.shop.composable.ProductItem
+import com.noljanolja.android.features.home.play.playlist.TrendingVideo
 import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.SearchBar
 import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.ui.composable.UserPoint
 import com.noljanolja.android.ui.theme.NeutralGrey
-import com.noljanolja.android.ui.theme.withMedium
-import com.noljanolja.android.util.formatDigitsNumber
-import com.noljanolja.core.loyalty.domain.model.MemberInfo
-import com.noljanolja.core.shop.domain.model.Gift
+import com.noljanolja.core.video.domain.model.Video
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun SearchProductScreen(
-    viewModel: SearchProductViewModel = getViewModel(),
-) {
-    val searchKeys by viewModel.searchKeys.collectAsStateWithLifecycle()
+fun SearchVideosScreen(viewModel: SearchVideosViewModel = getViewModel()) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    val memberInfo by viewModel.memberInfoFlow.collectAsStateWithLifecycle()
-    SearchProductContent(
-        searchKeys = searchKeys,
+    val searchKeys by viewModel.searchKeys.collectAsStateWithLifecycle()
+    SearchVideosContent(
         uiState = uiState,
-        memberInfo = memberInfo,
+        searchKeys = searchKeys,
         handleEvent = viewModel::handleEvent
     )
 }
 
 @Composable
-private fun SearchProductContent(
+private fun SearchVideosContent(
+    uiState: UiState<SearchVideosUiData>,
     searchKeys: List<String>,
-    memberInfo: MemberInfo,
-    uiState: UiState<SearchGiftUiData>,
-    handleEvent: (SearchProductEvent) -> Unit,
+    handleEvent: (SearchVideosEvent) -> Unit,
 ) {
     var isSearchFocus by remember {
         mutableStateOf(false)
@@ -78,18 +71,12 @@ private fun SearchProductContent(
     var searchText by remember {
         mutableStateOf("")
     }
-
-    val backgroundColor = if (isSearchFocus) {
-        MaterialTheme.colorScheme.background
-    } else {
-        MaterialTheme.colorScheme.primary
-    }
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundColor)
+            .background(MaterialTheme.colorScheme.background),
     ) {
-        SearchProductHeader(
+        SearchVideoHeader(
             searchText = searchText,
             onSearchChange = {
                 searchText = it
@@ -98,32 +85,33 @@ private fun SearchProductContent(
                 isSearchFocus = it
             },
             onBack = {
-                handleEvent(SearchProductEvent.Back)
+                handleEvent(SearchVideosEvent.Back)
             },
             onSubmit = {
-                handleEvent(SearchProductEvent.Search(searchText))
+                handleEvent(SearchVideosEvent.Search(searchText))
             }
         )
         if (isSearchFocus) {
-            SearchHistory(
+            SearchVideosHistory(
                 searchKeys = searchKeys,
                 onClear = {
-                    handleEvent(SearchProductEvent.Clear(it))
+                    handleEvent(SearchVideosEvent.Clear(it))
                 },
-                onClearAll = { handleEvent(SearchProductEvent.ClearAll) },
+                onClearAll = {
+                    handleEvent(SearchVideosEvent.ClearAll)
+                },
                 onSearch = {
-                    handleEvent(SearchProductEvent.Search(it))
+                    handleEvent(SearchVideosEvent.Search(it))
                     searchText = it
                     focusManager.clearFocus()
                 }
             )
         } else {
-            val data = uiState.data ?: return@Column
-            SearchResult(
-                memberInfo = memberInfo,
-                gifts = data.gifts,
-                onItemClick = {
-                    handleEvent(SearchProductEvent.GiftDetail(it))
+            val videos = uiState.data?.videos.orEmpty()
+            SearchVideosResult(
+                videos = videos,
+                onClick = {
+                    handleEvent(SearchVideosEvent.PlayVideo(it.id))
                 }
             )
         }
@@ -131,7 +119,7 @@ private fun SearchProductContent(
 }
 
 @Composable
-private fun SearchProductHeader(
+private fun SearchVideoHeader(
     searchText: String,
     onSearchChange: (String) -> Unit,
     onFocusChange: (Boolean) -> Unit,
@@ -155,18 +143,6 @@ private fun SearchProductHeader(
             .background(MaterialTheme.colorScheme.primaryContainer)
             .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 6.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(id = R.string.shop_welcome_nolja_shop),
-                style = MaterialTheme.typography.titleSmall.withMedium(),
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-        }
-        SizeBox(height = 5.dp)
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 Icons.Default.ArrowBack,
@@ -200,7 +176,7 @@ private fun SearchProductHeader(
 }
 
 @Composable
-private fun SearchHistory(
+private fun SearchVideosHistory(
     searchKeys: List<String>,
     onSearch: (String) -> Unit,
     onClear: (String) -> Unit,
@@ -257,32 +233,37 @@ private fun SearchHistory(
 }
 
 @Composable
-private fun SearchResult(
-    memberInfo: MemberInfo,
-    gifts: List<Gift>,
-    onItemClick: (Gift) -> Unit,
+private fun SearchVideosResult(
+    videos: List<Video>,
+    onClick: (Video) -> Unit,
 ) {
-    Column(
+    val configuration = LocalConfiguration.current
+
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 10.dp, horizontal = 16.dp)
+            .padding(vertical = 12.dp)
     ) {
-        UserPoint(point = memberInfo.point.formatDigitsNumber())
-        SizeBox(height = 16.dp)
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(gifts) {
-                ProductItem(
-                    gift = it,
-                    memberPoint = memberInfo.point,
-                    modifier = Modifier.weight(1F),
-                    onClick = {
-                        onItemClick.invoke(it)
+        if (configuration.screenWidthDp < 500) {
+            videos.forEach { video ->
+                item(key = "trending${video.id}") {
+                    TrendingVideo(video = video, onClick = { onClick(video) })
+                }
+            }
+        } else {
+            items((videos.size + 1) / 2) { index ->
+                Row(modifier = Modifier.height(IntrinsicSize.Min)) {
+                    videos[index * 2].let {
+                        Column(modifier = Modifier.weight(1f).fillMaxHeight()) {
+                            TrendingVideo(video = it, onClick = { onClick(it) })
+                        }
                     }
-                )
+                    videos.getOrNull(index * 2 + 1)?.let {
+                        Column(modifier = Modifier.weight(1f).fillMaxHeight()) {
+                            TrendingVideo(video = it, onClick = { onClick(it) })
+                        }
+                    } ?: Box(modifier = Modifier.weight(1f))
+                }
             }
         }
     }

@@ -28,6 +28,8 @@ interface UserRemoteDataSource {
     suspend fun findContacts(phoneNumber: String?, friendId: String?): Result<List<User>>
 
     suspend fun inviteFriend(friendId: String): Result<Boolean>
+
+    suspend fun checkin(): Result<Boolean>
 }
 
 class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSource {
@@ -147,6 +149,19 @@ class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSou
     override suspend fun inviteFriend(friendId: String): Result<Boolean> {
         return try {
             val response = userApi.inviteFriend(InviteFriendRequest(friendId))
+            if (response.isSuccessful()) {
+                Result.success(true)
+            } else {
+                Result.failure(Throwable(response.message))
+            }
+        } catch (e: Throwable) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun checkin(): Result<Boolean> {
+        return try {
+            val response = userApi.checkin()
             if (response.isSuccessful()) {
                 Result.success(true)
             } else {

@@ -29,6 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.ui.composable.*
+import com.noljanolja.android.ui.theme.withSemiBold
 import com.noljanolja.android.util.showToast
 import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.ConversationType
@@ -65,7 +66,10 @@ fun ChatOptionsScreen(
         isAdmin = isAdminOfConversation,
         handleEvent = viewModel::handleEvent
     )
-    ComposeToast(isVisible = showSuccessToast, onDismiss = { showSuccessToast = false }) {
+    ComposeToast(
+        isVisible = showSuccessToast,
+        onDismiss = { showSuccessToast = false }
+    ) {
         SuccessToast()
     }
 }
@@ -82,7 +86,7 @@ fun ChatOptionsContent(
         mutableStateOf<User?>(null)
     }
     val bottomSheetState =
-        rememberBottomSheetScaffoldState()
+        rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
 
     var showLeaveChatDialog by remember {
         mutableStateOf(false)
@@ -99,8 +103,8 @@ fun ChatOptionsContent(
         mutableStateOf(false)
     }
 
-    FullSizeWithBottomSheet(
-        modalSheetState = bottomSheetState,
+    ModalBottomSheetLayout(
+        sheetState = bottomSheetState,
         sheetContent = {
             EditParticipantSheet(
                 participant = selectParticipant,
@@ -135,26 +139,29 @@ fun ChatOptionsContent(
                     LazyColumn(
                         modifier = Modifier.weight(1F)
                     ) {
-                        chatParticipants(
-                            conversation = conversation,
-                            isAdmin = isAdmin,
-                            onUserClick = {
-                                scope.launch {
-                                    selectParticipant = it
-                                    bottomSheetState.bottomSheetState.expand()
-                                }
-                            },
-                            onAddParticipant = {
-                                handleEvent(ChatOptionsEvent.AddContact)
-                            }
-                        )
-                        item {
-                            Divider(thickness = 1.dp)
-                        }
                         if (conversation.type == ConversationType.GROUP) {
-                            setting(
+                            groupContent(
+                                conversation = conversation,
+                                isAdmin = isAdmin,
+                                onUserClick = {
+                                    scope.launch {
+                                        selectParticipant = it
+                                        bottomSheetState.show()
+                                    }
+                                },
+                                onAddParticipant = {
+                                    handleEvent(ChatOptionsEvent.AddContact)
+                                },
                                 onChangeTitle = {
                                     handleEvent(ChatOptionsEvent.EditTitle)
+                                }
+                            )
+                        } else {
+                            singleContent(
+                                conversation = conversation,
+                                onBlock = { user ->
+                                    selectParticipant = user
+                                    showBlockParticipantDialog = true
                                 }
                             )
                         }
@@ -187,7 +194,7 @@ fun ChatOptionsContent(
         onDismiss = { showAssignAdminChatDialog = false },
         onConfirm = {
             scope.launch {
-                bottomSheetState.bottomSheetState.collapse()
+                bottomSheetState.hide()
             }
             selectParticipant?.let {
                 handleEvent(ChatOptionsEvent.MakeAdminConversation(it.id))
@@ -203,6 +210,9 @@ fun ChatOptionsContent(
         confirmText = stringResource(id = R.string.common_agree),
         onDismiss = { showBlockParticipantDialog = false },
         onConfirm = {
+            selectParticipant?.let {
+                handleEvent(ChatOptionsEvent.BlockUser(it.id))
+            }
             showBlockParticipantDialog = false
         }
     )
@@ -215,7 +225,7 @@ fun ChatOptionsContent(
         onDismiss = { showRemoveParticipantChatDialog = false },
         onConfirm = {
             scope.launch {
-                bottomSheetState.bottomSheetState.collapse()
+                bottomSheetState.hide()
             }
             selectParticipant?.let {
                 handleEvent(ChatOptionsEvent.RemoveParticipant(it.id))
@@ -225,73 +235,114 @@ fun ChatOptionsContent(
     )
 }
 
+private fun LazyListScope.groupContent(
+    conversation: Conversation,
+    isAdmin: Boolean,
+    onUserClick: (User) -> Unit,
+    onAddParticipant: () -> Unit,
+    onChangeTitle: () -> Unit,
+) {
+    chatParticipants(
+        conversation = conversation,
+        isAdmin = isAdmin,
+        onUserClick = onUserClick,
+        onAddParticipant = onAddParticipant
+    )
+    item {
+        Divider(thickness = 1.dp)
+    }
+    groupSettings(
+        onChangeTitle = onChangeTitle
+    )
+}
+
+private fun LazyListScope.singleContent(conversation: Conversation, onBlock: (User) -> Unit) {
+    val participant = conversation.participants.firstOrNull { !it.isMe } ?: return
+    item {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            OvalAvatar(user = participant, size = 64.dp, modifier = Modifier.padding(top = 35.dp))
+            SizeBox(height = 12.dp)
+            Text(participant.name, style = MaterialTheme.typography.bodyLarge.withSemiBold())
+            SizeBox(height = 25.dp)
+        }
+    }
+    item {
+        Divider(thickness = 8.dp, color = MaterialTheme.colorScheme.surface)
+    }
+    item {
+        SettingRow(
+            text = stringResource(id = R.string.edit_chat_block_user),
+            icon = Icons.Default.Block,
+            onClick = {
+                onBlock(participant)
+            }
+        )
+    }
+}
+
 fun LazyListScope.chatParticipants(
     conversation: Conversation,
     isAdmin: Boolean,
     onUserClick: (User) -> Unit,
     onAddParticipant: () -> Unit,
 ) {
-    when (conversation.type) {
-        ConversationType.GROUP -> {
-            item {
+    item {
+        Text(
+            stringResource(id = R.string.common_members),
+            modifier = Modifier.padding(
+                top = 12.dp,
+                start = 16.dp,
+            ),
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
+    if (isAdmin) {
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable {
+                        onAddParticipant.invoke()
+                    }
+                    .padding(vertical = 10.dp, horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .border(
+                            width = 1.dp,
+                            MaterialTheme.colorScheme.outline,
+                            shape = RoundedCornerShape(14.dp)
+                        )
+                        .padding(8.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    stringResource(id = R.string.common_members),
-                    modifier = Modifier.padding(
-                        top = 12.dp,
-                        start = 16.dp,
-                    ),
-                    style = MaterialTheme.typography.bodyLarge
+                    text = stringResource(id = R.string.edit_chat_add_members),
+                    style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.primary)
                 )
             }
-            if (isAdmin) {
-                item {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clickable {
-                                onAddParticipant.invoke()
-                            }
-                            .padding(vertical = 10.dp, horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            Icons.Default.Add,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .border(
-                                    width = 1.dp,
-                                    MaterialTheme.colorScheme.outline,
-                                    shape = RoundedCornerShape(14.dp)
-                                )
-                                .padding(8.dp)
-                        )
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = stringResource(id = R.string.edit_chat_add_members),
-                            style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.primary)
-                        )
-                    }
-                }
-            }
-            conversation.participants.forEach {
-                item {
-                    ParticipantRow(
-                        participant = it,
-                        isAdmin = it.isAdminOfConversation(conversation),
-                        onClick = onUserClick
-                    )
-                }
-            }
         }
-
-        ConversationType.SINGLE -> {
+    }
+    conversation.participants.forEach {
+        item {
+            ParticipantRow(
+                participant = it,
+                isAdmin = it.isAdminOfConversation(conversation),
+                onClick = onUserClick
+            )
         }
     }
 }
 
-fun LazyListScope.setting(
+fun LazyListScope.groupSettings(
     onChangeTitle: () -> Unit,
 ) {
     item {
@@ -425,7 +476,7 @@ private fun EditParticipantSheet(
     isAdmin: Boolean,
     onChat: () -> Unit,
     onAssignAdmin: () -> Unit,
-    onBlock: () -> Unit,
+    onBlock: (User) -> Unit,
     onRemove: () -> Unit,
 ) {
     if (participant == null) return
@@ -465,7 +516,7 @@ private fun EditParticipantSheet(
                 stringResource(id = R.string.edit_chat_block_user),
                 style = style.bodyLarge,
                 modifier = Modifier.clickable {
-                    onBlock.invoke()
+                    onBlock.invoke(participant)
                 }
             )
             Spacer(modifier = Modifier.height(20.dp))

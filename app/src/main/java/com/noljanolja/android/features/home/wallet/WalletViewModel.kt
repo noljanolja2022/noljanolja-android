@@ -5,16 +5,22 @@ import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
+import com.noljanolja.core.event.domain.model.EventBanner
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
 import com.noljanolja.core.user.domain.model.User
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 
 class WalletViewModel : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow<UiState<WalletUIData>>(UiState())
     val uiStateFlow = _uiStateFlow.asStateFlow()
+
+    private val _checkinSuccessEvent = MutableSharedFlow<Unit>()
+    val checkinSuccessEvent = _checkinSuccessEvent.asSharedFlow()
 
     val memberInfoFlow = coreManager.getMemberInfo().stateIn(
         scope = viewModelScope,
@@ -44,26 +50,41 @@ class WalletViewModel : BaseViewModel() {
                 }
 
                 WalletEvent.Refresh -> {
-                    val data = _uiStateFlow.value.data
-                    _uiStateFlow.emit(
-                        UiState(
-                            data = data,
-                            loading = true
-                        )
-                    )
                     refresh(forceRefresh = true)
                 }
+
+                WalletEvent.CheckIn -> checkin()
             }
         }
     }
 
     private suspend fun refresh(forceRefresh: Boolean = false) {
+        val data = _uiStateFlow.value.data
+        _uiStateFlow.emit(
+            UiState(
+                data = data,
+                loading = true
+            )
+        )
         val user = coreManager.getCurrentUser(forceRefresh = forceRefresh).getOrNull()
-        _uiStateFlow.emit(UiState(data = WalletUIData(user = user)))
+        val banners = coreManager.getEventBanners().getOrNull().orEmpty()
+        _uiStateFlow.emit(UiState(data = WalletUIData(user = user, banners = banners)))
+    }
+
+    private suspend fun checkin() {
+        val result = coreManager.checkin()
+        if (result.isSuccess) {
+            _checkinSuccessEvent.emit(Unit)
+        } else {
+            result.exceptionOrNull()?.let {
+                sendError(it)
+            }
+        }
     }
 }
 
 data class WalletUIData(
     val user: User?,
     val friendNumber: Int = 100,
+    val banners: List<EventBanner> = emptyList(),
 )

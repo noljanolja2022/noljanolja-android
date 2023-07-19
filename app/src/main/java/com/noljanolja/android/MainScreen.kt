@@ -34,6 +34,7 @@ import com.noljanolja.android.features.home.chat_options.ChatOptionsScreen
 import com.noljanolja.android.features.home.contacts.ContactsScreen
 import com.noljanolja.android.features.home.info.MyInfoScreen
 import com.noljanolja.android.features.home.play.playscreen.VideoDetailScreen
+import com.noljanolja.android.features.home.play.search.SearchVideosScreen
 import com.noljanolja.android.features.home.root.HomeScreen
 import com.noljanolja.android.features.home.wallet.dashboard.WalletDashboardScreen
 import com.noljanolja.android.features.home.wallet.detail.TransactionDetailScreen
@@ -247,6 +248,11 @@ private fun NavGraphBuilder.addVideoGraph() {
         composable(destination, arguments) {
             val videoId = (it.arguments?.getString("videoId").orEmpty())
             VideoDetailScreen(videoId)
+        }
+    }
+    with(NavigationDirections.SearchVideos) {
+        composable(destination, arguments) {
+            SearchVideosScreen()
         }
     }
 }

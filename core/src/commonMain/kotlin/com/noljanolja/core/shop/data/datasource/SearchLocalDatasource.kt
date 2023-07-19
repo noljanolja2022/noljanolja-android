@@ -9,12 +9,14 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
-internal class ShopLocalDatasource(
+internal class SearchLocalDatasource(
     private val searchTextQueries: SearchTextQueries,
     private val backgroundDispatcher: CoroutineDispatcher,
 ) {
     val searchMapper = {
-            text: String, created_at: Long,
+            text: String,
+            screen: String,
+            created_at: Long,
             updated_at: Long,
         ->
         SearchKey(
@@ -24,11 +26,16 @@ internal class ShopLocalDatasource(
         )
     }
 
-    fun findAll() = searchTextQueries.findAll(searchMapper).asFlow().mapToList(backgroundDispatcher)
+    fun findAllByScreen(screen: String) = searchTextQueries.findAllByScreen(
+        screen,
+        searchMapper
+    ).asFlow()
+        .mapToList(backgroundDispatcher)
 
-    fun insertKey(text: String) =
+    fun insertKey(text: String, screen: String) =
         searchTextQueries.upsert(
             text = text,
+            screen = screen,
             created_at = Clock.System.now().toEpochMilliseconds(),
             updated_at = Clock.System.now().toEpochMilliseconds(),
         )
@@ -39,7 +46,13 @@ internal class ShopLocalDatasource(
 
     suspend fun deleteByText(
         text: String,
+        screen: String,
     ) = searchTextQueries.transactionWithContext(backgroundDispatcher) {
-        searchTextQueries.deleteByText(text)
+        searchTextQueries.deleteByTextAndScreen(text, screen)
     }
+
+    suspend fun deleteByScreen(screen: String) =
+        searchTextQueries.transactionWithContext(backgroundDispatcher) {
+            searchTextQueries.deleteAllByScreen(screen)
+        }
 }

@@ -43,6 +43,7 @@ import com.noljanolja.android.features.home.menu.MenuViewModel
 import com.noljanolja.android.features.home.mypage.MyPageViewModel
 import com.noljanolja.android.features.home.play.playlist.PlayListViewModel
 import com.noljanolja.android.features.home.play.playscreen.VideoDetailViewModel
+import com.noljanolja.android.features.home.play.search.SearchVideosViewModel
 import com.noljanolja.android.features.home.require_login.RequireLoginViewModel
 import com.noljanolja.android.features.home.root.HomeViewModel
 import com.noljanolja.android.features.home.wallet.WalletViewModel
@@ -215,7 +216,7 @@ class MyApplication : Application() {
                     ForgotViewModel()
                 }
                 viewModel {
-                    HomeViewModel()
+                    HomeViewModel(get())
                 }
                 viewModel {
                     LoginOrSignupViewModel()
@@ -306,6 +307,9 @@ class MyApplication : Application() {
                 }
                 viewModel {
                     SelectShareMessageViewModel(get())
+                }
+                viewModel {
+                    SearchVideosViewModel()
                 }
             }
         )

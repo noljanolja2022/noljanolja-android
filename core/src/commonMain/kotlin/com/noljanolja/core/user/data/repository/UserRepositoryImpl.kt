@@ -124,4 +124,8 @@ internal class UserRepositoryImpl(
             Result.failure(it)
         } ?: getCurrentUser(true)
     }
+
+    override suspend fun checkin(): Result<Boolean> {
+        return userRemoteDataSource.checkin()
+    }
 }

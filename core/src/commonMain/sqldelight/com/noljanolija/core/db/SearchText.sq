@@ -1,36 +1,46 @@
 CREATE TABLE `search` (
-  text TEXT NOT NULL PRIMARY KEY,
+  text TEXT NOT NULL,
+  screen TEXT NOT NULL,
   created_at INTEGER NOT NULL DEFAULT 0,
-  updated_at INTEGER NOT NULL DEFAULT 0
+  updated_at INTEGER NOT NULL DEFAULT 0,
+
+  PRIMARY KEY (text, screen)
 );
 
 
 upsert {
   UPDATE `search`
   SET updated_at = :updated_at
-  WHERE text = :text;
+  WHERE text = :text AND screen = :screen;
 
   INSERT OR IGNORE INTO `search`(
     text,
+    screen,
     created_at,
     updated_at
   )
   VALUES (
     :text,
+    :screen,
     :created_at,
     :updated_at
   );
 }
 
-deleteAll:
-DELETE FROM `search`;
-
-deleteByText:
+deleteAllByScreen:
 DELETE FROM `search`
-WHERE text = :text;
+WHERE screen = :screen;
+
+deleteByTextAndScreen:
+DELETE FROM `search`
+WHERE text = :text AND screen = :screen;
 
 
-findAll:
+findAllByScreen:
 SELECT *
 FROM `search`
+WHERE screen = :screen
 ORDER BY updated_at DESC;
+
+deleteAll:
+DELETE FROM `search`;

@@ -351,4 +351,5 @@
     <string name="common_undefined">[Undefined]</string>
     <string name="common_image">[Image]</string>
     <string name="common_sticker">[Sticker]</string>
+    <string name="wallet_checkin_success">Checkin success</string>
 </resources>

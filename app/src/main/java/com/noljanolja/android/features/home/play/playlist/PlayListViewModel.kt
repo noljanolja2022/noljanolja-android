@@ -31,17 +31,19 @@ class PlayListViewModel : BaseViewModel() {
                 }
 
                 PlayListEvent.Refresh -> {
-                    launch {
-                        val data = _uiStateFlow.value.data ?: PlayListUIData()
-                        _uiStateFlow.emit(
-                            UiState(
-                                data = data,
-                                loading = true
-                            )
+                    val data = _uiStateFlow.value.data ?: PlayListUIData()
+                    _uiStateFlow.emit(
+                        UiState(
+                            data = data,
+                            loading = true
                         )
-                        delay(500)
-                        refresh()
-                    }
+                    )
+                    delay(500)
+                    refresh()
+                }
+
+                PlayListEvent.Search -> {
+                    navigationManager.navigate(NavigationDirections.SearchVideos)
                 }
             }
         }
@@ -94,4 +96,5 @@ data class PlayListUIData(
     val watchingVideos: List<Video> = listOf(),
     val highlightVideos: List<Video> = listOf(),
     val todayVideos: List<Video> = listOf(),
+    val searchedVideos: List<Video> = listOf(),
 )

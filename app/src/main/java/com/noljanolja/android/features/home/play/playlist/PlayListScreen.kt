@@ -8,8 +8,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,9 +26,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -83,6 +89,16 @@ private fun PlayListContent(
             title = stringResource(id = R.string.video_title),
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            actions = {
+                IconButton(onClick = { handleEvent(PlayListEvent.Search) }) {
+                    Icon(
+                        Icons.Default.Search,
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp),
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+            }
         )
     }) {
         val data = uiState.data ?: return@ScaffoldWithUiState
@@ -190,7 +206,7 @@ private fun LazyListScope.trendingVideos(
         )
         SizeBox(height = 10.dp)
     }
-    if (configuration.screenWidthDp < 400) {
+    if (configuration.screenWidthDp < 500) {
         videos.forEach { video ->
             item(key = "trending${video.id}") {
                 TrendingVideo(video = video, onClick = { onClick(video) })
@@ -198,14 +214,14 @@ private fun LazyListScope.trendingVideos(
         }
     } else {
         items((videos.size + 1) / 2) { index ->
-            Row {
+            Row(modifier = Modifier.height(IntrinsicSize.Min)) {
                 videos[index * 2].let {
-                    Column(modifier = Modifier.weight(1f)) {
+                    Column(modifier = Modifier.weight(1f).fillMaxHeight()) {
                         TrendingVideo(video = it, onClick = { onClick(it) })
                     }
                 }
                 videos.getOrNull(index * 2 + 1)?.let {
-                    Column(modifier = Modifier.weight(1f)) {
+                    Column(modifier = Modifier.weight(1f).fillMaxHeight()) {
                         TrendingVideo(video = it, onClick = { onClick(it) })
                     }
                 } ?: Box(modifier = Modifier.weight(1f))
@@ -281,7 +297,7 @@ private fun LazyListScope.watchingVideos(
 }
 
 @Composable
-private fun TrendingVideo(
+fun TrendingVideo(
     video: Video,
     onClick: (Video) -> Unit,
 ) {

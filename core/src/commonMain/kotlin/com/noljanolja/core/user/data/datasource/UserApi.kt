@@ -92,4 +92,8 @@ class UserApi(private val client: HttpClient) {
             setBody(request)
         }.body()
     }
+
+    suspend fun checkin(): ResponseWithoutData {
+        return client.post("$BASE_URL/users/me/checkin/").body()
+    }
 }

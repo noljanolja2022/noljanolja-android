@@ -1,11 +1,12 @@
 package com.noljanolja.android.features.home.wallet
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -16,11 +17,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -34,13 +35,14 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -48,6 +50,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.ui.composable.CircleAvatar
@@ -58,9 +64,15 @@ import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.composable.UserPoint
 import com.noljanolja.android.ui.theme.Orange300
 import com.noljanolja.android.ui.theme.darkContent
+import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.util.formatDigitsNumber
+import com.noljanolja.android.util.showError
+import com.noljanolja.android.util.showToast
+import com.noljanolja.core.event.domain.model.EventBanner
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
 import com.noljanolja.core.user.domain.model.User
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -68,8 +80,19 @@ fun WalletScreen(
     viewModel: WalletViewModel = getViewModel(),
     onUseNow: () -> Unit,
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     val memberInfo by viewModel.memberInfoFlow.collectAsStateWithLifecycle()
+    LaunchedEffect(key1 = viewModel.checkinSuccessEvent) {
+        viewModel.checkinSuccessEvent.collectLatest {
+            context.showToast(context.getString(R.string.wallet_checkin_success))
+        }
+    }
+    LaunchedEffect(key1 = viewModel.errorFlow) {
+        viewModel.errorFlow.collectLatest {
+            context.showError(it)
+        }
+    }
     WalletContent(
         uiState = uiState,
         memberInfo = memberInfo,
@@ -87,8 +110,10 @@ private fun WalletContent(
     onUseNow: () -> Unit,
 ) {
     val state = rememberPullRefreshState(uiState.loading, { handleEvent(WalletEvent.Refresh) })
+
     ScaffoldWithUiState(uiState = uiState) {
         val user = uiState.data?.user ?: return@ScaffoldWithUiState
+        val banners = uiState.data.banners
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -96,19 +121,27 @@ private fun WalletContent(
                 .pullRefresh(state)
         ) {
             item {
-                UserInformation(
-                    user = user,
-                    memberInfo = memberInfo,
-                    goToSetting = {
-                        handleEvent(WalletEvent.Setting)
-                    },
-                    goToRanking = {
-                        handleEvent(WalletEvent.Ranking)
-                    }
-                )
-            }
-            item {
-                UserPoint(memberInfo.point.formatDigitsNumber(), modifier = Modifier.padding(16.dp))
+                Box(
+                    contentAlignment = Alignment.BottomCenter,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                ) {
+                    WalletBanners(banners = banners)
+                    UserInformation(
+                        user = user,
+                        memberInfo = memberInfo,
+                        goToSetting = {
+                            handleEvent(WalletEvent.Setting)
+                        },
+                        goToRanking = {
+                            handleEvent(WalletEvent.Ranking)
+                        },
+                        modifier = Modifier.padding(bottom = 180.dp)
+                    )
+                    UserPoint(
+                        memberInfo.point.formatDigitsNumber(),
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
             }
             item {
                 UserWalletInfo(
@@ -120,7 +153,9 @@ private fun WalletContent(
                 )
             }
             item {
-                UserAttendance()
+                UserAttendance(
+                    onCheckin = { handleEvent(WalletEvent.CheckIn) }
+                )
             }
             item {
                 SizeBox(height = 24.dp)
@@ -135,9 +170,10 @@ private fun UserInformation(
     memberInfo: MemberInfo?,
     goToSetting: () -> Unit,
     goToRanking: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(
                 RoundedCornerShape(
@@ -191,7 +227,7 @@ private fun UserWalletInfo(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight()
+            .height(IntrinsicSize.Min)
             .padding(horizontal = 16.dp)
     ) {
         WalletInfoItem(
@@ -200,7 +236,8 @@ private fun UserWalletInfo(
             memberInfo.accumulatedPointsToday,
             valueColor = Color(0xFF623B00),
             stringResource(id = R.string.wallet_view_history),
-            onGoToTransactionHistory,
+            onClick = onGoToTransactionHistory,
+            modifier = Modifier.fillMaxHeight(),
         )
         SizeBox(width = 12.dp)
         WalletInfoItem(
@@ -209,7 +246,8 @@ private fun UserWalletInfo(
             memberInfo.exchangeablePoints,
             valueColor = Color(0xFF007AFF),
             stringResource(id = R.string.wallet_exchange_money),
-            onClick = onUseNow
+            onClick = onUseNow,
+            modifier = Modifier.fillMaxHeight(),
         )
     }
 }
@@ -222,11 +260,11 @@ private fun RowScope.WalletInfoItem(
     valueColor: Color,
     textButton: String,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .weight(1F)
-            .wrapContentHeight()
             .clip(RoundedCornerShape(13.dp))
             .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 8.dp, vertical = 15.dp),
@@ -277,8 +315,42 @@ private fun RowScope.WalletInfoItem(
     }
 }
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
-private fun UserAttendance() {
+private fun BoxScope.WalletBanners(banners: List<EventBanner>) {
+    val bannerState = rememberPagerState()
+    LaunchedEffect(key1 = true) {
+        while (banners.isNotEmpty()) {
+            delay(4000)
+            val currentPage = bannerState.currentPage
+            if (currentPage != banners.size - 1) {
+                bannerState.animateScrollToPage(currentPage + 1)
+            } else {
+                bannerState.animateScrollToPage(0)
+            }
+        }
+    }
+    HorizontalPager(
+        state = bannerState,
+        count = banners.size,
+        modifier = Modifier.padding(bottom = 47.dp)
+    ) { page ->
+        val eventBanner = banners[page]
+        AsyncImage(
+            model = eventBanner.image,
+            contentDescription = null,
+            modifier = Modifier
+                .height(150.dp)
+                .align(Alignment.Center),
+            contentScale = ContentScale.Crop
+        )
+    }
+}
+
+@Composable
+private fun UserAttendance(
+    onCheckin: () -> Unit,
+) {
     Box(modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp)) {
         Card(
             modifier = Modifier.padding(top = 7.dp),
@@ -291,21 +363,23 @@ private fun UserAttendance() {
                     .fillMaxWidth()
                     .background(Color.White)
             ) {
-                SizeBox(height = 17.dp)
-                Box(
+                Row(
                     modifier = Modifier
-                        .padding(start = 24.dp, end = 12.dp)
                         .fillMaxWidth()
-                        .wrapContentHeight()
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.attendance_banner),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxWidth(),
-                        contentScale = ContentScale.FillWidth
+                    AttendeeInformationItem(
+                        modifier = Modifier.weight(1f)
+                            .padding(18.dp),
+                        firstText = "To get",
+                        secondText = "Benefit".uppercase()
+                    )
+                    AttendeeInformationItem(
+                        modifier = Modifier.weight(1f)
+                            .padding(18.dp),
+                        firstText = "Check in",
+                        secondText = "Everyday".uppercase()
                     )
                 }
-                SizeBox(height = 18.dp)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -358,7 +432,7 @@ private fun UserAttendance() {
                         )
                     }
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = onCheckin,
                         modifier = Modifier
                             .padding(start = 18.dp)
                             .weight(1F),
@@ -380,13 +454,28 @@ private fun UserAttendance() {
                 SizeBox(height = 14.dp)
             }
         }
-        Image(
-            painterResource(id = R.drawable.ic_light_wallet),
-            contentDescription = null,
-            modifier = Modifier
-                .padding(start = 10.dp)
-                .size(88.dp)
-                .align(Alignment.TopStart)
+    }
+}
+
+@Composable
+private fun AttendeeInformationItem(
+    firstText: String,
+    secondText: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier) {
+        Icon(
+            Icons.Default.Check,
+            tint = Orange300,
+            contentDescription = null
+        )
+        Text(
+            text = firstText,
+            style = MaterialTheme.typography.bodyLarge
+        )
+        Text(
+            text = secondText,
+            style = MaterialTheme.typography.headlineMedium.withBold()
         )
     }
 }

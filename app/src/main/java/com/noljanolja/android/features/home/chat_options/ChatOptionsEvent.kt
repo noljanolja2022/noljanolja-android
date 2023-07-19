@@ -12,4 +12,6 @@ sealed interface ChatOptionsEvent {
     data class RemoveParticipant(val id: String) : ChatOptionsEvent
 
     data class MakeAdminConversation(val id: String) : ChatOptionsEvent
+
+    data class BlockUser(val id: String) : ChatOptionsEvent
 }

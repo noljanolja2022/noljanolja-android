@@ -3,6 +3,7 @@ package com.noljanolja.android
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -94,6 +95,14 @@ class MainActivity : ComponentActivity() {
                 )
             )
         }
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        val newOverride = Configuration(newBase?.resources?.configuration)
+        newOverride.fontScale = maxOf(newOverride.fontScale, 1.2f)
+        applyOverrideConfiguration(newOverride)
+
+        super.attachBaseContext(newBase)
     }
 
     fun launchIfLogin(block: suspend () -> Unit) = launchInMainIO {
