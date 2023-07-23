@@ -9,6 +9,7 @@ import com.noljanolja.core.user.data.model.request.PushTokensRequest
 import com.noljanolja.core.user.data.model.request.SyncUserContactsRequest
 import com.noljanolja.core.user.data.model.request.UpdateAvatarRequest
 import com.noljanolja.core.user.data.model.request.UpdateUserRequest
+import com.noljanolja.core.user.domain.model.CheckinProgress
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.utils.toDomainUser
 
@@ -30,6 +31,8 @@ interface UserRemoteDataSource {
     suspend fun inviteFriend(friendId: String): Result<Boolean>
 
     suspend fun checkin(): Result<Boolean>
+
+    suspend fun getCheckinProgress(): Result<List<CheckinProgress>>
 }
 
 class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSource {
@@ -164,6 +167,19 @@ class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSou
             val response = userApi.checkin()
             if (response.isSuccessful()) {
                 Result.success(true)
+            } else {
+                Result.failure(Throwable(response.message))
+            }
+        } catch (e: Throwable) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getCheckinProgress(): Result<List<CheckinProgress>> {
+        return try {
+            val response = userApi.getCheckinProgress()
+            if (response.isSuccessful()) {
+                Result.success(response.data)
             } else {
                 Result.failure(Throwable(response.message))
             }

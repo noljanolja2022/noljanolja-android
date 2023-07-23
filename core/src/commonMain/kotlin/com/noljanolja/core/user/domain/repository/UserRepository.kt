@@ -1,5 +1,6 @@
 package com.noljanolja.core.user.domain.repository
 
+import com.noljanolja.core.user.domain.model.CheckinProgress
 import com.noljanolja.core.user.domain.model.User
 
 internal interface UserRepository {
@@ -40,4 +41,6 @@ internal interface UserRepository {
     suspend fun logout(requireSuccess: Boolean): Result<Boolean>
 
     suspend fun checkin(): Result<Boolean>
+
+    suspend fun getCheckinProgress(): Result<List<CheckinProgress>>
 }

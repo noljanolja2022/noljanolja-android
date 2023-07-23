@@ -352,4 +352,8 @@
     <string name="common_image">[Image]</string>
     <string name="common_sticker">[Sticker]</string>
     <string name="wallet_checkin_success">Checkin success</string>
+    <string name="wallet_to_get">To get</string>
+    <string name="wallet_benefit">Benefit</string>
+    <string name="wallet_checkin">Check in</string>
+    <string name="wallet_every_day">Everyday</string>
 </resources>

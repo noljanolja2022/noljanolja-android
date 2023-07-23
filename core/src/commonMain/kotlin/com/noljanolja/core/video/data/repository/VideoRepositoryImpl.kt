@@ -44,7 +44,12 @@ internal class VideoRepositoryImpl(
                 searchLocalDatasource.insertKey(it, screen = SCREEN)
             }
             val videos =
-                videoApi.getVideos(GetVideosRequest(isHighlight = isHighlight)).data.orEmpty()
+                videoApi.getVideos(
+                    GetVideosRequest(
+                        isHighlight = isHighlight,
+                        query = query
+                    )
+                ).data.orEmpty()
             emit(videos)
 //            updateLocalVideos(videos)
         } catch (e: Throwable) {

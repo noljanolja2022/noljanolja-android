@@ -70,6 +70,7 @@ import com.noljanolja.android.util.showError
 import com.noljanolja.android.util.showToast
 import com.noljanolja.core.event.domain.model.EventBanner
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
+import com.noljanolja.core.user.domain.model.CheckinProgress
 import com.noljanolja.core.user.domain.model.User
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -114,6 +115,7 @@ private fun WalletContent(
     ScaffoldWithUiState(uiState = uiState) {
         val user = uiState.data?.user ?: return@ScaffoldWithUiState
         val banners = uiState.data.banners
+        val checkinProgresses = uiState.data.checkinProgresses
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -154,6 +156,7 @@ private fun WalletContent(
             }
             item {
                 UserAttendance(
+                    checkinProgresses = checkinProgresses,
                     onCheckin = { handleEvent(WalletEvent.CheckIn) }
                 )
             }
@@ -349,8 +352,11 @@ private fun BoxScope.WalletBanners(banners: List<EventBanner>) {
 
 @Composable
 private fun UserAttendance(
+    checkinProgresses: List<CheckinProgress>,
     onCheckin: () -> Unit,
 ) {
+    val checkedDay = checkinProgresses.filter { it.isCompleted }.size
+
     Box(modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp)) {
         Card(
             modifier = Modifier.padding(top = 7.dp),
@@ -368,16 +374,18 @@ private fun UserAttendance(
                         .fillMaxWidth()
                 ) {
                     AttendeeInformationItem(
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier
+                            .weight(1f)
                             .padding(18.dp),
-                        firstText = "To get",
-                        secondText = "Benefit".uppercase()
+                        firstText = stringResource(id = R.string.wallet_to_get),
+                        secondText = stringResource(id = R.string.wallet_benefit).uppercase()
                     )
                     AttendeeInformationItem(
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier
+                            .weight(1f)
                             .padding(18.dp),
-                        firstText = "Check in",
-                        secondText = "Everyday".uppercase()
+                        firstText = stringResource(id = R.string.wallet_checkin),
+                        secondText = stringResource(id = R.string.wallet_every_day).uppercase()
                     )
                 }
                 Row(
@@ -404,7 +412,7 @@ private fun UserAttendance(
                             )
                             Row(verticalAlignment = Alignment.Bottom) {
                                 Text(
-                                    "12",
+                                    checkedDay.toString(),
                                     style = TextStyle(
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Bold,
@@ -412,7 +420,7 @@ private fun UserAttendance(
                                     )
                                 )
                                 Text(
-                                    " / 30",
+                                    " / ${checkinProgresses.size}",
                                     style = TextStyle(
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.Bold,
@@ -423,7 +431,7 @@ private fun UserAttendance(
                         }
                         SizeBox(height = 4.dp)
                         LinearProgressIndicator(
-                            progress = 12f / 30,
+                            progress = checkedDay.toFloat() / checkinProgresses.size,
                             modifier = Modifier
                                 .clip(RoundedCornerShape(6.dp))
                                 .height(6.dp),

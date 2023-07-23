@@ -7,6 +7,7 @@ import com.noljanolja.core.user.data.model.request.PushTokensRequest
 import com.noljanolja.core.user.data.model.request.SyncUserContactsRequest
 import com.noljanolja.core.user.data.model.request.UpdateAvatarRequest
 import com.noljanolja.core.user.data.model.request.UpdateUserRequest
+import com.noljanolja.core.user.data.model.response.GetCheckinProgressesResponse
 import com.noljanolja.core.user.data.model.response.GetMeResponse
 import com.noljanolja.core.user.data.model.response.GetUsersResponse
 import com.noljanolja.core.user.data.model.response.UpdateAvatarResponse
@@ -94,6 +95,10 @@ class UserApi(private val client: HttpClient) {
     }
 
     suspend fun checkin(): ResponseWithoutData {
-        return client.post("$BASE_URL/users/me/checkin/").body()
+        return client.post("$BASE_URL/users/me/checkin").body()
+    }
+
+    suspend fun getCheckinProgress(): GetCheckinProgressesResponse {
+        return client.get("$BASE_URL/users/me/checkin-progresses").body()
     }
 }

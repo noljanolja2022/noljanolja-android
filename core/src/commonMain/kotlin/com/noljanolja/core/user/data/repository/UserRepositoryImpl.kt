@@ -5,6 +5,7 @@ import com.noljanolja.core.conversation.data.datasource.LocalConversationDataSou
 import com.noljanolja.core.user.data.datasource.AuthDataSource
 import com.noljanolja.core.user.data.datasource.LocalUserDataSource
 import com.noljanolja.core.user.data.datasource.UserRemoteDataSource
+import com.noljanolja.core.user.domain.model.CheckinProgress
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.user.domain.repository.UserRepository
 import io.ktor.client.*
@@ -127,5 +128,9 @@ internal class UserRepositoryImpl(
 
     override suspend fun checkin(): Result<Boolean> {
         return userRemoteDataSource.checkin()
+    }
+
+    override suspend fun getCheckinProgress(): Result<List<CheckinProgress>> {
+        return userRemoteDataSource.getCheckinProgress()
     }
 }

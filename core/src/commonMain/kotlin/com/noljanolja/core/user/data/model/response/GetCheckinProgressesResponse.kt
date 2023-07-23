@@ -4,8 +4,8 @@ import com.noljanolja.core.base.BaseResponse
 import com.noljanolja.core.user.domain.model.CheckinProgress
 
 @kotlinx.serialization.Serializable
-data class GetCheckinProgressResponse(
+data class GetCheckinProgressesResponse(
     override val code: Int,
     override val message: String,
-    override val data: CheckinProgress,
-) : BaseResponse<CheckinProgress>()
+    override val data: List<CheckinProgress> = emptyList(),
+) : BaseResponse<List<CheckinProgress>>()

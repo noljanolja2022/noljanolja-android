@@ -23,12 +23,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import coil.compose.AsyncImage
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
+import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.theme.NeutralDarkGrey
 import com.noljanolja.android.util.openUrl
@@ -86,7 +88,8 @@ fun EventBannerDialog(
                         modifier = Modifier
                             .clip(RoundedCornerShape(18.dp))
                             .align(Alignment.Center),
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Crop,
+                        placeholder = painterResource(id = R.drawable.banner_placeholder)
                     )
                     if (eventBanner.action == EventAction.LINK) {
                         PrimaryButton(
