@@ -1,3 +1,4 @@
+- 1.0.23: Release checkin, fix bug search videos
 - 1.0.22: Update ui fold, search videos
 - 1.0.21: Reply, delete, forward messages
 - 1.0.20: Update reactions, fold UI
