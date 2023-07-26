@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE resources [<!ENTITY kakao_api_key "15d1b0d5dde51ea18a397effc5f25e3c">]>
 <resources>
-    <string name="app_name" translatable="false">Noljanolja</string>
+    <string name="app_name">NolgoBulja</string>
     <string name="app_channel_id" translatable="false">noljanolja_notification_channel</string>
     <string name="app_channel_name" translatable="false">noljanolja</string>
     <string name="app_channel_description" translatable="false">noljanolja</string>
@@ -50,7 +50,7 @@
     <!--    countries-->
     <string name="country_kr">South Korea</string>
 
-    <string name="welcome_noljanolja">Welcome to Noja Noja. Watch videos,play and earn.</string>
+    <string name="welcome_noljanolja">Welcome to NolgoBulja. Watch videos,play and earn.</string>
 
     <string name="splash_explore">EXPLORE NOW</string>
     <string name="splash_wait">Just a moment ...</string>
@@ -175,12 +175,12 @@
     <string name="contacts_not_found">No contacts found</string>
 
     <string name="permission">Permission</string>
-    <string name="permission_contacts_description">To help you message friends and family on Noljanolja, allow Noljanolja access to your contacts.</string>
-    <string name="permission_access_storage_description">To help you access gallery on Noljanolja, allow Noljanolja access to your media files.</string>
+    <string name="permission_contacts_description">To help you message friends and family on NolgoBulja, allow NolgoBulja access to your contacts.</string>
+    <string name="permission_access_storage_description">To help you access gallery on NolgoBulja, allow NolgoBulja access to your media files.</string>
     <string name="permission_accept">Accept</string>
-    <string name="permission_required_description">You\'re unable to use this feature without the required permissions. \nTap the Settings button to allow Noljanolja to access the required permission.</string>
+    <string name="permission_required_description">You\'re unable to use this feature without the required permissions. \nTap the Settings button to allow NolgoBulja to access the required permission.</string>
     <string name="permission_go_to_settings">Settings</string>
-    <string name="permission_camera">To help you send image or video, allow Noljanolja access to your camera.</string>
+    <string name="permission_camera">To help you send image or video, allow NolgoBulja access to your camera.</string>
     <!--    Chats-->
     <string name="conversation_empty">Add friends to chat now.</string>
     <string name="conversation_create">%s created conversation</string>
