@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">놀고벌자</string>
     <string name="common_next">다음</string>
     <string name="common_previous">이전</string>
     <string name="common_verification">인증</string>
@@ -37,7 +38,7 @@
     <string name="common_warning">경고</string>
     <string name="common_all">모두</string>
     <string name="common_download">다운로드</string>
-    <string name="welcome_noljanolja">Welcome to 놀자놀자\nWATCH PLAY EARN</string>
+    <string name="welcome_noljanolja">Welcome to 놀고벌자\nWATCH PLAY EARN</string>
     <string name="splash_explore">지금 바로 시작하기</string>
     <string name="splash_wait">잠시만 기다려주세요...</string>
     <string name="signup">회원가입</string>
@@ -72,7 +73,7 @@
     <string name="home_wallet">지갑</string>
     <string name="home_shop">쇼핑</string>
     <string name="home_news">뉴스</string>
-    <string name="login_phone_description">Welcome to 놀자놀자. 계속 진행하기 위해 휴대폰 번호를 넣어주세요.</string>
+    <string name="login_phone_description">Welcome to 놀고벌자. 계속 진행하기 위해 휴대폰 번호를 넣어주세요.</string>
     <string name="login_country_input_label">국가</string>
     <string name="login_phone_input_label">휴대폰 번호</string>
     <string name="login_invalid_phone_title">유효하지 않은 번호</string>
@@ -137,10 +138,10 @@
     <string name="contacts_title_add_memmber">친구 추가</string>
     <string name="contacts_not_found">등록된 친구가 없습니다</string>
     <string name="permission">권한</string>
-    <string name="permission_contacts_description">놀자놀자 앱에서 친구와 가족에게 메시지를 보낼 수 있도록 연락처 접근 권한을 허용해주세요.</string>
-    <string name="permission_access_storage_description">놀자놀자 앱에서 갤러리(사진)에 접근할 수 있도록 미디에 파일에 접근 권한을 허용해주세요.</string>
+    <string name="permission_contacts_description">놀고벌자 앱에서 친구와 가족에게 메시지를 보낼 수 있도록 연락처 접근 권한을 허용해주세요.</string>
+    <string name="permission_access_storage_description">놀고벌자 앱에서 갤러리(사진)에 접근할 수 있도록 미디에 파일에 접근 권한을 허용해주세요.</string>
     <string name="permission_accept">허용</string>
-    <string name="permission_required_description">권한이 없으면 이 기능을 사용할 수 없습니다. 놀자놀자 앱이 필요한 권한에 접근할 수 있도록 설정버튼을 눌러주세요.</string>
+    <string name="permission_required_description">권한이 없으면 이 기능을 사용할 수 없습니다. 놀고벌자 앱이 필요한 권한에 접근할 수 있도록 설정버튼을 눌러주세요.</string>
     <string name="permission_go_to_settings">설정</string>
     <string name="conversation_empty">친구추가</string>
     <string name="conversation_create">%s 님이 채팅방을 개설하였습니다.</string>
