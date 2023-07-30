@@ -5,8 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -22,14 +24,13 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import coil.compose.AsyncImage
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.rememberPagerState
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.theme.NeutralDarkGrey
@@ -37,7 +38,7 @@ import com.noljanolja.android.util.openUrl
 import com.noljanolja.core.event.domain.model.EventAction
 import com.noljanolja.core.event.domain.model.EventBanner
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalPagerApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun EventBannerDialog(
     eventBanners: List<EventBanner>,
@@ -45,8 +46,8 @@ fun EventBannerDialog(
     onCloseBanner: (EventBanner) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
-    val state = rememberPagerState()
     val context = LocalContext.current
+    val configuration = LocalConfiguration.current
     var showPage by remember { mutableStateOf(0) }
     Popup(
         onDismissRequest = onDismissRequest,
@@ -63,11 +64,15 @@ fun EventBannerDialog(
                 .background(NeutralDarkGrey.copy(alpha = 0.7f))
                 .clickable(enabled = false) { },
         ) {
+            val contentModifier = if (configuration.screenWidthDp > 500) {
+                Modifier.widthIn(max = 400.dp)
+            } else {
+                Modifier.fillMaxWidth()
+            }
             Box(
-                modifier = Modifier
+                modifier = contentModifier
                     .clip(RoundedCornerShape(18.dp))
                     .padding(horizontal = 50.dp)
-                    .aspectRatio(1f)
                     .align(Alignment.Center)
             ) {
                 Box(
@@ -86,6 +91,8 @@ fun EventBannerDialog(
                         model = eventBanner.image,
                         contentDescription = null,
                         modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f)
                             .clip(RoundedCornerShape(18.dp))
                             .align(Alignment.Center),
                         contentScale = ContentScale.Crop,

@@ -27,6 +27,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -39,6 +40,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -57,7 +62,9 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.noljanolja.android.R
+import com.noljanolja.android.common.Const.VIDEO_IMAGE_RATIO
 import com.noljanolja.android.common.base.UiState
+import com.noljanolja.android.features.home.play.optionsvideo.OptionVideoBottomBottomSheet
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SizeBox
@@ -83,6 +90,10 @@ private fun PlayListContent(
 ) {
     val configuration = LocalConfiguration.current
     val state = rememberPullRefreshState(uiState.loading, { handleEvent(PlayListEvent.Refresh) })
+
+    var selectOptionsVideo by remember {
+        mutableStateOf<Video?>(null)
+    }
     ScaffoldWithUiState(uiState = uiState, topBar = {
         CommonTopAppBar(
             centeredTitle = true,
@@ -122,10 +133,26 @@ private fun PlayListContent(
                 }
             }
 
-            trendingVideos(videos = data.todayVideos, configuration = configuration, onClick = {
-                handleEvent(PlayListEvent.PlayVideo(it.id))
-            })
+            trendingVideos(
+                videos = data.todayVideos,
+                configuration = configuration,
+                onClick = {
+                    handleEvent(PlayListEvent.PlayVideo(it.id))
+                },
+                onMoreVideo = {
+                    selectOptionsVideo = it
+                }
+            )
         }
+    }
+    selectOptionsVideo?.let {
+        OptionVideoBottomBottomSheet(
+            visible = true,
+            video = it,
+            onDismissRequest = {
+                selectOptionsVideo = null
+            },
+        )
     }
 }
 
@@ -157,7 +184,7 @@ private fun HighlightVideos(
         state = bannerState,
         modifier = Modifier
             .fillMaxWidth()
-            .aspectRatio(16 / 9f)
+            .aspectRatio(VIDEO_IMAGE_RATIO)
     ) { page ->
         val video = videos[page]
         SubcomposeAsyncImage(
@@ -195,7 +222,7 @@ private fun LazyListScope.trendingVideos(
     videos: List<Video>,
     onClick: (Video) -> Unit,
     configuration: Configuration,
-
+    onMoreVideo: (Video) -> Unit,
 ) {
     if (videos.isEmpty()) return
     item {
@@ -209,7 +236,11 @@ private fun LazyListScope.trendingVideos(
     if (configuration.screenWidthDp < 500) {
         videos.forEach { video ->
             item(key = "trending${video.id}") {
-                TrendingVideo(video = video, onClick = { onClick(video) })
+                TrendingVideo(
+                    video = video,
+                    onClick = { onClick(video) },
+                    onMore = onMoreVideo
+                )
             }
         }
     } else {
@@ -217,12 +248,20 @@ private fun LazyListScope.trendingVideos(
             Row(modifier = Modifier.height(IntrinsicSize.Min)) {
                 videos[index * 2].let {
                     Column(modifier = Modifier.weight(1f).fillMaxHeight()) {
-                        TrendingVideo(video = it, onClick = { onClick(it) })
+                        TrendingVideo(
+                            video = it,
+                            onClick = { onClick(it) },
+                            onMore = onMoreVideo
+                        )
                     }
                 }
                 videos.getOrNull(index * 2 + 1)?.let {
                     Column(modifier = Modifier.weight(1f).fillMaxHeight()) {
-                        TrendingVideo(video = it, onClick = { onClick(it) })
+                        TrendingVideo(
+                            video = it,
+                            onClick = { onClick(it) },
+                            onMore = onMoreVideo
+                        )
                     }
                 } ?: Box(modifier = Modifier.weight(1f))
             }
@@ -267,7 +306,7 @@ private fun LazyListScope.watchingVideos(
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .width(142.dp)
-                            .aspectRatio(16 / 9f)
+                            .aspectRatio(VIDEO_IMAGE_RATIO)
 
                     )
                     LinearProgressIndicator(
@@ -300,6 +339,7 @@ private fun LazyListScope.watchingVideos(
 fun TrendingVideo(
     video: Video,
     onClick: (Video) -> Unit,
+    onMore: (Video) -> Unit,
 ) {
     val context = LocalContext.current
     SubcomposeAsyncImage(
@@ -310,18 +350,26 @@ fun TrendingVideo(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .aspectRatio(16 / 9f)
+            .aspectRatio(VIDEO_IMAGE_RATIO)
             .clip(RoundedCornerShape(10.dp))
             .clickable {
                 onClick(video)
             }
     )
     SizeBox(height = 16.dp)
-    Text(
-        text = video.title,
-        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-        modifier = Modifier.padding(horizontal = 16.dp),
-    )
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.Top
+    ) {
+        Text(
+            text = video.title,
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+            modifier = Modifier.weight(1f).padding(horizontal = 16.dp),
+        )
+        IconButton(onClick = { onMore(video) }) {
+            Icon(Icons.Default.MoreVert, contentDescription = null)
+        }
+    }
     SizeBox(height = 2.dp)
     Text(
         modifier = Modifier.padding(horizontal = 16.dp),

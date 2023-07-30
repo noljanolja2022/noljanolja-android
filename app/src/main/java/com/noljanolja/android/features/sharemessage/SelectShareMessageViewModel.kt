@@ -5,9 +5,10 @@ import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.base.launchInMain
+import com.noljanolja.android.features.common.ShareContact
+import com.noljanolja.android.features.common.toShareContact
 import com.noljanolja.android.util.getUriFromCache
 import com.noljanolja.android.util.loadFileInfo
-import com.noljanolja.core.conversation.domain.model.ConversationType
 import com.noljanolja.core.conversation.domain.model.MessageAttachment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -45,13 +46,7 @@ class SelectShareMessageViewModel(
             val localConversations = coreManager.getLocalConversations().first()
             contacts.addAll(
                 localConversations.map { conversation ->
-                    ShareContact(
-                        conversationId = conversation.id,
-                        userId = conversation.participants.firstOrNull { !it.isMe }
-                            .takeIf { conversation.type == ConversationType.SINGLE }?.id,
-                        title = conversation.getDisplayTitle(),
-                        avatar = conversation.getDisplayAvatarUrl()
-                    )
+                    conversation.toShareContact()
                 }
             )
             _uiStateFlow.emit(UiState(data = contacts))
@@ -174,10 +169,3 @@ class SelectShareMessageViewModel(
         return contacts.any { it.userId == userId }
     }
 }
-
-class ShareContact(
-    val conversationId: Long? = null,
-    val userId: String? = null,
-    val title: String = "",
-    val avatar: String? = null,
-)

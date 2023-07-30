@@ -806,7 +806,7 @@ private fun ChatItemBubble(
                 PlaceholderReplyMessage(it, isMe = isMe)
             }
             Box {
-                if (isLastMessageByAuthorSameDay && (message.type == MessageType.PHOTO || message.type == MessageType.PLAINTEXT)) {
+                if (isLastMessageByAuthorSameDay && message.canShowArrow()) {
                     if (isMe) {
                         Icon(
                             painterResource(id = R.drawable.ic_chat_arrow_mine),
@@ -845,7 +845,8 @@ private fun ChatItemBubble(
                         message = message,
                         onMessageLongClick = {
                             selectMessage = message
-                        }
+                        },
+                        handleEvent = handleEvent
                     )
                 }
             }

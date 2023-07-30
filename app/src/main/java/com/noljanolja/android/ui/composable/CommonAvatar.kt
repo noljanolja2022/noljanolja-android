@@ -57,3 +57,46 @@ fun CircleAvatar(
         contentScale = ContentScale.Crop
     )
 }
+
+@Composable
+fun CircleAvatar(
+    size: Dp = 40.dp,
+    avatar: String?,
+) {
+    val context = LocalContext.current
+    SubcomposeAsyncImage(
+        ImageRequest.Builder(context = context)
+            .data(avatar)
+            .placeholder(R.drawable.placeholder_avatar)
+            .error(R.drawable.placeholder_avatar)
+            .fallback(R.drawable.placeholder_avatar)
+            .build(),
+        contentDescription = null,
+        modifier = Modifier
+            .size(size)
+            .clip(CircleShape),
+        contentScale = ContentScale.Crop
+    )
+}
+
+@Composable
+fun OvalAvatar(
+    modifier: Modifier = Modifier,
+    size: Dp = 40.dp,
+    avatar: String?,
+) {
+    val context = LocalContext.current
+    SubcomposeAsyncImage(
+        ImageRequest.Builder(context = context)
+            .data(avatar)
+            .placeholder(R.drawable.placeholder_avatar)
+            .error(R.drawable.placeholder_avatar)
+            .fallback(R.drawable.placeholder_avatar)
+            .build(),
+        contentDescription = null,
+        modifier = modifier
+            .size(size)
+            .clip(RoundedCornerShape(size / 3)),
+        contentScale = ContentScale.Crop
+    )
+}

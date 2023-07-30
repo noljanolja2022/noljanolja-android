@@ -108,6 +108,9 @@ class ChatViewModel(
 
                 is ChatEvent.SelectShareMessage -> selectShareMessage(event.message)
                 is ChatEvent.ShareMessage -> shareMessage(event.conversationIds, event.userIds)
+                is ChatEvent.OpenVideo -> {
+                    navigationManager.navigate(NavigationDirections.PlayScreen(videoId = event.id))
+                }
             }
         }
     }

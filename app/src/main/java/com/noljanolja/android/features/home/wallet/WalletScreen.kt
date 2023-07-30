@@ -63,7 +63,6 @@ import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.composable.UserPoint
 import com.noljanolja.android.ui.theme.Orange300
-import com.noljanolja.android.ui.theme.darkContent
 import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.util.formatDigitsNumber
 import com.noljanolja.android.util.showError
@@ -237,7 +236,7 @@ private fun UserWalletInfo(
             R.drawable.img_coins,
             stringResource(id = R.string.wallet_accumulated_point),
             memberInfo.accumulatedPointsToday,
-            valueColor = Color(0xFF623B00),
+            valueColor = MaterialTheme.colorScheme.onBackground,
             stringResource(id = R.string.wallet_view_history),
             onClick = onGoToTransactionHistory,
             modifier = Modifier.fillMaxHeight(),
@@ -367,7 +366,7 @@ private fun UserAttendance(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White)
+                    .background(MaterialTheme.colorScheme.background)
             ) {
                 Row(
                     modifier = Modifier
@@ -408,7 +407,7 @@ private fun UserAttendance(
                                 stringResource(id = R.string.wallet_my_attendance),
                                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                                 modifier = Modifier.weight(1f),
-                                color = MaterialTheme.darkContent()
+                                color = MaterialTheme.colorScheme.onBackground
                             )
                             Row(verticalAlignment = Alignment.Bottom) {
                                 Text(
@@ -416,7 +415,7 @@ private fun UserAttendance(
                                     style = TextStyle(
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.darkContent()
+                                        color = MaterialTheme.colorScheme.onBackground
                                     )
                                 )
                                 Text(
@@ -479,11 +478,13 @@ private fun AttendeeInformationItem(
         )
         Text(
             text = firstText,
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground
         )
         Text(
             text = secondText,
-            style = MaterialTheme.typography.headlineMedium.withBold()
+            style = MaterialTheme.typography.headlineMedium.withBold(),
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }

@@ -3,6 +3,7 @@ package com.noljanolja.core.conversation.domain.model
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.utils.Const.BASE_URL
 import com.noljanolja.core.utils.randomUUID
+import com.noljanolja.core.video.domain.model.Video
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
@@ -26,6 +27,7 @@ data class Message(
     val reactions: List<MessageReaction> = emptyList(),
     val replyToMessage: Message? = null,
     val isDeleted: Boolean = false,
+    val shareVideo: Video? = null,
     val createdAt: Instant = Clock.System.now(),
     val updatedAt: Instant = Clock.System.now(),
 ) {

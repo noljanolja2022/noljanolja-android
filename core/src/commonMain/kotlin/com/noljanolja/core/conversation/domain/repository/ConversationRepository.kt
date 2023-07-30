@@ -28,7 +28,18 @@ internal interface ConversationRepository {
         message: Message,
         replyToMessageId: Long?,
         shareMessageId: Long?,
+        shareVideoId: String?,
     ): Long
+
+    suspend fun sendConversationsMessage(
+        conversationIds: List<Long>,
+        userIds: List<String>,
+        message: Message,
+        replyToMessageId: Long?,
+        shareMessageId: Long?,
+        shareVideoId: String?,
+        title: String?,
+    ): Result<Boolean>
 
     suspend fun createConversation(title: String, userIds: List<String>): Long
 

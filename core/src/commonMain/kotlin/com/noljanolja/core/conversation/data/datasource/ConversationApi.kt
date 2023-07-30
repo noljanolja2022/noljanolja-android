@@ -15,7 +15,6 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
-import io.ktor.util.InternalAPI
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.decodeFromString
@@ -36,7 +35,6 @@ class ConversationApi(
         return client.get("$BASE_URL/conversations/${request.conversationId}").body()
     }
 
-    @OptIn(InternalAPI::class)
     suspend fun sendConversationMessage(
         request: SendConversationMessageRequest,
     ): SendConversationMessageResponse {
@@ -53,6 +51,64 @@ class ConversationApi(
                         }
                         request.shareMessageId?.let {
                             append("shareMessageId", it)
+                        }
+                        request.shareVideoId?.let {
+                            append("shareVideoId", it)
+                        }
+
+                        when (request.message.type) {
+                            MessageType.PHOTO,
+                            MessageType.DOCUMENT,
+                            -> {
+                                request.message.attachments.forEach { attachment ->
+                                    append(
+                                        "attachments",
+                                        attachment.contents,
+                                        Headers.build {
+                                            append(HttpHeaders.ContentType, attachment.type)
+                                            append(HttpHeaders.ContentLength, attachment.size)
+                                            append(
+                                                HttpHeaders.ContentDisposition,
+                                                "filename=${attachment.originalName}"
+                                            )
+                                        }
+                                    )
+                                }
+                            }
+
+                            else -> {}
+                        }
+                    },
+                )
+            )
+        }.body()
+    }
+
+    suspend fun sendConversationsMessage(
+        request: SendConversationsMessageRequest,
+    ): ResponseWithoutData {
+        return client.post("$BASE_URL/conversations/messages") {
+            header(HttpHeaders.Accept, ContentType.MultiPart.FormData)
+            setBody(
+                MultiPartFormDataContent(
+                    formData {
+                        request.conversationIds.forEach { id ->
+                            append(
+                                "conversationIds",
+                                id,
+                            )
+                        }
+                        append("message", request.message.message)
+                        append("type", request.message.type.name)
+                        append("localId", request.message.localId)
+                        request.replyToMessageId?.let {
+                            append("replyToMessageId", it)
+                        }
+                        request.shareMessageId?.let {
+                            append("shareMessageId", it)
+                        }
+                        request.shareVideoId?.let {
+                            append("shareVideoId", it)
                         }
 
                         when (request.message.type) {

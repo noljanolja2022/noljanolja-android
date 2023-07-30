@@ -100,6 +100,7 @@ internal class ConversationRepositoryImpl(
         message: Message,
         replyToMessageId: Long?,
         shareMessageId: Long?,
+        shareVideoId: String?,
     ): Long {
         val sentConversationId =
             if (conversationId == 0L) createConversation(title, userIds) else conversationId
@@ -121,6 +122,7 @@ internal class ConversationRepositoryImpl(
                             message = sendingMessage,
                             replyToMessageId = replyToMessageId,
                             shareMessageId = shareMessageId,
+                            shareVideoId = shareVideoId
                         )
                     )
 
@@ -154,6 +156,51 @@ internal class ConversationRepositoryImpl(
             return sentConversationId
         }
         return 0L
+    }
+
+    override suspend fun sendConversationsMessage(
+        conversationIds: List<Long>,
+        userIds: List<String>,
+        message: Message,
+        replyToMessageId: Long?,
+        shareMessageId: Long?,
+        shareVideoId: String?,
+        title: String?,
+    ): Result<Boolean> {
+        val sentConversationId =
+            if ((conversationIds.firstOrNull() ?: 0L) == 0L) {
+                createConversation(
+                    title.orEmpty(),
+                    userIds
+                )
+            } else {
+                conversationIds.firstOrNull()
+            }
+        val sendingMessage = message.copy(
+            sender = localUserDataSource.findMe()!!,
+            status = MessageStatus.SENDING,
+        )
+        try {
+            val response =
+                conversationApi.sendConversationsMessage(
+                    SendConversationsMessageRequest(
+                        conversationIds = listOfNotNull(sentConversationId),
+                        message = sendingMessage,
+                        replyToMessageId = replyToMessageId,
+                        shareMessageId = shareMessageId,
+                        shareVideoId = shareVideoId,
+                    )
+                )
+
+            Logger.e("Receive: send response ${response.data}")
+
+            if (!response.isSuccessful()) {
+                throw Throwable(response.message)
+            }
+            return Result.success(true)
+        } catch (e: Throwable) {
+            return Result.failure(e)
+        }
     }
 
     override suspend fun createConversation(title: String, userIds: List<String>): Long {
@@ -464,6 +511,10 @@ internal class ConversationRepositoryImpl(
                     createdAt = localConversation.createdAt,
                     updatedAt = localConversation.updatedAt,
                 )
+            }
+        }.map {
+            it.sortedByDescending {
+                it.messages.maxByOrNull { it.createdAt }?.createdAt ?: it.createdAt
             }
         }
     }

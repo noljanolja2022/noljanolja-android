@@ -92,8 +92,9 @@ class CoreManager : KoinComponent {
         conversationId: Long,
         userIds: List<String>,
         message: Message,
-        replyToMessageId: Long?,
+        replyToMessageId: Long? = null,
         shareMessageId: Long? = null,
+        shareVideoId: String? = null,
     ): Long {
         return conversationRepository.sendConversationMessage(
             title = title,
@@ -101,9 +102,28 @@ class CoreManager : KoinComponent {
             userIds = userIds,
             message = message,
             replyToMessageId = replyToMessageId,
-            shareMessageId = shareMessageId
+            shareMessageId = shareMessageId,
+            shareVideoId = shareVideoId
         )
     }
+
+    suspend fun sendConversationsMessage(
+        conversationIds: List<Long>,
+        userIds: List<String>,
+        message: Message,
+        replyToMessageId: Long? = null,
+        shareMessageId: Long? = null,
+        shareVideoId: String? = null,
+        title: String? = null,
+    ) = conversationRepository.sendConversationsMessage(
+        conversationIds = conversationIds,
+        userIds = userIds,
+        message = message,
+        replyToMessageId = replyToMessageId,
+        shareMessageId = shareMessageId,
+        shareVideoId = shareVideoId,
+        title = title
+    )
 
     suspend fun createConversation(title: String, userIds: List<String>): Long {
         return conversationRepository.createConversation(title, userIds)

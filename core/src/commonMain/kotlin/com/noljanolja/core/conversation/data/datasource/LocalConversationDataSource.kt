@@ -64,6 +64,7 @@ class LocalConversationDataSource(
             reactions: String,
             replyToMessage: String?,
             isDeleted: Boolean,
+            shareVideo: String?,
             created_at: Long,
             updated_at: Long,
         ->
@@ -84,6 +85,7 @@ class LocalConversationDataSource(
             seenBy = Json.decodeFromString(seenBy),
             replyToMessage = replyToMessage?.let { Json.decodeFromString(it) },
             isDeleted = isDeleted,
+            shareVideo = shareVideo?.let { Json.decodeFromString(it) },
             createdAt = Instant.fromEpochMilliseconds(created_at),
             updatedAt = Instant.fromEpochMilliseconds(updated_at),
         )
@@ -191,6 +193,7 @@ class LocalConversationDataSource(
                     reactions = json.encodeToString(message.reactions),
                     replyToMessage = message.replyToMessage?.let { json.encodeToString(it) },
                     isDeleted = message.isDeleted,
+                    shareVideo = message.shareVideo?.let { json.encodeToString(it.copy(comments = emptyList())) },
                     created_at = message.createdAt.toEpochMilliseconds(),
                     updated_at = message.updatedAt.toEpochMilliseconds(),
                 )

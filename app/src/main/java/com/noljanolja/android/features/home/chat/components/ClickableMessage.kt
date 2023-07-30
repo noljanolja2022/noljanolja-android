@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -36,12 +37,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.LayoutDirection
@@ -52,7 +55,10 @@ import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import coil.compose.SubcomposeAsyncImageScope
 import coil.request.ImageRequest
+import com.noljanolja.android.common.Const.VIDEO_IMAGE_RATIO
+import com.noljanolja.android.features.home.chat.ChatEvent
 import com.noljanolja.android.ui.composable.CombineClickableText
+import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.NeutralLight
 import com.noljanolja.android.ui.theme.colorMyChatText
 import com.noljanolja.android.util.chatMessageBubbleTime
@@ -72,8 +78,22 @@ fun ClickableMessage(
     conversationId: Long,
     message: Message,
     onMessageLongClick: (Message) -> Unit,
+    handleEvent: (ChatEvent) -> Unit,
 ) {
-    when (message.type) {
+    message.shareVideo?.let { video ->
+        ClickableVideoMessage(
+            message = message,
+            conversationId = conversationId,
+            modifier = Modifier.clicks(
+                onLongClick = {
+                    onMessageLongClick.invoke(message)
+                },
+                onClick = {
+                    handleEvent(ChatEvent.OpenVideo(video.id))
+                }
+            ),
+        )
+    } ?: when (message.type) {
         MessageType.PLAINTEXT -> {
             ClickableTextMessage(
                 message = message,
@@ -441,5 +461,40 @@ private fun SubcomposeAsyncImageScope.AsyncImageState(
                 contentScale = contentScale
             )
         }
+    }
+}
+
+@Composable
+fun ClickableVideoMessage(
+    message: Message,
+    conversationId: Long,
+    modifier: Modifier = Modifier,
+) {
+    val video = message.shareVideo
+    val configuration = LocalConfiguration.current
+    Column(
+        modifier = modifier
+            .width((configuration.screenWidthDp / 2).dp)
+            .padding(3.dp)
+            .height(IntrinsicSize.Min)
+    ) {
+        SubcomposeAsyncImage(
+            ImageRequest.Builder(context = LocalContext.current)
+                .data(video?.thumbnail)
+                .build(),
+            contentDescription = null,
+            contentScale = ContentScale.FillWidth,
+            modifier = Modifier.weight(1f)
+                .aspectRatio(VIDEO_IMAGE_RATIO)
+        )
+        SizeBox(height = 10.dp)
+        Text(
+            video?.title.orEmpty(),
+            style = TextStyle(
+                fontSize = 7.25.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        )
     }
 }

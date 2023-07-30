@@ -14,6 +14,7 @@ CREATE TABLE `message` (
   reactions TEXT NOT NULL,
   replyToMessage TEXT,
   isDeleted INTEGER AS Boolean NOT NULL DEFAULT 0,
+  shareVideo TEXT,
   created_at INTEGER NOT NULL DEFAULT 0,
   updated_at INTEGER NOT NULL DEFAULT 0,
 
@@ -52,6 +53,7 @@ upsert {
       reactions=:reactions,
       replyToMessage=:replyToMessage,
       isDeleted=:isDeleted,
+      shareVideo=:shareVideo,
       created_at=:created_at,
       updated_at = :updated_at
   WHERE (id != 0 AND id = :id) OR (id = 0 AND localId = :localId);
@@ -72,6 +74,7 @@ upsert {
     reactions,
     replyToMessage,
     isDeleted,
+    shareVideo,
     created_at,
     updated_at
   )
@@ -91,6 +94,7 @@ upsert {
     :reactions,
     :replyToMessage,
     :isDeleted,
+    :shareVideo,
     :created_at,
     :updated_at
   );

@@ -40,6 +40,7 @@ import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
+import com.noljanolja.android.features.common.ShareContact
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.EmptyPage
 import com.noljanolja.android.ui.composable.InfiniteListHandler
@@ -65,7 +66,7 @@ fun SelectShareMessageScreen(
     val selectedContacts by viewModel.selectedContactFlow.collectAsStateWithLifecycle()
     LaunchedEffect(viewModel.sharedEvent) {
         viewModel.sharedEvent.collectLatest {
-            context.showToast("Shared success")
+            context.showToast(context.getString(R.string.common_share_success))
         }
     }
     SelectShareMessageContent(

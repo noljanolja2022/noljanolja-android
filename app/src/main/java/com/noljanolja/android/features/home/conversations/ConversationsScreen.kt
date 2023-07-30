@@ -273,7 +273,13 @@ fun ConversationRow(
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
-            val formattedMessage = when (message.type) {
+            val formattedMessage = message.shareVideo?.let {
+                if (message.sender.isMe) {
+                    stringResource(R.string.chats_message_my_video)
+                } else {
+                    stringResource(R.string.chats_message_video)
+                }
+            } ?: when (message.type) {
                 MessageType.PLAINTEXT -> {
                     message.message
                 }

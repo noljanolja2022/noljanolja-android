@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.rounded.Cancel
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
+import com.noljanolja.android.features.home.play.optionsvideo.OptionVideoBottomBottomSheet
 import com.noljanolja.android.features.home.play.playlist.TrendingVideo
 import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.SearchBar
@@ -58,6 +60,7 @@ fun SearchVideosScreen(viewModel: SearchVideosViewModel = getViewModel()) {
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun SearchVideosContent(
     uiState: UiState<SearchVideosUiData>,
@@ -71,6 +74,10 @@ private fun SearchVideosContent(
     var searchText by remember {
         mutableStateOf("")
     }
+    var selectOptionsVideo by remember {
+        mutableStateOf<Video?>(null)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -110,11 +117,23 @@ private fun SearchVideosContent(
             val videos = uiState.data?.videos.orEmpty()
             SearchVideosResult(
                 videos = videos,
+                onMoreVideo = {
+                    selectOptionsVideo = it
+                },
                 onClick = {
                     handleEvent(SearchVideosEvent.PlayVideo(it.id))
                 }
             )
         }
+    }
+    selectOptionsVideo?.let {
+        OptionVideoBottomBottomSheet(
+            visible = true,
+            video = it,
+            onDismissRequest = {
+                selectOptionsVideo = null
+            },
+        )
     }
 }
 
@@ -235,6 +254,7 @@ private fun SearchVideosHistory(
 @Composable
 private fun SearchVideosResult(
     videos: List<Video>,
+    onMoreVideo: (Video) -> Unit,
     onClick: (Video) -> Unit,
 ) {
     val configuration = LocalConfiguration.current
@@ -247,20 +267,40 @@ private fun SearchVideosResult(
         if (configuration.screenWidthDp < 500) {
             videos.forEach { video ->
                 item(key = "trending${video.id}") {
-                    TrendingVideo(video = video, onClick = { onClick(video) })
+                    TrendingVideo(
+                        video = video,
+                        onClick = { onClick(video) },
+                        onMore = onMoreVideo
+                    )
                 }
             }
         } else {
             items((videos.size + 1) / 2) { index ->
                 Row(modifier = Modifier.height(IntrinsicSize.Min)) {
                     videos[index * 2].let {
-                        Column(modifier = Modifier.weight(1f).fillMaxHeight()) {
-                            TrendingVideo(video = it, onClick = { onClick(it) })
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                        ) {
+                            TrendingVideo(
+                                video = it,
+                                onClick = { onClick(it) },
+                                onMore = onMoreVideo
+                            )
                         }
                     }
                     videos.getOrNull(index * 2 + 1)?.let {
-                        Column(modifier = Modifier.weight(1f).fillMaxHeight()) {
-                            TrendingVideo(video = it, onClick = { onClick(it) })
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                        ) {
+                            TrendingVideo(
+                                video = it,
+                                onClick = { onClick(it) },
+                                onMore = onMoreVideo
+                            )
                         }
                     } ?: Box(modifier = Modifier.weight(1f))
                 }

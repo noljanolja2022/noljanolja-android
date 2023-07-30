@@ -9,4 +9,14 @@ data class SendConversationMessageRequest(
     val message: Message,
     val replyToMessageId: Long?,
     val shareMessageId: Long?,
+    val shareVideoId: String?,
+)
+
+@Serializable
+data class SendConversationsMessageRequest(
+    val conversationIds: List<Long>,
+    val message: Message,
+    val replyToMessageId: Long?,
+    val shareMessageId: Long?,
+    val shareVideoId: String?,
 )
