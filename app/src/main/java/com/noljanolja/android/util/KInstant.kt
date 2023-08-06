@@ -63,6 +63,10 @@ fun Instant.isSameDate(other: Instant): Boolean {
     }
 }
 
+fun Instant.isBeforeDate(other: Instant): Boolean {
+    return this.toEpochMilliseconds() < other.toEpochMilliseconds() && !this.isSameDate(other)
+}
+
 fun Instant.customFormatTime(format: String): String {
     return DateTimeFormatter.ofPattern(format)
         .format(this.toLocalDateTime(TimeZone.currentSystemDefault()).toJavaLocalDateTime())

@@ -14,6 +14,7 @@ data class EventBanner(
     val image: String = "",
     val priority: EventPriority = EventPriority.LOW,
     val action: EventAction = EventAction.NONE,
+    val actionUrl: String = "",
     val endTime: Instant = Clock.System.now(),
     val startTime: Instant = Clock.System.now(),
 )

@@ -22,6 +22,7 @@ import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.features.addfriend.AddFriendViewModel
 import com.noljanolja.android.features.addfriend.SearchFriendResultScreen
 import com.noljanolja.android.features.addfriend.SearchFriendScreen
+import com.noljanolja.android.features.addreferral.AddReferralScreen
 import com.noljanolja.android.features.auth.countries.CountriesScreen
 import com.noljanolja.android.features.auth.login_or_signup.LoginOrSignupScreen
 import com.noljanolja.android.features.auth.otp.OTPScreen
@@ -29,6 +30,7 @@ import com.noljanolja.android.features.auth.terms_of_service.TermsOfServiceScree
 import com.noljanolja.android.features.auth.updateprofile.UpdateProfileScreen
 import com.noljanolja.android.features.chatsettings.ChatSettingsScreen
 import com.noljanolja.android.features.edit_chat_title.EditChatTitleScreen
+import com.noljanolja.android.features.home.CheckinViewModel
 import com.noljanolja.android.features.home.chat.ChatScreen
 import com.noljanolja.android.features.home.chat_options.ChatOptionsScreen
 import com.noljanolja.android.features.home.contacts.ContactsScreen
@@ -36,12 +38,14 @@ import com.noljanolja.android.features.home.info.MyInfoScreen
 import com.noljanolja.android.features.home.play.playscreen.VideoDetailScreen
 import com.noljanolja.android.features.home.play.search.SearchVideosScreen
 import com.noljanolja.android.features.home.root.HomeScreen
+import com.noljanolja.android.features.home.wallet.checkin.CheckinScreen
 import com.noljanolja.android.features.home.wallet.dashboard.WalletDashboardScreen
 import com.noljanolja.android.features.home.wallet.detail.TransactionDetailScreen
 import com.noljanolja.android.features.home.wallet.model.UiLoyaltyPoint
 import com.noljanolja.android.features.home.wallet.myranking.MyRankingScreen
 import com.noljanolja.android.features.home.wallet.transaction.TransactionsHistoryScreen
 import com.noljanolja.android.features.qrcode.ScanQrCodeScreen
+import com.noljanolja.android.features.referral.ReferralScreen
 import com.noljanolja.android.features.setting.SettingScreen
 import com.noljanolja.android.features.setting.more.AboutUsScreen
 import com.noljanolja.android.features.setting.more.FAQScreen
@@ -112,12 +116,12 @@ fun MainScreen(
         startDestination = NavigationDirections.Splash.destination,
     ) {
         addSplashGraph()
-        addHomeGraph()
+        addHomeGraph(navController)
         addAuthGraph()
         addContactsGraph()
         addChatGraph()
         addVideoGraph()
-        addWalletGraph()
+        addWalletGraph(navController)
         addAddFriendGraph(navController)
         addShopGraph()
     }
@@ -132,9 +136,12 @@ private fun NavGraphBuilder.addSplashGraph() {
     }
 }
 
-private fun NavGraphBuilder.addHomeGraph() {
+private fun NavGraphBuilder.addHomeGraph(navController: NavHostController) {
     composable(NavigationDirections.Home.destination) { backStack ->
-        HomeScreen()
+        val checkinViewModel = backStack.sharedViewModel<CheckinViewModel>(
+            navController = navController
+        )
+        HomeScreen(checkinViewModel = checkinViewModel)
     }
     composable(NavigationDirections.MyInfo.destination) {
         MyInfoScreen()
@@ -164,6 +171,9 @@ private fun NavGraphBuilder.addAuthGraph() {
     }
     composable(NavigationDirections.UpdateProfile.destination) {
         UpdateProfileScreen()
+    }
+    composable(NavigationDirections.AddReferral.destination) {
+        AddReferralScreen()
     }
 }
 
@@ -257,7 +267,7 @@ private fun NavGraphBuilder.addVideoGraph() {
     }
 }
 
-private fun NavGraphBuilder.addWalletGraph() {
+private fun NavGraphBuilder.addWalletGraph(navController: NavHostController) {
     with(NavigationDirections.TransactionHistory) {
         composable(destination, arguments) {
             TransactionsHistoryScreen()
@@ -296,6 +306,22 @@ private fun NavGraphBuilder.addWalletGraph() {
     with(NavigationDirections.AboutUs) {
         composable(destination, arguments) {
             AboutUsScreen()
+        }
+    }
+    with(NavigationDirections.Checkin) {
+        composable(destination, arguments) { backStack ->
+            val checkinViewModel = backStack.sharedViewModel<CheckinViewModel>(
+                navController = navController
+            )
+            CheckinScreen(viewModel = checkinViewModel)
+        }
+    }
+    with(NavigationDirections.Referral) {
+        composable(
+            destination,
+            arguments
+        ) { backStack ->
+            ReferralScreen()
         }
     }
 }

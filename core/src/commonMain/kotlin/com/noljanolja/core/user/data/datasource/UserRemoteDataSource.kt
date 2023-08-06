@@ -2,6 +2,7 @@ package com.noljanolja.core.user.data.datasource
 
 import co.touchlab.kermit.Logger
 import com.noljanolja.core.contacts.domain.model.Contact
+import com.noljanolja.core.user.data.model.request.AddReferralCodeRequest
 import com.noljanolja.core.user.data.model.request.DeviceType
 import com.noljanolja.core.user.data.model.request.FindContactRequest
 import com.noljanolja.core.user.data.model.request.InviteFriendRequest
@@ -30,9 +31,11 @@ interface UserRemoteDataSource {
 
     suspend fun inviteFriend(friendId: String): Result<Boolean>
 
-    suspend fun checkin(): Result<Boolean>
+    suspend fun checkin(): Result<String>
 
     suspend fun getCheckinProgress(): Result<List<CheckinProgress>>
+
+    suspend fun addReferralCode(code: String): Result<Long>
 }
 
 class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSource {
@@ -162,11 +165,11 @@ class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSou
         }
     }
 
-    override suspend fun checkin(): Result<Boolean> {
+    override suspend fun checkin(): Result<String> {
         return try {
             val response = userApi.checkin()
             if (response.isSuccessful()) {
-                Result.success(true)
+                Result.success(response.message)
             } else {
                 Result.failure(Throwable(response.message))
             }
@@ -180,6 +183,19 @@ class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSou
             val response = userApi.getCheckinProgress()
             if (response.isSuccessful()) {
                 Result.success(response.data)
+            } else {
+                Result.failure(Throwable(response.message))
+            }
+        } catch (e: Throwable) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun addReferralCode(code: String): Result<Long> {
+        return try {
+            val response = userApi.addReferralCode(AddReferralCodeRequest(code))
+            if (response.isSuccessful()) {
+                Result.success(response.data.rewardPoints)
             } else {
                 Result.failure(Throwable(response.message))
             }

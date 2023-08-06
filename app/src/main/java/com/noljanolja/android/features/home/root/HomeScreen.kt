@@ -21,6 +21,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.noljanolja.android.features.home.CheckinViewModel
 import com.noljanolja.android.features.home.conversations.ConversationsScreen
 import com.noljanolja.android.features.home.play.playlist.PlayListScreen
 import com.noljanolja.android.features.home.root.banner.EventBannerDialog
@@ -38,9 +39,11 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = getViewModel(),
+    checkinViewModel: CheckinViewModel,
 ) {
     val context = LocalContext.current
     val showBanners by viewModel.eventBannersFlow.collectAsStateWithLifecycle()
+    val checkinProgresses by checkinViewModel.checkinProgressFlow.collectAsStateWithLifecycle()
     LaunchedEffect(key1 = viewModel.errorFlow) {
         launch {
             viewModel.errorFlow.collect {
@@ -65,12 +68,13 @@ fun HomeScreen(
             startDestination = HomeNavigationItem.ChatItem.route,
             modifier = Modifier.padding(contentPadding),
         ) {
-            addNavigationGraph(navController)
+            addNavigationGraph(navController, checkinViewModel)
         }
     }
     showBanners.takeIf { it.isNotEmpty() }?.let {
         EventBannerDialog(
             eventBanners = it,
+            checkinProgresses = checkinProgresses,
             onCheckIn = {
                 HomeNavigationItem.WalletItem.click(navController)
             },
@@ -86,6 +90,7 @@ fun HomeScreen(
 
 private fun NavGraphBuilder.addNavigationGraph(
     navController: NavHostController,
+    checkinViewModel: CheckinViewModel,
 ) {
     composable(HomeNavigationItem.ChatItem.route) {
         ConversationsScreen()
@@ -95,6 +100,7 @@ private fun NavGraphBuilder.addNavigationGraph(
     }
     composable(HomeNavigationItem.WalletItem.route) {
         WalletScreen(
+            checkinViewModel = checkinViewModel,
             onUseNow = {
                 HomeNavigationItem.StoreItem.click(navController)
             }

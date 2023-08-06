@@ -47,7 +47,7 @@ class UpdateProfileViewModel : BaseViewModel() {
         val result = coreManager.updateUser(name = name, email = null)
         if (result.isSuccess) {
             _uiStateFlow.emit(UpdateProfileUiState())
-            navigationManager.navigate(NavigationDirections.Home)
+            navigationManager.navigate(NavigationDirections.AddReferral)
         } else {
             _uiStateFlow.emit(UpdateProfileUiState(error = result.exceptionOrNull()))
         }

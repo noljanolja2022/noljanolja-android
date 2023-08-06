@@ -7,4 +7,5 @@ data class UserRemoteModel(
     val avatar: String? = null,
     val phone: String? = null,
     val email: String? = null,
+    val referralCode: String = "",
 )

@@ -119,6 +119,17 @@ object NavigationDirections {
         override val destination: String = "home"
     }
 
+    object AddReferral : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options: NavOptions = navOptions {
+            popUpTo(Root.destination) {
+                inclusive = true
+            }
+            launchSingleTop = true
+        }
+        override val destination: String = "add_referral"
+    }
+
     object ChatItem : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options = null
@@ -406,6 +417,18 @@ object NavigationDirections {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options = null
         override val destination: String = "coupons"
+    }
+
+    object Checkin : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "checkin"
+    }
+
+    object Referral : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "referral"
     }
 
     // Back

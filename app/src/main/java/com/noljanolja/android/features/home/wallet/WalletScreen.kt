@@ -56,6 +56,7 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
+import com.noljanolja.android.features.home.CheckinViewModel
 import com.noljanolja.android.ui.composable.CircleAvatar
 import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.RankingRow
@@ -66,11 +67,11 @@ import com.noljanolja.android.ui.theme.Orange300
 import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.util.formatDigitsNumber
 import com.noljanolja.android.util.showError
-import com.noljanolja.android.util.showToast
 import com.noljanolja.core.event.domain.model.EventBanner
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
 import com.noljanolja.core.user.domain.model.CheckinProgress
 import com.noljanolja.core.user.domain.model.User
+import com.patrykandpatrick.vico.core.extension.orZero
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.getViewModel
@@ -78,16 +79,13 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun WalletScreen(
     viewModel: WalletViewModel = getViewModel(),
+    checkinViewModel: CheckinViewModel,
     onUseNow: () -> Unit,
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     val memberInfo by viewModel.memberInfoFlow.collectAsStateWithLifecycle()
-    LaunchedEffect(key1 = viewModel.checkinSuccessEvent) {
-        viewModel.checkinSuccessEvent.collectLatest {
-            context.showToast(context.getString(R.string.wallet_checkin_success))
-        }
-    }
+    val checkinProgresses by checkinViewModel.checkinProgressFlow.collectAsStateWithLifecycle()
     LaunchedEffect(key1 = viewModel.errorFlow) {
         viewModel.errorFlow.collectLatest {
             context.showError(it)
@@ -95,6 +93,7 @@ fun WalletScreen(
     }
     WalletContent(
         uiState = uiState,
+        checkinProgresses = checkinProgresses,
         memberInfo = memberInfo,
         handleEvent = viewModel::handleEvent,
         onUseNow = onUseNow
@@ -105,6 +104,7 @@ fun WalletScreen(
 @Composable
 private fun WalletContent(
     uiState: UiState<WalletUIData>,
+    checkinProgresses: List<CheckinProgress>,
     memberInfo: MemberInfo,
     handleEvent: (WalletEvent) -> Unit,
     onUseNow: () -> Unit,
@@ -114,7 +114,6 @@ private fun WalletContent(
     ScaffoldWithUiState(uiState = uiState) {
         val user = uiState.data?.user ?: return@ScaffoldWithUiState
         val banners = uiState.data.banners
-        val checkinProgresses = uiState.data.checkinProgresses
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -382,7 +381,8 @@ private fun UserAttendance(
                     AttendeeInformationItem(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(18.dp),
+                            .padding(vertical = 18.dp)
+                            .padding(end = 18.dp),
                         firstText = stringResource(id = R.string.wallet_checkin),
                         secondText = stringResource(id = R.string.wallet_every_day).uppercase()
                     )
@@ -430,7 +430,7 @@ private fun UserAttendance(
                         }
                         SizeBox(height = 4.dp)
                         LinearProgressIndicator(
-                            progress = checkedDay.toFloat() / checkinProgresses.size,
+                            progress = (checkedDay.toFloat() / checkinProgresses.size).takeIf { checkinProgresses.isNotEmpty() }.orZero,
                             modifier = Modifier
                                 .clip(RoundedCornerShape(6.dp))
                                 .height(6.dp),
@@ -465,7 +465,7 @@ private fun UserAttendance(
 }
 
 @Composable
-private fun AttendeeInformationItem(
+fun AttendeeInformationItem(
     firstText: String,
     secondText: String,
     modifier: Modifier = Modifier,
@@ -483,7 +483,7 @@ private fun AttendeeInformationItem(
         )
         Text(
             text = secondText,
-            style = MaterialTheme.typography.headlineMedium.withBold(),
+            style = MaterialTheme.typography.headlineSmall.withBold(),
             color = MaterialTheme.colorScheme.onBackground
         )
     }

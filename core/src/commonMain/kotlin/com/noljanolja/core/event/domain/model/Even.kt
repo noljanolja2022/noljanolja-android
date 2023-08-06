@@ -10,5 +10,5 @@ data class Even(
     val isActive: Boolean,
     val priority: String,
     val startTime: String,
-    val title: String
+    val title: String,
 )

@@ -35,6 +35,7 @@ class LocalUserDataSource(
             dob: String?,
             avatar: String?,
             isMe: Boolean,
+            referralCode: String,
             created_at: Long,
             updated_at: Long,
         ->
@@ -47,6 +48,7 @@ class LocalUserDataSource(
             dob = dob?.let { LocalDate.parse(it) },
             avatar = avatar,
             isMe = isMe,
+            referralCode = referralCode,
             createdAt = Instant.fromEpochMilliseconds(created_at),
             updatedAt = Instant.fromEpochMilliseconds(updated_at),
         )
@@ -135,6 +137,7 @@ class LocalUserDataSource(
             dob = user.dob?.toString(),
             avatar = user.avatar,
             isMe = user.isMe,
+            referralCode = user.referralCode,
             created_at = user.createdAt.toEpochMilliseconds(),
             updated_at = user.updatedAt.toEpochMilliseconds(),
         )
@@ -155,6 +158,7 @@ class LocalUserDataSource(
                     dob = participant.dob?.toString(),
                     avatar = participant.avatar,
                     isMe = participant.isMe,
+                    referralCode = participant.referralCode,
                     created_at = participant.createdAt.toEpochMilliseconds(),
                     updated_at = participant.updatedAt.toEpochMilliseconds(),
                 )

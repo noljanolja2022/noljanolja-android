@@ -126,11 +126,15 @@ internal class UserRepositoryImpl(
         } ?: getCurrentUser(true)
     }
 
-    override suspend fun checkin(): Result<Boolean> {
+    override suspend fun checkin(): Result<String> {
         return userRemoteDataSource.checkin()
     }
 
     override suspend fun getCheckinProgress(): Result<List<CheckinProgress>> {
         return userRemoteDataSource.getCheckinProgress()
+    }
+
+    override suspend fun addReferralCode(code: String): Result<Long> {
+        return userRemoteDataSource.addReferralCode(code)
     }
 }

@@ -11,6 +11,7 @@ fun UserRemoteModel.toDomainUser() = User(
     email = email?.takeIf { it.isNotBlank() },
     avatar = avatar,
     phone = phone?.takeIf { it.isNotBlank() },
+    referralCode = referralCode,
 )
 
 fun User.isRemoveFromConversation(conversation: Conversation): Boolean {

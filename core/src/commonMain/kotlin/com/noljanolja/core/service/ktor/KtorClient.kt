@@ -23,6 +23,7 @@ object KtorClient {
         config: KtorConfig,
         coreManager: CoreManager,
         tokenRepo: TokenRepo,
+        localize: () -> String,
     ) = HttpClient(engine) {
         install(ContentNegotiation) {
             json(
@@ -72,6 +73,7 @@ object KtorClient {
         install(DefaultRequest) {
             header(HttpHeaders.ContentType, ContentType.Application.Json)
             header(HttpHeaders.UserAgent, config.userAgent)
+            header(HttpHeaders.AcceptLanguage, localize.invoke())
         }
     }
 }

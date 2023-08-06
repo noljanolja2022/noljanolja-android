@@ -24,6 +24,7 @@ import com.noljanolja.android.common.sharedpreference.SharedPreferenceHelper
 import com.noljanolja.android.common.user.data.AuthDataSourceImpl
 import com.noljanolja.android.common.user.data.TokenRepoImpl
 import com.noljanolja.android.features.addfriend.AddFriendViewModel
+import com.noljanolja.android.features.addreferral.AddReferralViewModel
 import com.noljanolja.android.features.auth.countries.CountriesViewModel
 import com.noljanolja.android.features.auth.forget.ForgotViewModel
 import com.noljanolja.android.features.auth.login.LoginViewModel
@@ -34,6 +35,7 @@ import com.noljanolja.android.features.auth.terms_of_service.TermsOfServiceViewM
 import com.noljanolja.android.features.auth.updateprofile.UpdateProfileViewModel
 import com.noljanolja.android.features.chatsettings.ChatSettingsViewModel
 import com.noljanolja.android.features.edit_chat_title.EditChatTitleViewModel
+import com.noljanolja.android.features.home.CheckinViewModel
 import com.noljanolja.android.features.home.chat.ChatViewModel
 import com.noljanolja.android.features.home.chat_options.ChatOptionsViewModel
 import com.noljanolja.android.features.home.contacts.ContactsViewModel
@@ -53,6 +55,7 @@ import com.noljanolja.android.features.home.wallet.detail.TransactionDetailViewM
 import com.noljanolja.android.features.home.wallet.myranking.MyRankingViewModel
 import com.noljanolja.android.features.home.wallet.transaction.TransactionHistoryViewModel
 import com.noljanolja.android.features.qrcode.ScanQrCodeViewModel
+import com.noljanolja.android.features.referral.ReferralViewModel
 import com.noljanolja.android.features.setting.SettingViewModel
 import com.noljanolja.android.features.setting.more.AppInfoViewModel
 import com.noljanolja.android.features.sharemessage.SelectShareMessageViewModel
@@ -195,8 +198,15 @@ class MyApplication : Application() {
                         get(),
                         get(),
                         get(),
-                        get(),
-                    )
+                        get()
+                    ) {
+                        val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            this@MyApplication.resources.configuration.locales[0]
+                        } else {
+                            this@MyApplication.resources.configuration.locale
+                        }
+                        locale.language
+                    }
                 }
                 single<AuthDataSource> {
                     AuthDataSourceImpl(get())
@@ -314,6 +324,13 @@ class MyApplication : Application() {
                 }
                 viewModel {
                     OptionsVideoViewModel()
+                }
+                viewModel {
+                    CheckinViewModel()
+                }
+                viewModel { ReferralViewModel() }
+                viewModel {
+                    AddReferralViewModel()
                 }
             }
         )

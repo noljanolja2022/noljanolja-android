@@ -6,8 +6,8 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import kotlinx.datetime.Instant as KInstant
 
-fun String.toInstant(): KInstant {
-    val formatter = DateTimeFormatter.ofPattern("MM-yyyy")
+fun String.toInstant(format: String = "yyyy-MM-dd"): KInstant {
+    val formatter = DateTimeFormatter.ofPattern(format)
     val localDate = LocalDate.parse(this, formatter)
     val instant = localDate.atStartOfDay().toInstant(ZoneOffset.UTC)
     return instant.toKotlinInstant()

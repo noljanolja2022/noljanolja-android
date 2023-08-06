@@ -52,6 +52,7 @@ fun LoadingDialog(
 
 @Composable
 fun InfoDialog(
+    title: @Composable (() -> Unit)? = null,
     content: String,
     isShown: Boolean = false,
     dismissText: String,
@@ -59,6 +60,7 @@ fun InfoDialog(
 ) {
     if (isShown) {
         AlertDialog(
+            title = title,
             text = { Text(text = content) },
             dismissButton = {
                 TextButton(onClick = onDismiss) {
@@ -67,6 +69,9 @@ fun InfoDialog(
             },
             confirmButton = {},
             onDismissRequest = onDismiss,
+            containerColor = MaterialTheme.colorScheme.background,
+            titleContentColor = MaterialTheme.colorScheme.onBackground,
+            textContentColor = MaterialTheme.colorScheme.onBackground
         )
     }
 }

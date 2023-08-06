@@ -358,4 +358,20 @@
     <string name="wallet_every_day">Everyday</string>
     <string name="common_share">Share</string>
     <string name="common_share_success">Share success</string>
+    <string name="referral_receive_point">Congratulation! You and your friend have just  got %d Points from referal code.</string>
+    <string name="invalid_referral">Invalid referral code</string>
+    <string name="referral_code">Referral code</string>
+    <string name="please_enter_referral_code">Please enter referral code to get bonus gifts.</string>
+    <string name="common_skip">Skip</string>
+    <string name="join_play">Let’s join and Play</string>
+    <string name="send_invite_link">Send invitation link</string>
+    <string name="how_to_refer">How to refer a friend</string>
+    <string name="referral_step_1">Send invitation link. Just tap the button!</string>
+    <string name="referral_step_2">Invite link to friend will be sent</string>
+    <string name="referral_step_3">Via the link sent to you. Proceed to membership registration</string>
+    <string name="referral_step_4">When all courses are completed. Friends and I also earn 1,000P!</string>
+    <string name="referral_description">* Even if a friend manually enters the referral code after copying and sending it. You can participate in the friend referral event.</string>
+    <string name="open_link">Open link</string>
+    <string name="checkout_and_play">Checkout and play</string>
+    <string name="invite_to_get_benefits">Invite Friends to get benefits</string>
 </resources>

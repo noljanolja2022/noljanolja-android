@@ -16,7 +16,7 @@ private val LightColorScheme = lightColorScheme(
     secondary = YellowMain,
     secondaryContainer = Yellow00,
     onSecondary = Color.White,
-    onSecondaryContainer = Color.Black,
+    onSecondaryContainer = NeutralDarkGrey,
 
     tertiary = BlueMain,
     tertiaryContainer = Blue00,
@@ -41,9 +41,9 @@ private val DarkColorScheme = darkColorScheme(
     onPrimaryContainer = NeutralDarkGrey,
 
     secondary = YellowMain,
-    secondaryContainer = Color(0xFF373100),
-    onSecondary = Color(0xFF504700),
-    onSecondaryContainer = Color(0xFFFDE40F),
+    secondaryContainer = Yellow00,
+    onSecondary = Color.White,
+    onSecondaryContainer = NeutralDarkGrey,
 
     tertiary = BlueMain,
     tertiaryContainer = Blue00,
@@ -85,6 +85,14 @@ fun MaterialTheme.colorBackground(darkTheme: Boolean = isSystemInDarkTheme()) = 
 } else {
     NeutralLight
 }
+
+@Composable
+fun MaterialTheme.colorBackgroundTransaction(darkTheme: Boolean = isSystemInDarkTheme()) =
+    if (darkTheme) {
+        Green300
+    } else {
+        colorScheme.secondaryContainer
+    }
 
 @Composable
 fun MaterialTheme.systemGreen(darkTheme: Boolean = isSystemInDarkTheme()) =

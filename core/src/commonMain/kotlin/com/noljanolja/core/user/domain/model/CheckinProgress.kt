@@ -4,8 +4,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CheckinProgress(
-    val id: Long,
-    val day: Long,
-    val rewardPoints: Long,
-    val isCompleted: Boolean,
-)
+    val id: Long = 0L,
+    val day: String = "",
+    val rewardPoints: Long = 0L,
+) {
+    val isCompleted = rewardPoints > 0
+}

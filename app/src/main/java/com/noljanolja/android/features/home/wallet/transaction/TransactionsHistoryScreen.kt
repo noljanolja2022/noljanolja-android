@@ -38,6 +38,7 @@ import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SearchBar
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.DeeperGrey
+import com.noljanolja.android.ui.theme.colorBackgroundTransaction
 import com.noljanolja.android.ui.theme.darkContent
 import com.noljanolja.android.util.formatMonthAndYear
 import com.noljanolja.android.util.getMonth
@@ -156,7 +157,7 @@ private fun WalletTransactionContent(
                                         .clickable {
                                             handleEvent(TransactionsHistoryEvent.Detail(value))
                                         }
-                                        .background(if (index % 2 == 0) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.background)
+                                        .background(if (index % 2 == 0) MaterialTheme.colorBackgroundTransaction() else MaterialTheme.colorScheme.background)
                                         .padding(vertical = 10.dp, horizontal = 16.dp),
                                 )
                             }

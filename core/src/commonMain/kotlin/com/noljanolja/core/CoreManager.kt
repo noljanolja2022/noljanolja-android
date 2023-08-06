@@ -265,6 +265,8 @@ class CoreManager : KoinComponent {
 
     suspend fun getCheckinProgress() = userRepository.getCheckinProgress()
 
+    suspend fun addReferralCode(code: String) = userRepository.addReferralCode(code)
+
     suspend fun logout(requireSuccess: Boolean = true): Result<Boolean> {
         return userRepository.logout(requireSuccess).also {
             clearManager.clearAll()

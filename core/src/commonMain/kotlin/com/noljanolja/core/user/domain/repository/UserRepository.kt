@@ -40,7 +40,9 @@ internal interface UserRepository {
     // logout
     suspend fun logout(requireSuccess: Boolean): Result<Boolean>
 
-    suspend fun checkin(): Result<Boolean>
+    suspend fun checkin(): Result<String>
 
     suspend fun getCheckinProgress(): Result<List<CheckinProgress>>
+
+    suspend fun addReferralCode(code: String): Result<Long>
 }

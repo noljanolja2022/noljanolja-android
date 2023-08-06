@@ -17,6 +17,7 @@ data class User(
     val createdAt: Instant = Clock.System.now(),
     val updatedAt: Instant = Clock.System.now(),
     var isMe: Boolean = false,
+    val referralCode: String = "",
 ) {
     fun getAvatarUrl() = avatar?.replace("storage", "storage-download")
     fun getQrUrl() = "nolljanollja:id:$id"

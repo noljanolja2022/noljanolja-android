@@ -1,12 +1,14 @@
 package com.noljanolja.core.user.data.datasource
 
 import com.noljanolja.core.base.ResponseWithoutData
+import com.noljanolja.core.user.data.model.request.AddReferralCodeRequest
 import com.noljanolja.core.user.data.model.request.FindContactRequest
 import com.noljanolja.core.user.data.model.request.InviteFriendRequest
 import com.noljanolja.core.user.data.model.request.PushTokensRequest
 import com.noljanolja.core.user.data.model.request.SyncUserContactsRequest
 import com.noljanolja.core.user.data.model.request.UpdateAvatarRequest
 import com.noljanolja.core.user.data.model.request.UpdateUserRequest
+import com.noljanolja.core.user.data.model.response.AddReferralResponse
 import com.noljanolja.core.user.data.model.response.GetCheckinProgressesResponse
 import com.noljanolja.core.user.data.model.response.GetMeResponse
 import com.noljanolja.core.user.data.model.response.GetUsersResponse
@@ -100,5 +102,11 @@ class UserApi(private val client: HttpClient) {
 
     suspend fun getCheckinProgress(): GetCheckinProgressesResponse {
         return client.get("$BASE_URL/users/me/checkin-progresses").body()
+    }
+
+    suspend fun addReferralCode(request: AddReferralCodeRequest): AddReferralResponse {
+        return client.put("$BASE_URL/users/me/referral") {
+            setBody(request)
+        }.body()
     }
 }
