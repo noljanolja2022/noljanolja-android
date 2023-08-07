@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -53,11 +52,13 @@ import com.noljanolja.android.ui.composable.InfoDialog
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.Orange300
-import com.noljanolja.android.ui.theme.withMedium
+import com.noljanolja.android.ui.theme.withBold
+import com.noljanolja.android.util.checkinDayToInstant
+import com.noljanolja.android.util.customFormatTime
 import com.noljanolja.android.util.getDayOfWeek
+import com.noljanolja.android.util.indexToDayOfWeek
 import com.noljanolja.android.util.isBeforeDate
 import com.noljanolja.android.util.secondaryTextColor
-import com.noljanolja.android.util.toInstant
 import com.noljanolja.core.user.domain.model.CheckinProgress
 import com.patrykandpatrick.vico.core.extension.orZero
 import kotlinx.coroutines.flow.collectLatest
@@ -217,43 +218,57 @@ private fun CheckinCalendarContent(
     ) {
         repeat(7) {
             Text(
-                text = if (it == 6) "Sun" else (it + 2).toString(),
-                modifier = Modifier.weight(1f),
+                text = it.indexToDayOfWeek(),
+                modifier = Modifier.weight(1f).padding(horizontal = 5.dp),
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodySmall.withMedium(),
+                style = MaterialTheme.typography.bodySmall.withBold(),
                 color = MaterialTheme.secondaryTextColor()
             )
         }
     }
 
     val startIndex =
-        (checkinProgresses.firstOrNull()?.day?.toInstant()?.getDayOfWeek()?.value ?: 1) - 1
+        (
+            checkinProgresses.firstOrNull()?.day?.checkinDayToInstant()?.getDayOfWeek()?.value
+                ?: 1
+            ) - 1
     repeat(row) { rowIndex ->
         SizeBox(height = 8.dp)
         Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
             repeat(7) {
                 val index = it - startIndex
                 val progress = checkinProgresses.getOrNull(rowIndex * 7 + index)
+
                 progress?.let {
-                    val isInPass = it.day.toInstant().isBeforeDate(Clock.System.now())
-                    if (it.rewardPoints > 0) {
-                        Icon(
-                            Icons.Default.Check,
-                            contentDescription = null,
-                            modifier = Modifier.clip(CircleShape).weight(1f).aspectRatio(1f)
-                                .background(MaterialTheme.colorScheme.primaryContainer)
-                                .padding(10.dp),
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    } else {
-                        Image(
-                            painter = painterResource(id = if (isInPass) R.drawable.ic_point else R.drawable.ic_coin),
-                            contentDescription = null,
-                            modifier = Modifier.clip(CircleShape).weight(1f).border(
-                                width = 1.5.dp,
-                                shape = CircleShape,
-                                color = MaterialTheme.colorScheme.outline
-                            ).aspectRatio(1f).padding(10.dp),
+                    val day = it.day.checkinDayToInstant()
+                    Column(
+                        modifier = Modifier.weight(1f).padding(5.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        val isInPass = day.isBeforeDate(Clock.System.now())
+                        if (it.rewardPoints > 0) {
+                            Icon(
+                                Icons.Default.Check,
+                                contentDescription = null,
+                                modifier = Modifier.clip(CircleShape).fillMaxWidth().aspectRatio(1f)
+                                    .background(MaterialTheme.colorScheme.primaryContainer),
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        } else {
+                            Image(
+                                painter = painterResource(id = if (isInPass) R.drawable.ic_point else R.drawable.ic_coin),
+                                contentDescription = null,
+                                modifier = Modifier.clip(CircleShape).fillMaxWidth().border(
+                                    width = 1.5.dp,
+                                    shape = CircleShape,
+                                    color = MaterialTheme.colorScheme.outline
+                                ).aspectRatio(1f),
+                            )
+                        }
+                        Text(
+                            day.customFormatTime("MM/dd"),
+                            color = MaterialTheme.secondaryTextColor(),
+                            style = MaterialTheme.typography.bodySmall
                         )
                     }
                 } ?: Box(modifier = Modifier.weight(1f))
