@@ -1,3 +1,4 @@
+- 1.0.26: Checkin & referral
 - 1.0.25: Share video
 - 1.0.24: Update app name, logo
 - 1.0.23: Release checkin, fix bug search videos
