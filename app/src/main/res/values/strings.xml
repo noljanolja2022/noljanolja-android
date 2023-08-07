@@ -91,7 +91,7 @@
     <string name="home_news">News</string>
 
     <!--    Login-->
-    <string name="login_phone_description">Welcome to Nolja Nolja. Please enter your Phone number to join continue.</string>
+    <string name="login_phone_description">Welcome to NolgoBulja. Please enter your Phone number to join continue.</string>
     <string name="login_country_input_label">Country</string>
     <string name="login_phone_input_label">Phone Number</string>
     <string name="login_invalid_phone_title">Incorrect Number</string>
@@ -318,12 +318,12 @@
     <string name="scan_qr_code_title">Scan QR code</string>
     <string name="chat_setting_friend_management">Friends management</string>
     <string name="chat_setting_auto_add_friend">Automatically add friends</string>
-    <string name="chat_setting_auto_add_description">Users who use Noja Noja app in your Directory will be synchronized automatically with friendlist in Nolja Nolja.</string>
+    <string name="chat_setting_auto_add_description">Users who use NolgoBulja app in your Directory will be synchronized automatically with friendlist in NolgoBulja.</string>
     <string name="chat_setting_all_friends">All friends</string>
     <string name="chat_setting_hide_friends">Hiden friends</string>
     <string name="chat_setting_blocked_friends">Blocked friends</string>
 
-    <string name="shop_welcome_nolja_shop">Welcome to Nolja shop!</string>
+    <string name="shop_welcome_nolja_shop">Welcome to NolgoBulja shop!</string>
     <string name="shop_search_products">Search products</string>
     <string name="shop_clear_all">Clear all</string>
     <string name="shop_view_all">View all</string>

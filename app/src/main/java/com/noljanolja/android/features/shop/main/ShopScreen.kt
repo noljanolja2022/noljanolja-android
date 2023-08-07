@@ -44,7 +44,6 @@ import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.features.shop.composable.CouponItem
 import com.noljanolja.android.features.shop.composable.HelpDialog
 import com.noljanolja.android.features.shop.composable.ProductItem
-import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SearchBar
 import com.noljanolja.android.ui.composable.SizeBox
@@ -205,13 +204,16 @@ private fun ExchangeCoupons(
         Text(
             text = stringResource(id = R.string.shop_exchanged_coupons),
             style = MaterialTheme.typography.bodyLarge.withBold(),
-            color = MaterialTheme.colorScheme.onPrimaryContainer
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            maxLines = 2,
+            modifier = Modifier.weight(1f)
         )
-        Expanded()
+        SizeBox(width = 10.dp)
         Text(
             text = stringResource(id = R.string.shop_view_all),
             style = MaterialTheme.typography.bodyLarge.withBold(),
             color = Color.White,
+            maxLines = 1,
             modifier = Modifier.clickable {
                 viewAllCoupons.invoke()
             }
