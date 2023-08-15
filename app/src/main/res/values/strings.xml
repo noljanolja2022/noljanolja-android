@@ -376,6 +376,6 @@
     <string name="uncompleted_video">Uncompleted video</string>
     <string name="get_point_after_watching">+ %d Points after watching</string>
     <string name="video_completed_state">Complete state: %d %%</string>
-    <string name="seconds">%d seconds</string>
-    <string name="minutes">%d minutes</string>
+    <string name="seconds">%d sec</string>
+    <string name="minutes">%d min</string>
 </resources>
