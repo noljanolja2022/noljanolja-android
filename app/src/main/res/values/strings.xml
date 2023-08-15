@@ -342,7 +342,7 @@
     <string name="gift_deduction_point">Deduction point</string>
     <string name="gift_remaining_point">Remaining points</string>
     <string name="gift_purchase">Purchase</string>
-    <string name="gift_give_code_to_cashier">Give this Code to the cashier to get products</string>
+    <string name="gift_give_code_to_cashier">Give this Code to the cashier to get pradoducts</string>
     <string name="shop_coupon">Coupon</string>
     <string name="chat_action_reply">Reply</string>
     <string name="chat_action_forward">Forward</string>
@@ -373,4 +373,9 @@
     <string name="open_link">Open link</string>
     <string name="checkout_and_play">Checkout and play</string>
     <string name="invite_to_get_benefits">Invite Friends to get benefits</string>
+    <string name="uncompleted_video">Uncompleted video</string>
+    <string name="get_point_after_watching">+ %d Points after watching</string>
+    <string name="video_completed_state">Complete state: %d %%</string>
+    <string name="seconds">%d seconds</string>
+    <string name="minutes">%d minutes</string>
 </resources>

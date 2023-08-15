@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.touchlab.kermit.Logger
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.noljanolja.android.MainActivity.Companion.getConversationId
@@ -352,7 +351,6 @@ fun ConversationRow(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
             )
-            Logger.d("Conversationnn ${message.isSeenByMe}")
             if (!conversation.isSeen()) {
                 Text(
                     "1",

@@ -284,6 +284,7 @@ private fun SearchVideosResult(
                                 .fillMaxHeight()
                         ) {
                             TrendingVideo(
+                                thumbnailModifier = Modifier.padding(start = 16.dp),
                                 video = it,
                                 onClick = { onClick(it) },
                                 onMore = onMoreVideo
@@ -297,12 +298,14 @@ private fun SearchVideosResult(
                                 .fillMaxHeight()
                         ) {
                             TrendingVideo(
+                                thumbnailModifier = Modifier.padding(start = 16.dp),
                                 video = it,
                                 onClick = { onClick(it) },
                                 onMore = onMoreVideo
                             )
                         }
                     } ?: Box(modifier = Modifier.weight(1f))
+                    SizeBox(width = 16.dp)
                 }
             }
         }

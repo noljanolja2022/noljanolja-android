@@ -24,9 +24,9 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -52,6 +52,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -119,14 +120,20 @@ private fun PlayListContent(
                 .pullRefresh(state)
         ) {
             item {
-                HighlightVideos(videos = data.todayVideos, onClick = {
+                HighlightVideos(videos = data.highlightVideos, onClick = {
                     handleEvent(PlayListEvent.PlayVideo(it.id))
                 })
                 SizeBox(height = 12.dp)
             }
-            watchingVideos(videos = data.watchingVideos, onClick = {
-                handleEvent(PlayListEvent.PlayVideo(it.id))
-            })
+            watchingVideos(
+                videos = data.watchingVideos,
+                onClick = {
+                    handleEvent(PlayListEvent.PlayVideo(it.id))
+                },
+                onShowAll = {
+                    handleEvent(PlayListEvent.Uncompleted)
+                }
+            )
             item {
                 if (data.watchingVideos.isNotEmpty() && data.todayVideos.isNotEmpty()) {
                     Divider(thickness = 1.dp, modifier = Modifier.padding(vertical = 16.dp))
@@ -249,6 +256,7 @@ private fun LazyListScope.trendingVideos(
                 videos[index * 2].let {
                     Column(modifier = Modifier.weight(1f).fillMaxHeight()) {
                         TrendingVideo(
+                            thumbnailModifier = Modifier.padding(start = 16.dp),
                             video = it,
                             onClick = { onClick(it) },
                             onMore = onMoreVideo
@@ -258,12 +266,14 @@ private fun LazyListScope.trendingVideos(
                 videos.getOrNull(index * 2 + 1)?.let {
                     Column(modifier = Modifier.weight(1f).fillMaxHeight()) {
                         TrendingVideo(
+                            thumbnailModifier = Modifier.padding(start = 16.dp),
                             video = it,
                             onClick = { onClick(it) },
                             onMore = onMoreVideo
                         )
                     }
                 } ?: Box(modifier = Modifier.weight(1f))
+                SizeBox(width = 16.dp)
             }
         }
     }
@@ -272,14 +282,27 @@ private fun LazyListScope.trendingVideos(
 private fun LazyListScope.watchingVideos(
     videos: List<Video>,
     onClick: (Video) -> Unit,
+    onShowAll: () -> Unit,
 ) {
     if (videos.isEmpty()) return
     item(key = "watching_title") {
-        Text(
-            stringResource(id = R.string.video_list_watching_to_get_point),
-            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+                .clickable { onShowAll() }
+                .padding(horizontal = 16.dp)
+        ) {
+            Text(
+                stringResource(id = R.string.video_list_watching_to_get_point),
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+            )
+            Icon(
+                Icons.Default.ChevronRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+        }
         SizeBox(height = 8.dp)
     }
     item {
@@ -313,7 +336,7 @@ private fun LazyListScope.watchingVideos(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(2.dp),
-                        color = MaterialTheme.colorScheme.secondary,
+                        color = MaterialTheme.colorScheme.primary,
                         trackColor = MaterialTheme.colorScheme.outline,
                         progress = video.getVideoProgress()
                     )
@@ -337,6 +360,7 @@ private fun LazyListScope.watchingVideos(
 
 @Composable
 fun TrendingVideo(
+    thumbnailModifier: Modifier = Modifier,
     video: Video,
     onClick: (Video) -> Unit,
     onMore: (Video) -> Unit,
@@ -347,16 +371,26 @@ fun TrendingVideo(
             .memoryCacheKey("video${video.id}").diskCacheKey("video${video.id}").build(),
         contentDescription = null,
         contentScale = ContentScale.Crop,
-        modifier = Modifier
+        modifier = thumbnailModifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
             .aspectRatio(VIDEO_IMAGE_RATIO)
-            .clip(RoundedCornerShape(10.dp))
             .clickable {
                 onClick(video)
             }
     )
-    SizeBox(height = 16.dp)
+    Text(
+        text = stringResource(id = R.string.get_point_after_watching, video.totalPoints),
+        style = MaterialTheme.typography.bodyMedium.copy(
+            fontWeight = FontWeight(700),
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            textAlign = TextAlign.Center,
+        ),
+        modifier = thumbnailModifier
+            .fillMaxWidth()
+            .background(color = MaterialTheme.colorScheme.secondary)
+            .padding(vertical = 3.dp)
+    )
+    SizeBox(height = 3.dp)
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.Top
@@ -365,6 +399,7 @@ fun TrendingVideo(
             text = video.title,
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
             modifier = Modifier.weight(1f).padding(horizontal = 16.dp),
+            color = MaterialTheme.colorScheme.onBackground
         )
         IconButton(onClick = { onMore(video) }) {
             Icon(Icons.Default.MoreVert, contentDescription = null)
@@ -382,5 +417,5 @@ fun TrendingVideo(
         text = video.getShortDescription(context),
         style = TextStyle(fontSize = 10.sp, color = MaterialTheme.colorScheme.outline)
     )
-    SizeBox(height = 40.dp)
+    SizeBox(height = 10.dp)
 }

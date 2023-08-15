@@ -1,6 +1,5 @@
 package com.noljanolja.android.features.home.wallet.checkin
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -35,7 +34,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -51,8 +49,11 @@ import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.InfoDialog
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.SizeBox
+import com.noljanolja.android.ui.theme.NeutralDeepGrey
+import com.noljanolja.android.ui.theme.NeutralLightGrey
 import com.noljanolja.android.ui.theme.Orange300
 import com.noljanolja.android.ui.theme.withBold
+import com.noljanolja.android.ui.theme.withMedium
 import com.noljanolja.android.util.checkinDayToInstant
 import com.noljanolja.android.util.customFormatTime
 import com.noljanolja.android.util.getDayOfWeek
@@ -113,6 +114,7 @@ private fun CheckinContent(
         val checkedDay = checkinProgresses.filter { it.rewardPoints > 0 }.size
 
         Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState())
         ) {
             Column(
@@ -120,50 +122,9 @@ private fun CheckinContent(
                     .background(MaterialTheme.colorScheme.onBackground),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                SizeBox(height = 16.dp)
-                Column(
-                    modifier = Modifier.width(IntrinsicSize.Min),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            stringResource(id = R.string.wallet_my_attendance),
-                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
-                            maxLines = 1,
-                            color = MaterialTheme.colorScheme.background
-                        )
-                        SizeBox(width = 8.dp)
-                        Text(
-                            checkedDay.toString(),
-                            style = TextStyle(
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.background
-                            )
-                        )
-                        Text(
-                            " / ${checkinProgresses.size}",
-                            style = TextStyle(
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.background
-                            )
-                        )
-                    }
-                    SizeBox(height = 4.dp)
-                    LinearProgressIndicator(
-                        progress = (checkedDay.toFloat() / checkinProgresses.size).takeIf { checkinProgresses.isNotEmpty() }.orZero,
-                        modifier = Modifier.clip(RoundedCornerShape(6.dp)).fillMaxWidth()
-                            .height(6.dp),
-                        color = Orange300,
-                        trackColor = MaterialTheme.colorScheme.surface,
-                    )
-                }
                 SizeBox(height = 20.dp)
                 Row(
-                    modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 28.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 15.dp)
                         .fillMaxWidth().clip(RoundedCornerShape(8.dp))
                         .background(MaterialTheme.colorScheme.background)
                 ) {
@@ -193,6 +154,53 @@ private fun CheckinContent(
                 ) {
                     handleEvent(CheckinEvent.Referral)
                 }
+            }
+            Column(
+                modifier = Modifier.width(IntrinsicSize.Min).padding(vertical = 20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                checkinProgresses.firstOrNull()?.day?.let {
+                    Text(
+                        it.checkinDayToInstant().customFormatTime("MMMM"),
+                        style = MaterialTheme.typography.headlineMedium.withMedium(),
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        stringResource(id = R.string.wallet_my_attendance),
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                        maxLines = 1,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    SizeBox(width = 8.dp)
+                    Text(
+                        checkedDay.toString(),
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    )
+                    Text(
+                        " / ${checkinProgresses.size}",
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    )
+                }
+                SizeBox(height = 4.dp)
+                LinearProgressIndicator(
+                    progress = (checkedDay.toFloat() / checkinProgresses.size).takeIf { checkinProgresses.isNotEmpty() }.orZero,
+                    modifier = Modifier.clip(RoundedCornerShape(6.dp)).fillMaxWidth()
+                        .height(6.dp),
+                    color = Orange300,
+                    trackColor = MaterialTheme.colorScheme.surface,
+                )
             }
             CheckinCalendarContent(checkinProgresses = checkinProgresses)
             SizeBox(height = 25.dp)
@@ -251,25 +259,39 @@ private fun CheckinCalendarContent(
                                 Icons.Default.Check,
                                 contentDescription = null,
                                 modifier = Modifier.clip(CircleShape).fillMaxWidth().aspectRatio(1f)
-                                    .background(MaterialTheme.colorScheme.primaryContainer),
+                                    .background(MaterialTheme.colorScheme.primaryContainer)
+                                    .padding(10.dp),
                                 tint = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                         } else {
-                            Image(
-                                painter = painterResource(id = if (isInPass) R.drawable.ic_point else R.drawable.ic_coin),
-                                contentDescription = null,
+                            val background =
+                                if (isInPass) NeutralLightGrey else MaterialTheme.colorScheme.secondary
+                            val content =
+                                if (isInPass) NeutralDeepGrey else MaterialTheme.colorScheme.onPrimaryContainer
+                            Box(
                                 modifier = Modifier.clip(CircleShape).fillMaxWidth().border(
                                     width = 1.5.dp,
                                     shape = CircleShape,
                                     color = MaterialTheme.colorScheme.outline
-                                ).aspectRatio(1f),
-                            )
+                                ).aspectRatio(1f)
+                                    .padding(10.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .clip(CircleShape)
+                                        .aspectRatio(1f)
+                                        .background(background),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        day.customFormatTime("dd"),
+                                        style = MaterialTheme.typography.bodySmall.withBold(),
+                                        color = content
+                                    )
+                                }
+                            }
                         }
-                        Text(
-                            day.customFormatTime("MM/dd"),
-                            color = MaterialTheme.secondaryTextColor(),
-                            style = MaterialTheme.typography.bodySmall
-                        )
                     }
                 } ?: Box(modifier = Modifier.weight(1f))
                 if (index < 6) {

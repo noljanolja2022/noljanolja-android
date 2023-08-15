@@ -1,6 +1,7 @@
 package com.noljanolja.core.video.domain.model
 
 import kotlinx.serialization.Serializable
+import kotlin.math.roundToInt
 
 @Serializable
 data class Video(
@@ -26,6 +27,8 @@ data class Video(
     fun getVideoProgress(): Float {
         return currentProgressMs.toFloat() / durationMs.toFloat()
     }
+
+    fun getVideoPercentProgress(): Int = (getVideoProgress() * 100).roundToInt()
 }
 
 enum class TrendingVideoDuration {

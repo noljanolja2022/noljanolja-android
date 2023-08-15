@@ -48,6 +48,7 @@ import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SearchBar
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.composable.UserPoint
+import com.noljanolja.android.ui.theme.shopBackground
 import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.ui.theme.withMedium
 import com.noljanolja.android.util.formatDigitsNumber
@@ -85,7 +86,7 @@ private fun ShopContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.primaryContainer)
+                .background(MaterialTheme.shopBackground())
                 .pullRefresh(state)
         ) {
             SearchProductHeader(
@@ -138,7 +139,7 @@ private fun SearchProductHeader(
                     bottomEnd = 10.dp
                 )
             )
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.colorScheme.primaryContainer)
             .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 6.dp)
     ) {
         Row(
@@ -148,15 +149,16 @@ private fun SearchProductHeader(
         ) {
             Text(
                 text = stringResource(id = R.string.shop_welcome_nolja_shop),
-                style = MaterialTheme.typography.titleSmall.withMedium()
+                style = MaterialTheme.typography.titleSmall.withMedium(),
+                color = MaterialTheme.colorScheme.onPrimaryContainer
             )
             Icon(
                 Icons.Default.Help,
                 contentDescription = null,
                 tint = if (isShowHelp) {
-                    MaterialTheme.colorScheme.primary
+                    MaterialTheme.colorScheme.secondary
                 } else {
-                    MaterialTheme.colorScheme.onBackground
+                    MaterialTheme.colorScheme.onPrimaryContainer
                 },
                 modifier = Modifier
                     .size(16.dp)
@@ -178,6 +180,7 @@ private fun SearchProductHeader(
             hint = stringResource(id = R.string.shop_search_products),
             onSearch = {},
             enabled = false,
+            background = MaterialTheme.colorScheme.background
         )
     }
     HelpDialog(
@@ -204,7 +207,7 @@ private fun ExchangeCoupons(
         Text(
             text = stringResource(id = R.string.shop_exchanged_coupons),
             style = MaterialTheme.typography.bodyLarge.withBold(),
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            color = MaterialTheme.colorScheme.onBackground,
             maxLines = 2,
             modifier = Modifier.weight(1f)
         )
@@ -212,7 +215,7 @@ private fun ExchangeCoupons(
         Text(
             text = stringResource(id = R.string.shop_view_all),
             style = MaterialTheme.typography.bodyLarge.withBold(),
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onBackground,
             maxLines = 1,
             modifier = Modifier.clickable {
                 viewAllCoupons.invoke()
@@ -253,7 +256,7 @@ fun LazyListScope.shop(
             text = stringResource(id = R.string.common_shop),
             style = MaterialTheme.typography.bodyLarge.withBold(),
             modifier = Modifier.padding(horizontal = 16.dp),
-            color = MaterialTheme.colorScheme.onPrimaryContainer
+            color = MaterialTheme.colorScheme.onBackground
         )
         SizeBox(height = 10.dp)
     }

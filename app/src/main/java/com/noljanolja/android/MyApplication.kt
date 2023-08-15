@@ -47,6 +47,7 @@ import com.noljanolja.android.features.home.play.optionsvideo.OptionsVideoViewMo
 import com.noljanolja.android.features.home.play.playlist.PlayListViewModel
 import com.noljanolja.android.features.home.play.playscreen.VideoDetailViewModel
 import com.noljanolja.android.features.home.play.search.SearchVideosViewModel
+import com.noljanolja.android.features.home.play.uncompleted.UncompletedVideoViewModel
 import com.noljanolja.android.features.home.require_login.RequireLoginViewModel
 import com.noljanolja.android.features.home.root.HomeViewModel
 import com.noljanolja.android.features.home.wallet.WalletViewModel
@@ -331,6 +332,9 @@ class MyApplication : Application() {
                 viewModel { ReferralViewModel() }
                 viewModel {
                     AddReferralViewModel()
+                }
+                viewModel {
+                    UncompletedVideoViewModel()
                 }
             }
         )

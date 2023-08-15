@@ -38,12 +38,16 @@ class PlayListViewModel : BaseViewModel() {
                             loading = true
                         )
                     )
-                    delay(500)
+                    delay(50)
                     refresh()
                 }
 
                 PlayListEvent.Search -> {
-                    navigationManager.navigate(NavigationDirections.SearchVideos)
+                    navigationManager.navigate(NavigationDirections.SearchProduct)
+                }
+
+                PlayListEvent.Uncompleted -> {
+                    navigationManager.navigate(NavigationDirections.UncompletedVideos)
                 }
             }
         }

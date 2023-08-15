@@ -5,4 +5,5 @@ sealed interface PlayListEvent {
     data class PlayVideo(val id: String) : PlayListEvent
     object Refresh : PlayListEvent
     object Search : PlayListEvent
+    object Uncompleted : PlayListEvent
 }

@@ -37,6 +37,7 @@ import com.noljanolja.android.features.home.contacts.ContactsScreen
 import com.noljanolja.android.features.home.info.MyInfoScreen
 import com.noljanolja.android.features.home.play.playscreen.VideoDetailScreen
 import com.noljanolja.android.features.home.play.search.SearchVideosScreen
+import com.noljanolja.android.features.home.play.uncompleted.UncompletedVideosScreen
 import com.noljanolja.android.features.home.root.HomeScreen
 import com.noljanolja.android.features.home.wallet.checkin.CheckinScreen
 import com.noljanolja.android.features.home.wallet.dashboard.WalletDashboardScreen
@@ -263,6 +264,11 @@ private fun NavGraphBuilder.addVideoGraph() {
     with(NavigationDirections.SearchVideos) {
         composable(destination, arguments) {
             SearchVideosScreen()
+        }
+    }
+    with(NavigationDirections.UncompletedVideos) {
+        composable(destination, arguments) {
+            UncompletedVideosScreen()
         }
     }
 }
