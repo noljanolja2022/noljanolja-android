@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -250,7 +251,7 @@ private fun CheckinCalendarContent(
                 progress?.let {
                     val day = it.day.checkinDayToInstant()
                     Column(
-                        modifier = Modifier.weight(1f).padding(5.dp),
+                        modifier = Modifier.weight(1f).padding(2.5.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         val isInPass = day.isBeforeDate(Clock.System.now())
@@ -260,7 +261,7 @@ private fun CheckinCalendarContent(
                                 contentDescription = null,
                                 modifier = Modifier.clip(CircleShape).fillMaxWidth().aspectRatio(1f)
                                     .background(MaterialTheme.colorScheme.primaryContainer)
-                                    .padding(10.dp),
+                                    .padding(8.dp),
                                 tint = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                         } else {
@@ -274,11 +275,12 @@ private fun CheckinCalendarContent(
                                     shape = CircleShape,
                                     color = MaterialTheme.colorScheme.outline
                                 ).aspectRatio(1f)
-                                    .padding(10.dp),
+                                    .padding(5.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Box(
                                     modifier = Modifier
+                                        .width(IntrinsicSize.Min)
                                         .clip(CircleShape)
                                         .aspectRatio(1f)
                                         .background(background),
