@@ -63,7 +63,6 @@ import com.noljanolja.android.ui.theme.NeutralLight
 import com.noljanolja.android.ui.theme.colorMyChatText
 import com.noljanolja.android.util.chatMessageBubbleTime
 import com.noljanolja.android.util.clicks
-import com.noljanolja.android.util.openImageFromCache
 import com.noljanolja.android.util.openUrl
 import com.noljanolja.android.util.setAnimated
 import com.noljanolja.android.util.toUri
@@ -108,7 +107,14 @@ fun ClickableMessage(
                 message = message,
                 conversationId = conversationId,
                 modifier = Modifier,
-                onMessageLongClick = onMessageLongClick
+                onMessageLongClick = onMessageLongClick,
+                onMessageClick = {
+                    handleEvent(
+                        ChatEvent.ViewImages(
+                            message.attachments.map { "${message.localId}/${it.originalName}" }
+                        )
+                    )
+                }
             )
         }
 
@@ -217,6 +223,7 @@ fun ClickablePhotoMessage(
     conversationId: Long,
     modifier: Modifier,
     onMessageLongClick: (Message) -> Unit,
+    onMessageClick: (Message) -> Unit,
 ) {
     val backgroundColor = if (message.sender.isMe) {
         MaterialTheme.colorScheme.primaryContainer
@@ -246,6 +253,9 @@ fun ClickablePhotoMessage(
                         timeAlign = TextAlign.End,
                         onLongClick = {
                             onMessageLongClick.invoke(message)
+                        },
+                        onClick = {
+                            onMessageClick.invoke(message)
                         }
                     )
                 }
@@ -271,6 +281,9 @@ fun ClickablePhotoMessage(
                             notShowImages = (size - 4).takeIf { it > 0 && row > 0 },
                             onLongClick = {
                                 onMessageLongClick.invoke(message)
+                            },
+                            onClick = {
+                                onMessageClick.invoke(message)
                             }
                         )
                     }
@@ -288,6 +301,7 @@ fun AttachmentRow(
     notShowImages: Int? = null,
     attachments: List<MessageAttachment>,
     maxAttachmentPerRow: Int,
+    onClick: () -> Unit,
     onLongClick: () -> Unit,
 ) {
     val isMe = message.sender.isMe
@@ -318,6 +332,7 @@ fun AttachmentRow(
                             time = message.createdAt.chatMessageBubbleTime(),
                             timeAlign = if (isMe) TextAlign.Start else TextAlign.End,
                             onLongClick = onLongClick,
+                            onClick = onClick
                         )
                         if ((index == 1 && !isMe) || (index == 0 && isMe)) {
                             notShowImages?.let {
@@ -356,6 +371,7 @@ private fun PhotoPreview(
     timeAlign: TextAlign = TextAlign.End,
     contentScale: ContentScale = ContentScale.Crop,
     onLongClick: () -> Unit,
+    onClick: () -> Unit,
 ) {
     val context = LocalContext.current
     var boxWidth by remember {
@@ -365,7 +381,7 @@ private fun PhotoPreview(
     Box(
         modifier = modifier.clicks(
             onClick = {
-                context.openImageFromCache(key)
+                onClick()
             },
             onLongClick = onLongClick
         ),

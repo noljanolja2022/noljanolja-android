@@ -33,3 +33,6 @@ fun String.capitalizeLetterAt(index: Int): String {
 }
 
 fun String.parseUserIdFromQr() = this.split(":").last()
+
+fun String.toNavList() = this.split(",")
+fun <T> List<T>.toNavString() = this.joinToString(",")

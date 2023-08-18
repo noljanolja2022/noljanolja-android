@@ -41,4 +41,5 @@ sealed interface ChatEvent {
 
     data class SelectShareMessage(val message: Message) : ChatEvent
     data class OpenVideo(val id: String) : ChatEvent
+    data class ViewImages(val images: List<String>) : ChatEvent
 }

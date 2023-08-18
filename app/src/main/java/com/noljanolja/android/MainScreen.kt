@@ -45,6 +45,7 @@ import com.noljanolja.android.features.home.wallet.detail.TransactionDetailScree
 import com.noljanolja.android.features.home.wallet.model.UiLoyaltyPoint
 import com.noljanolja.android.features.home.wallet.myranking.MyRankingScreen
 import com.noljanolja.android.features.home.wallet.transaction.TransactionsHistoryScreen
+import com.noljanolja.android.features.images.ViewImagesScreen
 import com.noljanolja.android.features.qrcode.ScanQrCodeScreen
 import com.noljanolja.android.features.referral.ReferralScreen
 import com.noljanolja.android.features.setting.SettingScreen
@@ -58,6 +59,7 @@ import com.noljanolja.android.features.shop.search.SearchProductScreen
 import com.noljanolja.android.features.splash.SplashScreen
 import com.noljanolja.android.util.orZero
 import com.noljanolja.android.util.showToast
+import com.noljanolja.android.util.toNavList
 import com.noljanolja.core.CoreManager
 import com.noljanolja.core.conversation.domain.model.ConversationType
 import org.koin.androidx.compose.get
@@ -125,6 +127,7 @@ fun MainScreen(
         addWalletGraph(navController)
         addAddFriendGraph(navController)
         addShopGraph()
+        addViewImagesGraph()
     }
 }
 
@@ -351,6 +354,15 @@ private fun NavGraphBuilder.addShopGraph() {
     with(NavigationDirections.Coupons) {
         composable(destination, arguments) {
             CouponsScreen()
+        }
+    }
+}
+
+private fun NavGraphBuilder.addViewImagesGraph() {
+    with(NavigationDirections.ViewImages()) {
+        composable(destination, arguments) {
+            val images = it.arguments?.getString("images").orEmpty()
+            ViewImagesScreen(images = images.toNavList())
         }
     }
 }

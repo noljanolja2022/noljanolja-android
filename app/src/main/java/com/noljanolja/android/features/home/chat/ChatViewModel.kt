@@ -111,6 +111,10 @@ class ChatViewModel(
                 is ChatEvent.OpenVideo -> {
                     navigationManager.navigate(NavigationDirections.PlayScreen(videoId = event.id))
                 }
+
+                is ChatEvent.ViewImages -> {
+                    navigationManager.navigate(NavigationDirections.ViewImages(images = event.images))
+                }
             }
         }
     }

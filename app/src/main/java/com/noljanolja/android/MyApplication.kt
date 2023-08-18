@@ -55,6 +55,7 @@ import com.noljanolja.android.features.home.wallet.dashboard.WalletDashboardView
 import com.noljanolja.android.features.home.wallet.detail.TransactionDetailViewModel
 import com.noljanolja.android.features.home.wallet.myranking.MyRankingViewModel
 import com.noljanolja.android.features.home.wallet.transaction.TransactionHistoryViewModel
+import com.noljanolja.android.features.images.ViewImagesViewModel
 import com.noljanolja.android.features.qrcode.ScanQrCodeViewModel
 import com.noljanolja.android.features.referral.ReferralViewModel
 import com.noljanolja.android.features.setting.SettingViewModel
@@ -335,6 +336,9 @@ class MyApplication : Application() {
                 }
                 viewModel {
                     UncompletedVideoViewModel()
+                }
+                viewModel {
+                    ViewImagesViewModel()
                 }
             }
         )

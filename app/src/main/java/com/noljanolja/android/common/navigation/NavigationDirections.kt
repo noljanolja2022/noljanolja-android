@@ -7,6 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import androidx.navigation.navOptions
 import com.noljanolja.android.features.home.wallet.model.UiLoyaltyPoint
+import com.noljanolja.android.util.toNavString
 import com.noljanolja.core.utils.defaultJson
 import kotlinx.serialization.encodeToString
 import java.net.URLEncoder
@@ -435,6 +436,22 @@ object NavigationDirections {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options = null
         override val destination: String = "referral"
+    }
+
+    data class ViewImages(
+        val images: List<String> = listOf(),
+    ) : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf(
+            navArgument("images") {
+                defaultValue = ""
+                type = NavType.StringType
+            },
+        )
+        override val options = null
+        override val destination: String = "view_images?images={images}"
+        override fun createDestination(): String {
+            return "view_images?images=${images.toNavString()}"
+        }
     }
 
     // Back
