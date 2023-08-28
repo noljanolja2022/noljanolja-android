@@ -1,4 +1,5 @@
--1.0.28: Update ui videos, shop & checkin
+- 1.0.29: View image in app and download image
+- 1.0.28: Update ui videos, shop & checkin
 - 1.0.27: Update checkin ui
 - 1.0.26: Checkin & referral
 - 1.0.25: Share video
