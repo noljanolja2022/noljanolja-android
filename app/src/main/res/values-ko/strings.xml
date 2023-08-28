@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">놀고벌자</string>
     <string name="common_next">다음</string>
     <string name="common_previous">이전</string>
     <string name="common_verification">인증</string>
@@ -12,7 +11,6 @@
     <string name="common_ok">확인</string>
     <string name="common_cancel">취소</string>
     <string name="common_confirm">확인</string>
-    <string name="common_yes">예</string>
     <string name="common_skip">건너뛰기</string>
     <string name="common_error_title">서비스장애</string>
     <string name="common_error_description">일시적으로 예기치 않은 장애가 발생했습니다. 다시 시도해 주세요.</string>
@@ -38,7 +36,7 @@
     <string name="common_warning">경고</string>
     <string name="common_all">모두</string>
     <string name="common_download">다운로드</string>
-    <string name="welcome_noljanolja">Welcome to 놀고벌자\nWATCH PLAY EARN</string>
+    <string name="welcome_noljanolja">Welcome to 놀자놀자\nWATCH PLAY EARN</string>
     <string name="splash_explore">지금 바로 시작하기</string>
     <string name="splash_wait">잠시만 기다려주세요...</string>
     <string name="signup">회원가입</string>
@@ -73,7 +71,7 @@
     <string name="home_wallet">지갑</string>
     <string name="home_shop">쇼핑</string>
     <string name="home_news">뉴스</string>
-    <string name="login_phone_description">Welcome to 놀고벌자. 계속 진행하기 위해 휴대폰 번호를 넣어주세요.</string>
+    <string name="login_phone_description">Welcome to 놀자놀자. 계속 진행하기 위해 휴대폰 번호를 넣어주세요.</string>
     <string name="login_country_input_label">국가</string>
     <string name="login_phone_input_label">휴대폰 번호</string>
     <string name="login_invalid_phone_title">유효하지 않은 번호</string>
@@ -138,10 +136,10 @@
     <string name="contacts_title_add_memmber">친구 추가</string>
     <string name="contacts_not_found">등록된 친구가 없습니다</string>
     <string name="permission">권한</string>
-    <string name="permission_contacts_description">놀고벌자 앱에서 친구와 가족에게 메시지를 보낼 수 있도록 연락처 접근 권한을 허용해주세요.</string>
-    <string name="permission_access_storage_description">놀고벌자 앱에서 갤러리(사진)에 접근할 수 있도록 미디에 파일에 접근 권한을 허용해주세요.</string>
+    <string name="permission_contacts_description">놀자놀자 앱에서 친구와 가족에게 메시지를 보낼 수 있도록 연락처 접근 권한을 허용해주세요.</string>
+    <string name="permission_access_storage_description">놀자놀자 앱에서 갤러리(사진)에 접근할 수 있도록 미디에 파일에 접근 권한을 허용해주세요.</string>
     <string name="permission_accept">허용</string>
-    <string name="permission_required_description">권한이 없으면 이 기능을 사용할 수 없습니다. 놀고벌자 앱이 필요한 권한에 접근할 수 있도록 설정버튼을 눌러주세요.</string>
+    <string name="permission_required_description">권한이 없으면 이 기능을 사용할 수 없습니다. 놀자놀자 앱이 필요한 권한에 접근할 수 있도록 설정버튼을 눌러주세요.</string>
     <string name="permission_go_to_settings">설정</string>
     <string name="conversation_empty">친구추가</string>
     <string name="conversation_create">%s 님이 채팅방을 개설하였습니다.</string>
@@ -177,7 +175,7 @@
     <string name="edit_chat_warning_leave_title">이 채팅방을 정말로 나가시겠습니까?</string>
     <string name="edit_chat_warning_leave_description">채팅방을 나가시면 모든 채팅 내용과 기록들이 삭제됩니다.</string>
     <string name="edit_chat_warning_block_title">이 친구를 정말로 차단하시겠습니까?</string>
-    <string name="edit_chat_warning_block_description"></string>
+    <string name="edit_chat_warning_block_description">이 친구는 나와 메시지를 보내거나 받을 수 없도록 차단됩니다.</string>
     <string name="edit_chat_warning_remove_title">이 친구를 정말로 삭제하시겠습니까?</string>
     <string name="edit_chat_warning_remove_description">이 친구는 이 채팅방에서 삭제됩니다.</string>
     <string name="edit_chat_warning_admin_title">이 친구에게 정말로 관리자(운영자) 권한을 주시겠습니까?</string>
@@ -202,7 +200,7 @@
     <string name="wallet_view_history">포인트 내역</string>
     <string name="wallet_exchange_money">지금 사용</string>
     <string name="transaction_history">포인트 내역</string>
-    <string name="transaction_history_search_hint">포이트 내역 검색</string>
+    <string name="transaction_history_search_hint">포인트 내역 검색</string>
     <string name="transactions_history_receive_reason">적립: %s</string>
     <string name="transactions_history_spent_reason">지출: %s</string>
     <string name="transaction_history_point">%s 포인트</string>
@@ -239,12 +237,57 @@
     <string name="video_detail_need_youtube_account">회원님은 아직 등록된 유튜브 계정이 없습니다.</string>
     <string name="video_detail_need_youtube_account_description">유튜브에 댓글을 작성하려면 유튜브 계정이 필요합니다. 유튜브 계정을 만드는 방법에 대한 가이드를 보려면 확인 버튼을 클릭해주세요.</string>
     <string name="video_detail_reward_point">%d 포인트</string>
+    <string name="chat_new_chat_tooltip">새 채팅을 시작하려면 이 버튼을 누르세요.</string>
     <string name="setting_faq_title">FAQ</string>
     <string name="setting_license_title">오픈소스 라이센스</string>
     <string name="setting_about_us_title">About us</string>
-    <string name="chat_new_chat_tooltip">새 채팅을 시작하려면 이 버튼을 누르세요.</string>
-    // need update
-    <string name="chat_edit_title_screen">닉네임 변경</string>
-
-    <string name="country_kr">한국</string>
+    <string name="common_yes">예</string>
+    <string name="chat_settings_title">채팅 설정</string>
+    <string name="chat_settings_change_avatar">프로필 변경</string>
+    <string name="video_earn_point">"+ %s 적립"</string>
+    <string name="add_friend_chat_now">지금 대화하기</string>
+    <string name="add_friend_scan_qr_to_add">친구추가를 위해 QR 코드를 스캔해주세요</string>
+    <string name="add_friend_title">친구 추가</string>
+    <string name="add_friend_search_by_phone">번호로 찾기</string>
+    <string name="add_friend_search_by_qr">QR로 찾기</string>
+    <string name="add_friend_add_by_contact">연락처 추가</string>
+    <string name="ask_to_logout">로그아웃 하시겠습니까?</string>
+    <string name="enter_phone_number">휴대폰 번호를 입력해주세요</string>
+    <string name="error_unexpected">예상치 않은 오류</string>
+    <string name="error_phone_invalid">휴대폰 번호가 유효하지 않습니다.</string>
+    <string name="error_phone_is_not_available">휴대폰이 사용 가능하지 않습니다.</string>
+    <string name="error_qr_not_valid">죄송합니다. QR 코드가 유효하지 않습니다.</string>
+    <string name="scan_qr_code_title">QR 코드 스캔</string>
+    <string name="chat_setting_friend_management">친구 관리</string>
+    <string name="chat_setting_auto_add_friend">자동 친구 추가</string>
+    <string name="chat_setting_auto_add_description">연락처에 등록된 친구중 놀고벌자 앱 사용자는 놀고벌자 친구 목록에 자동으로 동기화됩니다.</string>
+    <string name="chat_setting_all_friends">모든 친구</string>
+    <string name="chat_setting_hide_friends">숨김 친구</string>
+    <string name="chat_setting_blocked_friends">차단 친구</string>
+    <string name="shop_welcome_nolja_shop">놀고벌자 쇼핑에 오신것을 환영합니다.</string>
+    <string name="shop_search_products">제품 검색</string>
+    <string name="shop_clear_all">모두 지우기</string>
+    <string name="shop_view_all">모두 보기</string>
+    <string name="shop_exchanged_coupons">교환된 쿠폰</string>
+    <string name="common_shop">쇼핑</string>
+    <string name="shop_help_description">포인트를 사용하여 쿠폰을 교환할 수 있습니다. 교환된 쿠폰은 실제 매장에서 사용 가능합니다.</string>
+    <string name="shop_got_it">OK</string>
+    <string name="common_points">포인트</string>
+    <string name="common_success">성공</string>
+    <string name="shop_later">나중에</string>
+    <string name="common_use">사용</string>
+    <string name="common_use_now">지금 사용</string>
+    <string name="shop_order_coupon_success">주문이 완료되었습니다. 교환 쿠폰을 확인해주세요.</string>
+    <string name="gift_value_point">%s P</string>
+    <string name="gift_holding_point">보류중인 포인트</string>
+    <string name="gift_deduction_point">차감 포인트</string>
+    <string name="gift_remaining_point">잔여 포인트</string>
+    <string name="gift_purchase">구매</string>
+    <string name="gift_give_code_to_cashier">제품을 구매하기 위해 매장에서 이 코드(QR)를 보여주세요.</string>
+    <string name="shop_coupon">쿠폰</string>
+    <string name="chat_action_reply">답장</string>
+    <string name="chat_action_forward">전달</string>
+    <string name="chat_action_copy">복사</string>
+    <string name="chat_action_delete">삭제</string>
+    <string name="permission_camera">사진이나 동영상을 보내려면, 놀고벌자 앱이 카메라에 접근할 수 있도록 허용해주세요.</string>
 </resources>

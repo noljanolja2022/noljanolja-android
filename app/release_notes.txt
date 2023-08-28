@@ -1,3 +1,4 @@
+- 1.0.30: Update translate ko
 - 1.0.29: View image in app and download image
 - 1.0.28: Update ui videos, shop & checkin
 - 1.0.27: Update checkin ui
