@@ -6,6 +6,7 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Environment
 import android.provider.OpenableColumns
 import android.widget.Toast
 import androidx.core.content.FileProvider
@@ -21,6 +22,8 @@ import com.noljanolja.core.file.model.FileInfo
 import okio.Path.Companion.toPath
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
+import java.util.UUID
 
 fun Context.showToast(
     text: String?,
@@ -106,6 +109,40 @@ fun Context.getUriFromCache(key: String): Uri? {
         "${BuildConfig.APPLICATION_ID}.provider",
         tmpFile
     )
+}
+
+fun Context.downloadFromUrl(url: String): Boolean {
+    val context = this
+    return try {
+        val cache = Coil.imageLoader(context).memoryCache
+        val bitmap = cache?.get(MemoryCache.Key(url))?.bitmap ?: return false
+        val file = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath,
+            "${UUID.randomUUID()}.jpg"
+        ).apply {
+            createNewFile()
+        }
+        FileOutputStream(file).use { outputStream ->
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            outputStream.flush()
+            outputStream.close()
+        }
+        true
+    } catch (e: IOException) {
+        e.printStackTrace()
+        false
+    }
+}
+
+fun Context.createImageFromCache(key: String): Boolean {
+    val tmpFile = File.createTempFile(UUID.randomUUID().toString(), ".png", filesDir).apply {
+        createNewFile()
+    }
+    val cache = Coil.imageLoader(this).memoryCache
+    val bitmap = cache?.get(MemoryCache.Key(key))?.bitmap ?: return false
+    val out = FileOutputStream(tmpFile)
+    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+    return true
 }
 
 fun Context.openUrl(url: String) {

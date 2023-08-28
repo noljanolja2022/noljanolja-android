@@ -112,6 +112,8 @@ fun ClickableMessage(
                     handleEvent(
                         ChatEvent.ViewImages(
                             message.attachments.map { "${message.localId}/${it.originalName}" }
+
+//                                    message.attachments.map { it.getAttachmentUrl(conversationId) }
                         )
                     )
                 }

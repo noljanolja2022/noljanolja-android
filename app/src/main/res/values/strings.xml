@@ -378,4 +378,6 @@
     <string name="video_completed_state">Complete state: %d %%</string>
     <string name="seconds">%d sec</string>
     <string name="minutes">%d min</string>
+    <string name="download_success">Download success</string>
+    <string name="download_failure">Download failure</string>
 </resources>
