@@ -34,6 +34,7 @@ import com.noljanolja.android.features.auth.signup.SignupViewModel
 import com.noljanolja.android.features.auth.terms_of_service.TermsOfServiceViewModel
 import com.noljanolja.android.features.auth.updateprofile.UpdateProfileViewModel
 import com.noljanolja.android.features.chatsettings.ChatSettingsViewModel
+import com.noljanolja.android.features.conversationmedia.ConversationMediaViewModel
 import com.noljanolja.android.features.edit_chat_title.EditChatTitleViewModel
 import com.noljanolja.android.features.home.CheckinViewModel
 import com.noljanolja.android.features.home.chat.ChatViewModel
@@ -339,6 +340,9 @@ class MyApplication : Application() {
                 }
                 viewModel {
                     ViewImagesViewModel()
+                }
+                viewModel {
+                    ConversationMediaViewModel(get())
                 }
             }
         )

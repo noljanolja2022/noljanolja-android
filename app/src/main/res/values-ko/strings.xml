@@ -36,7 +36,7 @@
     <string name="common_warning">경고</string>
     <string name="common_all">모두</string>
     <string name="common_download">다운로드</string>
-    <string name="welcome_noljanolja">Welcome to 놀자놀자\nWATCH PLAY EARN</string>
+    <string name="welcome_noljanolja">Welcome to 놀고벌자\nWATCH PLAY EARN</string>
     <string name="splash_explore">지금 바로 시작하기</string>
     <string name="splash_wait">잠시만 기다려주세요...</string>
     <string name="signup">회원가입</string>
@@ -71,7 +71,7 @@
     <string name="home_wallet">지갑</string>
     <string name="home_shop">쇼핑</string>
     <string name="home_news">뉴스</string>
-    <string name="login_phone_description">Welcome to 놀자놀자. 계속 진행하기 위해 휴대폰 번호를 넣어주세요.</string>
+    <string name="login_phone_description">Welcome to 놀고벌자. 계속 진행하기 위해 휴대폰 번호를 넣어주세요.</string>
     <string name="login_country_input_label">국가</string>
     <string name="login_phone_input_label">휴대폰 번호</string>
     <string name="login_invalid_phone_title">유효하지 않은 번호</string>
@@ -103,6 +103,8 @@
     <string name="setting_faq">FAQ</string>
     <string name="setting_clear_cache_data">캐시데이터 지우기</string>
     <string name="setting_current_version">현재 버전 %s</string>
+    <string name="chat_edit_title_screen">닉네임 변경</string>
+
     <string name="menu_title">메뉴</string>
     <string name="menu_announcement">공지사항</string>
     <string name="menu_point_details">포인트 내역</string>
@@ -136,10 +138,10 @@
     <string name="contacts_title_add_memmber">친구 추가</string>
     <string name="contacts_not_found">등록된 친구가 없습니다</string>
     <string name="permission">권한</string>
-    <string name="permission_contacts_description">놀자놀자 앱에서 친구와 가족에게 메시지를 보낼 수 있도록 연락처 접근 권한을 허용해주세요.</string>
-    <string name="permission_access_storage_description">놀자놀자 앱에서 갤러리(사진)에 접근할 수 있도록 미디에 파일에 접근 권한을 허용해주세요.</string>
+    <string name="permission_contacts_description">놀고벌자 앱에서 친구와 가족에게 메시지를 보낼 수 있도록 연락처 접근 권한을 허용해주세요.</string>
+    <string name="permission_access_storage_description">놀고벌자 앱에서 갤러리(사진)에 접근할 수 있도록 미디에 파일에 접근 권한을 허용해주세요.</string>
     <string name="permission_accept">허용</string>
-    <string name="permission_required_description">권한이 없으면 이 기능을 사용할 수 없습니다. 놀자놀자 앱이 필요한 권한에 접근할 수 있도록 설정버튼을 눌러주세요.</string>
+    <string name="permission_required_description">권한이 없으면 이 기능을 사용할 수 없습니다. 놀고벌자 앱이 필요한 권한에 접근할 수 있도록 설정버튼을 눌러주세요.</string>
     <string name="permission_go_to_settings">설정</string>
     <string name="conversation_empty">친구추가</string>
     <string name="conversation_create">%s 님이 채팅방을 개설하였습니다.</string>
@@ -242,6 +244,7 @@
     <string name="setting_license_title">오픈소스 라이센스</string>
     <string name="setting_about_us_title">About us</string>
     <string name="common_yes">예</string>
+    <string name="common_success">성공</string>
     <string name="chat_settings_title">채팅 설정</string>
     <string name="chat_settings_change_avatar">프로필 변경</string>
     <string name="video_earn_point">"+ %s 적립"</string>
@@ -250,7 +253,7 @@
     <string name="add_friend_title">친구 추가</string>
     <string name="add_friend_search_by_phone">번호로 찾기</string>
     <string name="add_friend_search_by_qr">QR로 찾기</string>
-    <string name="add_friend_add_by_contact">연락처 추가</string>
+    <string name="add_friend_add_by_contact">연락처로 추가</string>
     <string name="ask_to_logout">로그아웃 하시겠습니까?</string>
     <string name="enter_phone_number">휴대폰 번호를 입력해주세요</string>
     <string name="error_unexpected">예상치 않은 오류</string>
@@ -265,7 +268,7 @@
     <string name="chat_setting_hide_friends">숨김 친구</string>
     <string name="chat_setting_blocked_friends">차단 친구</string>
     <string name="shop_welcome_nolja_shop">놀고벌자 쇼핑에 오신것을 환영합니다.</string>
-    <string name="shop_search_products">제품 검색</string>
+    <string name="shop_search_products">상품 검색</string>
     <string name="shop_clear_all">모두 지우기</string>
     <string name="shop_view_all">모두 보기</string>
     <string name="shop_exchanged_coupons">교환된 쿠폰</string>
@@ -273,7 +276,6 @@
     <string name="shop_help_description">포인트를 사용하여 쿠폰을 교환할 수 있습니다. 교환된 쿠폰은 실제 매장에서 사용 가능합니다.</string>
     <string name="shop_got_it">OK</string>
     <string name="common_points">포인트</string>
-    <string name="common_success">성공</string>
     <string name="shop_later">나중에</string>
     <string name="common_use">사용</string>
     <string name="common_use_now">지금 사용</string>
@@ -290,4 +292,37 @@
     <string name="chat_action_copy">복사</string>
     <string name="chat_action_delete">삭제</string>
     <string name="permission_camera">사진이나 동영상을 보내려면, 놀고벌자 앱이 카메라에 접근할 수 있도록 허용해주세요.</string>
+    <string name="common_undefined">[정의되지 않은]</string>
+    <string name="common_image">[이미지]</string>
+    <string name="common_sticker">[이모티콘]</string>
+    <string name="wallet_checkin_success">출석체크 성공</string>
+    <string name="wallet_to_get">포인트</string>
+    <string name="wallet_benefit">적립</string>
+    <string name="wallet_checkin">출석체크</string>
+    <string name="wallet_every_day">매일매일</string>
+    <string name="common_share">공유</string>
+    <string name="common_share_success">공유 성공</string>
+    <string name="referral_receive_point">축하합니다! 나와 내가 추천한 친구 모두 %d 포인트를 얻었습니다.</string>
+    <string name="invalid_referral">유효하지 않은 추천 코드</string>
+    <string name="referral_code">추천 코드</string>
+    <string name="please_enter_referral_code">보너스 리워드를 받으시려면 추천인 코드를 입력해주세요.</string>
+    <string name="join_play">가입하고 놀아봐요</string>
+    <string name="send_invite_link">초대 링크 보내기</string>
+    <string name="how_to_refer">친구 추천 방법</string>
+    <string name="referral_step_1">초대 링크를 보냅니다. 버튼을 눌러주세요.</string>
+    <string name="referral_step_2">초대 링크가 전송됩니다.</string>
+    <string name="referral_step_3">전송된 링크를 통해 회원가입을 진행해주세요.</string>
+    <string name="referral_step_4">모든 과정이 완료되면, 나와 친구 모두 1,000 포인트 적립</string>
+    <string name="referral_description">* 복사해서 보낸 추천코드를 친구가 직접 입력하는 경우에도 동일합니다. 친구추천 이벤트에 참여할 수 있습니다.</string>
+    <string name="open_link">링크 열기</string>
+    <string name="checkout_and_play">출첵하고 놀기</string>
+    <string name="invite_to_get_benefits">친구 초대하고 혜택을 받으세요.</string>
+    <string name="uncompleted_video">시청 완료하지 않은 동영상</string>
+    <string name="get_point_after_watching">시청하고 + %d 포인트 적립</string>
+    <string name="video_completed_state">시청 현황: %d %%</string>
+    <string name="seconds">%d 초</string>
+    <string name="minutes">%d 분</string>
+    <string name="download_success">다운로드 성공</string>
+    <string name="download_failure">다운로드 실패</string>
+    <string name="search_videos">동영상 검색</string>
 </resources>

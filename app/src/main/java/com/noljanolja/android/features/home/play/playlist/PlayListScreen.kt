@@ -323,7 +323,8 @@ private fun LazyListScope.watchingVideos(
                 ) {
                     SubcomposeAsyncImage(
                         ImageRequest.Builder(context = LocalContext.current).data(video.thumbnail)
-                            .memoryCacheKey("video${video.id}").diskCacheKey("video${video.id}")
+                            .memoryCacheKey("video${video.id}")
+                            .diskCacheKey("video${video.id}")
                             .build(),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,

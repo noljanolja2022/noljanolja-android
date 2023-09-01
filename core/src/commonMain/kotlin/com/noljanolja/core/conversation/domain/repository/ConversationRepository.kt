@@ -1,6 +1,7 @@
 package com.noljanolja.core.conversation.domain.repository
 
 import com.noljanolja.core.conversation.domain.model.Conversation
+import com.noljanolja.core.conversation.domain.model.ConversationMedia
 import com.noljanolja.core.conversation.domain.model.Message
 import com.noljanolja.core.conversation.domain.model.ReactIcon
 import com.noljanolja.core.video.data.model.request.VideoProgressEvent
@@ -91,6 +92,12 @@ internal interface ConversationRepository {
         messageId: Long,
         removeForSelfOnly: Boolean,
     ): Result<Boolean>
+
+    suspend fun getConversationAttachments(
+        conversationId: Long,
+        attachmentTypes: List<String>,
+        page: Int,
+    ): Result<List<ConversationMedia>>
 
     fun onDestroy()
 }

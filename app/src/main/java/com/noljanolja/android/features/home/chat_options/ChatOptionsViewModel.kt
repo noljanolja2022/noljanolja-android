@@ -78,6 +78,12 @@ class ChatOptionsViewModel(private val conversationId: Long) : BaseViewModel() {
                 is ChatOptionsEvent.BlockUser -> {
                     Logger.e("Block user ${event.id}")
                 }
+
+                ChatOptionsEvent.ShowMedias -> navigationManager.navigate(
+                    NavigationDirections.ConversationMedia(
+                        conversationId
+                    )
+                )
             }
         }
     }

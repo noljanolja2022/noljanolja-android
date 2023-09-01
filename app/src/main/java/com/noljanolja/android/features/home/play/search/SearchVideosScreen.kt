@@ -176,7 +176,7 @@ private fun SearchVideoHeader(
                 modifier = Modifier
                     .fillMaxWidth(),
                 searchText = searchText,
-                hint = stringResource(id = R.string.shop_search_products),
+                hint = stringResource(id = R.string.search_videos),
                 onSearch = onSearchChange,
                 background = MaterialTheme.colorScheme.background,
                 onFocusChange = {

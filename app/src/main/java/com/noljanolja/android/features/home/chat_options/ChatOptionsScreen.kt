@@ -154,6 +154,9 @@ fun ChatOptionsContent(
                                 },
                                 onChangeTitle = {
                                     handleEvent(ChatOptionsEvent.EditTitle)
+                                },
+                                onShowMedia = {
+                                    handleEvent(ChatOptionsEvent.ShowMedias)
                                 }
                             )
                         } else {
@@ -162,6 +165,9 @@ fun ChatOptionsContent(
                                 onBlock = { user ->
                                     selectParticipant = user
                                     showBlockParticipantDialog = true
+                                },
+                                onShowMedia = {
+                                    handleEvent(ChatOptionsEvent.ShowMedias)
                                 }
                             )
                         }
@@ -241,6 +247,7 @@ private fun LazyListScope.groupContent(
     onUserClick: (User) -> Unit,
     onAddParticipant: () -> Unit,
     onChangeTitle: () -> Unit,
+    onShowMedia: () -> Unit,
 ) {
     chatParticipants(
         conversation = conversation,
@@ -252,11 +259,16 @@ private fun LazyListScope.groupContent(
         Divider(thickness = 1.dp)
     }
     groupSettings(
-        onChangeTitle = onChangeTitle
+        onChangeTitle = onChangeTitle,
+        onShowMedia = onShowMedia
     )
 }
 
-private fun LazyListScope.singleContent(conversation: Conversation, onBlock: (User) -> Unit) {
+private fun LazyListScope.singleContent(
+    conversation: Conversation,
+    onBlock: (User) -> Unit,
+    onShowMedia: () -> Unit,
+) {
     val participant = conversation.participants.firstOrNull { !it.isMe } ?: return
     item {
         Column(
@@ -279,6 +291,13 @@ private fun LazyListScope.singleContent(conversation: Conversation, onBlock: (Us
             onClick = {
                 onBlock(participant)
             }
+        )
+    }
+    item {
+        SettingRow(
+            text = "Medias, Files, Links",
+            icon = Icons.Default.PermMedia,
+            onClick = onShowMedia
         )
     }
 }
@@ -344,6 +363,7 @@ fun LazyListScope.chatParticipants(
 
 fun LazyListScope.groupSettings(
     onChangeTitle: () -> Unit,
+    onShowMedia: () -> Unit,
 ) {
     item {
         Text(
@@ -360,6 +380,13 @@ fun LazyListScope.groupSettings(
             text = stringResource(id = R.string.edit_chat_change_room_name),
             icon = Icons.Default.Edit,
             onClick = onChangeTitle
+        )
+    }
+    item {
+        SettingRow(
+            text = "Medias, Files, Links",
+            icon = Icons.Default.PermMedia,
+            onClick = onShowMedia
         )
     }
 }

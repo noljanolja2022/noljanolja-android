@@ -429,7 +429,7 @@ private fun PhotoPreview(
 }
 
 @Composable
-private fun SubcomposeAsyncImageScope.AsyncImageState(
+fun SubcomposeAsyncImageScope.AsyncImageState(
     modifier: Modifier,
     contentScale: ContentScale,
 ) {

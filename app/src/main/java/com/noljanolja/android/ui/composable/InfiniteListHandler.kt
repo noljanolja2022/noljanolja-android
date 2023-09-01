@@ -1,6 +1,7 @@
 package com.noljanolja.android.ui.composable
 
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -16,7 +17,28 @@ fun InfiniteListHandler(
     val loadMore = remember {
         derivedStateOf {
             val layoutInfo = listState.layoutInfo
-            val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull() ?: return@derivedStateOf false
+            val lastVisibleItem =
+                layoutInfo.visibleItemsInfo.lastOrNull() ?: return@derivedStateOf false
+            lastVisibleItem.index >= layoutInfo.totalItemsCount - 1 - buffer
+        }
+    }
+
+    LaunchedEffect(loadMore) {
+        snapshotFlow { loadMore.value }.collect { if (it) onLoadMore() }
+    }
+}
+
+@Composable
+fun InfiniteListHandler(
+    listState: LazyGridState,
+    buffer: Int = 3,
+    onLoadMore: () -> Unit,
+) {
+    val loadMore = remember {
+        derivedStateOf {
+            val layoutInfo = listState.layoutInfo
+            val lastVisibleItem =
+                layoutInfo.visibleItemsInfo.lastOrNull() ?: return@derivedStateOf false
             lastVisibleItem.index >= layoutInfo.totalItemsCount - 1 - buffer
         }
     }

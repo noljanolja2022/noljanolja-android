@@ -254,4 +254,16 @@ class ConversationApi(
         }
             .body()
     }
+
+    suspend fun getConversationAttachments(
+        conversationId: Long,
+        attachmentTypes: List<String>,
+        page: Int = 0,
+    ): GetConversationMediasResponse {
+        return client.get("$BASE_URL/conversations/$conversationId/attachments") {
+            parameter("attachmentTypes", attachmentTypes.joinToString(","))
+            parameter("page", page)
+        }
+            .body()
+    }
 }

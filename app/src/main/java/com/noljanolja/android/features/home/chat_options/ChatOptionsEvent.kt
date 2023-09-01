@@ -14,4 +14,6 @@ sealed interface ChatOptionsEvent {
     data class MakeAdminConversation(val id: String) : ChatOptionsEvent
 
     data class BlockUser(val id: String) : ChatOptionsEvent
+
+    object ShowMedias : ChatOptionsEvent
 }

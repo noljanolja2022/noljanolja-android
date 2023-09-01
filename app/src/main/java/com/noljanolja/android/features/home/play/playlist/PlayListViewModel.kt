@@ -43,7 +43,7 @@ class PlayListViewModel : BaseViewModel() {
                 }
 
                 PlayListEvent.Search -> {
-                    navigationManager.navigate(NavigationDirections.SearchProduct)
+                    navigationManager.navigate(NavigationDirections.SearchVideos)
                 }
 
                 PlayListEvent.Uncompleted -> {

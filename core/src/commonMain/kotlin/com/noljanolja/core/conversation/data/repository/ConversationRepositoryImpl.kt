@@ -602,6 +602,27 @@ internal class ConversationRepositoryImpl(
         }
     }
 
+    override suspend fun getConversationAttachments(
+        conversationId: Long,
+        attachmentTypes: List<String>,
+        page: Int,
+    ): Result<List<ConversationMedia>> {
+        return try {
+            val response = conversationApi.getConversationAttachments(
+                conversationId = conversationId,
+                attachmentTypes = attachmentTypes,
+                page = page,
+            )
+            if (response.isSuccessful()) {
+                Result.success(response.data.orEmpty())
+            } else {
+                throw Throwable(response.message)
+            }
+        } catch (e: Throwable) {
+            Result.failure(e)
+        }
+    }
+
     override fun onDestroy() {
         streamJob?.cancel()
         scope.coroutineContext.cancel()

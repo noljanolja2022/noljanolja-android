@@ -392,6 +392,19 @@ object NavigationDirections {
         override val destination: String = "chat_settings"
     }
 
+    data class ConversationMedia(val conversationId: Long = 0L) : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf(
+            navArgument("conversationId") {
+                defaultValue = 0
+                type = NavType.LongType
+            },
+        )
+        override val options = null
+        override val destination: String = "conversation_media?conversationId={conversationId}"
+        override fun createDestination(): String =
+            "conversation_media?conversationId=$conversationId"
+    }
+
     object ScanQrCode : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options = null

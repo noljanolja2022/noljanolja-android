@@ -380,4 +380,5 @@
     <string name="minutes">%d min</string>
     <string name="download_success">Download success</string>
     <string name="download_failure">Download failure</string>
+    <string name="search_videos">Search videos</string>
 </resources>

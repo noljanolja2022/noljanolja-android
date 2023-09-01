@@ -5,6 +5,7 @@ import com.noljanolja.core.auth.domain.repository.AuthRepository
 import com.noljanolja.core.contacts.domain.model.Contact
 import com.noljanolja.core.contacts.domain.repository.ContactsRepository
 import com.noljanolja.core.conversation.domain.model.Conversation
+import com.noljanolja.core.conversation.domain.model.ConversationMedia
 import com.noljanolja.core.conversation.domain.model.Message
 import com.noljanolja.core.conversation.domain.model.MessageStatus
 import com.noljanolja.core.conversation.domain.repository.ConversationRepository
@@ -235,6 +236,16 @@ class CoreManager : KoinComponent {
         conversationId = conversationId,
         messageId = messageId,
         removeForSelfOnly = removeForSelfOnly
+    )
+
+    suspend fun getConversationAttachments(
+        conversationId: Long,
+        attachmentTypes: List<ConversationMedia.AttachmentType>,
+        page: Int = 0,
+    ) = conversationRepository.getConversationAttachments(
+        conversationId,
+        attachmentTypes.map { it.name },
+        page
     )
 
     suspend fun getCurrentUser(
