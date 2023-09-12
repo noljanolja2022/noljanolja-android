@@ -22,14 +22,6 @@ class PlayListViewModel : BaseViewModel() {
         launch {
             when (event) {
                 PlayListEvent.Back -> navigationManager.back()
-                is PlayListEvent.PlayVideo -> {
-                    navigationManager.navigate(
-                        NavigationDirections.PlayScreen(
-                            videoId = event.id
-                        )
-                    )
-                }
-
                 PlayListEvent.Refresh -> {
                     val data = _uiStateFlow.value.data ?: PlayListUIData()
                     _uiStateFlow.emit(
@@ -43,7 +35,7 @@ class PlayListViewModel : BaseViewModel() {
                 }
 
                 PlayListEvent.Search -> {
-                    navigationManager.navigate(NavigationDirections.SearchVideos)
+//                    navigationManager.navigate(NavigationDirections.SearchVideos)
                 }
 
                 PlayListEvent.Uncompleted -> {

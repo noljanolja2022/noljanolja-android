@@ -23,7 +23,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import org.koin.core.component.inject
 
-class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
+class VideoDetailViewModel() : BaseViewModel() {
+    private var videoId: String = ""
     private val sharedPreferenceHelper: SharedPreferenceHelper by inject()
     var youTubePlayer: YouTubePlayer? = null
 
@@ -35,9 +36,13 @@ class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
     private var lastTrackEvent: Pair<VideoProgressEvent, Long>? = null
     private val _eventForceLoginGoogle = MutableSharedFlow<String>()
     val eventForceLoginGoogle = _eventForceLoginGoogle.asSharedFlow()
+    private val _playerStateFlow =
+        MutableStateFlow<PlayerConstants.PlayerState>(PlayerConstants.PlayerState.UNKNOWN)
+    val playerStateFlow = _playerStateFlow.asStateFlow()
 
-    init {
+    fun updateVideo(videoId: String) {
         launch {
+            this.videoId = videoId
             val user = coreManager.getCurrentUser().getOrNull()
             coreManager.getVideoDetail(videoId)
                 .catch { e ->
@@ -52,7 +57,7 @@ class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
                             )
                         )
                     )
-                    youTubePlayer?.seekTo((it.currentProgressMs / 1000).toFloat())
+                    youTubePlayer?.loadVideo(videoId, (it.currentProgressMs / 1000).toFloat())
                 }
         }
         launch {
@@ -72,6 +77,7 @@ class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
                 is VideoDetailEvent.ReadyVideo -> onReady(event.player)
                 is VideoDetailEvent.Comment -> commentVideo(event.comment, event.token)
                 is VideoDetailEvent.SendError -> sendError(event.error)
+                is VideoDetailEvent.TogglePlayPause -> togglePlayPause()
             }
         }
     }
@@ -87,6 +93,8 @@ class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
                     state: PlayerConstants.PlayerState,
                 ) {
                     super.onStateChange(youTubePlayer, state)
+                    YoutubeViewWithFullScreen.playState = state
+                    _playerStateFlow.value = state
                     launch {
                         videoStateFlow.emit(state)
                     }
@@ -127,6 +135,14 @@ class VideoDetailViewModel(private val videoId: String) : BaseViewModel() {
             commentCount = video.commentCount + 1,
             comments = listOf(comment) + video.comments
         )
+    }
+
+    private fun togglePlayPause() {
+        if (playerStateFlow.value == PlayerConstants.PlayerState.PLAYING) {
+            youTubePlayer?.pause()
+        } else {
+            youTubePlayer?.play()
+        }
     }
 
     private suspend fun trackVideoProgress(state: PlayerConstants.PlayerState, durationMs: Long) {

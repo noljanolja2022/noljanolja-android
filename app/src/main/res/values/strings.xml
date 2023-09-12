@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE resources [<!ENTITY kakao_api_key "15d1b0d5dde51ea18a397effc5f25e3c">]>
 <resources>
-    <string name="app_name">NolgoBulja</string>
+    <string name="app_name" translatable="false">NolgoBulja</string>
     <string name="app_channel_id" translatable="false">noljanolja_notification_channel</string>
     <string name="app_channel_name" translatable="false">noljanolja</string>
     <string name="app_channel_description" translatable="false">noljanolja</string>

@@ -47,4 +47,9 @@ internal class VideoApi(private val client: HttpClient) {
             setBody(request)
         }.body()
     }
+
+    suspend fun getPromotedVideo(): GetVideosResponse {
+        return client.get("${Const.BASE_URL}/media/videos/promoted")
+            .body()
+    }
 }

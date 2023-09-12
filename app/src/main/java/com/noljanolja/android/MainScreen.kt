@@ -1,11 +1,14 @@
 package com.noljanolja.android
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavBackStackEntry
@@ -22,12 +25,6 @@ import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.features.addfriend.AddFriendViewModel
 import com.noljanolja.android.features.addfriend.SearchFriendResultScreen
 import com.noljanolja.android.features.addfriend.SearchFriendScreen
-import com.noljanolja.android.features.addreferral.AddReferralScreen
-import com.noljanolja.android.features.auth.countries.CountriesScreen
-import com.noljanolja.android.features.auth.login_or_signup.LoginOrSignupScreen
-import com.noljanolja.android.features.auth.otp.OTPScreen
-import com.noljanolja.android.features.auth.terms_of_service.TermsOfServiceScreen
-import com.noljanolja.android.features.auth.updateprofile.UpdateProfileScreen
 import com.noljanolja.android.features.chatsettings.ChatSettingsScreen
 import com.noljanolja.android.features.conversationmedia.ConversationMediaScreen
 import com.noljanolja.android.features.edit_chat_title.EditChatTitleScreen
@@ -36,8 +33,6 @@ import com.noljanolja.android.features.home.chat.ChatScreen
 import com.noljanolja.android.features.home.chat_options.ChatOptionsScreen
 import com.noljanolja.android.features.home.contacts.ContactsScreen
 import com.noljanolja.android.features.home.info.MyInfoScreen
-import com.noljanolja.android.features.home.play.playscreen.VideoDetailScreen
-import com.noljanolja.android.features.home.play.search.SearchVideosScreen
 import com.noljanolja.android.features.home.play.uncompleted.UncompletedVideosScreen
 import com.noljanolja.android.features.home.root.HomeScreen
 import com.noljanolja.android.features.home.wallet.checkin.CheckinScreen
@@ -57,7 +52,6 @@ import com.noljanolja.android.features.sharemessage.SelectShareMessageScreen
 import com.noljanolja.android.features.shop.coupons.CouponsScreen
 import com.noljanolja.android.features.shop.giftdetail.GiftDetailScreen
 import com.noljanolja.android.features.shop.search.SearchProductScreen
-import com.noljanolja.android.features.splash.SplashScreen
 import com.noljanolja.android.util.orZero
 import com.noljanolja.android.util.showToast
 import com.noljanolja.android.util.toNavList
@@ -88,6 +82,20 @@ fun MainScreen(
             val destination = commands.createDestination()
             if (destination.isNotEmpty()) {
                 when (commands) {
+                    is NavigationDirections.PlayScreen -> {
+                        with(context as Activity) {
+                            MyApplication.backStackActivities.apply {
+                                forEach { it.finish() }
+                                clear()
+                            }
+                        }
+                    }
+
+                    is NavigationDirections.Auth -> {
+                        context.startActivity(Intent(context, LoginActivity::class.java))
+                        (context as Activity).finish()
+                    }
+
                     is NavigationDirections.PhoneSettings -> {
                         context.startActivity(
                             Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
@@ -117,11 +125,9 @@ fun MainScreen(
     NavHost(
         navController = navController,
         route = NavigationDirections.Root.destination,
-        startDestination = NavigationDirections.Splash.destination,
+        startDestination = NavigationDirections.Home.destination,
     ) {
-        addSplashGraph()
         addHomeGraph(navController)
-        addAuthGraph()
         addContactsGraph()
         addChatGraph()
         addVideoGraph()
@@ -132,53 +138,22 @@ fun MainScreen(
     }
 }
 
-private fun NavGraphBuilder.addSplashGraph() {
-    composable(NavigationDirections.Splash.destination) {
-        SplashScreen()
-    }
-    composable(NavigationDirections.TermsOfService.destination) {
-        TermsOfServiceScreen()
-    }
-}
-
-private fun NavGraphBuilder.addHomeGraph(navController: NavHostController) {
+private fun NavGraphBuilder.addHomeGraph(
+    navController: NavHostController,
+) {
     composable(NavigationDirections.Home.destination) { backStack ->
         val checkinViewModel = backStack.sharedViewModel<CheckinViewModel>(
             navController = navController
         )
-        HomeScreen(checkinViewModel = checkinViewModel)
+        HomeScreen(
+            checkinViewModel = checkinViewModel,
+        )
     }
     composable(NavigationDirections.MyInfo.destination) {
         MyInfoScreen()
     }
     composable(NavigationDirections.Setting.destination) { backStack ->
         SettingScreen()
-    }
-}
-
-private fun NavGraphBuilder.addAuthGraph() {
-    composable(NavigationDirections.Auth.destination) { backStack ->
-        LoginOrSignupScreen(backStack.savedStateHandle)
-    }
-    composable(NavigationDirections.CountryPicker.destination) {
-        CountriesScreen()
-    }
-    with(NavigationDirections.AuthOTP()) {
-        composable(
-            destination,
-            arguments,
-        ) { backStack ->
-            with(backStack.arguments) {
-                val phone = this?.getString("phone") ?: ""
-                OTPScreen(phone = phone)
-            }
-        }
-    }
-    composable(NavigationDirections.UpdateProfile.destination) {
-        UpdateProfileScreen()
-    }
-    composable(NavigationDirections.AddReferral.destination) {
-        AddReferralScreen()
     }
 }
 
@@ -265,17 +240,17 @@ private fun NavGraphBuilder.addChatGraph() {
 }
 
 private fun NavGraphBuilder.addVideoGraph() {
-    with(NavigationDirections.PlayScreen()) {
-        composable(destination, arguments) {
-            val videoId = (it.arguments?.getString("videoId").orEmpty())
-            VideoDetailScreen(videoId)
-        }
-    }
-    with(NavigationDirections.SearchVideos) {
-        composable(destination, arguments) {
-            SearchVideosScreen()
-        }
-    }
+//    with(NavigationDirections.PlayScreen()) {
+//        composable(destination, arguments) {
+//            val videoId = (it.arguments?.getString("videoId").orEmpty())
+//            VideoDetailScreen(videoId)
+//        }
+//    }
+//    with(NavigationDirections.SearchVideos) {
+//        composable(destination, arguments) {
+//            SearchVideosScreen()
+//        }
+//    }
     with(NavigationDirections.UncompletedVideos) {
         composable(destination, arguments) {
             UncompletedVideosScreen()

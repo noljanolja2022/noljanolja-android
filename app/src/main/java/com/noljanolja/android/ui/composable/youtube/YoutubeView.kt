@@ -14,6 +14,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import com.noljanolja.android.util.findActivity
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.FullscreenListener
@@ -41,7 +42,15 @@ fun YoutubeView(
 @SuppressLint("StaticFieldLeak")
 object YoutubeViewWithFullScreen {
     private var instance: RelativeLayout? = null
-    private val playerOptions = IFramePlayerOptions.Builder().controls(1).fullscreen(1).build()
+    private var youTubePlayer: YouTubePlayer? = null
+    var playState: PlayerConstants.PlayerState = PlayerConstants.PlayerState.UNKNOWN
+    private var instanceYoutubeView: YouTubePlayerView? = null
+    private val playerOptions = IFramePlayerOptions.Builder()
+        .controls(1)
+        .fullscreen(1)
+        .autoplay(1)
+        .build()
+
     fun getInstance(
         context: Context,
         toggleFullScreen: (Boolean) -> Unit,
@@ -67,6 +76,7 @@ object YoutubeViewWithFullScreen {
                         override fun onReady(player: YouTubePlayer) {
                             super.onReady(player)
                             onReady(player)
+                            youTubePlayer = player
                         }
                     },
                     playerOptions = playerOptions,
@@ -93,6 +103,8 @@ object YoutubeViewWithFullScreen {
                         fullViewContainer.removeAllViews()
                     }
                 })
+            }.also {
+                instanceYoutubeView = it
             }
             addView(youtubeView)
             addView(fullViewContainer)
@@ -101,9 +113,22 @@ object YoutubeViewWithFullScreen {
         }
     }
 
+    fun update(videoId: String) {
+        youTubePlayer?.loadVideo(videoId, 0F)
+    }
+
     fun release() {
+        youTubePlayer = null
         (instance?.get(0) as? YouTubePlayerView)?.release()
         instance?.removeAllViews()
         instance = null
+    }
+
+    fun togglePlayPause() {
+        if (playState != PlayerConstants.PlayerState.PAUSED) {
+            youTubePlayer?.pause()
+        } else {
+            youTubePlayer?.play()
+        }
     }
 }

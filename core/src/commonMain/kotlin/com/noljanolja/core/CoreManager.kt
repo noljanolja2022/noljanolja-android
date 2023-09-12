@@ -314,6 +314,7 @@ class CoreManager : KoinComponent {
     ) = videoRepository.getVideos(isHighlight = isHighlight, query = query)
 
     suspend fun getWatchingVideos() = videoRepository.getWatchingVideos()
+    suspend fun getPromotedVideos() = videoRepository.getPromotedVideos()
 
     suspend fun clearSearchVideoHistories() = videoRepository.clearSearchHistories()
 

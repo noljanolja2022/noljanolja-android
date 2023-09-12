@@ -277,7 +277,11 @@ private fun LazyListScope.singleContent(
         ) {
             OvalAvatar(user = participant, size = 64.dp, modifier = Modifier.padding(top = 35.dp))
             SizeBox(height = 12.dp)
-            Text(participant.name, style = MaterialTheme.typography.bodyLarge.withSemiBold())
+            Text(
+                participant.name,
+                style = MaterialTheme.typography.bodyLarge.withSemiBold(),
+                color = MaterialTheme.colorScheme.onBackground,
+            )
             SizeBox(height = 25.dp)
         }
     }
@@ -315,7 +319,8 @@ fun LazyListScope.chatParticipants(
                 top = 12.dp,
                 start = 16.dp,
             ),
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground,
         )
     }
     if (isAdmin) {
@@ -372,7 +377,8 @@ fun LazyListScope.groupSettings(
                 vertical = 10.dp,
                 horizontal = 16.dp,
             ),
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground,
         )
     }
     item {
@@ -408,7 +414,7 @@ private fun SettingRow(
         ) {
             Icon(icon, contentDescription = null, modifier = Modifier.size(24.dp))
             Spacer(modifier = Modifier.width(12.dp))
-            Text(text = text)
+            Text(text = text, color = MaterialTheme.colorScheme.onBackground)
             Spacer(modifier = Modifier.weight(1F))
             Icon(
                 Icons.Default.ChevronRight,
@@ -444,7 +450,11 @@ private fun ParticipantRow(
         Spacer(modifier = Modifier.width(16.dp))
         Column() {
             if (participant.isMe) {
-                Text(stringResource(id = R.string.common_you), style = titleStyle)
+                Text(
+                    stringResource(id = R.string.common_you),
+                    style = titleStyle,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
             }
             Text(
                 participant.name,
@@ -518,14 +528,19 @@ private fun EditParticipantSheet(
         OvalAvatar(user = participant)
         Spacer(modifier = Modifier.height(5.dp))
 
-        Text(participant.name, style = style.titleMedium)
+        Text(
+            participant.name,
+            style = style.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground,
+        )
         Spacer(modifier = Modifier.height(20.dp))
         Text(
             stringResource(id = R.string.common_chat),
             style = style.bodyLarge,
             modifier = Modifier.clickable {
                 onChat.invoke()
-            }
+            },
+            color = MaterialTheme.colorScheme.onBackground,
         )
         Spacer(modifier = Modifier.height(20.dp))
         if (isAdmin) {
@@ -535,7 +550,8 @@ private fun EditParticipantSheet(
                     style = style.bodyLarge,
                     modifier = Modifier.clickable {
                         onAssignAdmin.invoke()
-                    }
+                    },
+                    color = MaterialTheme.colorScheme.onBackground,
                 )
                 Spacer(modifier = Modifier.height(20.dp))
             }
@@ -544,7 +560,8 @@ private fun EditParticipantSheet(
                 style = style.bodyLarge,
                 modifier = Modifier.clickable {
                     onBlock.invoke(participant)
-                }
+                },
+                color = MaterialTheme.colorScheme.onBackground,
             )
             Spacer(modifier = Modifier.height(20.dp))
             Text(
@@ -552,7 +569,7 @@ private fun EditParticipantSheet(
                 style = style.bodyLarge.copy(color = MaterialTheme.colorScheme.error),
                 modifier = Modifier.clickable {
                     onRemove.invoke()
-                }
+                },
             )
         }
     }

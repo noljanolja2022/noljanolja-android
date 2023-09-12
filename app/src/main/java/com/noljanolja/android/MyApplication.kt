@@ -1,5 +1,6 @@
 package com.noljanolja.android
 
+import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.os.Build
@@ -93,6 +94,7 @@ class MyApplication : Application() {
     companion object {
         var isAppInForeground: Boolean = false
         var latestConversationId: Long = 0L
+        val backStackActivities = mutableListOf<Activity>()
     }
 
     override fun onCreate() {
@@ -278,7 +280,7 @@ class MyApplication : Application() {
                     WalletViewModel()
                 }
                 viewModel {
-                    VideoDetailViewModel(get())
+                    VideoDetailViewModel()
                 }
                 viewModel {
                     PlayListViewModel()

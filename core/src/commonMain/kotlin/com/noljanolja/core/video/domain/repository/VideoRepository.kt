@@ -13,6 +13,8 @@ interface VideoRepository {
 
     fun getWatchingVideos(): Flow<List<Video>>
 
+    suspend fun getPromotedVideos(): Result<List<Video>>
+
     suspend fun getVideoDetail(id: String): Flow<Video>
 
     suspend fun commentVideo(

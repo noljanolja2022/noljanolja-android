@@ -78,9 +78,16 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun PlayListScreen(
     viewModel: PlayListViewModel = getViewModel(),
+    onSelectVideo: (String) -> Unit,
+    onSearchVideo: () -> Unit,
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    PlayListContent(uiState = uiState, handleEvent = viewModel::handleEvent)
+    PlayListContent(
+        uiState = uiState,
+        handleEvent = viewModel::handleEvent,
+        onSelectVideo = onSelectVideo,
+        onSearchVideo = onSearchVideo
+    )
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -88,6 +95,8 @@ fun PlayListScreen(
 private fun PlayListContent(
     uiState: UiState<PlayListUIData>,
     handleEvent: (PlayListEvent) -> Unit,
+    onSelectVideo: (String) -> Unit,
+    onSearchVideo: () -> Unit,
 ) {
     val configuration = LocalConfiguration.current
     val state = rememberPullRefreshState(uiState.loading, { handleEvent(PlayListEvent.Refresh) })
@@ -102,7 +111,7 @@ private fun PlayListContent(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             actions = {
-                IconButton(onClick = { handleEvent(PlayListEvent.Search) }) {
+                IconButton(onClick = onSearchVideo) {
                     Icon(
                         Icons.Default.Search,
                         contentDescription = null,
@@ -121,14 +130,14 @@ private fun PlayListContent(
         ) {
             item {
                 HighlightVideos(videos = data.highlightVideos, onClick = {
-                    handleEvent(PlayListEvent.PlayVideo(it.id))
+                    onSelectVideo(it.id)
                 })
                 SizeBox(height = 12.dp)
             }
             watchingVideos(
                 videos = data.watchingVideos,
                 onClick = {
-                    handleEvent(PlayListEvent.PlayVideo(it.id))
+                    onSelectVideo(it.id)
                 },
                 onShowAll = {
                     handleEvent(PlayListEvent.Uncompleted)
@@ -144,7 +153,7 @@ private fun PlayListContent(
                 videos = data.todayVideos,
                 configuration = configuration,
                 onClick = {
-                    handleEvent(PlayListEvent.PlayVideo(it.id))
+                    onSelectVideo(it.id)
                 },
                 onMoreVideo = {
                     selectOptionsVideo = it
@@ -254,7 +263,11 @@ private fun LazyListScope.trendingVideos(
         items((videos.size + 1) / 2) { index ->
             Row(modifier = Modifier.height(IntrinsicSize.Min)) {
                 videos[index * 2].let {
-                    Column(modifier = Modifier.weight(1f).fillMaxHeight()) {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                    ) {
                         TrendingVideo(
                             thumbnailModifier = Modifier.padding(start = 16.dp),
                             video = it,
@@ -264,7 +277,11 @@ private fun LazyListScope.trendingVideos(
                     }
                 }
                 videos.getOrNull(index * 2 + 1)?.let {
-                    Column(modifier = Modifier.weight(1f).fillMaxHeight()) {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                    ) {
                         TrendingVideo(
                             thumbnailModifier = Modifier.padding(start = 16.dp),
                             video = it,
@@ -289,7 +306,8 @@ private fun LazyListScope.watchingVideos(
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .clickable { onShowAll() }
                 .padding(horizontal = 16.dp)
         ) {
@@ -399,11 +417,17 @@ fun TrendingVideo(
         Text(
             text = video.title,
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-            modifier = Modifier.weight(1f).padding(horizontal = 16.dp),
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 16.dp),
             color = MaterialTheme.colorScheme.onBackground
         )
         IconButton(onClick = { onMore(video) }) {
-            Icon(Icons.Default.MoreVert, contentDescription = null)
+            Icon(
+                Icons.Default.MoreVert,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onBackground
+            )
         }
     }
     SizeBox(height = 2.dp)

@@ -27,6 +27,9 @@ class HomeViewModel(private val sharedPreferenceHelper: SharedPreferenceHelper) 
     private val _eventBannersFlow = MutableStateFlow<List<EventBanner>>(emptyList())
     val eventBannersFlow = _eventBannersFlow.asStateFlow()
 
+    private val _eventSelectVideoId = MutableSharedFlow<String>()
+    val eventSelectVideoId = _eventSelectVideoId.asSharedFlow()
+
     init {
         launchInMain {
             stickersLoader.loadAllRemoteStickerPackages()
@@ -42,6 +45,11 @@ class HomeViewModel(private val sharedPreferenceHelper: SharedPreferenceHelper) 
                 _eventBannersFlow.emit(it.filter { banner -> banner.action == EventAction.CHECKIN || seenBanners.none { it == banner.id } })
             }
         }
+        launch {
+            coreManager.getPromotedVideos().getOrNull()?.firstOrNull()?.let {
+                _eventSelectVideoId.emit(it.id)
+            }
+        }
     }
 
     fun handleEvent(event: HomeEvent) {
@@ -50,6 +58,7 @@ class HomeViewModel(private val sharedPreferenceHelper: SharedPreferenceHelper) 
                 HomeEvent.LoginOrVerifyEmail -> loginOrVerifyEmail()
                 HomeEvent.CancelBanner -> _eventBannersFlow.emit(emptyList())
                 is HomeEvent.CloseBanner -> sharedPreferenceHelper.seenBanners = listOf(event.id)
+                HomeEvent.Back -> back()
             }
         }
     }

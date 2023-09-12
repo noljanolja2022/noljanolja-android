@@ -68,6 +68,19 @@ internal class VideoRepositoryImpl(
         }
     }
 
+    override suspend fun getPromotedVideos(): Result<List<Video>> {
+        return try {
+            val result = videoApi.getPromotedVideo()
+            if (result.isSuccessful()) {
+                Result.success(result.data.orEmpty())
+            } else {
+                throw Throwable(result.message)
+            }
+        } catch (e: Throwable) {
+            Result.failure(e)
+        }
+    }
+
     override suspend fun getVideoDetail(id: String): Flow<Video> = flow {
         try {
             videoApi.getVideoDetail(GetVideoDetailRequest(videoId = id)).data?.let {

@@ -185,14 +185,19 @@ private fun ShareVideoContent(
 ) {
     val context = LocalContext.current
     SizeBox(height = 24.dp)
-    Text("Send to", style = MaterialTheme.typography.bodyMedium)
+    Text(
+        "Send to",
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onBackground
+    )
     SizeBox(height = 10.dp)
     OvalAvatar(avatar = shareContact.avatar)
     SizeBox(height = 10.dp)
     Text(
         shareContact.title,
         maxLines = 2,
-        style = MaterialTheme.typography.labelSmall
+        style = MaterialTheme.typography.labelSmall,
+        color = MaterialTheme.colorScheme.onBackground
     )
     SizeBox(height = 10.dp)
     SubcomposeAsyncImage(
@@ -206,7 +211,11 @@ private fun ShareVideoContent(
             .aspectRatio(Const.VIDEO_IMAGE_RATIO)
     )
     Column(modifier = Modifier.padding(horizontal = 10.dp)) {
-        Text(text = video.title, style = MaterialTheme.typography.labelLarge)
+        Text(
+            text = video.title,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onBackground
+        )
         SizeBox(height = 2.dp)
         Text(
             text = video.category.title,
@@ -238,7 +247,8 @@ private fun SelectConversation(
     SizeBox(height = 10.dp)
     Text(
         stringResource(id = R.string.common_share),
-        style = MaterialTheme.typography.bodyMedium
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onBackground
     )
     SizeBox(height = 20.dp)
     LazyRow(
@@ -264,7 +274,8 @@ private fun SelectConversation(
                     textAlign = TextAlign.Center,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(horizontal = 8.dp)
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
@@ -351,8 +362,12 @@ private fun OptionVideoRow(
             .clickable { onClick() }
             .padding(vertical = 10.dp, horizontal = 16.dp)
     ) {
-        Icon(icon, contentDescription = null)
+        Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.onBackground)
         SizeBox(width = 5.dp)
-        Text(text = text, style = MaterialTheme.typography.bodyMedium)
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onBackground
+        )
     }
 }

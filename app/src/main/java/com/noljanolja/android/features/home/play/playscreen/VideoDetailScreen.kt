@@ -1,18 +1,29 @@
 package com.noljanolja.android.features.home.play.playscreen
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.AlertDialog
+import android.app.PictureInPictureParams
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -31,10 +42,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
+import com.noljanolja.android.features.home.play.playscreen.PlayVideoActivity.Companion.createCustomActions
 import com.noljanolja.android.features.home.play.playscreen.composable.CommentInput
 import com.noljanolja.android.ui.composable.BackPressHandler
 import com.noljanolja.android.ui.composable.BoxWithBottomElevation
@@ -44,6 +57,9 @@ import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.composable.VerticalDivider
 import com.noljanolja.android.ui.composable.WarningDialog
 import com.noljanolja.android.ui.composable.youtube.YoutubeView
+import com.noljanolja.android.ui.theme.NeutralDarkGrey
+import com.noljanolja.android.ui.theme.NeutralGrey
+import com.noljanolja.android.ui.theme.NeutralLightGrey
 import com.noljanolja.android.ui.theme.Orange300
 import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.util.formatFullTime
@@ -53,13 +69,17 @@ import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.video.domain.model.Comment
 import com.noljanolja.core.video.domain.model.Commenter
 import com.noljanolja.core.video.domain.model.Video
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import org.koin.androidx.compose.getViewModel
-import org.koin.core.parameter.parametersOf
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun VideoDetailScreen(
-    videoId: String,
-    viewModel: VideoDetailViewModel = getViewModel { parametersOf(videoId) },
+    isInPipMode: Boolean,
+    viewModel: VideoDetailViewModel = getViewModel(),
+    onTogglePip: (Boolean) -> Unit,
+    onCloseVideo: () -> Unit,
+    onBack: () -> Unit,
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -67,6 +87,8 @@ fun VideoDetailScreen(
     val openUrl = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { }
+    val playerState by viewModel.playerStateFlow.collectAsStateWithLifecycle()
+
     LaunchedEffect(key1 = viewModel.errorFlow, block = {
         viewModel.errorFlow.collect {
             when (it) {
@@ -78,9 +100,15 @@ fun VideoDetailScreen(
             }
         }
     })
+
     VideoDetailContent(
         uiState = uiState,
-        handleEvent = viewModel::handleEvent
+        isInPipMode = isInPipMode,
+        playerState = playerState,
+        handleEvent = viewModel::handleEvent,
+        onTogglePip = onTogglePip,
+        onCloseVideo = onCloseVideo,
+        onBack = onBack,
     )
     WarningDialog(
         title = stringResource(id = R.string.video_detail_need_youtube_account),
@@ -106,35 +134,49 @@ fun VideoDetailScreen(
 @Composable
 private fun VideoDetailContent(
     uiState: UiState<VideoDetailUiData>,
+    isInPipMode: Boolean,
+    playerState: PlayerConstants.PlayerState,
     handleEvent: (VideoDetailEvent) -> Unit,
+    onTogglePip: (Boolean) -> Unit,
+    onCloseVideo: () -> Unit,
+    onBack: () -> Unit,
 ) {
+    val context = LocalContext.current
     var isFullScreen by rememberSaveable {
         mutableStateOf(false)
     }
-
+    val showOnlyVideo = isFullScreen || isInPipMode
     val video = uiState.data?.video
 
-    BackPressHandler(isFullScreen) {
-        handleEvent(VideoDetailEvent.ToggleFullScreen)
+    BackPressHandler() {
+        if (isFullScreen) {
+            handleEvent(VideoDetailEvent.ToggleFullScreen)
+        } else if (isInPipMode) {
+            onCloseVideo()
+        } else {
+            onTogglePip(true)
+        }
     }
     Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
-        if (!isFullScreen) {
+        if (!showOnlyVideo) {
             CommonTopAppBar(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 title = stringResource(id = R.string.video_title),
-                onBack = {
-                    handleEvent(VideoDetailEvent.Back)
-                }
+                onBack = onBack
             )
         }
     }) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(it)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
         ) {
-            if (!isFullScreen && video != null) {
+            if (!showOnlyVideo && video != null) {
                 Row(
-                    modifier = Modifier.fillMaxWidth().background(Color.Black),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.Black),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
@@ -146,30 +188,99 @@ private fun VideoDetailContent(
                     Image(
                         painter = painterResource(id = R.drawable.ic_video_point),
                         contentDescription = null,
-                        modifier = Modifier.padding(start = 1.dp).size(18.dp)
+                        modifier = Modifier
+                            .padding(start = 1.dp)
+                            .size(18.dp)
                     )
                 }
             }
-            val videoModifier = if (isFullScreen) {
-                Modifier.fillMaxWidth().wrapContentHeight()
+            val videoModifier = if (isInPipMode) {
+                Modifier
+                    .height(60.dp)
+                    .width(106.dp)
+            } else if (showOnlyVideo) {
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
             } else {
                 val configuration = LocalConfiguration.current
                 Modifier.widthIn(max = (configuration.screenHeightDp * 0.6).dp)
             }
+            val rowModifier = if (isInPipMode) Modifier.height(60.dp) else Modifier
             Column(
-                modifier = Modifier.fillMaxWidth().background(Color.Black),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Black),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                YoutubeView(
-                    modifier = videoModifier,
-                    onReady = { player -> handleEvent(VideoDetailEvent.ReadyVideo(player)) },
-                    toggleFullScreen = {
-                        isFullScreen = it
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = rowModifier
+                        .background(NeutralDarkGrey)
+                        .clickable {
+                            if (isInPipMode) {
+                                onTogglePip(false)
+                            }
+                        }
+                ) {
+                    Box(contentAlignment = Alignment.BottomCenter) {
+                        YoutubeView(
+                            modifier = videoModifier,
+                            onReady = { player -> handleEvent(VideoDetailEvent.ReadyVideo(player)) },
+                            toggleFullScreen = {
+                                isFullScreen = it
+                            }
+                        )
                     }
-                )
+                    if (isInPipMode) {
+                        SizeBox(12.dp)
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(60.dp)
+                        ) {
+                            Text(
+                                video?.title.orEmpty(),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                color = NeutralLightGrey
+                            )
+                            Text(
+                                video?.category?.title.orEmpty(),
+                                color = NeutralGrey
+                            )
+                        }
+                        Icon(
+                            if (playerState == PlayerConstants.PlayerState.PLAYING) {
+                                Icons.Default.Pause
+                            } else {
+                                Icons.Default.PlayArrow
+                            },
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clickable {
+                                    handleEvent(VideoDetailEvent.TogglePlayPause)
+                                }
+                                .padding(8.dp),
+                            tint = NeutralLightGrey
+                        )
+                        Icon(
+                            Icons.Default.Close,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clickable {
+                                    onCloseVideo()
+                                }
+                                .padding(8.dp),
+                            tint = NeutralLightGrey
+                        )
+                    }
+                }
             }
 
-            uiState.data?.video?.takeIf { !isFullScreen }?.let { video ->
+            uiState.data?.video?.takeIf { !showOnlyVideo }?.let { video ->
                 LazyColumn(modifier = Modifier.weight(1F)) {
                     item {
                         SizeBox(height = 8.dp)
@@ -205,7 +316,9 @@ private fun VideoInformation(video: Video) {
             style = MaterialTheme.typography.titleSmall.copy(
                 fontWeight = FontWeight.SemiBold
             ),
-            modifier = Modifier.weight(1f).padding(horizontal = 16.dp)
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 16.dp)
         )
         IconButton(onClick = { /*TODO*/ }) {
             Icon(Icons.Default.MoreVert, contentDescription = null)
@@ -228,7 +341,9 @@ private fun VideoInformation(video: Video) {
 @Composable
 private fun VideoParameters(video: Video) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
     ) {
         VideoParameter(
             title = stringResource(id = R.string.video_detail_views),
@@ -255,7 +370,9 @@ private fun RowScope.VideoParameter(
     valueColor: Color = MaterialTheme.colorScheme.onBackground,
 ) {
     BoxWithBottomElevation(
-        modifier = Modifier.weight(1F).height(55.dp)
+        modifier = Modifier
+            .weight(1F)
+            .height(55.dp)
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -321,7 +438,9 @@ private fun CommentSortItem(
     Text(
         text = stringResource(id = type.id),
         style = MaterialTheme.typography.labelMedium,
-        modifier = Modifier.clip(RoundedCornerShape(25.dp)).background(containerColor)
+        modifier = Modifier
+            .clip(RoundedCornerShape(25.dp))
+            .background(containerColor)
             .padding(vertical = 5.dp, horizontal = 10.dp),
         color = contentColor,
     )
@@ -333,11 +452,16 @@ private fun CommentRow(
     comment: Comment,
 ) {
     Row(
-        modifier = modifier.padding(top = 10.dp).fillMaxWidth().height(IntrinsicSize.Min)
+        modifier = modifier
+            .padding(top = 10.dp)
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min)
             .wrapContentHeight(),
     ) {
         Column(
-            modifier = Modifier.padding(top = 8.dp).fillMaxHeight(),
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             CommenterAvatar(commenter = comment.commenter)
@@ -358,11 +482,15 @@ private fun CommentRow(
             )
             SizeBox(height = 8.dp)
             BoxWithBottomElevation(
-                modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min)
             ) {
                 Text(
                     text = comment.comment,
-                    modifier = Modifier.fillMaxSize().padding(vertical = 10.dp, horizontal = 13.dp)
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(vertical = 10.dp, horizontal = 13.dp)
                 )
             }
             SizeBox(height = 8.dp)
@@ -375,6 +503,26 @@ private fun CommentRow(
 @Composable
 private fun CommenterAvatar(commenter: Commenter) {
     CircleAvatar(user = User(avatar = commenter.avatar), size = 25.dp)
+}
+
+private fun enterPictureInPicture(context: Context, playerState: PlayerConstants.PlayerState) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val supportsPIP: Boolean =
+            context.packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
+        if (supportsPIP) {
+            val params = PictureInPictureParams.Builder()
+                .setActions(listOf(createCustomActions(context, playerState)))
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                params.setSeamlessResizeEnabled(true)
+            }
+            (context as Activity).enterPictureInPictureMode(params.build())
+        }
+    } else {
+        AlertDialog.Builder(context)
+            .setTitle("Can't enter picture in picture mode")
+            .setMessage("In order to enter picture in picture mode you need a Android version >= 8")
+            .show()
+    }
 }
 
 private const val helpYoutubeUri =
