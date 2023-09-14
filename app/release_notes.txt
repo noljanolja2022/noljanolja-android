@@ -1,3 +1,4 @@
+- 1.0.33: Update new pip mode
 - 1.0.32: Release enter pip for video
 - 1.0.31: Release conversations media & update search videos
 - 1.0.30: Update translate ko
