@@ -1,6 +1,7 @@
 package com.noljanolja.android
 
 import android.app.PendingIntent
+import android.app.PictureInPictureParams
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -8,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -29,6 +31,8 @@ import com.noljanolja.android.common.network.NetworkConnectivityObserver
 import com.noljanolja.android.ui.theme.NoljanoljaTheme
 import com.noljanolja.core.CoreManager
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -41,7 +45,7 @@ class MainActivity : ComponentActivity() {
     private val contactsLoader: ContactsLoader by inject()
     private val authSdk: AuthSdk by inject()
     private lateinit var connectivityObserver: ConnectivityObserver
-
+    private var showVideoId: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -60,7 +64,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.primary,
                 ) {
-                    MainScreen(navigationManager)
+                    MainScreen(navigationManager) {
+                        showVideoId = it
+                    }
                 }
             }
         }
@@ -105,6 +111,21 @@ class MainActivity : ComponentActivity() {
         super.attachBaseContext(newBase)
     }
 
+    override fun onUserLeaveHint() {
+        showVideoId?.let {
+            enterPip()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onPictureInPictureModeChanged(
+        isInPictureInPictureMode: Boolean,
+        newConfig: Configuration,
+    ) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
+        _isPipModeFlow.value = isInPictureInPictureMode
+    }
+
     fun launchIfLogin(block: suspend () -> Unit) = launchInMainIO {
         authSdk.getIdToken(false)?.takeIf { it.isNotBlank() } ?: return@launchInMainIO
         block.invoke()
@@ -112,7 +133,8 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         const val EXTRA_CONVERSATION_ID = "conversationId"
-
+        private val _isPipModeFlow = MutableStateFlow(false)
+        val isPipModeFlow = _isPipModeFlow.asStateFlow()
         fun getIntent(
             context: Context,
             conversationId: String,
@@ -139,6 +161,14 @@ class MainActivity : ComponentActivity() {
 
         fun Intent.removeConversationId() {
             removeExtra(EXTRA_CONVERSATION_ID)
+        }
+    }
+
+    fun enterPip() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            enterPictureInPictureMode(PictureInPictureParams.Builder().build())
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            enterPictureInPictureMode()
         }
     }
 }

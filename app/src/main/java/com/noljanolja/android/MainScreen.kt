@@ -63,6 +63,7 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun MainScreen(
     navigationManager: NavigationManager,
+    onSelectVideo: (String?) -> Unit,
 ) {
     val context = LocalContext.current
     val coreManager: CoreManager = get()
@@ -127,7 +128,7 @@ fun MainScreen(
         route = NavigationDirections.Root.destination,
         startDestination = NavigationDirections.Home.destination,
     ) {
-        addHomeGraph(navController)
+        addHomeGraph(navController, onSelectVideo = onSelectVideo)
         addContactsGraph()
         addChatGraph()
         addVideoGraph()
@@ -140,6 +141,7 @@ fun MainScreen(
 
 private fun NavGraphBuilder.addHomeGraph(
     navController: NavHostController,
+    onSelectVideo: (String?) -> Unit,
 ) {
     composable(NavigationDirections.Home.destination) { backStack ->
         val checkinViewModel = backStack.sharedViewModel<CheckinViewModel>(
@@ -147,6 +149,7 @@ private fun NavGraphBuilder.addHomeGraph(
         )
         HomeScreen(
             checkinViewModel = checkinViewModel,
+            onSelectVideo = onSelectVideo
         )
     }
     composable(NavigationDirections.MyInfo.destination) {

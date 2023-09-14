@@ -30,6 +30,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.noljanolja.android.MainActivity
 import com.noljanolja.android.features.home.CheckinViewModel
 import com.noljanolja.android.features.home.conversations.ConversationsScreen
 import com.noljanolja.android.features.home.play.playlist.PlayListScreen
@@ -54,6 +55,7 @@ import org.koin.androidx.compose.getViewModel
 fun HomeScreen(
     viewModel: HomeViewModel = getViewModel(),
     checkinViewModel: CheckinViewModel,
+    onSelectVideo: (String?) -> Unit,
 ) {
     val context = LocalContext.current
     val showBanners by viewModel.eventBannersFlow.collectAsStateWithLifecycle()
@@ -70,14 +72,16 @@ fun HomeScreen(
     // Video detail screen
     val videoDetailViewModel: VideoDetailViewModel = getViewModel()
     var videoId by rememberSaveable { mutableStateOf<String?>(null) }
-    var isPipMode by rememberSaveable { mutableStateOf(false) }
+    var isBottomPlayMode by rememberSaveable { mutableStateOf(false) }
     var navHeight by remember { mutableStateOf(0.dp) }
     val density = LocalDensity.current
-    val onSelectVideo: (String) -> Unit = {
+    val selectVideo: (String?) -> Unit = {
         videoId = it
-        isPipMode = false
+        isBottomPlayMode = false
         videoDetailViewModel.updateVideo(it)
+        onSelectVideo(it)
     }
+    val isPipMode by MainActivity.isPipModeFlow.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = viewModel.errorFlow) {
         launch {
@@ -90,14 +94,15 @@ fun HomeScreen(
     LaunchedEffect(viewModel.eventSelectVideoId) {
         viewModel.eventSelectVideoId.collectLatest {
             videoId = it
-            isPipMode = true
+            isBottomPlayMode = true
             videoDetailViewModel.updateVideo(it)
+            onSelectVideo(it)
         }
     }
 
     Scaffold(
         bottomBar = {
-            if (videoId == null || isPipMode) {
+            if (videoId == null || isBottomPlayMode && !isPipMode) {
                 HomeBottomBar(
                     navController = navController,
                     isReadAllConversations = readAllConversations,
@@ -118,7 +123,7 @@ fun HomeScreen(
             addNavigationGraph(
                 navController,
                 checkinViewModel,
-                onSelectVideo = onSelectVideo,
+                onSelectVideo = selectVideo,
                 onSearchVideo = {
                     showSearchVideo = true
                 }
@@ -134,13 +139,13 @@ fun HomeScreen(
             onBack = {
                 showSearchVideo = false
             },
-            onSelectVideo = onSelectVideo
+            onSelectVideo = selectVideo
         )
     }
     videoId?.let {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
             val videoModifier =
-                if (isPipMode) {
+                if (isBottomPlayMode && !isPipMode) {
                     Modifier
                         .fillMaxWidth()
                         .padding(bottom = if (showSearchVideo) 0.dp else navHeight)
@@ -151,15 +156,16 @@ fun HomeScreen(
             Box(modifier = videoModifier) {
                 VideoDetailScreen(
                     viewModel = videoDetailViewModel,
-                    isInPipMode = isPipMode,
-                    onTogglePip = {
-                        isPipMode = it
+                    isBottomPlayMode = isBottomPlayMode,
+                    isPipMode = isPipMode,
+                    onToggleBottomPlay = {
+                        isBottomPlayMode = it
                     },
                     onCloseVideo = {
-                        videoId = null
+                        selectVideo(null)
                     },
                     onBack = {
-                        isPipMode = true
+                        isBottomPlayMode = true
                     }
                 )
             }

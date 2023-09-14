@@ -40,7 +40,11 @@ class VideoDetailViewModel() : BaseViewModel() {
         MutableStateFlow<PlayerConstants.PlayerState>(PlayerConstants.PlayerState.UNKNOWN)
     val playerStateFlow = _playerStateFlow.asStateFlow()
 
-    fun updateVideo(videoId: String) {
+    fun updateVideo(videoId: String?) {
+        if (videoId == null) {
+            onCleared()
+            return
+        }
         launch {
             this.videoId = videoId
             val user = coreManager.getCurrentUser().getOrNull()

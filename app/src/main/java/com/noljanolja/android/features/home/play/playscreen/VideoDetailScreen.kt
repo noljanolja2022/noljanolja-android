@@ -45,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.noljanolja.android.MainActivity
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.features.home.play.playscreen.PlayVideoActivity.Companion.createCustomActions
@@ -75,9 +76,10 @@ import org.koin.androidx.compose.getViewModel
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun VideoDetailScreen(
-    isInPipMode: Boolean,
+    isBottomPlayMode: Boolean,
+    isPipMode: Boolean,
     viewModel: VideoDetailViewModel = getViewModel(),
-    onTogglePip: (Boolean) -> Unit,
+    onToggleBottomPlay: (Boolean) -> Unit,
     onCloseVideo: () -> Unit,
     onBack: () -> Unit,
 ) {
@@ -103,10 +105,11 @@ fun VideoDetailScreen(
 
     VideoDetailContent(
         uiState = uiState,
-        isInPipMode = isInPipMode,
+        isBottomPlayMode = isBottomPlayMode,
+        isPipMode = isPipMode,
         playerState = playerState,
         handleEvent = viewModel::handleEvent,
-        onTogglePip = onTogglePip,
+        onToggleBottomPlay = onToggleBottomPlay,
         onCloseVideo = onCloseVideo,
         onBack = onBack,
     )
@@ -134,10 +137,11 @@ fun VideoDetailScreen(
 @Composable
 private fun VideoDetailContent(
     uiState: UiState<VideoDetailUiData>,
-    isInPipMode: Boolean,
+    isBottomPlayMode: Boolean,
+    isPipMode: Boolean,
     playerState: PlayerConstants.PlayerState,
     handleEvent: (VideoDetailEvent) -> Unit,
-    onTogglePip: (Boolean) -> Unit,
+    onToggleBottomPlay: (Boolean) -> Unit,
     onCloseVideo: () -> Unit,
     onBack: () -> Unit,
 ) {
@@ -145,16 +149,16 @@ private fun VideoDetailContent(
     var isFullScreen by rememberSaveable {
         mutableStateOf(false)
     }
-    val showOnlyVideo = isFullScreen || isInPipMode
+    val showOnlyVideo = isFullScreen || isBottomPlayMode || isPipMode
     val video = uiState.data?.video
 
     BackPressHandler() {
         if (isFullScreen) {
             handleEvent(VideoDetailEvent.ToggleFullScreen)
-        } else if (isInPipMode) {
-            onCloseVideo()
+        } else if (isBottomPlayMode) {
+            (context as MainActivity).enterPip()
         } else {
-            onTogglePip(true)
+            onToggleBottomPlay(true)
         }
     }
     Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
@@ -194,7 +198,11 @@ private fun VideoDetailContent(
                     )
                 }
             }
-            val videoModifier = if (isInPipMode) {
+            val videoModifier = if (isPipMode) {
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+            } else if (isBottomPlayMode) {
                 Modifier
                     .height(60.dp)
                     .width(106.dp)
@@ -206,7 +214,7 @@ private fun VideoDetailContent(
                 val configuration = LocalConfiguration.current
                 Modifier.widthIn(max = (configuration.screenHeightDp * 0.6).dp)
             }
-            val rowModifier = if (isInPipMode) Modifier.height(60.dp) else Modifier
+            val rowModifier = if (isBottomPlayMode) Modifier.height(60.dp) else Modifier
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -218,8 +226,8 @@ private fun VideoDetailContent(
                     modifier = rowModifier
                         .background(NeutralDarkGrey)
                         .clickable {
-                            if (isInPipMode) {
-                                onTogglePip(false)
+                            if (isBottomPlayMode) {
+                                onToggleBottomPlay(false)
                             }
                         }
                 ) {
@@ -232,7 +240,7 @@ private fun VideoDetailContent(
                             }
                         )
                     }
-                    if (isInPipMode) {
+                    if (isBottomPlayMode && !isPipMode) {
                         SizeBox(12.dp)
                         Column(
                             modifier = Modifier
