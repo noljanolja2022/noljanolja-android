@@ -9,6 +9,7 @@ import com.noljanolja.android.common.sharedpreference.SharedPreferenceHelper
 import com.noljanolja.android.util.isSeen
 import com.noljanolja.core.event.domain.model.EventAction
 import com.noljanolja.core.event.domain.model.EventBanner
+import com.noljanolja.core.video.domain.model.PromotedVideo
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -27,8 +28,10 @@ class HomeViewModel(private val sharedPreferenceHelper: SharedPreferenceHelper) 
     private val _eventBannersFlow = MutableStateFlow<List<EventBanner>>(emptyList())
     val eventBannersFlow = _eventBannersFlow.asStateFlow()
 
-    private val _eventSelectVideoId = MutableSharedFlow<String>()
-    val eventSelectVideoId = _eventSelectVideoId.asSharedFlow()
+    private val _eventPromotedVideoFlow = MutableSharedFlow<PromotedVideo>()
+    val eventPromotedVideoFlow = _eventPromotedVideoFlow.asSharedFlow()
+
+    private var promotedVideo: PromotedVideo? = null
 
     init {
         launchInMain {
@@ -47,7 +50,8 @@ class HomeViewModel(private val sharedPreferenceHelper: SharedPreferenceHelper) 
         }
         launch {
             coreManager.getPromotedVideos().getOrNull()?.firstOrNull()?.let {
-                _eventSelectVideoId.emit(it.id)
+                promotedVideo = it
+                _eventPromotedVideoFlow.emit(it)
             }
         }
     }
@@ -59,6 +63,18 @@ class HomeViewModel(private val sharedPreferenceHelper: SharedPreferenceHelper) 
                 HomeEvent.CancelBanner -> _eventBannersFlow.emit(emptyList())
                 is HomeEvent.CloseBanner -> sharedPreferenceHelper.seenBanners = listOf(event.id)
                 HomeEvent.Back -> back()
+                is HomeEvent.CommentLike -> commentLikeVideo(event.token)
+            }
+        }
+    }
+
+    private fun commentLikeVideo(token: String) {
+        launch {
+            if (promotedVideo?.autoComment == true) {
+                coreManager.commentVideo(promotedVideo?.video?.id.orEmpty(), "Auto comment", token)
+            }
+            if (promotedVideo?.autoLike == true) {
+                coreManager.likeVideo(promotedVideo?.video?.id.orEmpty(), token)
             }
         }
     }

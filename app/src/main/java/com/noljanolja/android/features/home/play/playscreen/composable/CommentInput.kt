@@ -70,7 +70,8 @@ fun CommentInput(
     val context = LocalContext.current
     val activity = context.findActivity()!!
     val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail()
-        .requestIdToken(stringResource(id = R.string.web_client_id)).requestScopes(YOUTUBE_SCOPE).build()
+        .requestIdToken(stringResource(id = R.string.web_client_id)).requestScopes(YOUTUBE_SCOPE)
+        .build()
 
     val googleSignInClient = GoogleSignIn.getClient(context, gso)
     val onTokenResult = { token: String ->
@@ -193,7 +194,7 @@ fun CommentInput(
     }
 }
 
-private fun getTokenFromAccount(
+fun getTokenFromAccount(
     activity: Activity,
     account: GoogleSignInAccount,
     onError: (Throwable) -> Unit,
@@ -222,7 +223,7 @@ private fun getTokenFromAccount(
     }
 }
 
-private suspend fun Task<GoogleSignInAccount>.getAccount(
+suspend fun Task<GoogleSignInAccount>.getAccount(
     onError: (Throwable) -> Unit,
 ) = try {
     this.await()

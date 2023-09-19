@@ -9,7 +9,9 @@ import com.noljanolja.core.video.data.model.request.CommentVideoRequest
 import com.noljanolja.core.video.data.model.request.GetTrendingVideosRequest
 import com.noljanolja.core.video.data.model.request.GetVideoDetailRequest
 import com.noljanolja.core.video.data.model.request.GetVideosRequest
+import com.noljanolja.core.video.data.model.request.LikeVideoRequest
 import com.noljanolja.core.video.domain.model.Comment
+import com.noljanolja.core.video.domain.model.PromotedVideo
 import com.noljanolja.core.video.domain.model.TrendingVideoDuration
 import com.noljanolja.core.video.domain.model.Video
 import com.noljanolja.core.video.domain.repository.VideoRepository
@@ -68,7 +70,7 @@ internal class VideoRepositoryImpl(
         }
     }
 
-    override suspend fun getPromotedVideos(): Result<List<Video>> {
+    override suspend fun getPromotedVideos(): Result<List<PromotedVideo>> {
         return try {
             val result = videoApi.getPromotedVideo()
             if (result.isSuccessful()) {
@@ -107,6 +109,22 @@ internal class VideoRepositoryImpl(
                 throw Failure.NotHasYoutubeChannel
             } else {
                 throw Throwable("Comment video error")
+            }
+        } catch (e: Throwable) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun likeVideo(videoId: String, youtubeToken: String): Result<Boolean> {
+        return try {
+            val response =
+                videoApi.likeVideo(videoId, LikeVideoRequest(youtubeToken = youtubeToken))
+            if (response.isSuccessful()) {
+                Result.success(true)
+            } else if (response.code == Failure.NotHasYoutubeChannel.code) {
+                throw Failure.NotHasYoutubeChannel
+            } else {
+                throw Throwable("Like video error")
             }
         } catch (e: Throwable) {
             Result.failure(e)

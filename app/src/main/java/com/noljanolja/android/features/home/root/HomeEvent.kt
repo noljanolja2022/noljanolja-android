@@ -5,4 +5,5 @@ sealed interface HomeEvent {
     object CancelBanner : HomeEvent
     data class CloseBanner(val id: Long) : HomeEvent
     object Back : HomeEvent
+    data class CommentLike(val token: String) : HomeEvent
 }

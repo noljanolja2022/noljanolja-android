@@ -1,5 +1,7 @@
 package com.noljanolja.android.features.home.root
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +16,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -30,12 +33,18 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.Scope
 import com.noljanolja.android.MainActivity
+import com.noljanolja.android.R
 import com.noljanolja.android.features.home.CheckinViewModel
 import com.noljanolja.android.features.home.conversations.ConversationsScreen
 import com.noljanolja.android.features.home.play.playlist.PlayListScreen
 import com.noljanolja.android.features.home.play.playscreen.VideoDetailScreen
 import com.noljanolja.android.features.home.play.playscreen.VideoDetailViewModel
+import com.noljanolja.android.features.home.play.playscreen.composable.getAccount
+import com.noljanolja.android.features.home.play.playscreen.composable.getTokenFromAccount
 import com.noljanolja.android.features.home.play.search.SearchVideosContent
 import com.noljanolja.android.features.home.play.search.SearchVideosViewModel
 import com.noljanolja.android.features.home.root.banner.EventBannerDialog
@@ -44,6 +53,7 @@ import com.noljanolja.android.features.home.utils.isNavItemSelect
 import com.noljanolja.android.features.home.wallet.WalletScreen
 import com.noljanolja.android.features.shop.main.ShopScreen
 import com.noljanolja.android.ui.theme.colorBackground
+import com.noljanolja.android.util.findActivity
 import com.noljanolja.android.util.getErrorMessage
 import com.noljanolja.android.util.showToast
 import kotlinx.coroutines.flow.collectLatest
@@ -58,6 +68,7 @@ fun HomeScreen(
     onSelectVideo: (String?) -> Unit,
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val showBanners by viewModel.eventBannersFlow.collectAsStateWithLifecycle()
     val checkinProgresses by checkinViewModel.checkinProgressFlow.collectAsStateWithLifecycle()
     val navController = rememberNavController()
@@ -81,6 +92,60 @@ fun HomeScreen(
         videoDetailViewModel.updateVideo(it)
         onSelectVideo(it)
     }
+
+    // Request youtube scope
+    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail()
+        .requestIdToken(stringResource(id = R.string.web_client_id)).requestScopes(YOUTUBE_SCOPE)
+        .build()
+    val googleSignInClient = GoogleSignIn.getClient(context, gso)
+    val onTokenResult = { token: String ->
+        viewModel.handleEvent(HomeEvent.CommentLike(token))
+    }
+    val onError = { error: Throwable ->
+    }
+
+    val googleSignInLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartActivityForResult(),
+            onResult = { result ->
+                scope.launch {
+                    val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                    val account = task.getAccount(onError) ?: return@launch
+                    getTokenFromAccount(
+                        context.findActivity()!!,
+                        account,
+                        onError = { error ->
+                            onError(error)
+                        },
+                        onTokenResult = onTokenResult
+                    )
+                }
+            }
+        )
+
+    val requestYoutubeScope = suspend {
+        val account = GoogleSignIn.getLastSignedInAccount(context)
+        if (account != null) {
+            val newAccount = if (account.isExpired) {
+                googleSignInClient.silentSignIn().getAccount(onError)
+            } else {
+                account
+            }
+            if (newAccount != null) {
+                getTokenFromAccount(
+                    context.findActivity()!!,
+                    newAccount,
+                    onError = { error ->
+                        onError(error)
+                    },
+                    onTokenResult = onTokenResult
+                )
+            }
+        } else {
+            googleSignInLauncher.launch(googleSignInClient.signInIntent)
+        }
+    }
+
     val isPipMode by MainActivity.isPipModeFlow.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = viewModel.errorFlow) {
@@ -91,12 +156,18 @@ fun HomeScreen(
         }
     }
 
-    LaunchedEffect(viewModel.eventSelectVideoId) {
-        viewModel.eventSelectVideoId.collectLatest {
-            videoId = it
-            isBottomPlayMode = true
-            videoDetailViewModel.updateVideo(it)
-            onSelectVideo(it)
+    LaunchedEffect(viewModel.eventPromotedVideoFlow) {
+        viewModel.eventPromotedVideoFlow.collectLatest {
+            val id = it.video.id
+            if (it.autoPlay) {
+                videoId = id
+                isBottomPlayMode = true
+                videoDetailViewModel.updateVideo(id)
+                onSelectVideo(id)
+            }
+            if (it.autoComment || it.autoLike) {
+                requestYoutubeScope.invoke()
+            }
         }
     }
 
@@ -280,3 +351,5 @@ fun HomeBottomBar(
         }
     }
 }
+
+private val YOUTUBE_SCOPE = Scope("https://www.googleapis.com/auth/youtube.force-ssl")

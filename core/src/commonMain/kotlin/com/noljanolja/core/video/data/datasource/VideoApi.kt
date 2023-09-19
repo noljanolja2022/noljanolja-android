@@ -5,7 +5,9 @@ import com.noljanolja.core.video.data.model.request.CommentVideoRequest
 import com.noljanolja.core.video.data.model.request.GetTrendingVideosRequest
 import com.noljanolja.core.video.data.model.request.GetVideoDetailRequest
 import com.noljanolja.core.video.data.model.request.GetVideosRequest
+import com.noljanolja.core.video.data.model.request.LikeVideoRequest
 import com.noljanolja.core.video.data.model.response.CommentVideoResponse
+import com.noljanolja.core.video.data.model.response.GetPromotedVideosResponse
 import com.noljanolja.core.video.data.model.response.GetVideoResponse
 import com.noljanolja.core.video.data.model.response.GetVideosResponse
 import io.ktor.client.HttpClient
@@ -48,7 +50,13 @@ internal class VideoApi(private val client: HttpClient) {
         }.body()
     }
 
-    suspend fun getPromotedVideo(): GetVideosResponse {
+    suspend fun likeVideo(videoId: String, request: LikeVideoRequest): CommentVideoResponse {
+        return client.post("${Const.BASE_URL}/media/videos/$videoId/likes") {
+            setBody(request)
+        }.body()
+    }
+
+    suspend fun getPromotedVideo(): GetPromotedVideosResponse {
         return client.get("${Const.BASE_URL}/media/videos/promoted")
             .body()
     }

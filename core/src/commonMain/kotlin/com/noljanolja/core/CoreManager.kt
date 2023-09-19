@@ -330,6 +330,14 @@ class CoreManager : KoinComponent {
         youtubeToken: String,
     ) = videoRepository.commentVideo(videoId = id, comment = comment, youtubeToken = youtubeToken)
 
+    suspend fun likeVideo(
+        id: String,
+        youtubeToken: String,
+    ) = videoRepository.likeVideo(
+        videoId = id,
+        youtubeToken = youtubeToken
+    )
+
     fun getMemberInfo() = loyaltyRepository.getMemberInfo()
 
     suspend fun refreshMemberInfo() = loyaltyRepository.refreshMemberInfo()
