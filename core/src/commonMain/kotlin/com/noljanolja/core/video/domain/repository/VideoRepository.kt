@@ -29,6 +29,10 @@ interface VideoRepository {
         youtubeToken: String,
     ): Result<Boolean>
 
+    suspend fun subscribeChannel(
+        channelId: String,
+        youtubeToken: String,
+    ): Result<Boolean>
     suspend fun clearSearchHistories()
 
     suspend fun clearSearchText(text: String)

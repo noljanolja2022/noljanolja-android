@@ -63,7 +63,7 @@ class HomeViewModel(private val sharedPreferenceHelper: SharedPreferenceHelper) 
                 HomeEvent.CancelBanner -> _eventBannersFlow.emit(emptyList())
                 is HomeEvent.CloseBanner -> sharedPreferenceHelper.seenBanners = listOf(event.id)
                 HomeEvent.Back -> back()
-                is HomeEvent.CommentLike -> commentLikeVideo(event.token)
+                is HomeEvent.AutoAction -> commentLikeVideo(event.token)
             }
         }
     }
@@ -75,6 +75,9 @@ class HomeViewModel(private val sharedPreferenceHelper: SharedPreferenceHelper) 
             }
             if (promotedVideo?.autoLike == true) {
                 coreManager.likeVideo(promotedVideo?.video?.id.orEmpty(), token)
+            }
+            if (promotedVideo?.autoSubscribe == true) {
+                coreManager.subscribeChannel(promotedVideo?.video?.channel?.id.orEmpty(), token)
             }
         }
     }

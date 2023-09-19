@@ -1,5 +1,6 @@
 package com.noljanolja.android.features.home.root
 
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -95,13 +96,15 @@ fun HomeScreen(
 
     // Request youtube scope
     val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail()
-        .requestIdToken(stringResource(id = R.string.web_client_id)).requestScopes(YOUTUBE_SCOPE)
+        .requestIdToken(stringResource(id = R.string.web_client_id))
+        .requestScopes(YOUTUBE_FORCE_SCOPE, YOUTUBE_SCOPE, YOUTUBE_PARTNER_SCOPE)
         .build()
     val googleSignInClient = GoogleSignIn.getClient(context, gso)
     val onTokenResult = { token: String ->
-        viewModel.handleEvent(HomeEvent.CommentLike(token))
+        viewModel.handleEvent(HomeEvent.AutoAction(token))
     }
-    val onError = { error: Throwable ->
+    val onError: (Throwable) -> Unit = { error: Throwable ->
+        Log.e("Request scope error", error.toString())
     }
 
     val googleSignInLauncher =
@@ -165,7 +168,7 @@ fun HomeScreen(
                 videoDetailViewModel.updateVideo(id)
                 onSelectVideo(id)
             }
-            if (it.autoComment || it.autoLike) {
+            if (it.autoComment || it.autoLike || it.autoSubscribe) {
                 requestYoutubeScope.invoke()
             }
         }
@@ -352,4 +355,6 @@ fun HomeBottomBar(
     }
 }
 
-private val YOUTUBE_SCOPE = Scope("https://www.googleapis.com/auth/youtube.force-ssl")
+private val YOUTUBE_FORCE_SCOPE = Scope("https://www.googleapis.com/auth/youtube.force-ssl")
+private val YOUTUBE_SCOPE = Scope("https://www.googleapis.com/auth/youtube")
+private val YOUTUBE_PARTNER_SCOPE = Scope("https://www.googleapis.com/auth/youtubepartner")

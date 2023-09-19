@@ -338,6 +338,11 @@ class CoreManager : KoinComponent {
         youtubeToken = youtubeToken
     )
 
+    suspend fun subscribeChannel(
+        channelId: String,
+        youtubeToken: String,
+    ) = videoRepository.subscribeChannel(channelId, youtubeToken)
+
     fun getMemberInfo() = loyaltyRepository.getMemberInfo()
 
     suspend fun refreshMemberInfo() = loyaltyRepository.refreshMemberInfo()
