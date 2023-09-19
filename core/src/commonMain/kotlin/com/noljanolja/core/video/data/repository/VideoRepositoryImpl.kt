@@ -10,6 +10,7 @@ import com.noljanolja.core.video.data.model.request.GetTrendingVideosRequest
 import com.noljanolja.core.video.data.model.request.GetVideoDetailRequest
 import com.noljanolja.core.video.data.model.request.GetVideosRequest
 import com.noljanolja.core.video.data.model.request.LikeVideoRequest
+import com.noljanolja.core.video.data.model.request.SubscribeChannelRequest
 import com.noljanolja.core.video.domain.model.Comment
 import com.noljanolja.core.video.domain.model.PromotedVideo
 import com.noljanolja.core.video.domain.model.TrendingVideoDuration
@@ -125,6 +126,28 @@ internal class VideoRepositoryImpl(
                 throw Failure.NotHasYoutubeChannel
             } else {
                 throw Throwable("Like video error")
+            }
+        } catch (e: Throwable) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun subscribeChannel(
+        channelId: String,
+        youtubeToken: String,
+    ): Result<Boolean> {
+        return try {
+            val response =
+                videoApi.subscribeChannel(
+                    channelId,
+                    SubscribeChannelRequest(isSubscribing = true, youtubeToken = youtubeToken)
+                )
+            if (response.isSuccessful()) {
+                Result.success(true)
+            } else if (response.code == Failure.NotHasYoutubeChannel.code) {
+                throw Failure.NotHasYoutubeChannel
+            } else {
+                throw Throwable("Subscribe channel error")
             }
         } catch (e: Throwable) {
             Result.failure(e)
