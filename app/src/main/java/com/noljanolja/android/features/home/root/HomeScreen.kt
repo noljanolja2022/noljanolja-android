@@ -5,9 +5,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -16,14 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -37,16 +32,13 @@ import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
-import com.noljanolja.android.MainActivity
 import com.noljanolja.android.R
 import com.noljanolja.android.features.home.CheckinViewModel
 import com.noljanolja.android.features.home.conversations.ConversationsScreen
 import com.noljanolja.android.features.home.play.playlist.PlayListScreen
-import com.noljanolja.android.features.home.play.playscreen.VideoDetailScreen
-import com.noljanolja.android.features.home.play.playscreen.VideoDetailViewModel
+import com.noljanolja.android.features.home.play.playscreen.PlayVideoActivity
 import com.noljanolja.android.features.home.play.playscreen.composable.getAccount
 import com.noljanolja.android.features.home.play.playscreen.composable.getTokenFromAccount
-import com.noljanolja.android.features.home.play.search.SearchVideosContent
 import com.noljanolja.android.features.home.play.search.SearchVideosViewModel
 import com.noljanolja.android.features.home.root.banner.EventBannerDialog
 import com.noljanolja.android.features.home.utils.click
@@ -66,7 +58,6 @@ import org.koin.androidx.compose.getViewModel
 fun HomeScreen(
     viewModel: HomeViewModel = getViewModel(),
     checkinViewModel: CheckinViewModel,
-    onSelectVideo: (String?) -> Unit,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -82,17 +73,7 @@ fun HomeScreen(
     var showSearchVideo by rememberSaveable { mutableStateOf(false) }
 
     // Video detail screen
-    val videoDetailViewModel: VideoDetailViewModel = getViewModel()
-    var videoId by rememberSaveable { mutableStateOf<String?>(null) }
-    var isBottomPlayMode by rememberSaveable { mutableStateOf(false) }
-    var navHeight by remember { mutableStateOf(0.dp) }
     val density = LocalDensity.current
-    val selectVideo: (String?) -> Unit = {
-        videoId = it
-        isBottomPlayMode = false
-        videoDetailViewModel.updateVideo(it)
-        onSelectVideo(it)
-    }
 
     // Request youtube scope
     val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail()
@@ -149,8 +130,6 @@ fun HomeScreen(
         }
     }
 
-    val isPipMode by MainActivity.isPipModeFlow.collectAsStateWithLifecycle()
-
     LaunchedEffect(key1 = viewModel.errorFlow) {
         launch {
             viewModel.errorFlow.collect {
@@ -162,12 +141,7 @@ fun HomeScreen(
     LaunchedEffect(viewModel.eventPromotedVideoFlow) {
         viewModel.eventPromotedVideoFlow.collectLatest {
             val id = it.video.id
-            if (it.autoPlay) {
-                videoId = id
-                isBottomPlayMode = true
-                videoDetailViewModel.updateVideo(id)
-                onSelectVideo(id)
-            }
+            context.startActivity(PlayVideoActivity.createIntent(context, id))
             if (it.autoComment || it.autoLike || it.autoSubscribe) {
                 requestYoutubeScope.invoke()
             }
@@ -176,17 +150,10 @@ fun HomeScreen(
 
     Scaffold(
         bottomBar = {
-            if (videoId == null || isBottomPlayMode && !isPipMode) {
-                HomeBottomBar(
-                    navController = navController,
-                    isReadAllConversations = readAllConversations,
-                    modifier = Modifier.onSizeChanged {
-                        density.run {
-                            navHeight = it.height.toDp()
-                        }
-                    },
-                )
-            }
+            HomeBottomBar(
+                navController = navController,
+                isReadAllConversations = readAllConversations,
+            )
         },
     ) { contentPadding ->
         NavHost(
@@ -197,7 +164,6 @@ fun HomeScreen(
             addNavigationGraph(
                 navController,
                 checkinViewModel,
-                onSelectVideo = selectVideo,
                 onSearchVideo = {
                     showSearchVideo = true
                 }
@@ -205,46 +171,6 @@ fun HomeScreen(
         }
     }
 
-    if (showSearchVideo) {
-        SearchVideosContent(
-            uiState = uiState,
-            searchKeys = searchKeys,
-            handleEvent = searchVideosViewModel::handleEvent,
-            onBack = {
-                showSearchVideo = false
-            },
-            onSelectVideo = selectVideo
-        )
-    }
-    videoId?.let {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
-            val videoModifier =
-                if (isBottomPlayMode && !isPipMode) {
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = if (showSearchVideo) 0.dp else navHeight)
-                        .height(70.dp)
-                } else {
-                    Modifier.fillMaxSize()
-                }
-            Box(modifier = videoModifier) {
-                VideoDetailScreen(
-                    viewModel = videoDetailViewModel,
-                    isBottomPlayMode = isBottomPlayMode,
-                    isPipMode = isPipMode,
-                    onToggleBottomPlay = {
-                        isBottomPlayMode = it
-                    },
-                    onCloseVideo = {
-                        selectVideo(null)
-                    },
-                    onBack = {
-                        isBottomPlayMode = true
-                    }
-                )
-            }
-        }
-    }
     showBanners.takeIf { it.isNotEmpty() }?.let {
         EventBannerDialog(eventBanners = it, checkinProgresses = checkinProgresses, onCheckIn = {
             HomeNavigationItem.WalletItem.click(navController)
@@ -259,7 +185,6 @@ fun HomeScreen(
 private fun NavGraphBuilder.addNavigationGraph(
     navController: NavHostController,
     checkinViewModel: CheckinViewModel,
-    onSelectVideo: (String) -> Unit,
     onSearchVideo: () -> Unit,
 ) {
     composable(HomeNavigationItem.ChatItem.route) {
@@ -267,7 +192,6 @@ private fun NavGraphBuilder.addNavigationGraph(
     }
     composable(HomeNavigationItem.WatchItem.route) {
         PlayListScreen(
-            onSelectVideo = onSelectVideo,
             onSearchVideo = onSearchVideo
         )
     }

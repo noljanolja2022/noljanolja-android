@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
+import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.core.video.domain.model.Video
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,6 +28,7 @@ class SearchVideosViewModel : BaseViewModel() {
     fun handleEvent(event: SearchVideosEvent) {
         launch {
             when (event) {
+                SearchVideosEvent.Back -> back()
                 is SearchVideosEvent.Clear -> {
                     coreManager.clearSearchVideoText(event.text)
                 }
@@ -34,6 +36,12 @@ class SearchVideosViewModel : BaseViewModel() {
                 SearchVideosEvent.ClearAll -> {
                     coreManager.clearSearchVideoHistories()
                 }
+
+                is SearchVideosEvent.PlayVideo -> navigationManager.navigate(
+                    NavigationDirections.PlayScreen(
+                        event.id
+                    )
+                )
 
                 is SearchVideosEvent.Search -> searchVideos(event.text)
             }

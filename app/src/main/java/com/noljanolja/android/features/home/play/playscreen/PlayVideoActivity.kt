@@ -37,7 +37,7 @@ class PlayVideoActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val videoId = intent.extras?.getString("videoId").orEmpty()
         val viewModel: VideoDetailViewModel = getViewModel { parametersOf(videoId) }
-
+        viewModel.updateVideo(videoId)
         YoutubeViewWithFullScreen.release()
         MyApplication.backStackActivities.add(this)
         setContent {
@@ -47,14 +47,13 @@ class PlayVideoActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.primary,
                 ) {
-//                    VideoDetailScreen(
-//                        videoId = videoId,
-//                        isInPipMode = isInPipMode.value,
-//                        viewModel = viewModel,
-//                        onTogglePip = {},
-//                        onCloseVideo = {},
-//                        onBack = {}
-//                    )
+                    VideoDetailScreen(
+                        isPipMode = isInPipMode.value,
+                        viewModel = viewModel,
+                        onBack = {
+                            enterPip()
+                        }
+                    )
                 }
             }
         }
@@ -70,6 +69,7 @@ class PlayVideoActivity : ComponentActivity() {
                 }
             }
         }
+        enterPip()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -79,6 +79,14 @@ class PlayVideoActivity : ComponentActivity() {
     ) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
         isInPipMode.value = isInPictureInPictureMode
+    }
+
+    private fun enterPip() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            enterPictureInPictureMode(PictureInPictureParams.Builder().build())
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            enterPictureInPictureMode()
+        }
     }
 
     companion object {

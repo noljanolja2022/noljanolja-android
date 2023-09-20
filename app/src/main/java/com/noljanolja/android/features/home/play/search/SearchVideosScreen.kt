@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.rounded.Cancel
@@ -37,6 +36,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.features.home.play.optionsvideo.OptionVideoBottomBottomSheet
@@ -46,24 +46,24 @@ import com.noljanolja.android.ui.composable.SearchBar
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.NeutralGrey
 import com.noljanolja.core.video.domain.model.Video
+import org.koin.androidx.compose.getViewModel
 
-// @Composable
-// fun SearchVideosScreen() {
-//    SearchVideosContent(
-//        uiState = uiState,
-//        searchKeys = searchKeys,
-//        handleEvent = viewModel::handleEvent
-//    )
-// }
-
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SearchVideosContent(
+fun SearchVideosScreen(viewModel: SearchVideosViewModel = getViewModel()) {
+    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val searchKeys by viewModel.searchKeys.collectAsStateWithLifecycle()
+    SearchVideosContent(
+        uiState = uiState,
+        searchKeys = searchKeys,
+        handleEvent = viewModel::handleEvent
+    )
+}
+
+@Composable
+private fun SearchVideosContent(
     uiState: UiState<SearchVideosUiData>,
     searchKeys: List<String>,
     handleEvent: (SearchVideosEvent) -> Unit,
-    onBack: () -> Unit,
-    onSelectVideo: (String) -> Unit,
 ) {
     var isSearchFocus by remember {
         mutableStateOf(false)
@@ -76,56 +76,54 @@ fun SearchVideosContent(
         mutableStateOf<Video?>(null)
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Box(modifier = Modifier.fillMaxSize().clickable(enabled = false) { })
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
-        ) {
-            SearchVideoHeader(
-                searchText = searchText,
-                onSearchChange = {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+    ) {
+        SearchVideoHeader(
+            searchText = searchText,
+            onSearchChange = {
+                searchText = it
+            },
+            onFocusChange = {
+                isSearchFocus = it
+            },
+            onBack = {
+                handleEvent(SearchVideosEvent.Back)
+            },
+            onSubmit = {
+                handleEvent(SearchVideosEvent.Search(searchText))
+            }
+        )
+        if (isSearchFocus) {
+            SearchVideosHistory(
+                searchKeys = searchKeys,
+                onClear = {
+                    handleEvent(SearchVideosEvent.Clear(it))
+                },
+                onClearAll = {
+                    handleEvent(SearchVideosEvent.ClearAll)
+                },
+                onSearch = {
+                    handleEvent(SearchVideosEvent.Search(it))
                     searchText = it
-                },
-                onFocusChange = {
-                    isSearchFocus = it
-                },
-                onBack = onBack,
-                onSubmit = {
-                    handleEvent(SearchVideosEvent.Search(searchText))
+                    focusManager.clearFocus()
                 }
             )
-            if (isSearchFocus) {
-                SearchVideosHistory(
-                    searchKeys = searchKeys,
-                    onClear = {
-                        handleEvent(SearchVideosEvent.Clear(it))
-                    },
-                    onClearAll = {
-                        handleEvent(SearchVideosEvent.ClearAll)
-                    },
-                    onSearch = {
-                        handleEvent(SearchVideosEvent.Search(it))
-                        searchText = it
-                        focusManager.clearFocus()
-                    }
-                )
-            } else {
-                val videos = uiState.data?.videos.orEmpty()
-                SearchVideosResult(
-                    videos = videos,
-                    onMoreVideo = {
-                        selectOptionsVideo = it
-                    },
-                    onClick = {
-                        onSelectVideo(it.id)
-                    }
-                )
-            }
+        } else {
+            val videos = uiState.data?.videos.orEmpty()
+            SearchVideosResult(
+                videos = videos,
+                onMoreVideo = {
+                    selectOptionsVideo = it
+                },
+                onClick = {
+                    handleEvent(SearchVideosEvent.PlayVideo(it.id))
+                }
+            )
         }
     }
-
     selectOptionsVideo?.let {
         OptionVideoBottomBottomSheet(
             visible = true,

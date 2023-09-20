@@ -78,15 +78,12 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun PlayListScreen(
     viewModel: PlayListViewModel = getViewModel(),
-    onSelectVideo: (String) -> Unit,
     onSearchVideo: () -> Unit,
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     PlayListContent(
         uiState = uiState,
         handleEvent = viewModel::handleEvent,
-        onSelectVideo = onSelectVideo,
-        onSearchVideo = onSearchVideo
     )
 }
 
@@ -95,8 +92,6 @@ fun PlayListScreen(
 private fun PlayListContent(
     uiState: UiState<PlayListUIData>,
     handleEvent: (PlayListEvent) -> Unit,
-    onSelectVideo: (String) -> Unit,
-    onSearchVideo: () -> Unit,
 ) {
     val configuration = LocalConfiguration.current
     val state = rememberPullRefreshState(uiState.loading, { handleEvent(PlayListEvent.Refresh) })
@@ -111,7 +106,9 @@ private fun PlayListContent(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             actions = {
-                IconButton(onClick = onSearchVideo) {
+                IconButton(onClick = {
+                    handleEvent(PlayListEvent.Search)
+                }) {
                     Icon(
                         Icons.Default.Search,
                         contentDescription = null,
@@ -130,14 +127,14 @@ private fun PlayListContent(
         ) {
             item {
                 HighlightVideos(videos = data.highlightVideos, onClick = {
-                    onSelectVideo(it.id)
+                    handleEvent(PlayListEvent.PlayVideo(it.id))
                 })
                 SizeBox(height = 12.dp)
             }
             watchingVideos(
                 videos = data.watchingVideos,
                 onClick = {
-                    onSelectVideo(it.id)
+                    handleEvent(PlayListEvent.PlayVideo(it.id))
                 },
                 onShowAll = {
                     handleEvent(PlayListEvent.Uncompleted)
@@ -153,7 +150,7 @@ private fun PlayListContent(
                 videos = data.todayVideos,
                 configuration = configuration,
                 onClick = {
-                    onSelectVideo(it.id)
+                    handleEvent(PlayListEvent.PlayVideo(it.id))
                 },
                 onMoreVideo = {
                     selectOptionsVideo = it

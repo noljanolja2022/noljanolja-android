@@ -71,7 +71,7 @@ class HomeViewModel(private val sharedPreferenceHelper: SharedPreferenceHelper) 
     private fun commentLikeVideo(token: String) {
         launch {
             if (promotedVideo?.autoComment == true) {
-                coreManager.commentVideo(promotedVideo?.video?.id.orEmpty(), "Auto comment", token)
+                coreManager.commentVideo(promotedVideo?.video?.id.orEmpty(), AUTO_COMMENT, token)
             }
             if (promotedVideo?.autoLike == true) {
                 coreManager.likeVideo(promotedVideo?.video?.id.orEmpty(), token)
@@ -95,5 +95,9 @@ class HomeViewModel(private val sharedPreferenceHelper: SharedPreferenceHelper) 
                 else -> _showRequireLoginPopupEvent.emit(false)
             }
         }
+    }
+
+    companion object {
+        const val AUTO_COMMENT = "영상 재미있게 잘 봤습니다. 앞으로도 좋은 영상 기대할게요. 화이팅"
     }
 }

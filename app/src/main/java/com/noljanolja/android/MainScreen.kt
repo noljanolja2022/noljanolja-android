@@ -25,6 +25,12 @@ import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.features.addfriend.AddFriendViewModel
 import com.noljanolja.android.features.addfriend.SearchFriendResultScreen
 import com.noljanolja.android.features.addfriend.SearchFriendScreen
+import com.noljanolja.android.features.addreferral.AddReferralScreen
+import com.noljanolja.android.features.auth.countries.CountriesScreen
+import com.noljanolja.android.features.auth.login_or_signup.LoginOrSignupScreen
+import com.noljanolja.android.features.auth.otp.OTPScreen
+import com.noljanolja.android.features.auth.terms_of_service.TermsOfServiceScreen
+import com.noljanolja.android.features.auth.updateprofile.UpdateProfileScreen
 import com.noljanolja.android.features.chatsettings.ChatSettingsScreen
 import com.noljanolja.android.features.conversationmedia.ConversationMediaScreen
 import com.noljanolja.android.features.edit_chat_title.EditChatTitleScreen
@@ -33,6 +39,8 @@ import com.noljanolja.android.features.home.chat.ChatScreen
 import com.noljanolja.android.features.home.chat_options.ChatOptionsScreen
 import com.noljanolja.android.features.home.contacts.ContactsScreen
 import com.noljanolja.android.features.home.info.MyInfoScreen
+import com.noljanolja.android.features.home.play.playscreen.PlayVideoActivity
+import com.noljanolja.android.features.home.play.search.SearchVideosScreen
 import com.noljanolja.android.features.home.play.uncompleted.UncompletedVideosScreen
 import com.noljanolja.android.features.home.root.HomeScreen
 import com.noljanolja.android.features.home.wallet.checkin.CheckinScreen
@@ -52,6 +60,7 @@ import com.noljanolja.android.features.sharemessage.SelectShareMessageScreen
 import com.noljanolja.android.features.shop.coupons.CouponsScreen
 import com.noljanolja.android.features.shop.giftdetail.GiftDetailScreen
 import com.noljanolja.android.features.shop.search.SearchProductScreen
+import com.noljanolja.android.features.splash.SplashScreen
 import com.noljanolja.android.util.orZero
 import com.noljanolja.android.util.showToast
 import com.noljanolja.android.util.toNavList
@@ -63,7 +72,6 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun MainScreen(
     navigationManager: NavigationManager,
-    onSelectVideo: (String?) -> Unit,
 ) {
     val context = LocalContext.current
     val coreManager: CoreManager = get()
@@ -89,12 +97,8 @@ fun MainScreen(
                                 forEach { it.finish() }
                                 clear()
                             }
+                            startActivity(PlayVideoActivity.createIntent(this, commands.videoId))
                         }
-                    }
-
-                    is NavigationDirections.Auth -> {
-                        context.startActivity(Intent(context, LoginActivity::class.java))
-                        (context as Activity).finish()
                     }
 
                     is NavigationDirections.PhoneSettings -> {
@@ -126,9 +130,11 @@ fun MainScreen(
     NavHost(
         navController = navController,
         route = NavigationDirections.Root.destination,
-        startDestination = NavigationDirections.Home.destination,
+        startDestination = NavigationDirections.Splash.destination,
     ) {
-        addHomeGraph(navController, onSelectVideo = onSelectVideo)
+        addSplashGraph()
+        addAuthGraph()
+        addHomeGraph(navController)
         addContactsGraph()
         addChatGraph()
         addVideoGraph()
@@ -141,7 +147,6 @@ fun MainScreen(
 
 private fun NavGraphBuilder.addHomeGraph(
     navController: NavHostController,
-    onSelectVideo: (String?) -> Unit,
 ) {
     composable(NavigationDirections.Home.destination) { backStack ->
         val checkinViewModel = backStack.sharedViewModel<CheckinViewModel>(
@@ -149,7 +154,6 @@ private fun NavGraphBuilder.addHomeGraph(
         )
         HomeScreen(
             checkinViewModel = checkinViewModel,
-            onSelectVideo = onSelectVideo
         )
     }
     composable(NavigationDirections.MyInfo.destination) {
@@ -249,11 +253,11 @@ private fun NavGraphBuilder.addVideoGraph() {
 //            VideoDetailScreen(videoId)
 //        }
 //    }
-//    with(NavigationDirections.SearchVideos) {
-//        composable(destination, arguments) {
-//            SearchVideosScreen()
-//        }
-//    }
+    with(NavigationDirections.SearchVideos) {
+        composable(destination, arguments) {
+            SearchVideosScreen()
+        }
+    }
     with(NavigationDirections.UncompletedVideos) {
         composable(destination, arguments) {
             UncompletedVideosScreen()
@@ -376,6 +380,41 @@ private fun NavGraphBuilder.addAddFriendGraph(navController: NavHostController) 
                 SearchFriendResultScreen(addFriendViewModel = addFriendViewModel)
             }
         }
+    }
+}
+
+private fun NavGraphBuilder.addSplashGraph() {
+    composable(NavigationDirections.Splash.destination) {
+        SplashScreen()
+    }
+    composable(NavigationDirections.TermsOfService.destination) {
+        TermsOfServiceScreen()
+    }
+}
+
+private fun NavGraphBuilder.addAuthGraph() {
+    composable(NavigationDirections.Auth.destination) { backStack ->
+        LoginOrSignupScreen(backStack.savedStateHandle)
+    }
+    composable(NavigationDirections.CountryPicker.destination) {
+        CountriesScreen()
+    }
+    with(NavigationDirections.AuthOTP()) {
+        composable(
+            destination,
+            arguments,
+        ) { backStack ->
+            with(backStack.arguments) {
+                val phone = this?.getString("phone") ?: ""
+                OTPScreen(phone = phone)
+            }
+        }
+    }
+    composable(NavigationDirections.UpdateProfile.destination) {
+        UpdateProfileScreen()
+    }
+    composable(NavigationDirections.AddReferral.destination) {
+        AddReferralScreen()
     }
 }
 

@@ -13,17 +13,13 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -42,10 +38,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.noljanolja.android.MainActivity
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.features.home.play.playscreen.PlayVideoActivity.Companion.createCustomActions
@@ -58,9 +52,6 @@ import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.composable.VerticalDivider
 import com.noljanolja.android.ui.composable.WarningDialog
 import com.noljanolja.android.ui.composable.youtube.YoutubeView
-import com.noljanolja.android.ui.theme.NeutralDarkGrey
-import com.noljanolja.android.ui.theme.NeutralGrey
-import com.noljanolja.android.ui.theme.NeutralLightGrey
 import com.noljanolja.android.ui.theme.Orange300
 import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.util.formatFullTime
@@ -76,11 +67,8 @@ import org.koin.androidx.compose.getViewModel
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun VideoDetailScreen(
-    isBottomPlayMode: Boolean,
     isPipMode: Boolean,
     viewModel: VideoDetailViewModel = getViewModel(),
-    onToggleBottomPlay: (Boolean) -> Unit,
-    onCloseVideo: () -> Unit,
     onBack: () -> Unit,
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
@@ -105,12 +93,8 @@ fun VideoDetailScreen(
 
     VideoDetailContent(
         uiState = uiState,
-        isBottomPlayMode = isBottomPlayMode,
         isPipMode = isPipMode,
-        playerState = playerState,
         handleEvent = viewModel::handleEvent,
-        onToggleBottomPlay = onToggleBottomPlay,
-        onCloseVideo = onCloseVideo,
         onBack = onBack,
     )
     WarningDialog(
@@ -137,28 +121,22 @@ fun VideoDetailScreen(
 @Composable
 private fun VideoDetailContent(
     uiState: UiState<VideoDetailUiData>,
-    isBottomPlayMode: Boolean,
     isPipMode: Boolean,
-    playerState: PlayerConstants.PlayerState,
     handleEvent: (VideoDetailEvent) -> Unit,
-    onToggleBottomPlay: (Boolean) -> Unit,
-    onCloseVideo: () -> Unit,
     onBack: () -> Unit,
 ) {
     val context = LocalContext.current
     var isFullScreen by rememberSaveable {
         mutableStateOf(false)
     }
-    val showOnlyVideo = isFullScreen || isBottomPlayMode || isPipMode
+    val showOnlyVideo = isFullScreen || isPipMode
     val video = uiState.data?.video
 
     BackPressHandler() {
         if (isFullScreen) {
             handleEvent(VideoDetailEvent.ToggleFullScreen)
-        } else if (isBottomPlayMode) {
-            (context as MainActivity).enterPip()
         } else {
-            onToggleBottomPlay(true)
+            onBack()
         }
     }
     Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
@@ -202,10 +180,6 @@ private fun VideoDetailContent(
                 Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-            } else if (isBottomPlayMode) {
-                Modifier
-                    .height(60.dp)
-                    .width(106.dp)
             } else if (showOnlyVideo) {
                 Modifier
                     .fillMaxWidth()
@@ -214,77 +188,20 @@ private fun VideoDetailContent(
                 val configuration = LocalConfiguration.current
                 Modifier.widthIn(max = (configuration.screenHeightDp * 0.6).dp)
             }
-            val rowModifier = if (isBottomPlayMode) Modifier.height(60.dp) else Modifier
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color.Black),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = rowModifier
-                        .background(NeutralDarkGrey)
-                        .clickable {
-                            if (isBottomPlayMode) {
-                                onToggleBottomPlay(false)
-                            }
+                Box(contentAlignment = Alignment.BottomCenter) {
+                    YoutubeView(
+                        modifier = videoModifier,
+                        onReady = { player -> handleEvent(VideoDetailEvent.ReadyVideo(player)) },
+                        toggleFullScreen = {
+                            isFullScreen = it
                         }
-                ) {
-                    Box(contentAlignment = Alignment.BottomCenter) {
-                        YoutubeView(
-                            modifier = videoModifier,
-                            onReady = { player -> handleEvent(VideoDetailEvent.ReadyVideo(player)) },
-                            toggleFullScreen = {
-                                isFullScreen = it
-                            }
-                        )
-                    }
-                    if (isBottomPlayMode && !isPipMode) {
-                        SizeBox(12.dp)
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(60.dp)
-                        ) {
-                            Text(
-                                video?.title.orEmpty(),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                color = NeutralLightGrey
-                            )
-                            Text(
-                                video?.category?.title.orEmpty(),
-                                color = NeutralGrey
-                            )
-                        }
-                        Icon(
-                            if (playerState == PlayerConstants.PlayerState.PLAYING) {
-                                Icons.Default.Pause
-                            } else {
-                                Icons.Default.PlayArrow
-                            },
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clickable {
-                                    handleEvent(VideoDetailEvent.TogglePlayPause)
-                                }
-                                .padding(8.dp),
-                            tint = NeutralLightGrey
-                        )
-                        Icon(
-                            Icons.Default.Close,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clickable {
-                                    onCloseVideo()
-                                }
-                                .padding(8.dp),
-                            tint = NeutralLightGrey
-                        )
-                    }
+                    )
                 }
             }
 

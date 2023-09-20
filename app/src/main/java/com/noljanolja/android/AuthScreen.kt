@@ -7,23 +7,12 @@ import android.provider.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
-import com.noljanolja.android.features.addreferral.AddReferralScreen
-import com.noljanolja.android.features.auth.countries.CountriesScreen
-import com.noljanolja.android.features.auth.login_or_signup.LoginOrSignupScreen
-import com.noljanolja.android.features.auth.otp.OTPScreen
-import com.noljanolja.android.features.auth.terms_of_service.TermsOfServiceScreen
-import com.noljanolja.android.features.auth.updateprofile.UpdateProfileScreen
-import com.noljanolja.android.features.home.contacts.ContactsScreen
-import com.noljanolja.android.features.splash.SplashScreen
 import com.noljanolja.android.util.showToast
 import com.noljanolja.core.CoreManager
-import com.noljanolja.core.conversation.domain.model.ConversationType
 import org.koin.androidx.compose.get
 
 @Composable
@@ -84,55 +73,8 @@ fun AuthScreen(
         route = NavigationDirections.Root.destination,
         startDestination = NavigationDirections.Splash.destination,
     ) {
-        addSplashGraph()
-        addAuthGraph()
-        addContactsGraph()
-    }
-}
-
-private fun NavGraphBuilder.addSplashGraph() {
-    composable(NavigationDirections.Splash.destination) {
-        SplashScreen()
-    }
-    composable(NavigationDirections.TermsOfService.destination) {
-        TermsOfServiceScreen()
-    }
-}
-
-private fun NavGraphBuilder.addAuthGraph() {
-    composable(NavigationDirections.Auth.destination) { backStack ->
-        LoginOrSignupScreen(backStack.savedStateHandle)
-    }
-    composable(NavigationDirections.CountryPicker.destination) {
-        CountriesScreen()
-    }
-    with(NavigationDirections.AuthOTP()) {
-        composable(
-            destination,
-            arguments,
-        ) { backStack ->
-            with(backStack.arguments) {
-                val phone = this?.getString("phone") ?: ""
-                OTPScreen(phone = phone)
-            }
-        }
-    }
-    composable(NavigationDirections.UpdateProfile.destination) {
-        UpdateProfileScreen()
-    }
-    composable(NavigationDirections.AddReferral.destination) {
-        AddReferralScreen()
-    }
-}
-
-private fun NavGraphBuilder.addContactsGraph() {
-    val direction = NavigationDirections.SelectContact()
-    composable(
-        direction.destination,
-        direction.arguments
-    ) { backStack ->
-        val type = backStack.arguments?.getString("type") ?: "SINGLE"
-        val conversationId = backStack.arguments?.getLong("conversationId") ?: 0L
-        ContactsScreen(ConversationType.valueOf(type), conversationId)
+//        addSplashGraph()
+//        addAuthGraph()
+//        addContactsGraph()
     }
 }
