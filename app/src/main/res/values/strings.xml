@@ -89,7 +89,7 @@
     <string name="home_wallet">Wallet</string>
     <string name="home_shop">Shop</string>
     <string name="home_news">News</string>
-
+    <string name="home_friends">Friends</string>
     <!--    Login-->
     <string name="login_phone_description">Welcome to NolgoBulja. Please enter your Phone number to join continue.</string>
     <string name="login_country_input_label">Country</string>
@@ -383,4 +383,5 @@
     <string name="search_videos">Search videos</string>
     <string name="common_play">Play</string>
     <string name="common_turn_off">Turn off</string>
+    <string name="friend_reference">Friend reference</string>
 </resources>

@@ -42,6 +42,7 @@ import com.noljanolja.android.features.home.chat.ChatViewModel
 import com.noljanolja.android.features.home.chat_options.ChatOptionsViewModel
 import com.noljanolja.android.features.home.contacts.ContactsViewModel
 import com.noljanolja.android.features.home.conversations.ConversationsViewModel
+import com.noljanolja.android.features.home.friends.FriendsViewModel
 import com.noljanolja.android.features.home.info.MyInfoViewModel
 import com.noljanolja.android.features.home.menu.MenuViewModel
 import com.noljanolja.android.features.home.mypage.MyPageViewModel
@@ -346,6 +347,9 @@ class MyApplication : Application() {
                 }
                 viewModel {
                     ConversationMediaViewModel(get())
+                }
+                viewModel {
+                    FriendsViewModel()
                 }
             }
         )

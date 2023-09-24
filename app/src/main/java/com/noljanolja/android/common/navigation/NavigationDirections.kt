@@ -131,6 +131,12 @@ object NavigationDirections {
         override val destination: String = "add_referral"
     }
 
+    object FriendItem : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "home_friend_item"
+    }
+
     object ChatItem : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options = null

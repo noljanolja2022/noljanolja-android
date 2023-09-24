@@ -4,10 +4,12 @@ import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.ChatBubble
+import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.OndemandVideo
 import androidx.compose.material.icons.filled.Store
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.ChatBubble
+import androidx.compose.material.icons.outlined.Group
 import androidx.compose.material.icons.outlined.OndemandVideo
 import androidx.compose.material.icons.outlined.Store
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -25,6 +27,13 @@ sealed class HomeNavigationItem(
         Icons.Filled.ChatBubble,
         Icons.Outlined.ChatBubble,
         R.string.home_chats,
+    )
+
+    object FriendsItem : HomeNavigationItem(
+        NavigationDirections.FriendItem.destination,
+        Icons.Filled.Group,
+        Icons.Outlined.Group,
+        R.string.home_friends,
     )
 
     object WatchItem : HomeNavigationItem(

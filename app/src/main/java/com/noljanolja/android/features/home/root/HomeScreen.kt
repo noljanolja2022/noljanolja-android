@@ -32,7 +32,7 @@ import com.google.android.gms.common.api.Scope
 import com.noljanolja.android.MyApplication
 import com.noljanolja.android.R
 import com.noljanolja.android.features.home.CheckinViewModel
-import com.noljanolja.android.features.home.conversations.ConversationsScreen
+import com.noljanolja.android.features.home.friends.FriendsScreen
 import com.noljanolja.android.features.home.play.playlist.PlayListScreen
 import com.noljanolja.android.features.home.play.playscreen.PlayVideoActivity
 import com.noljanolja.android.features.home.play.playscreen.composable.getAccount
@@ -155,7 +155,7 @@ fun HomeScreen(
     ) { contentPadding ->
         NavHost(
             navController = navController,
-            startDestination = HomeNavigationItem.ChatItem.route,
+            startDestination = HomeNavigationItem.FriendsItem.route,
             modifier = Modifier.padding(contentPadding),
         ) {
             addNavigationGraph(
@@ -180,8 +180,8 @@ private fun NavGraphBuilder.addNavigationGraph(
     navController: NavHostController,
     checkinViewModel: CheckinViewModel,
 ) {
-    composable(HomeNavigationItem.ChatItem.route) {
-        ConversationsScreen()
+    composable(HomeNavigationItem.FriendsItem.route) {
+        FriendsScreen()
     }
     composable(HomeNavigationItem.WatchItem.route) {
         PlayListScreen()
@@ -203,7 +203,7 @@ fun HomeBottomBar(
     isReadAllConversations: Boolean,
 ) {
     val items = listOf(
-        HomeNavigationItem.ChatItem,
+        HomeNavigationItem.FriendsItem,
         HomeNavigationItem.WatchItem,
         HomeNavigationItem.WalletItem,
         HomeNavigationItem.StoreItem,
