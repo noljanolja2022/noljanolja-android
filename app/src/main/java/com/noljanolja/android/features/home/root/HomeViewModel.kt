@@ -7,7 +7,6 @@ import com.noljanolja.android.common.mobiledata.data.StickersLoader
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.sharedpreference.SharedPreferenceHelper
 import com.noljanolja.android.util.isSeen
-import com.noljanolja.core.event.domain.model.EventAction
 import com.noljanolja.core.event.domain.model.EventBanner
 import com.noljanolja.core.video.domain.model.PromotedVideo
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -45,7 +44,7 @@ class HomeViewModel(private val sharedPreferenceHelper: SharedPreferenceHelper) 
         launch {
             val seenBanners = sharedPreferenceHelper.seenBanners
             coreManager.getEventBanners().getOrNull()?.let {
-                _eventBannersFlow.emit(it.filter { banner -> banner.action == EventAction.CHECKIN || seenBanners.none { it == banner.id } })
+//                _eventBannersFlow.emit(it.filter { banner -> banner.action == EventAction.CHECKIN || seenBanners.none { it == banner.id } })
             }
         }
         launch {

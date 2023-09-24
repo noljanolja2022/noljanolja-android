@@ -16,9 +16,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
+import co.touchlab.kermit.Logger
 import com.d2brothers.firebase_auth.AuthSdk
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import com.noljanolja.android.common.base.launchInMain
 import com.noljanolja.android.common.base.launchInMainIO
 import com.noljanolja.android.common.mobiledata.data.ContactsLoader
@@ -29,6 +32,7 @@ import com.noljanolja.android.common.network.NetworkConnectivityObserver
 import com.noljanolja.android.ui.theme.NoljanoljaTheme
 import com.noljanolja.core.CoreManager
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -75,6 +79,8 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        onNewIntent(intent)
+        subscribeVideoTopic()
     }
 
     private fun syncContacts() {
@@ -89,11 +95,26 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         lifecycleScope.launch {
-            navigationManager.navigate(
-                NavigationDirections.Chat(
-                    conversationId = intent.getConversationId()
-                )
-            )
+            while (!MyApplication.isHomeShowed) {
+                delay(100)
+            }
+            with(intent) {
+                if (getConversationId() > 0L) {
+                    navigationManager.navigate(
+                        NavigationDirections.Chat(
+                            conversationId = getConversationId()
+                        )
+                    )
+                }
+                if (!getVideoId().isNullOrBlank()) {
+                    navigationManager.navigate(
+                        NavigationDirections.PlayScreen(
+                            videoId = getVideoId()!!,
+                            isInPipMode = true
+                        )
+                    )
+                }
+            }
         }
     }
 
@@ -110,21 +131,36 @@ class MainActivity : ComponentActivity() {
         block.invoke()
     }
 
-    companion object {
-        const val EXTRA_CONVERSATION_ID = "conversationId"
+    private fun subscribeVideoTopic() {
+        val topic = "/topics/promote-video"
+        Firebase.messaging.subscribeToTopic(topic)
+            .addOnCompleteListener { task ->
+                var msg = "Subscribed"
+                if (!task.isSuccessful) {
+                    msg = "Subscribe failed"
+                }
+                Logger.d("$msg $topic")
+            }
+    }
 
-        fun getIntent(
+    companion object {
+        private const val EXTRA_CONVERSATION_ID = "conversationId"
+        private const val EXTRA_VIDEO_ID = "videoId"
+        private fun getIntent(
             context: Context,
             conversationId: String,
+            videoId: String,
         ): Intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             putExtra(EXTRA_CONVERSATION_ID, conversationId)
+            putExtra(EXTRA_VIDEO_ID, videoId)
         }
 
         fun getPendingIntent(
             context: Context,
             conversationId: String,
-        ): PendingIntent = with(getIntent(context, conversationId)) {
+            videoId: String,
+        ): PendingIntent = with(getIntent(context, conversationId, videoId)) {
             val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             } else {
@@ -134,7 +170,11 @@ class MainActivity : ComponentActivity() {
         }
 
         fun Intent.getConversationId(): Long {
-            return extras?.getString(EXTRA_CONVERSATION_ID)?.toLong() ?: 0
+            return extras?.getString(EXTRA_CONVERSATION_ID)?.toLongOrNull() ?: 0
+        }
+
+        fun Intent.getVideoId(): String? {
+            return extras?.getString(EXTRA_VIDEO_ID)
         }
 
         fun Intent.removeConversationId() {

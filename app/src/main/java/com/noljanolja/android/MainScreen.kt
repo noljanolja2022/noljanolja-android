@@ -97,7 +97,13 @@ fun MainScreen(
                                 forEach { it.finish() }
                                 clear()
                             }
-                            startActivity(PlayVideoActivity.createIntent(this, commands.videoId))
+                            startActivity(
+                                PlayVideoActivity.createIntent(
+                                    this,
+                                    commands.videoId,
+                                    isInPictureInPictureMode = commands.isInPipMode
+                                )
+                            )
                         }
                     }
 

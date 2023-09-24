@@ -275,17 +275,25 @@ object NavigationDirections {
         }
     }
 
-    data class PlayScreen(val videoId: String = "") : NavigationCommand {
+    data class PlayScreen(
+        val videoId: String = "",
+        val isInPipMode: Boolean = false,
+    ) :
+        NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf(
             navArgument("videoId") {
                 defaultValue = ""
                 type = NavType.StringType
             },
+            navArgument("isInPipMode") {
+                defaultValue = false
+                type = NavType.BoolType
+            },
         )
         override val options = null
-        override val destination: String = "play_screen?videoId={videoId}"
+        override val destination: String = "play_screen?videoId={videoId}&isInPipMode={isInPipMode}"
         override fun createDestination(): String {
-            return "play_screen?videoId=$videoId"
+            return "play_screen?videoId=$videoId&isInPipMode=$isInPipMode"
         }
     }
 

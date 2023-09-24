@@ -78,7 +78,6 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun PlayListScreen(
     viewModel: PlayListViewModel = getViewModel(),
-    onSearchVideo: () -> Unit,
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     PlayListContent(

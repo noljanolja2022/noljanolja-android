@@ -95,5 +95,9 @@
                 android:resource="@xml/provider_paths" />
         </provider>
         <receiver android:name="com.noljanolja.VideoBroadcastReceiver" />
+        <receiver
+            android:name=".TurnOffReceiver"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 </manifest>

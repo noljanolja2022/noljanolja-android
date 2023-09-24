@@ -95,6 +95,7 @@ class MyApplication : Application() {
         var isAppInForeground: Boolean = false
         var latestConversationId: Long = 0L
         val backStackActivities = mutableListOf<Activity>()
+        var isHomeShowed: Boolean = false
     }
 
     override fun onCreate() {

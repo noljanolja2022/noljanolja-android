@@ -12,15 +12,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -32,6 +29,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
+import com.noljanolja.android.MyApplication
 import com.noljanolja.android.R
 import com.noljanolja.android.features.home.CheckinViewModel
 import com.noljanolja.android.features.home.conversations.ConversationsScreen
@@ -39,7 +37,6 @@ import com.noljanolja.android.features.home.play.playlist.PlayListScreen
 import com.noljanolja.android.features.home.play.playscreen.PlayVideoActivity
 import com.noljanolja.android.features.home.play.playscreen.composable.getAccount
 import com.noljanolja.android.features.home.play.playscreen.composable.getTokenFromAccount
-import com.noljanolja.android.features.home.play.search.SearchVideosViewModel
 import com.noljanolja.android.features.home.root.banner.EventBannerDialog
 import com.noljanolja.android.features.home.utils.click
 import com.noljanolja.android.features.home.utils.isNavItemSelect
@@ -59,21 +56,15 @@ fun HomeScreen(
     viewModel: HomeViewModel = getViewModel(),
     checkinViewModel: CheckinViewModel,
 ) {
+    LaunchedEffect(true) {
+        MyApplication.isHomeShowed = true
+    }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val showBanners by viewModel.eventBannersFlow.collectAsStateWithLifecycle()
     val checkinProgresses by checkinViewModel.checkinProgressFlow.collectAsStateWithLifecycle()
     val navController = rememberNavController()
     val readAllConversations by viewModel.readAllConversations.collectAsStateWithLifecycle()
-
-    // Search screen
-    val searchVideosViewModel: SearchVideosViewModel = getViewModel()
-    val uiState by searchVideosViewModel.uiStateFlow.collectAsStateWithLifecycle()
-    val searchKeys by searchVideosViewModel.searchKeys.collectAsStateWithLifecycle()
-    var showSearchVideo by rememberSaveable { mutableStateOf(false) }
-
-    // Video detail screen
-    val density = LocalDensity.current
 
     // Request youtube scope
     val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail()
@@ -141,7 +132,13 @@ fun HomeScreen(
     LaunchedEffect(viewModel.eventPromotedVideoFlow) {
         viewModel.eventPromotedVideoFlow.collectLatest {
             val id = it.video.id
-            context.startActivity(PlayVideoActivity.createIntent(context, id))
+            context.startActivity(
+                PlayVideoActivity.createIntent(
+                    context,
+                    id,
+                    isInPictureInPictureMode = true
+                )
+            )
             if (it.autoComment || it.autoLike || it.autoSubscribe) {
                 requestYoutubeScope.invoke()
             }
@@ -164,9 +161,6 @@ fun HomeScreen(
             addNavigationGraph(
                 navController,
                 checkinViewModel,
-                onSearchVideo = {
-                    showSearchVideo = true
-                }
             )
         }
     }
@@ -185,15 +179,12 @@ fun HomeScreen(
 private fun NavGraphBuilder.addNavigationGraph(
     navController: NavHostController,
     checkinViewModel: CheckinViewModel,
-    onSearchVideo: () -> Unit,
 ) {
     composable(HomeNavigationItem.ChatItem.route) {
         ConversationsScreen()
     }
     composable(HomeNavigationItem.WatchItem.route) {
-        PlayListScreen(
-            onSearchVideo = onSearchVideo
-        )
+        PlayListScreen()
     }
     composable(HomeNavigationItem.WalletItem.route) {
         WalletScreen(checkinViewModel = checkinViewModel, onUseNow = {

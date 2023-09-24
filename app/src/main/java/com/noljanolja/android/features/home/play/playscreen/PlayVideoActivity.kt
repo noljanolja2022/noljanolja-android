@@ -69,7 +69,9 @@ class PlayVideoActivity : ComponentActivity() {
                 }
             }
         }
-        enterPip()
+        if (intent.extras?.getBoolean("isInPictureInPictureMode") == true) {
+            enterPip()
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -90,9 +92,10 @@ class PlayVideoActivity : ComponentActivity() {
     }
 
     companion object {
-        fun createIntent(activity: Context, videoId: String) =
+        fun createIntent(activity: Context, videoId: String, isInPictureInPictureMode: Boolean) =
             Intent(activity, PlayVideoActivity::class.java).apply {
                 putExtra("videoId", videoId)
+                putExtra("isInPictureInPictureMode", isInPictureInPictureMode)
             }
 
         @RequiresApi(Build.VERSION_CODES.O)

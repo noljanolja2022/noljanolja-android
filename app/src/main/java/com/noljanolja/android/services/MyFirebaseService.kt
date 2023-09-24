@@ -3,7 +3,9 @@ package com.noljanolja.android.services
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
 import android.media.RingtoneManager
 import android.os.Build
@@ -14,12 +16,15 @@ import androidx.core.graphics.drawable.IconCompat
 import androidx.core.graphics.drawable.toBitmap
 import co.touchlab.kermit.Logger
 import coil.Coil
+import coil.ImageLoader
 import coil.request.ImageRequest
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.noljanolja.android.MainActivity
 import com.noljanolja.android.MyApplication
 import com.noljanolja.android.R
+import com.noljanolja.android.TurnOffReceiver
+import com.noljanolja.android.util.orZero
 import com.noljanolja.core.CoreManager
 import com.noljanolja.core.conversation.domain.model.ConversationType
 import com.noljanolja.core.conversation.domain.model.MessageType
@@ -37,7 +42,16 @@ class MyFirebaseService : FirebaseMessagingService() {
         Logger.d("onMessageReceived: ${message.data}")
 
         scope.launch {
-            displayNotification(message.data)
+            val data = message.data
+            when {
+                data["conversationId"]?.toLongOrNull().orZero() > 0L -> {
+                    displayMessageNotification(message.data)
+                }
+
+                !data["id"].isNullOrBlank() -> {
+                    displayPlayVideoNotification(message.data)
+                }
+            }
         }
     }
 
@@ -52,9 +66,9 @@ class MyFirebaseService : FirebaseMessagingService() {
         }
     }
 
-    private suspend fun displayNotification(data: Map<String, String>) {
-        val conversationId = data["conversationId"]?.toLong() ?: 0
-        if (!isShowNotification(conversationId)) return
+    private suspend fun displayMessageNotification(data: Map<String, String>) {
+        val conversationId = data["conversationId"]?.toLongOrNull() ?: 0
+        if (!isShowMessageNotification(conversationId)) return
 
         val channelId = getString(R.string.app_channel_id)
         val notificationManager =
@@ -117,7 +131,13 @@ class MyFirebaseService : FirebaseMessagingService() {
             .setAutoCancel(true)
             .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(MainActivity.getPendingIntent(this, conversationId.toString()))
+            .setContentIntent(
+                MainActivity.getPendingIntent(
+                    this,
+                    conversationId.toString(),
+                    videoId = ""
+                )
+            )
             .build()
     }
 
@@ -139,7 +159,81 @@ class MyFirebaseService : FirebaseMessagingService() {
         }
     }
 
-    private fun isShowNotification(conversationId: Long): Boolean {
+    private fun isShowMessageNotification(conversationId: Long): Boolean {
         return !with(MyApplication) { conversationId == latestConversationId && isAppInForeground }
+    }
+
+    private fun displayPlayVideoNotification(data: Map<String, String>) {
+        val id = data["id"].orEmpty()
+        val url = data["url"].orEmpty()
+        val title = data["title"].orEmpty()
+        val thumbnail = data["thumbnail"]
+        val duration = data["duration"]
+        val notificationId = id.hashCode()
+        val imageLoader = ImageLoader.Builder(this)
+            .crossfade(true)
+            .build()
+        val channelId = getString(R.string.app_channel_id)
+        val notificationBuilder = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.logo)
+            .setContentTitle(title)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+            .setAutoCancel(true)
+            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+
+        notificationBuilder.addVideoNotificationAction(notificationId, id)
+        val notificationManager =
+            (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).apply {
+                createMessageNotificationChannel(channelId)
+            }
+        val imageRequest = ImageRequest.Builder(this)
+            .data(thumbnail)
+            .target { drawable ->
+                if (drawable is BitmapDrawable) {
+                    notificationBuilder.setLargeIcon(drawable.bitmap)
+                    notificationBuilder.setStyle(
+                        NotificationCompat.BigPictureStyle().bigPicture(drawable.bitmap)
+                    )
+                    notificationManager.notify(
+                        notificationId,
+                        notificationBuilder.build()
+                    )
+                }
+            }
+            .build()
+
+        imageLoader.enqueue(imageRequest)
+    }
+
+    private fun NotificationCompat.Builder.addVideoNotificationAction(
+        notificationId: Int,
+        videoId: String,
+    ) {
+        val playIntent = MainActivity.getPendingIntent(
+            this@MyFirebaseService,
+            conversationId = "",
+            videoId = videoId
+        )
+
+        addAction(
+            R.drawable.ic_play,
+            this@MyFirebaseService.getString(R.string.common_play),
+            playIntent
+        )
+
+        val turnOffIntent = PendingIntent.getBroadcast(
+            this@MyFirebaseService,
+            0,
+            Intent(this@MyFirebaseService, TurnOffReceiver::class.java).apply {
+                putExtra("notificationId", notificationId)
+            },
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        addAction(
+            com.nhn.android.oauth.R.drawable.close_btn_img,
+            this@MyFirebaseService.getString(R.string.common_turn_off),
+            turnOffIntent
+        )
     }
 }
