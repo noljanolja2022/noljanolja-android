@@ -1,3 +1,4 @@
+- 1.0.36: Video notification
 - 1.0.35: New PIP in app
 - 1.0.34: Auto like comment video
 - 1.0.33: Update new pip mode
