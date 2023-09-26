@@ -110,7 +110,8 @@ class MainActivity : ComponentActivity() {
                     navigationManager.navigate(
                         NavigationDirections.PlayScreen(
                             videoId = getVideoId()!!,
-                            isInPipMode = true
+                            isInPipMode = true,
+                            autoAction = true
                         )
                     )
                 }

@@ -40,7 +40,9 @@ class VideoDetailViewModel() : BaseViewModel() {
         MutableStateFlow<PlayerConstants.PlayerState>(PlayerConstants.PlayerState.UNKNOWN)
     val playerStateFlow = _playerStateFlow.asStateFlow()
 
-    fun updateVideo(videoId: String?) {
+    fun updateVideo(
+        videoId: String?,
+    ) {
         if (videoId == null) {
             onCleared()
             return
@@ -82,6 +84,9 @@ class VideoDetailViewModel() : BaseViewModel() {
                 is VideoDetailEvent.Comment -> commentVideo(event.comment, event.token)
                 is VideoDetailEvent.SendError -> sendError(event.error)
                 is VideoDetailEvent.TogglePlayPause -> togglePlayPause()
+                is VideoDetailEvent.AutoAction -> {
+                    coreManager.reactVideo(videoId, event.token)
+                }
             }
         }
     }

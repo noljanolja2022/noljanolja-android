@@ -7,6 +7,7 @@ import com.noljanolja.core.video.data.model.request.GetTrendingVideosRequest
 import com.noljanolja.core.video.data.model.request.GetVideoDetailRequest
 import com.noljanolja.core.video.data.model.request.GetVideosRequest
 import com.noljanolja.core.video.data.model.request.LikeVideoRequest
+import com.noljanolja.core.video.data.model.request.ReactVideoRequest
 import com.noljanolja.core.video.data.model.request.SubscribeChannelRequest
 import com.noljanolja.core.video.data.model.response.CommentVideoResponse
 import com.noljanolja.core.video.data.model.response.GetPromotedVideosResponse
@@ -58,8 +59,17 @@ internal class VideoApi(private val client: HttpClient) {
         }.body()
     }
 
-    suspend fun subscribeChannel(chanelId: String, request: SubscribeChannelRequest): ResponseWithoutData {
+    suspend fun subscribeChannel(
+        chanelId: String,
+        request: SubscribeChannelRequest,
+    ): ResponseWithoutData {
         return client.post("${Const.BASE_URL}/media/channels/$chanelId/subscribe") {
+            setBody(request)
+        }.body()
+    }
+
+    suspend fun reactVideo(videoId: String, request: ReactVideoRequest): ResponseWithoutData {
+        return client.post("${Const.BASE_URL}/media/videos/$videoId/react-promote") {
             setBody(request)
         }.body()
     }

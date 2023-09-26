@@ -10,17 +10,26 @@ import android.graphics.drawable.Icon
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
+import co.touchlab.kermit.Logger
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.Scope
 import com.noljanolja.VideoBroadcastReceiver
 import com.noljanolja.android.MyApplication
 import com.noljanolja.android.R
+import com.noljanolja.android.features.home.play.playscreen.composable.getAccount
+import com.noljanolja.android.features.home.play.playscreen.composable.getTokenFromAccount
 import com.noljanolja.android.ui.composable.youtube.YoutubeViewWithFullScreen
 import com.noljanolja.android.ui.theme.NoljanoljaTheme
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
@@ -35,12 +44,71 @@ class PlayVideoActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val videoId = intent.extras?.getString("videoId").orEmpty()
+        val videoId = intent.getVideoId()
+        val autoAction = intent.autoAction()
         val viewModel: VideoDetailViewModel = getViewModel { parametersOf(videoId) }
-        viewModel.updateVideo(videoId)
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail()
+            .requestIdToken(getString(R.string.web_client_id))
+            .requestScopes(YOUTUBE_FORCE_SCOPE, YOUTUBE_SCOPE, YOUTUBE_PARTNER_SCOPE)
+            .build()
+        val googleSignInClient = GoogleSignIn.getClient(this, gso)
+
+        viewModel.updateVideo(
+            videoId,
+        )
+        val onTokenResult = { token: String ->
+            Logger.d("Request scope success $token")
+            viewModel.handleEvent(VideoDetailEvent.AutoAction(token))
+        }
+        val onError: (Throwable) -> Unit = { error: Throwable ->
+            Logger.e("Request scope error $error")
+        }
         YoutubeViewWithFullScreen.release()
         MyApplication.backStackActivities.add(this)
         setContent {
+            val googleSignInLauncher =
+                rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.StartActivityForResult(),
+                    onResult = { result ->
+                        lifecycleScope.launch {
+                            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                            val account = task.getAccount(onError) ?: return@launch
+                            getTokenFromAccount(
+                                this@PlayVideoActivity,
+                                account,
+                                onError = { error ->
+                                    onError(error)
+                                },
+                                onTokenResult = onTokenResult
+                            )
+                        }
+                    }
+                )
+            val requestYoutubeScope = suspend {
+                val account = GoogleSignIn.getLastSignedInAccount(this)
+                if (account != null) {
+                    val newAccount = if (account.isExpired) {
+                        googleSignInClient.silentSignIn().getAccount(onError)
+                    } else {
+                        account
+                    }
+                    if (newAccount != null) {
+                        getTokenFromAccount(
+                            this,
+                            newAccount,
+                            onError = { error ->
+                                onError(error)
+                            },
+                            onTokenResult = onTokenResult
+                        )
+                    }
+                } else {
+                    googleSignInLauncher.launch(googleSignInClient.signInIntent)
+                }
+            }
+            LaunchedEffect(autoAction) {
+                requestYoutubeScope.invoke()
+            }
             NoljanoljaTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -69,7 +137,7 @@ class PlayVideoActivity : ComponentActivity() {
                 }
             }
         }
-        if (intent.extras?.getBoolean("isInPictureInPictureMode") == true) {
+        if (intent.isInPictureInPictureMode()) {
             enterPip()
         }
     }
@@ -92,10 +160,26 @@ class PlayVideoActivity : ComponentActivity() {
     }
 
     companion object {
-        fun createIntent(activity: Context, videoId: String, isInPictureInPictureMode: Boolean) =
+
+        private val YOUTUBE_FORCE_SCOPE = Scope("https://www.googleapis.com/auth/youtube.force-ssl")
+        private val YOUTUBE_SCOPE = Scope("https://www.googleapis.com/auth/youtube")
+        private val YOUTUBE_PARTNER_SCOPE = Scope("https://www.googleapis.com/auth/youtubepartner")
+        private fun Intent.getVideoId() = extras?.getString("videoId").orEmpty()
+        private fun Intent.isInPictureInPictureMode() =
+            extras?.getBoolean("isInPictureInPictureMode") ?: false
+
+        private fun Intent.autoAction() = extras?.getBoolean("autoAction") ?: false
+
+        fun createIntent(
+            activity: Context,
+            videoId: String,
+            isInPictureInPictureMode: Boolean,
+            autoAction: Boolean,
+        ) =
             Intent(activity, PlayVideoActivity::class.java).apply {
                 putExtra("videoId", videoId)
                 putExtra("isInPictureInPictureMode", isInPictureInPictureMode)
+                putExtra("autoAction", autoAction)
             }
 
         @RequiresApi(Build.VERSION_CODES.O)

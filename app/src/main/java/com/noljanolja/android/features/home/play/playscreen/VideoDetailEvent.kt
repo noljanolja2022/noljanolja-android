@@ -9,4 +9,5 @@ sealed interface VideoDetailEvent {
     data class Comment(val comment: String, val token: String) : VideoDetailEvent
     data class SendError(val error: Throwable) : VideoDetailEvent
     object TogglePlayPause : VideoDetailEvent
+    data class AutoAction(val token: String) : VideoDetailEvent
 }

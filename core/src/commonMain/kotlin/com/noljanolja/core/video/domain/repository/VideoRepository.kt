@@ -33,6 +33,12 @@ interface VideoRepository {
         channelId: String,
         youtubeToken: String,
     ): Result<Boolean>
+
+    suspend fun reactVideo(
+        videoId: String,
+        youtubeToken: String,
+    ): Result<Boolean>
+
     suspend fun clearSearchHistories()
 
     suspend fun clearSearchText(text: String)

@@ -284,6 +284,7 @@ object NavigationDirections {
     data class PlayScreen(
         val videoId: String = "",
         val isInPipMode: Boolean = false,
+        val autoAction: Boolean = false,
     ) :
         NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf(
@@ -297,9 +298,11 @@ object NavigationDirections {
             },
         )
         override val options = null
-        override val destination: String = "play_screen?videoId={videoId}&isInPipMode={isInPipMode}"
+        override val destination: String =
+            "play_screen?videoId={videoId}&isInPipMode={isInPipMode}&autoAction={autoAction}"
+
         override fun createDestination(): String {
-            return "play_screen?videoId=$videoId&isInPipMode=$isInPipMode"
+            return "play_screen?videoId=$videoId&isInPipMode=$isInPipMode&autoAction=$autoAction"
         }
     }
 

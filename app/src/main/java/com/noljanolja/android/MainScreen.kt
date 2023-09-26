@@ -101,7 +101,8 @@ fun MainScreen(
                                 PlayVideoActivity.createIntent(
                                     this,
                                     commands.videoId,
-                                    isInPictureInPictureMode = commands.isInPipMode
+                                    isInPictureInPictureMode = commands.isInPipMode,
+                                    autoAction = commands.autoAction
                                 )
                             )
                         }
