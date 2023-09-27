@@ -11,7 +11,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -19,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import com.noljanolja.android.ui.composable.TextField
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -43,7 +44,7 @@ fun DoBInput(
         value = dob?.format(DateTimeFormatter.ISO_LOCAL_DATE).orEmpty(),
         onValueChange = { },
         label = { Text(label) },
-        textStyle = MaterialTheme.typography.bodyLarge.copy(
+        textStyle = MaterialTheme.typography.bodyMedium.copy(
             color = LocalContentColor.current,
         ),
         singleLine = true,
@@ -55,6 +56,7 @@ fun DoBInput(
             focusedLabelColor = MaterialTheme.colorScheme.secondary
         ),
         interactionSource = dobInteractionSource,
+        contentPadding = TextFieldDefaults.textFieldWithLabelPadding(start = 0.dp, end = 0.dp)
     )
 }
 

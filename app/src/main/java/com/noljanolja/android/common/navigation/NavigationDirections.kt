@@ -41,6 +41,18 @@ object NavigationDirections {
         override val destination: String = "terms_of_service"
     }
 
+    data class TermDetail(val termIndex: Int = 1) : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf(
+            navArgument("termIndex") {
+                defaultValue = 1
+                type = NavType.IntType
+            },
+        )
+        override val options = null
+        override val destination: String = "term_detail?termIndex={termIndex}"
+        override fun createDestination() = "term_detail?termIndex=$termIndex"
+    }
+
     // AUTH
 
     object Auth : NavigationCommand {

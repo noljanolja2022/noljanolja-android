@@ -58,6 +58,11 @@ class PlayVideoActivity : ComponentActivity() {
             }
         }
         lifecycleScope.launch {
+            if (intent.extras?.getBoolean("isInPictureInPictureMode") == true) {
+                enterPip()
+            }
+        }
+        lifecycleScope.launch {
             viewModel.playerStateFlow.collectLatest {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     val params = PictureInPictureParams.Builder()
@@ -68,9 +73,6 @@ class PlayVideoActivity : ComponentActivity() {
                     setPictureInPictureParams(params.build())
                 }
             }
-        }
-        if (intent.extras?.getBoolean("isInPictureInPictureMode") == true) {
-            enterPip()
         }
     }
 

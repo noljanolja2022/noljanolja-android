@@ -338,6 +338,14 @@ class CoreManager : KoinComponent {
         youtubeToken = youtubeToken
     )
 
+    suspend fun reactVideo(
+        id: String,
+        youtubeToken: String,
+    ) = videoRepository.reactVideo(
+        videoId = id,
+        youtubeToken = youtubeToken
+    )
+
     suspend fun subscribeChannel(
         channelId: String,
         youtubeToken: String,

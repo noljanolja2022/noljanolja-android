@@ -38,9 +38,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.noljanolja.android.R
+import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.InfoDialog
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.ScaffoldWithRoundedContent
+import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.util.secondaryTextColor
 import org.koin.androidx.compose.getViewModel
 
@@ -55,7 +57,7 @@ fun TermsOfServiceScreen(
 
 @Composable
 fun TermsOfServiceScreenContent(
-    event: (TermsOfServiceEvent) -> Unit,
+    handleEvent: (TermsOfServiceEvent) -> Unit,
 ) {
     val compulsoryTerms = remember {
         mutableStateMapOf(
@@ -90,7 +92,7 @@ fun TermsOfServiceScreenContent(
                         .weight(1f)
                         .verticalScroll(rememberScrollState()),
                 ) {
-                    Spacer(modifier = Modifier.weight(1F))
+                    SizeBox(height = 50.dp)
                     Text(
                         stringResource(R.string.tos_compulsory).uppercase(),
                         modifier = Modifier.padding(
@@ -109,7 +111,6 @@ fun TermsOfServiceScreenContent(
                         termTitle = stringResource(R.string.tos_compulsory_item_title_1),
                         checked = compulsoryTerms.getOrDefault(1, false),
                         onChecked = { compulsoryTerms[1] = it },
-                        onClicked = {}
                     )
 
                     TermRow(
@@ -119,30 +120,9 @@ fun TermsOfServiceScreenContent(
                         termTitle = stringResource(R.string.tos_compulsory_item_title_2),
                         checked = compulsoryTerms.getOrDefault(2, false),
                         onChecked = { compulsoryTerms[2] = it },
-                        onClicked = {},
-                    )
-
-                    TermRow(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
-                        termTitle = stringResource(R.string.tos_compulsory_item_title_3),
-                        checked = compulsoryTerms.getOrDefault(3, false),
-                        onChecked = { compulsoryTerms[3] = it },
-                        onClicked = {},
-                    )
-
-                    Spacer(modifier = Modifier.weight(1F))
-
-                    Text(
-                        stringResource(R.string.tos_optional).uppercase(),
-                        modifier = Modifier.padding(
-                            start = 16.dp,
-                            end = 16.dp,
-                            bottom = 5.dp
-                        ),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onBackground,
+                        onClicked = {
+                            handleEvent(TermsOfServiceEvent.Detail(2))
+                        },
                     )
 
                     TermRow(
@@ -150,15 +130,17 @@ fun TermsOfServiceScreenContent(
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
                         termTitle = stringResource(R.string.tos_optional_item_title_1),
-                        checked = optionalTerms.getOrDefault(1, false),
-                        onChecked = { optionalTerms[1] = it },
-                        onClicked = {},
+                        checked = compulsoryTerms.getOrDefault(3, false),
+                        onChecked = { compulsoryTerms[3] = it },
+                        onClicked = {
+                            handleEvent(TermsOfServiceEvent.Detail(3))
+                        },
                     )
-                    Spacer(modifier = Modifier.weight(1F))
+                    Expanded()
                 }
 
                 PrimaryButton(
-                    onClick = { event(TermsOfServiceEvent.Continue) },
+                    onClick = { handleEvent(TermsOfServiceEvent.Continue) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 16.dp, end = 16.dp, bottom = 42.dp),
@@ -185,37 +167,36 @@ private fun TermRow(
     onChecked: (Boolean) -> Unit,
     onClicked: (() -> Unit)? = null,
 ) {
-    Column(modifier = modifier) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(vertical = 15.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,
-        ) {
-            TermCheckBox(
-                modifier = Modifier.padding(end = 8.dp),
-                checked = checked,
-                onChecked = onChecked,
-            )
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(vertical = 15.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start,
+    ) {
+        TermCheckBox(
+            modifier = Modifier.padding(end = 8.dp),
+            checked = checked,
+            onChecked = onChecked,
+        )
 
-            Text(
-                termTitle,
-                modifier = Modifier.weight(1f),
-                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.secondaryTextColor()),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+        Text(
+            termTitle,
+            modifier = Modifier.weight(1f),
+            style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.secondaryTextColor()),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+        )
+        if (onClicked != null) {
+            Icon(
+                Icons.Default.ChevronRight,
+                contentDescription = null,
+                modifier = Modifier
+                    .clickable { onClicked.invoke() }
+                    .padding(start = 8.dp)
+                    .size(24.dp),
             )
-            if (onClicked != null) {
-                Icon(
-                    Icons.Default.ChevronRight,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .size(24.dp),
-                )
-            }
         }
     }
 }

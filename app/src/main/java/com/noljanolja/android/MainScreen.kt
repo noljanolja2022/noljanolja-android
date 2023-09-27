@@ -29,6 +29,7 @@ import com.noljanolja.android.features.addreferral.AddReferralScreen
 import com.noljanolja.android.features.auth.countries.CountriesScreen
 import com.noljanolja.android.features.auth.login_or_signup.LoginOrSignupScreen
 import com.noljanolja.android.features.auth.otp.OTPScreen
+import com.noljanolja.android.features.auth.termdetail.TermDetailScreen
 import com.noljanolja.android.features.auth.terms_of_service.TermsOfServiceScreen
 import com.noljanolja.android.features.auth.updateprofile.UpdateProfileScreen
 import com.noljanolja.android.features.chatsettings.ChatSettingsScreen
@@ -395,6 +396,12 @@ private fun NavGraphBuilder.addSplashGraph() {
     }
     composable(NavigationDirections.TermsOfService.destination) {
         TermsOfServiceScreen()
+    }
+    with(NavigationDirections.TermDetail()) {
+        composable(destination, arguments) {
+            val termIndex = it.arguments?.getInt("termIndex") ?: 1
+            TermDetailScreen(termIndex)
+        }
     }
 }
 

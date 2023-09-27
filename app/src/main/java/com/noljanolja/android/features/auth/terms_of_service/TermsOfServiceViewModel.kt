@@ -12,6 +12,10 @@ class TermsOfServiceViewModel : BaseViewModel() {
                 is TermsOfServiceEvent.Continue -> {
                     navigationManager.navigate(NavigationDirections.Auth)
                 }
+
+                is TermsOfServiceEvent.Detail -> {
+                    navigationManager.navigate(NavigationDirections.TermDetail(event.index))
+                }
             }
         }
     }

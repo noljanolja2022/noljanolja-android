@@ -46,6 +46,7 @@ import com.noljanolja.android.ui.theme.colorBackground
 import com.noljanolja.android.util.findActivity
 import com.noljanolja.android.util.getErrorMessage
 import com.noljanolja.android.util.showToast
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
@@ -140,6 +141,8 @@ fun HomeScreen(
                 )
             )
             if (it.autoComment || it.autoLike || it.autoSubscribe) {
+                // TODO : Remove when login google
+                delay(200)
                 requestYoutubeScope.invoke()
             }
         }
