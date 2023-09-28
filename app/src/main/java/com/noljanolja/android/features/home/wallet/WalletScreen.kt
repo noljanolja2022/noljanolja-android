@@ -152,12 +152,12 @@ private fun WalletContent(
                     onUseNow = onUseNow
                 )
             }
-            item {
-                UserAttendance(
-                    checkinProgresses = checkinProgresses,
-                    onCheckin = { handleEvent(WalletEvent.CheckIn) }
-                )
-            }
+//            item {
+//                UserAttendance(
+//                    checkinProgresses = checkinProgresses,
+//                    onCheckin = { handleEvent(WalletEvent.CheckIn) }
+//                )
+//            }
             item {
                 SizeBox(height = 24.dp)
             }
