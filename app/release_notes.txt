@@ -1,3 +1,4 @@
+- 1.0.37: Update new api auto, hide daily checkin, update term & services, fix ui profile
 - 1.0.36: Video notification
 - 1.0.35: New PIP in app
 - 1.0.34: Auto like comment video
