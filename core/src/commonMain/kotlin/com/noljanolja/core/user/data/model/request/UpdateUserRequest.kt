@@ -6,6 +6,7 @@ import com.noljanolja.core.user.domain.model.Gender
 data class UpdateUserRequest(
     val name: String? = null,
     val email: String? = null,
+    val phone: String? = null,
     val gender: Gender? = null,
     val dob: String? = null,
     val preferences: Preferences? = null,

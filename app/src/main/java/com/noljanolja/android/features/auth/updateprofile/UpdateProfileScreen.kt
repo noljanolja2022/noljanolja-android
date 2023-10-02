@@ -28,9 +28,11 @@ import com.noljanolja.android.features.auth.updateprofile.components.AvatarInput
 import com.noljanolja.android.features.auth.updateprofile.components.DoBInput
 import com.noljanolja.android.features.auth.updateprofile.components.GenderInput
 import com.noljanolja.android.features.auth.updateprofile.components.NameInput
+import com.noljanolja.android.features.auth.updateprofile.components.PhoneInput
 import com.noljanolja.android.ui.composable.ErrorDialog
 import com.noljanolja.android.ui.composable.LoadingDialog
 import com.noljanolja.android.ui.composable.PrimaryButton
+import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.util.loadFileInfo
 import com.noljanolja.core.user.domain.model.Gender
 import kotlinx.datetime.toKotlinLocalDate
@@ -61,6 +63,7 @@ fun UpdateProfileContent(
     var avatar by rememberSaveable { mutableStateOf<Uri?>(null) }
     val maxNameLength = rememberSaveable { 20 }
     var name by rememberSaveable { mutableStateOf("") }
+    var phone by rememberSaveable { mutableStateOf("") }
     var gender by rememberSaveable { mutableStateOf<String?>(null) }
     var dob by rememberSaveable { mutableStateOf<LocalDate?>(null) }
     val isRegisterEnable = name.isNotBlank()
@@ -162,6 +165,16 @@ fun UpdateProfileContent(
                     maxNameLength = maxNameLength,
                     onNameChange = { if (it.trim().length <= maxNameLength) name = it }
                 )
+                SizeBox(height = 8.dp)
+                PhoneInput(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    focusManager = focusManager,
+                    label = stringResource(R.string.common_phone),
+                    phone = phone,
+                    onPhoneChange = { phone = it }
+                )
 
                 Spacer(modifier = Modifier.height(20.dp))
 
@@ -196,6 +209,7 @@ fun UpdateProfileContent(
                         handleEvent(
                             UpdateProfileEvent.Update(
                                 name.trim(),
+                                phone,
                                 dob?.toKotlinLocalDate(),
                                 gender?.let { Gender.valueOf(it) },
                                 files = fileInfo?.contents,
@@ -207,7 +221,7 @@ fun UpdateProfileContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
-                    isEnable = name.isNotBlank(),
+                    isEnable = name.isNotBlank() && phone.isNotBlank(),
                     text = stringResource(id = R.string.common_ok).uppercase()
                 )
             }

@@ -8,4 +8,6 @@ sealed interface FriendsEvent {
     object LoadMore : FriendsEvent
 
     object OpenPhoneSettings : FriendsEvent
+
+    object AddFriend : FriendsEvent
 }

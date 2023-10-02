@@ -3,7 +3,6 @@ package com.noljanolja.android.features.auth.login
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.features.auth.common.BaseAuthViewModel
-import com.noljanolja.core.user.domain.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -20,37 +19,54 @@ class LoginViewModel : BaseAuthViewModel() {
                             LoginUIState.VerifyEmail -> {
                                 _uiStateFlow.emit(LoginUIState.Login)
                             }
+
                             else -> navigationManager.navigate(NavigationDirections.Back)
                         }
                     }
                 }
+
                 is LoginEvent.GoJoinMember -> TODO("Not implement")
                 is LoginEvent.ShowError -> {
                     event.error?.let {
                         sendError(event.error)
                     }
                 }
+
                 is LoginEvent.ChangeEmail -> {
                     changeEmail(event.email)
                 }
+
                 is LoginEvent.ChangePassword -> {
                     changePassword(event.password)
                 }
+
                 LoginEvent.GoForgotEmailAndPassword -> {
                     onForgotIdOrPassword()
                 }
+
                 LoginEvent.LoginEmail -> {
 //                    signInWithEmailAndPassword()
                 }
+
                 LoginEvent.LoginKakao -> {
 //                    loginWithKakao()
                 }
+
                 LoginEvent.VerifyEmail -> {}
                 LoginEvent.OpenCountryList -> {
                     navigationManager.navigate(NavigationDirections.CountryPicker)
                 }
+
                 is LoginEvent.SendOTP -> {
                     navigationManager.navigate(NavigationDirections.AuthOTP(event.phone))
+                }
+
+                is LoginEvent.HandleLoginResult -> {
+                    if (event.token.isNotBlank()) {
+                        handleAuthResult()
+                    } else {
+                        sendError(Throwable("Login error"))
+                    }
                 }
             }
         }
@@ -80,22 +96,21 @@ class LoginViewModel : BaseAuthViewModel() {
 //        }
 //    }
 
-    private fun handleAuthResult(result: Result<User>?) {
+    private fun handleAuthResult() {
         launch {
-            result?.getOrNull()?.let {
-                navigationManager.navigate(NavigationDirections.Home)
-//                if (it.isVerify) {
-//
-//                } else {
-//                    _uiStateFlow.emit(LoginUIState.VerifyEmail)
-//                }
-            } ?: result?.exceptionOrNull()?.let {
+            val result = coreManager.getCurrentUser(true)
+            result.getOrNull()?.let { user ->
+                if (user.name.isBlank() || user.phone.isNullOrBlank()) {
+                    navigationManager.navigate(NavigationDirections.UpdateProfile)
+                } else {
+                    navigationManager.navigate(NavigationDirections.Home)
+                }
+                coreManager.pushToken()
+            } ?: result.exceptionOrNull()?.let {
                 sendError(it)
-                _uiStateFlow.emit(LoginUIState.Login)
             }
         }
     }
-
 //    private fun signInWithEmailAndPassword() {
 //        launch {
 //            _uiStateFlow.emit(LoginUIState.Loading)

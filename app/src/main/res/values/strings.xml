@@ -385,4 +385,5 @@
     <string name="common_turn_off">Turn off</string>
     <string name="friend_reference">Friend reference</string>
     <string name="term_of_service">Term of service</string>
+    <string name="common_phone">Phone</string>
 </resources>

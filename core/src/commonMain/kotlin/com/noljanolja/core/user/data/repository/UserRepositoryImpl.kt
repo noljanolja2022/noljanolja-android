@@ -94,8 +94,9 @@ internal class UserRepositoryImpl(
     override suspend fun updateUser(
         name: String,
         email: String?,
+        phone: String?,
     ): Result<User> {
-        val result = userRemoteDataSource.updateUser(name, email)
+        val result = userRemoteDataSource.updateUser(name, email, phone)
         return handleResult(result)
     }
 

@@ -23,6 +23,7 @@ class UpdateProfileViewModel : BaseViewModel() {
                     event.name,
                     event.gender,
                     event.dob?.formatTime("MMMM yyyy"),
+                    phone = event.phone,
                     event.fileName,
                     event.fileType,
                     event.files,
@@ -35,6 +36,7 @@ class UpdateProfileViewModel : BaseViewModel() {
         name: String,
         gender: Gender?,
         dob: String?,
+        phone: String?,
         fileName: String?,
         fileType: String = "",
         files: ByteArray?,
@@ -44,7 +46,7 @@ class UpdateProfileViewModel : BaseViewModel() {
             val updateAvatarResult =
                 coreManager.updateAvatar(name = fileName, type = fileType, files = files)
         }
-        val result = coreManager.updateUser(name = name, email = null)
+        val result = coreManager.updateUser(name = name, email = null, phone)
         if (result.isSuccess) {
             _uiStateFlow.emit(UpdateProfileUiState())
             navigationManager.navigate(NavigationDirections.AddReferral)

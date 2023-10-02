@@ -264,8 +264,12 @@ class CoreManager : KoinComponent {
         return userRepository.verifyOTPCode(verificationId, otp)
     }
 
-    suspend fun updateUser(name: String, email: String? = null): Result<User> {
-        return userRepository.updateUser(name, email)
+    suspend fun updateUser(
+        name: String,
+        email: String? = null,
+        phone: String? = null,
+    ): Result<User> {
+        return userRepository.updateUser(name, email, phone)
     }
 
     suspend fun updateAvatar(name: String, type: String, files: ByteArray): Result<Boolean> {

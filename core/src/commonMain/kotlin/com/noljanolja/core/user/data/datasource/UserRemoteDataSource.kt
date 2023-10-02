@@ -19,7 +19,7 @@ interface UserRemoteDataSource {
 
     suspend fun pushToken(userId: String, token: String): Result<Boolean>
 
-    suspend fun updateUser(name: String?, email: String?): Result<Boolean>
+    suspend fun updateUser(name: String?, email: String?, phone: String?): Result<Boolean>
 
     suspend fun updateAvatar(field: String, type: String, files: ByteArray): Result<Boolean>
 
@@ -84,12 +84,17 @@ class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSou
         }
     }
 
-    override suspend fun updateUser(name: String?, email: String?): Result<Boolean> {
+    override suspend fun updateUser(
+        name: String?,
+        email: String?,
+        phone: String?,
+    ): Result<Boolean> {
         return try {
             val response = userApi.updateUser(
                 UpdateUserRequest(
                     name = name,
-                    email = email
+                    email = email,
+                    phone = phone
                 )
             )
             if (response.isSuccessful()) {

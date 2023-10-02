@@ -21,4 +21,6 @@ sealed interface LoginEvent {
     object OpenCountryList : LoginEvent
 
     data class SendOTP(val phone: String) : LoginEvent
+
+    data class HandleLoginResult(val token: String) : LoginEvent
 }

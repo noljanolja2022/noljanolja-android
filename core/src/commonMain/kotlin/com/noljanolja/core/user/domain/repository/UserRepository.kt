@@ -29,6 +29,7 @@ internal interface UserRepository {
     suspend fun updateUser(
         name: String,
         email: String?,
+        phone: String?,
     ): Result<User>
 
     suspend fun updateAvatar(

@@ -1,9 +1,17 @@
 package com.noljanolja.android.features.auth.login
 
-import android.telephony.PhoneNumberUtils
+import android.content.Intent
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -11,15 +19,18 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.d2brothers.firebase_auth.AuthSdk
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.handleError
 import com.noljanolja.android.common.country.Countries
@@ -28,10 +39,10 @@ import com.noljanolja.android.common.country.DEFAULT_CODE
 import com.noljanolja.android.common.country.getFlagEmoji
 import com.noljanolja.android.features.auth.common.component.VerifyEmail
 import com.noljanolja.android.features.auth.login.component.LoginButton
-import com.noljanolja.android.ui.composable.ErrorDialog
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.SecondaryButton
-import com.noljanolja.android.ui.composable.WarningDialog
+import com.noljanolja.android.ui.composable.SizeBox
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -70,6 +81,9 @@ private fun LoginContent(
     countryCode: String?,
     handleEvent: (LoginEvent) -> Unit,
 ) {
+    val scope = rememberCoroutineScope()
+    val authSdk = AuthSdk.instance
+    val context = LocalContext.current
     val country by remember {
         mutableStateOf(
             Countries.first {
@@ -81,56 +95,41 @@ private fun LoginContent(
     var showErrorPhoneNumber by remember { mutableStateOf(false) }
     var showConfirmPhoneNumber by remember { mutableStateOf(false) }
 
+    val googleLauncher = rememberAuthLauncher {
+        scope.launch {
+            val result = authSdk.getAccountFromGoogleIntent(it)
+            if (result.isSuccess) {
+                handleEvent(LoginEvent.HandleLoginResult(result.getOrDefault("")))
+            }
+        }
+    }
     Column(
         modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.Start,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        LoginPhoneContent(
-            country = country,
-            phone = phone,
-            onChangePhone = {
-                phone = it
-            },
-            openCountryList = {
-                handleEvent(LoginEvent.OpenCountryList)
-            },
-            onSubmit = {
-                val formattedPhoneNumber =
-                    PhoneNumberUtils.formatNumberToE164(phone.trim(), country.nameCode.uppercase())
-                if (formattedPhoneNumber == null) {
-                    showErrorPhoneNumber = true
-                } else {
-                    showConfirmPhoneNumber = true
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.clip(RoundedCornerShape(8.dp))
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .padding(horizontal = 12.dp, vertical = 4.dp)
+                .clickable {
+                    AuthSdk.authenticateGoogle(context, googleLauncher)
                 }
-            }
-        )
-        Spacer(modifier = Modifier.weight(1F))
-    }
-
-    ErrorDialog(
-        showError = showErrorPhoneNumber,
-        title = stringResource(R.string.login_invalid_phone_title),
-        description = stringResource(R.string.login_invalid_phone_description)
-    ) {
-        showErrorPhoneNumber = false
-    }
-    val formattedPhoneNumber =
-        PhoneNumberUtils.formatNumberToE164(phone.trim(), country.nameCode.uppercase())
-
-    WarningDialog(
-        title = formattedPhoneNumber,
-        content = stringResource(R.string.login_confirm_phone_description),
-        dismissText = stringResource(R.string.common_cancel),
-        confirmText = stringResource(R.string.common_confirm),
-        isWarning = showConfirmPhoneNumber,
-        onDismiss = {
-            showConfirmPhoneNumber = false
-        },
-        onConfirm = {
-            showConfirmPhoneNumber = false
-            handleEvent(LoginEvent.SendOTP(formattedPhoneNumber))
+        ) {
+            Image(
+                painter = painterResource(R.drawable.google),
+                contentDescription = null,
+                modifier = Modifier.size(30.dp)
+            )
+            SizeBox(width = 8.dp)
+            Text(
+                "Sign in with google",
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                style = MaterialTheme.typography.bodySmall
+            )
         }
-    )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -223,5 +222,18 @@ fun LoginVerifyEmail(
             )
         }
         Spacer(modifier = Modifier.height(24.dp))
+    }
+}
+
+@Composable
+private fun LoginGoogleContent() {
+}
+
+@Composable
+private fun rememberAuthLauncher(
+    handleAuthResult: (Intent?) -> Unit,
+): ManagedActivityResultLauncher<Intent, ActivityResult> {
+    return rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        handleAuthResult(result.data)
     }
 }

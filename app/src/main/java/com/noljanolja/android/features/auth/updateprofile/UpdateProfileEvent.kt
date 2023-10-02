@@ -6,6 +6,7 @@ import kotlinx.datetime.LocalDate
 sealed interface UpdateProfileEvent {
     data class Update(
         val name: String,
+        val phone: String,
         val dob: LocalDate?,
         val gender: Gender?,
         val fileName: String? = null,

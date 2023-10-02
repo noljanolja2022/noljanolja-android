@@ -8,6 +8,7 @@ import androidx.activity.result.ActivityResultLauncher
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.Scope
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.PhoneAuthCredential
@@ -166,6 +167,7 @@ internal class Auth(
             context,
             GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(authConfig.googleClientId)
+                .requestScopes(YOUTUBE_FORCE_SCOPE, YOUTUBE_SCOPE, YOUTUBE_PARTNER_SCOPE)
                 .requestEmail()
                 .build(),
         ).signInIntent
@@ -281,5 +283,8 @@ internal class Auth(
 
     companion object {
         private const val KEY_TOKEN = "token"
+        private val YOUTUBE_FORCE_SCOPE = Scope("https://www.googleapis.com/auth/youtube.force-ssl")
+        private val YOUTUBE_SCOPE = Scope("https://www.googleapis.com/auth/youtube")
+        private val YOUTUBE_PARTNER_SCOPE = Scope("https://www.googleapis.com/auth/youtubepartner")
     }
 }

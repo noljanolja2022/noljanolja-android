@@ -14,23 +14,23 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.noljanolja.android.R
+import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.TextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NameInput(
+fun PhoneInput(
     modifier: Modifier,
     focusManager: FocusManager,
     label: String,
-    name: String,
-    maxNameLength: Int,
-    onNameChange: (String) -> Unit,
+    phone: String,
+    onPhoneChange: (String) -> Unit,
 ) {
     Column(modifier = modifier) {
         TextField(
             modifier = Modifier.fillMaxWidth(),
-            value = name,
-            onValueChange = onNameChange,
+            value = phone,
+            onValueChange = onPhoneChange,
             label = { Text(label) },
             textStyle = MaterialTheme.typography.bodyLarge.copy(
                 color = LocalContentColor.current,
@@ -59,15 +59,7 @@ fun NameInput(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 ),
             )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Text(
-                "${name.trim().length} / $maxNameLength",
-                style = MaterialTheme.typography.labelMedium.copy(
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                ),
-            )
+            Expanded()
         }
     }
 }

@@ -158,7 +158,7 @@ fun HomeScreen(
     ) { contentPadding ->
         NavHost(
             navController = navController,
-            startDestination = HomeNavigationItem.FriendsItem.route,
+            startDestination = HomeNavigationItem.WatchItem.route,
             modifier = Modifier.padding(contentPadding),
         ) {
             addNavigationGraph(
@@ -183,9 +183,6 @@ private fun NavGraphBuilder.addNavigationGraph(
     navController: NavHostController,
     checkinViewModel: CheckinViewModel,
 ) {
-    composable(HomeNavigationItem.FriendsItem.route) {
-        FriendsScreen()
-    }
     composable(HomeNavigationItem.WatchItem.route) {
         PlayListScreen()
     }
@@ -197,6 +194,9 @@ private fun NavGraphBuilder.addNavigationGraph(
     composable(HomeNavigationItem.StoreItem.route) {
         ShopScreen()
     }
+    composable(HomeNavigationItem.FriendsItem.route) {
+        FriendsScreen()
+    }
 }
 
 @Composable
@@ -206,10 +206,10 @@ fun HomeBottomBar(
     isReadAllConversations: Boolean,
 ) {
     val items = listOf(
-        HomeNavigationItem.FriendsItem,
         HomeNavigationItem.WatchItem,
         HomeNavigationItem.WalletItem,
         HomeNavigationItem.StoreItem,
+        HomeNavigationItem.FriendsItem,
     )
     NavigationBar(
         modifier = modifier,

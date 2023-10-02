@@ -39,6 +39,10 @@ class FriendsViewModel : BaseViewModel() {
                     if (noMoreContact) return@launch
                     getContacts()
                 }
+
+                FriendsEvent.AddFriend -> {
+                    navigationManager.navigate(NavigationDirections.AddFriend)
+                }
             }
         }
     }
