@@ -29,7 +29,7 @@ class LocalUserDataSource(
     private val userMapper = {
             id: String,
             name: String,
-            phone: String,
+            phone: String?,
             email: String,
             gender: String?,
             dob: String?,

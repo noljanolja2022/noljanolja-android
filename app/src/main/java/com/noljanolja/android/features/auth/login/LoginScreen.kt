@@ -39,6 +39,7 @@ import com.noljanolja.android.common.country.DEFAULT_CODE
 import com.noljanolja.android.common.country.getFlagEmoji
 import com.noljanolja.android.features.auth.common.component.VerifyEmail
 import com.noljanolja.android.features.auth.login.component.LoginButton
+import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.SecondaryButton
 import com.noljanolja.android.ui.composable.SizeBox
@@ -105,17 +106,27 @@ private fun LoginContent(
     }
     Column(
         modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
     ) {
+        Text(
+            stringResource(id = R.string.common_login),
+            style = MaterialTheme.typography.displaySmall
+        )
+        Text(
+            stringResource(R.string.login_phone_description),
+            modifier = Modifier.fillMaxWidth(),
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Expanded()
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.clip(RoundedCornerShape(8.dp))
+                .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.primaryContainer)
                 .padding(horizontal = 12.dp, vertical = 4.dp)
                 .clickable {
                     AuthSdk.authenticateGoogle(context, googleLauncher)
-                }
+                },
+            horizontalArrangement = Arrangement.Center
         ) {
             Image(
                 painter = painterResource(R.drawable.google),
@@ -129,6 +140,7 @@ private fun LoginContent(
                 style = MaterialTheme.typography.bodySmall
             )
         }
+        Expanded()
     }
 }
 

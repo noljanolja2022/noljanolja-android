@@ -31,7 +31,8 @@ fun TermDetailScreen(termIndex: Int) {
             )
             Text(
                 "Welcome to Nolgu Bulgu. Please read our terms of service carefully.",
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
             )
             SizeBox(height = 20.dp)
         }
