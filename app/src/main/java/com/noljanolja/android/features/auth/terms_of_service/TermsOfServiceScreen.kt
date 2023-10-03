@@ -183,7 +183,9 @@ private fun TermRow(
 
         Text(
             termTitle,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f).clickable(enabled = onClicked != null) {
+                onClicked?.invoke()
+            },
             style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.secondaryTextColor()),
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
