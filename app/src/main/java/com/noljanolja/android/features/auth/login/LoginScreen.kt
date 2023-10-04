@@ -112,7 +112,7 @@ private fun LoginContent(
             style = MaterialTheme.typography.displaySmall
         )
         Text(
-            stringResource(R.string.login_phone_description),
+            stringResource(R.string.login_google_description),
             modifier = Modifier.fillMaxWidth(),
             style = MaterialTheme.typography.bodyMedium
         )
@@ -135,7 +135,7 @@ private fun LoginContent(
             )
             SizeBox(width = 8.dp)
             Text(
-                "Sign in with google",
+                stringResource(R.string.login_google_button),
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 style = MaterialTheme.typography.bodySmall
             )

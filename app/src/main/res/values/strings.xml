@@ -386,4 +386,6 @@
     <string name="friend_reference">Friend reference</string>
     <string name="term_of_service">Term of service</string>
     <string name="common_phone">Phone</string>
+    <string name="login_google_description">Welcome to NolgoBulja. Please connect your Google account to continue.</string>
+    <string name="login_google_button">Connect with Google</string>
 </resources>
