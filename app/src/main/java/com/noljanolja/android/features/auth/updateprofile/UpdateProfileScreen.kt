@@ -34,7 +34,12 @@ import com.noljanolja.android.ui.composable.LoadingDialog
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.util.loadFileInfo
+import com.noljanolja.android.util.toUri
 import com.noljanolja.core.user.domain.model.Gender
+import com.noljanolja.core.user.domain.model.User
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toKotlinLocalDate
 import org.koin.androidx.compose.getViewModel
 import java.time.LocalDate
@@ -47,6 +52,7 @@ fun UpdateProfileScreen(
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     UpdateProfileContent(
         uiState = uiState,
+        userFlow = viewModel.userFlow,
         handleEvent = viewModel::handleEvent,
     )
 }
@@ -55,6 +61,7 @@ fun UpdateProfileScreen(
 @Composable
 fun UpdateProfileContent(
     uiState: UpdateProfileUiState,
+    userFlow: StateFlow<User?>,
     handleEvent: (UpdateProfileEvent) -> Unit,
 ) {
     val genders =
@@ -67,6 +74,18 @@ fun UpdateProfileContent(
     var gender by rememberSaveable { mutableStateOf<String?>(null) }
     var dob by rememberSaveable { mutableStateOf<LocalDate?>(null) }
     val isRegisterEnable = name.isNotBlank()
+
+    LaunchedEffect(userFlow) {
+        userFlow.collectLatest {
+            it?.let { user ->
+                avatar = user.avatar?.toUri()
+                name = user.name
+                phone = user.phone.orEmpty()
+                gender = user.gender?.name
+                dob = user.dob?.toJavaLocalDate()
+            }
+        }
+    }
 
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current

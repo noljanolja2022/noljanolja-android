@@ -5,12 +5,24 @@ import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.util.formatTime
 import com.noljanolja.core.user.domain.model.Gender
+import com.noljanolja.core.user.domain.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class UpdateProfileViewModel : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow(UpdateProfileUiState())
     val uiStateFlow = _uiStateFlow.asStateFlow()
+
+    private val _userFlow = MutableStateFlow<User?>(null)
+    val userFlow = _userFlow.asStateFlow()
+
+    init {
+        launch {
+            coreManager.getCurrentUser().getOrNull()?.let {
+                _userFlow.emit(it)
+            }
+        }
+    }
 
     fun handleEvent(event: UpdateProfileEvent) {
         launch {
