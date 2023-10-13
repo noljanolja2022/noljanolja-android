@@ -41,6 +41,7 @@ upsert {
       email = :email,
       gender = :gender,
       dob = :dob,
+      phone =:phone,
       avatar= :avatar,
       referralCode= :referralCode,
       created_at = :created_at,

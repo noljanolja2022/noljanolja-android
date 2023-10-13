@@ -239,9 +239,9 @@ fun ConversationRow(
                 AsyncImage(
                     ImageRequest.Builder(context = context)
                         .data(url)
-                        .placeholder(R.drawable.placeholder_avatar)
-                        .error(R.drawable.placeholder_avatar)
-                        .fallback(R.drawable.placeholder_avatar)
+                        .placeholder(R.drawable.placeholder_account)
+                        .error(R.drawable.placeholder_account)
+                        .fallback(R.drawable.placeholder_account)
                         .build(),
                     contentDescription = null,
                     modifier = avatarModifier,

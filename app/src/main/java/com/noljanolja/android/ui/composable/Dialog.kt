@@ -17,6 +17,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -56,6 +57,9 @@ fun InfoDialog(
     content: String,
     isShown: Boolean = false,
     dismissText: String,
+    contentColor: Color = MaterialTheme.colorScheme.onBackground,
+    containerColor: Color = MaterialTheme.colorScheme.background,
+    properties: DialogProperties = DialogProperties(),
     onDismiss: () -> Unit,
 ) {
     if (isShown) {
@@ -69,9 +73,11 @@ fun InfoDialog(
             },
             confirmButton = {},
             onDismissRequest = onDismiss,
-            containerColor = MaterialTheme.colorScheme.background,
-            titleContentColor = MaterialTheme.colorScheme.onBackground,
-            textContentColor = MaterialTheme.colorScheme.onBackground
+            containerColor = containerColor,
+            titleContentColor = contentColor,
+            textContentColor = contentColor,
+            tonalElevation = 5.dp,
+            properties = properties
         )
     }
 }

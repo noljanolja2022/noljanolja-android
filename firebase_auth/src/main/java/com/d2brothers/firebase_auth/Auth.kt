@@ -163,6 +163,7 @@ internal class Auth(
 
     // Google
     fun authenticateGoogle(context: Context, launcher: ActivityResultLauncher<Intent>) {
+        val googleClientId = authConfig.googleClientId
         val intent = GoogleSignIn.getClient(
             context,
             GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

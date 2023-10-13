@@ -293,8 +293,9 @@ fun ChatScreenContent(
                                     Message(
                                         message = message.trim(),
                                         type = type,
-                                        attachments = attachments.map {
-                                            val fileInfo = context.loadFileInfo(it)
+                                        attachments = attachments.mapNotNull {
+                                            val fileInfo =
+                                                context.loadFileInfo(it) ?: return@mapNotNull null
                                             MessageAttachment(
                                                 name = "",
                                                 originalName = fileInfo.name,
@@ -598,9 +599,9 @@ fun MessageRow(
                                     AsyncImage(
                                         ImageRequest.Builder(context = context)
                                             .data(userSeen.getAvatarUrl())
-                                            .placeholder(R.drawable.placeholder_avatar)
-                                            .error(R.drawable.placeholder_avatar)
-                                            .fallback(R.drawable.placeholder_avatar)
+                                            .placeholder(R.drawable.placeholder_account)
+                                            .error(R.drawable.placeholder_account)
+                                            .fallback(R.drawable.placeholder_account)
                                             .build(),
                                         contentDescription = null,
                                         modifier = Modifier

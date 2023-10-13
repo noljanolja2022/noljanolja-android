@@ -5,7 +5,7 @@
     <string name="app_channel_name" translatable="false">noljanolja</string>
     <string name="app_channel_description" translatable="false">noljanolja</string>
     <string name="home_item_1" translatable="false">Home 1</string>
-    <string name="web_client_id" translatable="false">954965503519-4indv4tab6cr141999er2dd8nj43mtcr.apps.googleusercontent.com</string>
+    <string name="web_client_id" translatable="false">178013335305-3tuknh3s2ptb19tstjq4immq3t2rovn6.apps.googleusercontent.com</string>
     <string name="kakao_api_key" translatable="false">&kakao_api_key;</string>
     <string name="kakao_scheme" translatable="false">kakao&kakao_api_key;</string>
 
@@ -50,10 +50,10 @@
     <!--    countries-->
     <string name="country_kr">South Korea</string>
 
-    <string name="welcome_noljanolja">Welcome to NolgoBulja. Watch videos,play and earn.</string>
+    <string name="welcome_noljanolja">Welcome to NolgoBulja. Watch videos, play and earn.</string>
 
     <string name="splash_explore">EXPLORE NOW</string>
-    <string name="splash_wait">Just a moment ...</string>
+    <string name="splash_wait">Just a moment …</string>
 
     <string name="signup">Join the membership</string>
     <string name="forgot_password">Forgot your password?</string>
@@ -384,8 +384,11 @@
     <string name="common_play">Play</string>
     <string name="common_turn_off">Turn off</string>
     <string name="friend_reference">Friend reference</string>
-    <string name="term_of_service">Term of service</string>
+    <string name="term_of_service">Terms of service</string>
+    <string name="term_detail_description">Welcome to NolgoBulja. Please read our terms of service carefully.</string>
     <string name="common_phone">Phone</string>
     <string name="login_google_description">Welcome to NolgoBulja. Please connect your Google account to continue.</string>
     <string name="login_google_button">Connect with Google</string>
+    <string name="coming_soon">Welcome to NolgoBulja. We will be coming soon. Thank you.</string>
+    <string name="common_exit">Exit</string>
 </resources>

@@ -181,9 +181,9 @@ private fun ContactRow(
         SubcomposeAsyncImage(
             ImageRequest.Builder(context = context)
                 .data(contact.avatar)
-                .placeholder(R.drawable.placeholder_avatar)
-                .error(R.drawable.placeholder_avatar)
-                .fallback(R.drawable.placeholder_avatar)
+                .placeholder(R.drawable.placeholder_account)
+                .error(R.drawable.placeholder_account)
+                .fallback(R.drawable.placeholder_account)
                 .build(),
             contentDescription = null,
             modifier = Modifier

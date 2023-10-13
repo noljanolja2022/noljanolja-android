@@ -15,11 +15,11 @@ android {
     namespace = "com.noljanolja.android"
     compileSdk = 33
     defaultConfig {
-        applicationId = "com.noljanolja.app.android"
+        applicationId = "com.ppnyy.nolgobulja"
         minSdk = 21
         targetSdk = 33
-        versionCode = 42
-        versionName = "1.0.39"
+        versionCode = 44
+        versionName = "1.1.1"
         testInstrumentationRunner = "com.noljanolja.android.InstrumentationTestRunner"
         multiDexEnabled = true
     }
@@ -29,6 +29,12 @@ android {
             keyAlias = "signin_debug"
             keyPassword = "3131994no1"
             storeFile = file("../key/signin_debug.jks")
+            storePassword = "3131994no1"
+        }
+        create("release") {
+            keyAlias = "alias_nolgo"
+            keyPassword = "3131994no1"
+            storeFile = file("../key/signin_release.jks")
             storePassword = "3131994no1"
         }
     }
@@ -56,6 +62,7 @@ android {
         val notes = file("release_notes.txt").readText()
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
             firebaseAppDistribution {
                 artifactType = "APK"
                 serviceCredentialsFile = "key/key_distributor.json"
@@ -63,6 +70,9 @@ android {
                 testers =
                     "doduchieu.kstn@gmail.com, itanchi.dev@gmail.com, sangjin.d.han@gmail.com, sangjin.han@ppnyy.com, tiaddeeps@gmail.com, taduydoan123.dng@gmail.com"
             }
+            proguardFiles("proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("release")
+//            isDebuggable = true
         }
         debug {
             firebaseAppDistribution {

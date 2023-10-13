@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "178013335305",
+    "project_id": "nolgobulja-2023",
+    "storage_bucket": "nolgobulja-2023.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:178013335305:android:26cdc5741e50ad63306dd8",
+        "android_client_info": {
+          "package_name": "com.ppnyy.nolgobulja"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "178013335305-3tuknh3s2ptb19tstjq4immq3t2rovn6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_lwkRSJ4SgClhy9rDY6jVDcHVuRUXt0w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "178013335305-3tuknh3s2ptb19tstjq4immq3t2rovn6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "178013335305-k5uo0q32lure8a4p70rvcnvv7acmfi9s.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ppnyy.nolgobulja"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
