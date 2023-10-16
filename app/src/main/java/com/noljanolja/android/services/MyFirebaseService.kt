@@ -106,7 +106,7 @@ class MyFirebaseService : FirebaseMessagingService() {
             .execute(senderIconRequest)
             .drawable
             ?.let { (it as BitmapDrawable).bitmap }
-            ?: AppCompatResources.getDrawable(this, R.drawable.placeholder_avatar)!!.toBitmap()
+            ?: AppCompatResources.getDrawable(this, R.drawable.placeholder_account)!!.toBitmap()
 
         val sender = Person.Builder()
             .setIcon(IconCompat.createWithBitmap(senderIcon))

@@ -1,5 +1,6 @@
 package com.noljanolja.android.features.auth.updateprofile.components
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -31,11 +32,16 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.rememberPermissionState
 import com.noljanolja.android.R
 import com.noljanolja.android.util.findActivity
 import com.noljanolja.android.util.getTmpFileUri
+import com.noljanolja.android.util.showToast
 import com.yalantis.ucrop.UCrop
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun AvatarInput(
     isShown: Boolean,
@@ -46,6 +52,7 @@ fun AvatarInput(
     val toolbarColor = MaterialTheme.colorScheme.surface.toArgb()
     val toolbarWidgetColor = MaterialTheme.colorScheme.onSurface.toArgb()
     val selectedFile = remember { mutableStateOf<Uri?>(null) }
+
     val photoEditorLauncher =
         rememberLauncherForActivityResult(object : ActivityResultContract<Pair<Uri, Uri>, Uri?>() {
             override fun createIntent(context: Context, input: Pair<Uri, Uri>): Intent {
@@ -88,6 +95,20 @@ fun AvatarInput(
                 }
             }
         }
+    val selectImageFromCamera = {
+        selectedFile.value = context.getTmpFileUri("temp_photo", ".png").also {
+            photoCameraLauncher.launch(it)
+        }
+    }
+    val cameraPermissionsState = rememberPermissionState(
+        Manifest.permission.CAMERA,
+        onPermissionResult = {
+            when {
+                !it -> context.showToast(context.getString(R.string.permission_camera))
+                else -> selectImageFromCamera.invoke()
+            }
+        }
+    )
 
     if (isShown) {
         AlertDialog(
@@ -99,8 +120,10 @@ fun AvatarInput(
                         icon = Icons.Default.Camera,
                         label = stringResource(R.string.update_profile_avatar_open_camera),
                         onClick = {
-                            selectedFile.value = context.getTmpFileUri("temp_photo", ".png").also {
-                                photoCameraLauncher.launch(it)
+                            if (cameraPermissionsState.status != PermissionStatus.Granted) {
+                                cameraPermissionsState.launchPermissionRequest()
+                            } else {
+                                selectImageFromCamera.invoke()
                             }
                         },
                     )

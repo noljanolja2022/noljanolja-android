@@ -117,12 +117,12 @@ private fun AccountSection(
                             image,
                         ).crossfade(true).build(),
                         contentDescription = "avatar",
-                        placeholder = painterResource(id = R.drawable.placeholder_avatar),
+                        placeholder = painterResource(id = R.drawable.placeholder_account),
                         contentScale = ContentScale.FillWidth,
                         modifier = modifier,
                     )
                 } ?: Image(
-                    painter = painterResource(id = R.drawable.placeholder_avatar),
+                    painter = painterResource(id = R.drawable.placeholder_account),
                     contentDescription = null,
                     modifier = modifier,
                 )

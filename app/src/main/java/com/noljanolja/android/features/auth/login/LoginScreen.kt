@@ -37,12 +37,14 @@ import com.noljanolja.android.common.country.Countries
 import com.noljanolja.android.common.country.Country
 import com.noljanolja.android.common.country.DEFAULT_CODE
 import com.noljanolja.android.common.country.getFlagEmoji
+import com.noljanolja.android.common.error.UnexpectedFailure
 import com.noljanolja.android.features.auth.common.component.VerifyEmail
 import com.noljanolja.android.features.auth.login.component.LoginButton
 import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.SecondaryButton
 import com.noljanolja.android.ui.composable.SizeBox
+import com.noljanolja.android.util.showError
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
@@ -101,6 +103,8 @@ private fun LoginContent(
             val result = authSdk.getAccountFromGoogleIntent(it)
             if (result.isSuccess) {
                 handleEvent(LoginEvent.HandleLoginResult(result.getOrDefault("")))
+            } else {
+                context.showError(result.exceptionOrNull() ?: UnexpectedFailure)
             }
         }
     }

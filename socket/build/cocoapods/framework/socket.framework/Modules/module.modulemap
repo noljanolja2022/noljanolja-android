@@ -1,6 +1,0 @@
-framework module socket {
-  umbrella header "placeholder.h"
-
-  export *
-  module * { export * }
-}

@@ -54,11 +54,16 @@ fun Context.getTmpFileUri(name: String, ext: String): Uri {
     return FileProvider.getUriForFile(this, "${BuildConfig.APPLICATION_ID}.provider", tmpFile)
 }
 
-fun Context.loadFileInfo(uri: Uri): FileInfo {
-    val contents = contentResolver.openInputStream(uri)!!.readBytes()
-    val type = getType(uri)
-    val name = getName(uri)
-    return FileInfo(name, uri.toString().toPath(false), type, contents)
+fun Context.loadFileInfo(uri: Uri?): FileInfo? {
+    if (uri == null) return null
+    return try {
+        val contents = contentResolver.openInputStream(uri)!!.readBytes()
+        val type = getType(uri)
+        val name = getName(uri)
+        FileInfo(name, uri.toString().toPath(false), type, contents)
+    } catch (e: Throwable) {
+        null
+    }
 }
 
 fun Context.getType(uri: Uri): String {

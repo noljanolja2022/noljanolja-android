@@ -25,9 +25,9 @@ fun OvalAvatar(
     SubcomposeAsyncImage(
         ImageRequest.Builder(context = context)
             .data(user.getAvatarUrl())
-            .placeholder(R.drawable.placeholder_avatar)
-            .error(R.drawable.placeholder_avatar)
-            .fallback(R.drawable.placeholder_avatar)
+            .placeholder(R.drawable.placeholder_account)
+            .error(R.drawable.placeholder_account)
+            .fallback(R.drawable.placeholder_account)
             .build(),
         contentDescription = null,
         modifier = modifier
@@ -46,9 +46,9 @@ fun CircleAvatar(
     SubcomposeAsyncImage(
         ImageRequest.Builder(context = context)
             .data(user.getAvatarUrl())
-            .placeholder(R.drawable.placeholder_avatar)
-            .error(R.drawable.placeholder_avatar)
-            .fallback(R.drawable.placeholder_avatar)
+            .placeholder(R.drawable.placeholder_account)
+            .error(R.drawable.placeholder_account)
+            .fallback(R.drawable.placeholder_account)
             .build(),
         contentDescription = null,
         modifier = Modifier
@@ -67,9 +67,9 @@ fun CircleAvatar(
     SubcomposeAsyncImage(
         ImageRequest.Builder(context = context)
             .data(avatar)
-            .placeholder(R.drawable.placeholder_avatar)
-            .error(R.drawable.placeholder_avatar)
-            .fallback(R.drawable.placeholder_avatar)
+            .placeholder(R.drawable.placeholder_account)
+            .error(R.drawable.placeholder_account)
+            .fallback(R.drawable.placeholder_account)
             .build(),
         contentDescription = null,
         modifier = Modifier
@@ -89,9 +89,9 @@ fun OvalAvatar(
     SubcomposeAsyncImage(
         ImageRequest.Builder(context = context)
             .data(avatar)
-            .placeholder(R.drawable.placeholder_avatar)
-            .error(R.drawable.placeholder_avatar)
-            .fallback(R.drawable.placeholder_avatar)
+            .placeholder(R.drawable.placeholder_account)
+            .error(R.drawable.placeholder_account)
+            .fallback(R.drawable.placeholder_account)
             .build(),
         contentDescription = null,
         modifier = modifier

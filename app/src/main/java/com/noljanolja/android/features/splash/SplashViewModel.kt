@@ -42,7 +42,7 @@ class SplashViewModel : BaseViewModel() {
                 coreManager.saveAuthToken(it)
                 coreManager.getCurrentUser(true).getOrNull()?.let { user ->
                     coreManager.pushToken()
-                    if (user.name.isBlank()) {
+                    if (user.name.isBlank() || user.phone.isNullOrBlank()) {
                         navigationManager.navigate(
                             NavigationDirections.UpdateProfile
                         )

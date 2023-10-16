@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -42,6 +43,7 @@ import com.noljanolja.android.features.home.utils.click
 import com.noljanolja.android.features.home.utils.isNavItemSelect
 import com.noljanolja.android.features.home.wallet.WalletScreen
 import com.noljanolja.android.features.shop.main.ShopScreen
+import com.noljanolja.android.ui.composable.InfoDialog
 import com.noljanolja.android.ui.theme.colorBackground
 import com.noljanolja.android.util.findActivity
 import com.noljanolja.android.util.getErrorMessage
@@ -50,6 +52,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
+import kotlin.system.exitProcess
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,10 +60,10 @@ fun HomeScreen(
     viewModel: HomeViewModel = getViewModel(),
     checkinViewModel: CheckinViewModel,
 ) {
+    val context = LocalContext.current
     LaunchedEffect(true) {
         MyApplication.isHomeShowed = true
     }
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val showBanners by viewModel.eventBannersFlow.collectAsStateWithLifecycle()
     val checkinProgresses by checkinViewModel.checkinProgressFlow.collectAsStateWithLifecycle()
@@ -168,6 +171,20 @@ fun HomeScreen(
         }
     }
 
+    InfoDialog(
+        content = stringResource(R.string.coming_soon),
+        isShown = true,
+        dismissText = stringResource(R.string.common_exit),
+        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+        onDismiss = {
+            exitProcess(0)
+        },
+        properties = DialogProperties(
+            dismissOnClickOutside = false,
+            dismissOnBackPress = false
+        )
+    )
     showBanners.takeIf { it.isNotEmpty() }?.let {
         EventBannerDialog(eventBanners = it, checkinProgresses = checkinProgresses, onCheckIn = {
             HomeNavigationItem.WalletItem.click(navController)
@@ -257,7 +274,7 @@ fun HomeBottomBar(
                 label = { Text(label, maxLines = 1) },
                 selected = isSelected,
                 onClick = {
-                    item.click(navController)
+//                    item.click(navController)
                 },
                 colors = with(MaterialTheme.colorScheme) {
                     NavigationBarItemDefaults.colors(

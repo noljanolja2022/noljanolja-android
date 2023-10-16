@@ -30,7 +30,7 @@ fun TermDetailScreen(termIndex: Int) {
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
             Text(
-                "Welcome to Nolgu Bulgu. Please read our terms of service carefully.",
+                stringResource(R.string.term_detail_description),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )

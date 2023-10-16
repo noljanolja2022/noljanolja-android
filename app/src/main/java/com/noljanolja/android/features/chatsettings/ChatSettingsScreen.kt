@@ -99,10 +99,10 @@ private fun ChatSettingsContent(
     var avatar by rememberSaveable { mutableStateOf<Uri?>(null) }
     var showAvatarInputDialog by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(key1 = avatar, block = {
-        avatar?.let {
+        context.loadFileInfo(avatar)?.let {
             handleEvent(
                 ChatSettingsEvent.ChangeAvatar(
-                    context.loadFileInfo(it)
+                    it
                 )
             )
         }
