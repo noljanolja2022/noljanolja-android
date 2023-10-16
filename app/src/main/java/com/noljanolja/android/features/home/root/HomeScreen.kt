@@ -30,6 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
+import com.noljanolja.android.BuildConfig
 import com.noljanolja.android.MyApplication
 import com.noljanolja.android.R
 import com.noljanolja.android.features.home.CheckinViewModel
@@ -46,6 +47,7 @@ import com.noljanolja.android.features.shop.main.ShopScreen
 import com.noljanolja.android.ui.composable.InfoDialog
 import com.noljanolja.android.ui.theme.colorBackground
 import com.noljanolja.android.util.findActivity
+import com.noljanolja.android.util.getClientId
 import com.noljanolja.android.util.getErrorMessage
 import com.noljanolja.android.util.showToast
 import kotlinx.coroutines.delay
@@ -72,7 +74,7 @@ fun HomeScreen(
 
     // Request youtube scope
     val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail()
-        .requestIdToken(stringResource(id = R.string.web_client_id))
+        .requestIdToken(context.getClientId())
         .requestScopes(YOUTUBE_FORCE_SCOPE, YOUTUBE_SCOPE, YOUTUBE_PARTNER_SCOPE)
         .build()
     val googleSignInClient = GoogleSignIn.getClient(context, gso)
@@ -173,7 +175,7 @@ fun HomeScreen(
 
     InfoDialog(
         content = stringResource(R.string.coming_soon),
-        isShown = true,
+        isShown = !BuildConfig.DEBUG,
         dismissText = stringResource(R.string.common_exit),
         contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
         containerColor = MaterialTheme.colorScheme.secondaryContainer,

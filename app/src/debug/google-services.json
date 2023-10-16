@@ -7,18 +7,18 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:954965503519:android:a3c7853a95dacc6d1d6f2a",
+        "mobilesdk_app_id": "1:954965503519:android:909d233700da34451d6f2a",
         "android_client_info": {
-          "package_name": "com.noljanolja.app.android"
+          "package_name": "com.ppnyy.nolgobulja.dev"
         }
       },
       "oauth_client": [
         {
-          "client_id": "954965503519-mkvjd042ckp76d42t5mchegtf4744ge2.apps.googleusercontent.com",
+          "client_id": "954965503519-fqrsi17d0pn7islca2ks0gq024hgn1po.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.noljanolja.app.android",
-            "certificate_hash": "f4b41939cb7ed4d2e9b8da70b15b6f884a3e59c8"
+            "package_name": "com.ppnyy.nolgobulja.dev",
+            "certificate_hash": "2b67c10a5911bdcf7cc075f8ecde15c1f8d0f079"
           }
         },
         {

@@ -53,6 +53,7 @@ import com.noljanolja.android.ui.composable.BackPressHandler
 import com.noljanolja.android.ui.composable.CircleAvatar
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.util.findActivity
+import com.noljanolja.android.util.getClientId
 import com.noljanolja.core.user.domain.model.User
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -70,7 +71,7 @@ fun CommentInput(
     val context = LocalContext.current
     val activity = context.findActivity()!!
     val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail()
-        .requestIdToken(stringResource(id = R.string.web_client_id)).requestScopes(YOUTUBE_SCOPE)
+        .requestIdToken(context.getClientId()).requestScopes(YOUTUBE_SCOPE)
         .build()
 
     val googleSignInClient = GoogleSignIn.getClient(context, gso)

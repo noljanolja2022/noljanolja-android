@@ -73,6 +73,7 @@ import com.noljanolja.android.services.PermissionChecker
 import com.noljanolja.android.services.analytics.AppAnalytics
 import com.noljanolja.android.services.analytics.firebase.FirebaseLogger
 import com.noljanolja.android.services.analytics.firebase.FirebaseTracker
+import com.noljanolja.android.util.getClientId
 import com.noljanolja.core.CoreManager
 import com.noljanolja.core.di.initKoin
 import com.noljanolja.core.service.ktor.KtorClient
@@ -168,7 +169,7 @@ class MyApplication : Application() {
                     AuthSdk.init(
                         context = get(),
                         kakaoApiKey = get<Context>().getString(R.string.kakao_api_key),
-                        googleWebClientId = get<Context>().getString(R.string.web_client_id),
+                        googleWebClientId = get<Context>().getClientId(),
                         naverClientId = "3zDg6vMsJmoFk2TGOjcq",
                         naverClientSecret = "8keRny2c_4",
                         naverClientName = "놀자놀자",

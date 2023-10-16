@@ -163,10 +163,11 @@ internal class Auth(
 
     // Google
     fun authenticateGoogle(context: Context, launcher: ActivityResultLauncher<Intent>) {
+        val clientId = authConfig.googleClientId
         val intent = GoogleSignIn.getClient(
             context,
             GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(authConfig.googleClientId)
+                .requestIdToken(clientId)
                 .requestScopes(YOUTUBE_FORCE_SCOPE, YOUTUBE_SCOPE, YOUTUBE_PARTNER_SCOPE)
                 .requestEmail()
                 .build(),

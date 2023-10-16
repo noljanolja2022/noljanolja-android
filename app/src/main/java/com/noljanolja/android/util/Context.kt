@@ -180,3 +180,9 @@ fun Context.shareText(text: String) {
     val shareIntent = Intent.createChooser(sendIntent, null)
     startActivity(shareIntent)
 }
+
+fun Context.getClientId() = if (BuildConfig.DEBUG) {
+    "954965503519-4indv4tab6cr141999er2dd8nj43mtcr.apps.googleusercontent.com"
+} else {
+    "178013335305-3tuknh3s2ptb19tstjq4immq3t2rovn6.apps.googleusercontent.com"
+}
