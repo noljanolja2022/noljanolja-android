@@ -15,11 +15,11 @@ android {
     namespace = "com.noljanolja.android"
     compileSdk = 33
     defaultConfig {
-        applicationId = "com.ppnyy.nolgobulja.dev"
+        applicationId = "com.ppnyy.nolgobulja"
         minSdk = 21
         targetSdk = 33
-        versionCode = 44
-        versionName = "1.1.1"
+        versionCode = 46
+        versionName = "1.1.3"
         testInstrumentationRunner = "com.noljanolja.android.InstrumentationTestRunner"
         multiDexEnabled = true
     }
