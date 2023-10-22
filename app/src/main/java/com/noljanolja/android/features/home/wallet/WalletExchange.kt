@@ -171,7 +171,7 @@ private fun WalletExchangeContent(
                         contentColor = NeutralDarkGrey,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        showAdmob = true
+                        handleEvent(WalletEvent.Exchange)
                     }
                 }
             }
