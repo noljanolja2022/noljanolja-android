@@ -6,9 +6,12 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -20,6 +23,8 @@ import co.touchlab.kermit.Logger
 import com.d2brothers.firebase_auth.AuthSdk
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
 import com.noljanolja.android.common.base.launchInMain
@@ -29,6 +34,7 @@ import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.common.network.ConnectivityObserver
 import com.noljanolja.android.common.network.NetworkConnectivityObserver
+import com.noljanolja.android.ui.composable.admob.AdmobCustom
 import com.noljanolja.android.ui.theme.NoljanoljaTheme
 import com.noljanolja.core.CoreManager
 import kotlinx.coroutines.Dispatchers
@@ -37,6 +43,7 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
+import java.util.Arrays
 
 class MainActivity : ComponentActivity() {
     private val navigationManager: NavigationManager by inject()
@@ -49,8 +56,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+        MobileAds.initialize(this) {}
+        MobileAds.setRequestConfiguration(
+            RequestConfiguration.Builder()
+                .setTestDeviceIds(Arrays.asList("5ECA40C7C6D7F5F65594DF7F55AC5E83")).build()
+        )
         connectivityObserver = NetworkConnectivityObserver(this)
         syncContacts()
+        Logger.d("DeviceId ${getDeviceId(this)}")
         setContent {
             RequestPermissions() {
                 if (it[android.Manifest.permission.READ_CONTACTS] == true) {
@@ -64,6 +77,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.primary,
                 ) {
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        AdmobCustom(modifier = Modifier.fillMaxWidth())
+                    }
                     MainScreen(navigationManager)
                 }
             }
@@ -141,6 +157,10 @@ class MainActivity : ComponentActivity() {
                 }
                 Logger.d("$msg $topic")
             }
+    }
+
+    fun getDeviceId(context: Context): String {
+        return Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
     }
 
     companion object {

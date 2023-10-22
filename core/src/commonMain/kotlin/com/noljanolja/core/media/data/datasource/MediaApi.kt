@@ -12,10 +12,10 @@ internal class MediaApi(
     private val client: HttpClient,
 ) {
     suspend fun loadAllStickerPacks(): GetStickerPacksResponse {
-        return client.get("${Const.BASE_URL}/media/sticker-packs").body()
+        return client.get("${Const.BASE_URL}/api/v1/media/sticker-packs").body()
     }
 
     suspend fun downloadStickerPack(id: Long): Flow<ByteArray> = client.download(
-        "${Const.BASE_URL}/media/sticker-packs/$id"
+        "${Const.BASE_URL}/api/v1/media/sticker-packs/$id"
     )
 }

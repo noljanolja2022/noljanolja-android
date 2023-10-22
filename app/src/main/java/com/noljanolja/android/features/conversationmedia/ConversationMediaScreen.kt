@@ -125,7 +125,6 @@ private fun ConversationMediaContent(
                 1 -> FilesContent(
                     uiState.data?.get(ConversationMedia.AttachmentType.FILE).orEmpty(),
                     onLoadMore = {
-                        Logger.d("LoadmoreMediaFile")
                         handleEvent(ConversationMediaEvent.LoadMoreFile)
                     }
                 )
@@ -133,7 +132,6 @@ private fun ConversationMediaContent(
                 2 -> LinksContent(
                     uiState.data?.get(ConversationMedia.AttachmentType.LINK).orEmpty(),
                     onLoadMore = {
-                        Logger.d("LoadmoreMediaLInk")
                         handleEvent(ConversationMediaEvent.LoadMoreLink)
                     }
                 )

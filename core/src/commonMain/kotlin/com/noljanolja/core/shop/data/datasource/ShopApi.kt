@@ -12,7 +12,7 @@ import io.ktor.client.request.post
 
 class ShopApi(private val client: HttpClient) {
     suspend fun getGifts(searchText: String): GetGiftsResponse {
-        return client.get("${Const.BASE_URL}/gifts") {
+        return client.get("${Const.BASE_URL}/api/v1/gifts") {
             url {
                 searchText.takeIf { it.isNotBlank() }?.let {
                     parameters.append("name", it)
@@ -22,14 +22,14 @@ class ShopApi(private val client: HttpClient) {
     }
 
     suspend fun getMyGifts(): GetGiftsResponse {
-        return client.get("${Const.BASE_URL}/gifts/me").body()
+        return client.get("${Const.BASE_URL}/api/v1/gifts/me").body()
     }
 
     suspend fun getGiftDetail(request: GetGiftRequest): GetGiftResponse {
-        return client.get("${Const.BASE_URL}/gifts/${request.id}").body()
+        return client.get("${Const.BASE_URL}/api/v1/gifts/${request.id}").body()
     }
 
     suspend fun buyGift(request: BuildGiftRequest): GetGiftResponse {
-        return client.post("${Const.BASE_URL}/gifts/${request.id}/buy").body()
+        return client.post("${Const.BASE_URL}/api/v1/gifts/${request.id}/buy").body()
     }
 }

@@ -10,6 +10,7 @@ import com.noljanolja.core.conversation.domain.model.Message
 import com.noljanolja.core.conversation.domain.model.MessageStatus
 import com.noljanolja.core.conversation.domain.repository.ConversationRepository
 import com.noljanolja.core.event.domain.repository.EventBannerRepository
+import com.noljanolja.core.exchange.domain.repository.ExchangeRepository
 import com.noljanolja.core.loyalty.domain.model.LoyaltyType
 import com.noljanolja.core.loyalty.domain.repository.LoyaltyRepository
 import com.noljanolja.core.media.domain.repository.MediaRepository
@@ -24,7 +25,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -40,6 +40,7 @@ class CoreManager : KoinComponent {
     private val loyaltyRepository: LoyaltyRepository by inject()
     private val shopRepository: ShopRepository by inject()
     private val eventBannerRepository: EventBannerRepository by inject()
+    private val exchangeRepository: ExchangeRepository by inject()
     private val socketManager: SocketManager by inject()
     private val clearManager: ClearManager by inject()
 
@@ -74,26 +75,25 @@ class CoreManager : KoinComponent {
 
     suspend fun getConversation(conversationId: Long): Flow<Conversation> {
         return flow { }
-        return conversationRepository.getConversation(conversationId)
+//        return conversationRepository.getConversation(conversationId)
     }
 
     suspend fun fetchConversations(): Flow<List<Conversation>> {
         return flow { }
-        val conversationsFlow = conversationRepository.fetchConversations()
-        scope.launch {
-            streamConversations(null)
-        }
-        return conversationsFlow
+//        val conversationsFlow = conversationRepository.fetchConversations()
+//        scope.launch {
+//            streamConversations(null)
+//        }
+//        return conversationsFlow
     }
 
     suspend fun getLocalConversations(): Flow<List<Conversation>> {
-        return flow { }
-        conversationRepository.getLocalConversations()
+        return flow {}
+//        return conversationRepository.getLocalConversations()
     }
 
     suspend fun forceRefreshConversations() {
-        return
-        conversationRepository.forceRefreshConversations()
+//         conversationRepository.forceRefreshConversations()
     }
 
     suspend fun sendConversationMessage(
@@ -399,4 +399,10 @@ class CoreManager : KoinComponent {
     suspend fun getMyGifts() = shopRepository.getMyGifts()
     suspend fun getGiftDetail(giftId: Long) = shopRepository.getGiftDetail(giftId)
     suspend fun buyGift(giftId: Long) = shopRepository.buyGift(giftId)
+
+    // Exchange
+    suspend fun convertPoint() = exchangeRepository.convert()
+    suspend fun getExchangeTransactions() = exchangeRepository.getExchangeTransactions()
+    suspend fun getExchangeBalance() = exchangeRepository.getExchangeBalance()
+    suspend fun getExchangeRate() = exchangeRepository.getRate()
 }

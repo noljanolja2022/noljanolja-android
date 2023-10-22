@@ -11,6 +11,6 @@ class BannerApi(
     private val client: HttpClient,
 ) {
     suspend fun getBanners(request: GetBannersRequest): GetBannersResponse {
-        return client.get("${Const.BASE_URL}/banners").body()
+        return client.get("${Const.BASE_URL}/api/v1/banners").body()
     }
 }

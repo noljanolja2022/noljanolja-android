@@ -27,29 +27,29 @@ import io.ktor.http.HttpHeaders
 class UserApi(private val client: HttpClient) {
 
     suspend fun getMe(): GetMeResponse {
-        return client.get("$BASE_URL/users/me").body()
+        return client.get("$BASE_URL/api/v1/users/me").body()
     }
 
     suspend fun pushTokens(pushTokensRequest: PushTokensRequest): ResponseWithoutData {
-        return client.post("$BASE_URL/push-tokens") {
+        return client.post("$BASE_URL/api/v1/push-tokens") {
             setBody(pushTokensRequest)
         }.body()
     }
 
     suspend fun syncUserContacts(request: SyncUserContactsRequest): GetUsersResponse {
-        return client.post("$BASE_URL/users/me/contacts") {
+        return client.post("$BASE_URL/api/v1/users/me/contacts") {
             setBody(request)
         }.body()
     }
 
     suspend fun updateUser(request: UpdateUserRequest): UpdateUserResponse {
-        return client.put("$BASE_URL/users/me") {
+        return client.put("$BASE_URL/api/v1/users/me") {
             setBody(request)
         }.body()
     }
 
     suspend fun updateAvatar(request: UpdateAvatarRequest): UpdateAvatarResponse {
-        return client.post("$BASE_URL/users/me") {
+        return client.post("$BASE_URL/api/v1/users/me") {
             header(HttpHeaders.Accept, ContentType.MultiPart.FormData)
             setBody(
                 MultiPartFormDataContent(
@@ -74,11 +74,11 @@ class UserApi(private val client: HttpClient) {
     }
 
     suspend fun getContacts(page: Int): GetUsersResponse {
-        return client.get("$BASE_URL/users/me/contacts?page=$page").body()
+        return client.get("$BASE_URL/api/v1/users/me/contacts?page=$page").body()
     }
 
     suspend fun findContacts(request: FindContactRequest): GetUsersResponse {
-        return client.get("$BASE_URL/users") {
+        return client.get("$BASE_URL/api/v1/users") {
             url {
                 request.friendId?.let {
                     parameters.append("friendId", it)
@@ -91,21 +91,21 @@ class UserApi(private val client: HttpClient) {
     }
 
     suspend fun inviteFriend(request: InviteFriendRequest): ResponseWithoutData {
-        return client.post("$BASE_URL/users/me/contacts/invite") {
+        return client.post("$BASE_URL/api/v1/users/me/contacts/invite") {
             setBody(request)
         }.body()
     }
 
     suspend fun checkin(): ResponseWithoutData {
-        return client.post("$BASE_URL/users/me/checkin").body()
+        return client.post("$BASE_URL/api/v1/users/me/checkin").body()
     }
 
     suspend fun getCheckinProgress(): GetCheckinProgressesResponse {
-        return client.get("$BASE_URL/users/me/checkin-progresses").body()
+        return client.get("$BASE_URL/api/v1/users/me/checkin-progresses").body()
     }
 
     suspend fun addReferralCode(request: AddReferralCodeRequest): AddReferralResponse {
-        return client.put("$BASE_URL/users/me/referral") {
+        return client.put("$BASE_URL/api/v1/users/me/referral") {
             setBody(request)
         }.body()
     }

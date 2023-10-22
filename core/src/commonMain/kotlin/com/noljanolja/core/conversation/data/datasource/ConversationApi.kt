@@ -26,19 +26,19 @@ class ConversationApi(
 ) {
 
     suspend fun getConversations(): GetConversationsResponse {
-        return client.get("$BASE_URL/conversations").body()
+        return client.get("$BASE_URL/api/v1/conversations").body()
     }
 
     suspend fun getConversation(
         request: GetConversationRequest,
     ): GetConversationResponse {
-        return client.get("$BASE_URL/conversations/${request.conversationId}").body()
+        return client.get("$BASE_URL/api/v1/conversations/${request.conversationId}").body()
     }
 
     suspend fun sendConversationMessage(
         request: SendConversationMessageRequest,
     ): SendConversationMessageResponse {
-        return client.post("$BASE_URL/conversations/${request.conversationId}/messages") {
+        return client.post("$BASE_URL/api/v1/conversations/${request.conversationId}/messages") {
             header(HttpHeaders.Accept, ContentType.MultiPart.FormData)
             setBody(
                 MultiPartFormDataContent(
@@ -87,7 +87,7 @@ class ConversationApi(
     suspend fun sendConversationsMessage(
         request: SendConversationsMessageRequest,
     ): ResponseWithoutData {
-        return client.post("$BASE_URL/conversations/messages") {
+        return client.post("$BASE_URL/api/v1/conversations/messages") {
             header(HttpHeaders.Accept, ContentType.MultiPart.FormData)
             setBody(
                 MultiPartFormDataContent(
@@ -143,7 +143,7 @@ class ConversationApi(
         request: CreateConversationRequest,
     ): CreateConversationResponse {
         return client.submitFormWithBinaryData(
-            "$BASE_URL/conversations",
+            "$BASE_URL/api/v1/conversations",
             formData {
                 append("title", request.title)
                 val type = request.type
@@ -178,7 +178,7 @@ class ConversationApi(
     suspend fun getConversationMessages(
         request: GetConversationMessagesRequest,
     ): GetConversationMessagesResponse {
-        return client.get("$BASE_URL/conversations/${request.conversationId}/messages") {
+        return client.get("$BASE_URL/api/v1/conversations/${request.conversationId}/messages") {
             parameter("beforeMessageId", request.messageBefore)
             parameter("afterMessageId", request.messageAfter)
         }.body()
@@ -188,7 +188,7 @@ class ConversationApi(
         request: UpdateMessageStatusRequest,
     ) {
         return client.post(
-            "$BASE_URL/conversations/${request.conversationId}/messages/${request.messageId}/seen"
+            "$BASE_URL/api/v1/conversations/${request.conversationId}/messages/${request.messageId}/seen"
         ).body()
     }
 
@@ -196,7 +196,7 @@ class ConversationApi(
         conversationId: Long,
         request: UpdateParticipantsRequest,
     ): ResponseWithoutData {
-        return client.put("$BASE_URL/conversations/$conversationId/participants") {
+        return client.put("$BASE_URL/api/v1/conversations/$conversationId/participants") {
             setBody(request)
         }.body()
     }
@@ -206,7 +206,7 @@ class ConversationApi(
         request: UpdateParticipantsRequest,
     ): ResponseWithoutData {
         val participantIds = request.participantIds.joinToString(",")
-        return client.delete("$BASE_URL/conversations/$conversationId/participants?participantIds=$participantIds") {
+        return client.delete("$BASE_URL/api/v1/conversations/$conversationId/participants?participantIds=$participantIds") {
         }.body()
     }
 
@@ -214,7 +214,7 @@ class ConversationApi(
         conversationId: Long,
         request: AssignAdminRequest,
     ): ResponseWithoutData {
-        return client.put("$BASE_URL/conversations/$conversationId/admin") {
+        return client.put("$BASE_URL/api/v1/conversations/$conversationId/admin") {
             setBody(request)
         }.body()
     }
@@ -223,7 +223,7 @@ class ConversationApi(
         conversationId: Long,
         request: UpdateConversationRequest,
     ): GetConversationResponse {
-        return client.put("$BASE_URL/conversations/$conversationId") {
+        return client.put("$BASE_URL/api/v1/conversations/$conversationId") {
             header(HttpHeaders.Accept, ContentType.MultiPart.FormData)
             setBody(
                 MultiPartFormDataContent(
@@ -236,11 +236,11 @@ class ConversationApi(
     }
 
     suspend fun getReactIcons(): GetReactIconsResponse {
-        return client.get("$BASE_URL/conversations/react-icons").body()
+        return client.get("$BASE_URL/api/v1/conversations/react-icons").body()
     }
 
     suspend fun reactMessage(request: ReactRequest): ResponseWithoutData {
-        return client.put("$BASE_URL/conversations/${request.conversationId}/messages/${request.messageId}/reactions/${request.reactId}")
+        return client.put("$BASE_URL/api/v1/conversations/${request.conversationId}/messages/${request.messageId}/reactions/${request.reactId}")
             .body()
     }
 
@@ -249,7 +249,7 @@ class ConversationApi(
         messageId: Long,
         removeForSelfOnly: Boolean,
     ): ResponseWithoutData {
-        return client.delete("$BASE_URL/conversations/$conversationId/messages/$messageId") {
+        return client.delete("$BASE_URL/api/v1/conversations/$conversationId/messages/$messageId") {
             parameter("removeForSelfOnly", removeForSelfOnly)
         }
             .body()
@@ -260,7 +260,7 @@ class ConversationApi(
         attachmentTypes: List<String>,
         page: Int = 0,
     ): GetConversationMediasResponse {
-        return client.get("$BASE_URL/conversations/$conversationId/attachments") {
+        return client.get("$BASE_URL/api/v1/conversations/$conversationId/attachments") {
             parameter("attachmentTypes", attachmentTypes.joinToString(","))
             parameter("page", page)
         }

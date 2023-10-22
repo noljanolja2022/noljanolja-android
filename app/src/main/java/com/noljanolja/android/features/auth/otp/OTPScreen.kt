@@ -28,7 +28,7 @@ import org.koin.androidx.compose.get
 import org.koin.androidx.compose.getViewModel
 
 private const val BLOCK_RESEND_TIME = 90_000L
-private const val ONE_MILI_SECOND = 1_000L
+private const val ONE_MILLI_SECOND = 1_000L
 
 @Composable
 fun OTPScreen(
@@ -78,7 +78,7 @@ fun OTPScreenContent(
             AuthSdk.loginWithPhone(
                 context = context as Activity,
                 phone = phone,
-                timeout = (BLOCK_RESEND_TIME / ONE_MILI_SECOND),
+                timeout = (BLOCK_RESEND_TIME / ONE_MILLI_SECOND),
                 onVerificationCompleted = { smsCode ->
                     val newOTP = otp.clone()
                     smsCode?.toCharArray()?.forEachIndexed { index, char ->

@@ -21,7 +21,7 @@ data class ConversationMedia(
     }
 
     fun getAttachmentUrl(conversationId: Long) =
-        "${Const.BASE_URL}/conversations/$conversationId/attachments/$id"
+        "${Const.BASE_URL}/api/v1/conversations/$conversationId/attachments/$id"
 
     fun getCacheKey() = "attachment$id"
 }

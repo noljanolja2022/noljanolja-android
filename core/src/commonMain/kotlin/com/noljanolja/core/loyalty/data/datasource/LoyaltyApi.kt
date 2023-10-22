@@ -12,11 +12,11 @@ internal class LoyaltyApi(
     private val client: HttpClient,
 ) {
     suspend fun getMemberInfo(): GetMemberInfoResponse {
-        return client.get("${Const.BASE_URL}/loyalty/me").body()
+        return client.get("${Const.BASE_URL}/api/v1/loyalty/me").body()
     }
 
     suspend fun getLoyaltyPoints(request: GetLoyaltyPointsRequest): GetLoyaltyPointsResponse {
-        return client.get("${Const.BASE_URL}/loyalty/me/points") {
+        return client.get("${Const.BASE_URL}/api/v1/loyalty/me/points") {
             url {
                 with(request) {
                     parameters.append("type", type.name)

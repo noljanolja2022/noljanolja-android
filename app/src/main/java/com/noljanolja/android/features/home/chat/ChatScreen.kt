@@ -1016,7 +1016,7 @@ private fun PlaceholderReplyMessage(message: Message, isMe: Boolean) {
             MessageType.STICKER -> {
                 SubcomposeAsyncImage(
                     ImageRequest.Builder(context = LocalContext.current)
-                        .data("${Const.BASE_URL}/media/sticker-packs/${message.message}")
+                        .data("${Const.BASE_URL}/api/v1/media/sticker-packs/${message.message}")
                         .memoryCacheKey(message.message)
                         .diskCacheKey(message.message)
                         .build(),

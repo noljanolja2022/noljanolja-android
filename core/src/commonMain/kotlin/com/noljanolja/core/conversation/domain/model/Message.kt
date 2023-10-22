@@ -49,7 +49,7 @@ data class MessageAttachment(
     val contents: ByteArray = ByteArray(0),
 ) {
     fun getAttachmentUrl(conversationId: Long) =
-        "$BASE_URL/conversations/$conversationId/attachments/$id"
+        "$BASE_URL/api/v1/conversations/$conversationId/attachments/$id"
 
     fun getPhotoUri(conversationId: Long) =
         localPath.takeIf { it.isNotBlank() } ?: getAttachmentUrl(

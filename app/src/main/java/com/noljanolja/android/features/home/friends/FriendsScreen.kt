@@ -83,7 +83,7 @@ private fun FriendsScreenContent(
                         contentDescription = null,
                     )
                 },
-                text = { Text(text = "Add Friends") },
+                text = { Text(text = stringResource(R.string.add_friend_title)) },
                 containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer
             )

@@ -6,4 +6,5 @@ sealed interface WalletEvent {
     object Ranking : WalletEvent
     object Refresh : WalletEvent
     object CheckIn : WalletEvent
+    object Exchange : WalletEvent
 }

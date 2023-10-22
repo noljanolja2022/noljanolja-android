@@ -22,12 +22,12 @@ import io.ktor.client.request.setBody
 
 internal class VideoApi(private val client: HttpClient) {
     suspend fun getTrendingVideo(request: GetTrendingVideosRequest): GetVideosResponse {
-        return client.get("${Const.BASE_URL}/media/videos/trending?duration=${request.duration.name.lowercase()}")
+        return client.get("${Const.BASE_URL}/api/v1/media/videos/trending?duration=${request.duration.name.lowercase()}")
             .body()
     }
 
     suspend fun getVideos(request: GetVideosRequest): GetVideosResponse {
-        return client.get("${Const.BASE_URL}/media/videos") {
+        return client.get("${Const.BASE_URL}/api/v1/media/videos") {
             request.isHighlight?.let {
                 parameter("isHighlighted", it)
             }
@@ -39,22 +39,22 @@ internal class VideoApi(private val client: HttpClient) {
     }
 
     suspend fun getWatchingVideos(): GetVideosResponse {
-        return client.get("${Const.BASE_URL}/media/videos/watching")
+        return client.get("${Const.BASE_URL}/api/v1/media/videos/watching")
             .body()
     }
 
     suspend fun getVideoDetail(request: GetVideoDetailRequest): GetVideoResponse {
-        return client.get("${Const.BASE_URL}/media/videos/${request.videoId}").body()
+        return client.get("${Const.BASE_URL}/api/v1/media/videos/${request.videoId}").body()
     }
 
     suspend fun commentVideo(videoId: String, request: CommentVideoRequest): CommentVideoResponse {
-        return client.post("${Const.BASE_URL}/media/videos/$videoId/comments") {
+        return client.post("${Const.BASE_URL}/api/v1/media/videos/$videoId/comments") {
             setBody(request)
         }.body()
     }
 
     suspend fun likeVideo(videoId: String, request: LikeVideoRequest): ResponseWithoutData {
-        return client.post("${Const.BASE_URL}/media/videos/$videoId/likes") {
+        return client.post("${Const.BASE_URL}/api/v1/media/videos/$videoId/likes") {
             setBody(request)
         }.body()
     }
@@ -63,19 +63,19 @@ internal class VideoApi(private val client: HttpClient) {
         chanelId: String,
         request: SubscribeChannelRequest,
     ): ResponseWithoutData {
-        return client.post("${Const.BASE_URL}/media/channels/$chanelId/subscribe") {
+        return client.post("${Const.BASE_URL}/api/v1/media/channels/$chanelId/subscribe") {
             setBody(request)
         }.body()
     }
 
     suspend fun reactVideo(videoId: String, request: ReactVideoRequest): ResponseWithoutData {
-        return client.post("${Const.BASE_URL}/media/videos/$videoId/react-promote") {
+        return client.post("${Const.BASE_URL}/api/v1/media/videos/$videoId/react-promote") {
             setBody(request)
         }.body()
     }
 
     suspend fun getPromotedVideo(): GetPromotedVideosResponse {
-        return client.get("${Const.BASE_URL}/media/videos/promoted")
+        return client.get("${Const.BASE_URL}/api/v1/media/videos/promoted")
             .body()
     }
 }

@@ -15,6 +15,9 @@ import com.noljanolja.core.db.Noljanolja
 import com.noljanolja.core.event.data.datasource.BannerApi
 import com.noljanolja.core.event.data.repository.EventBannerRepositoryImpl
 import com.noljanolja.core.event.domain.repository.EventBannerRepository
+import com.noljanolja.core.exchange.data.ExchangeApi
+import com.noljanolja.core.exchange.data.repository.ExchangeRepositoryImpl
+import com.noljanolja.core.exchange.domain.repository.ExchangeRepository
 import com.noljanolja.core.loyalty.data.datasource.LoyaltyApi
 import com.noljanolja.core.loyalty.data.repository.LoyaltyRepositoryImpl
 import com.noljanolja.core.loyalty.domain.repository.LoyaltyRepository
@@ -160,6 +163,12 @@ private val coreModule = module {
     }
     single<EventBannerRepository> {
         EventBannerRepositoryImpl(get())
+    }
+    single {
+        ExchangeApi(get())
+    }
+    single<ExchangeRepository> {
+        ExchangeRepositoryImpl(get())
     }
     single {
         CoreManager()

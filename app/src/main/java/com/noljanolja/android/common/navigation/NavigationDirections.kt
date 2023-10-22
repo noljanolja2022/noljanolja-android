@@ -412,6 +412,12 @@ object NavigationDirections {
         }
     }
 
+    object ExchangeCoin : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "exchange_coin"
+    }
+
     object ChatSettings : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options = null

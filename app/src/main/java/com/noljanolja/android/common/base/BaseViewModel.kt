@@ -1,5 +1,6 @@
 package com.noljanolja.android.common.base
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
@@ -23,6 +24,7 @@ open class BaseViewModel : ViewModel(), KoinComponent {
     protected val navigationManager: NavigationManager by inject()
     protected val coreManager: CoreManager by inject()
     protected val json = defaultJson()
+    protected val context: Context by inject()
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
     val errorFlow = _errorFlow.asSharedFlow()
@@ -73,13 +75,14 @@ fun launchInMain(block: suspend () -> Unit) = MainScope().launch {
     block.invoke()
 }
 
-fun launchInMainIO(onError: (Throwable) -> Unit = {}, block: suspend () -> Unit) = MainScope().launch {
-    withContext(Dispatchers.IO) {
-        try {
-            block.invoke()
-        } catch (e: Throwable) {
-            e.printStackTrace()
-            onError(e)
+fun launchInMainIO(onError: (Throwable) -> Unit = {}, block: suspend () -> Unit) =
+    MainScope().launch {
+        withContext(Dispatchers.IO) {
+            try {
+                block.invoke()
+            } catch (e: Throwable) {
+                e.printStackTrace()
+                onError(e)
+            }
         }
     }
-}

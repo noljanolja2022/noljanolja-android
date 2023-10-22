@@ -55,7 +55,7 @@ fun UserPoint(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_coin),
+                    painter = painterResource(id = R.drawable.wallet_ic_point),
                     contentDescription = null,
                     modifier = Modifier.size(37.dp)
                 )

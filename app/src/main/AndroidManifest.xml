@@ -99,5 +99,8 @@
             android:name=".TurnOffReceiver"
             android:enabled="true"
             android:exported="false" />
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-9799182919003995~1843139716" />
     </application>
 </manifest>

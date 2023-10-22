@@ -337,16 +337,16 @@ private fun OptionsContent(
 ) {
     OptionVideoRow(
         icon = ImageVector.vectorResource(id = R.drawable.ic_share),
-        text = "Share video",
+        text = stringResource(R.string.common_share),
         onClick = onShare
     )
     OptionVideoRow(
         icon = Icons.Default.Link,
-        text = "Copy link"
+        text = stringResource(R.string.common_copy)
     ) {}
     OptionVideoRow(
         icon = Icons.Default.Block,
-        text = "Ignore video"
+        text = stringResource(R.string.ignore_video)
     ) {}
 }
 

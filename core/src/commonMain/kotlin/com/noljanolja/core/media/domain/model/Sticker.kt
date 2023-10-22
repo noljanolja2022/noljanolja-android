@@ -18,7 +18,7 @@ data class StickerPack(
     var downloading: Boolean = false,
 ) {
     fun getImageUrl() =
-        "${Const.BASE_URL}/media/sticker-packs/$id/$trayImageFile"
+        "${Const.BASE_URL}/api/v1/media/sticker-packs/$id/$trayImageFile"
 }
 
 @Serializable

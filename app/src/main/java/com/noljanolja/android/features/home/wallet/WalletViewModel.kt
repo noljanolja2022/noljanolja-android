@@ -49,6 +49,7 @@ class WalletViewModel : BaseViewModel() {
                 }
 
                 WalletEvent.CheckIn -> navigationManager.navigate(NavigationDirections.Checkin)
+                WalletEvent.Exchange -> navigationManager.navigate(NavigationDirections.ExchangeCoin)
             }
         }
     }

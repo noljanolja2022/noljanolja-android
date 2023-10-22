@@ -47,6 +47,7 @@ import com.noljanolja.android.features.home.root.HomeScreen
 import com.noljanolja.android.features.home.wallet.checkin.CheckinScreen
 import com.noljanolja.android.features.home.wallet.dashboard.WalletDashboardScreen
 import com.noljanolja.android.features.home.wallet.detail.TransactionDetailScreen
+import com.noljanolja.android.features.home.wallet.exchange.ExchangePointScreen
 import com.noljanolja.android.features.home.wallet.model.UiLoyaltyPoint
 import com.noljanolja.android.features.home.wallet.myranking.MyRankingScreen
 import com.noljanolja.android.features.home.wallet.transaction.TransactionsHistoryScreen
@@ -327,6 +328,11 @@ private fun NavGraphBuilder.addWalletGraph(navController: NavHostController) {
             arguments
         ) { backStack ->
             ReferralScreen()
+        }
+    }
+    with(NavigationDirections.ExchangeCoin) {
+        composable(destination, arguments) {
+            ExchangePointScreen()
         }
     }
 }

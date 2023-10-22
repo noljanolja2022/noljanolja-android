@@ -56,6 +56,7 @@ import com.noljanolja.android.features.home.root.HomeViewModel
 import com.noljanolja.android.features.home.wallet.WalletViewModel
 import com.noljanolja.android.features.home.wallet.dashboard.WalletDashboardViewModel
 import com.noljanolja.android.features.home.wallet.detail.TransactionDetailViewModel
+import com.noljanolja.android.features.home.wallet.exchange.ExchangePointViewModel
 import com.noljanolja.android.features.home.wallet.myranking.MyRankingViewModel
 import com.noljanolja.android.features.home.wallet.transaction.TransactionHistoryViewModel
 import com.noljanolja.android.features.images.ViewImagesViewModel
@@ -351,6 +352,9 @@ class MyApplication : Application() {
                 }
                 viewModel {
                     FriendsViewModel()
+                }
+                viewModel {
+                    ExchangePointViewModel()
                 }
             }
         )

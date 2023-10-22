@@ -61,7 +61,6 @@ fun SelectShareMessageScreen(
     },
 ) {
     val context = LocalContext.current
-    viewModel.setContext(context)
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     val selectedContacts by viewModel.selectedContactFlow.collectAsStateWithLifecycle()
     LaunchedEffect(viewModel.sharedEvent) {

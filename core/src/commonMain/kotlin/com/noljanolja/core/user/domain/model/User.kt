@@ -20,7 +20,7 @@ data class User(
     val referralCode: String = "",
 ) {
     fun getAvatarUrl() = avatar?.replace("storage", "storage-download")
-    fun getQrUrl() = "nolljanollja:id:$id"
+    fun getQrUrl() = "NolgoBulja:id:$id"
 }
 
 @Serializable

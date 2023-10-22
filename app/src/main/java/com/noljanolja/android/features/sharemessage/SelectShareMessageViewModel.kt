@@ -1,6 +1,5 @@
 package com.noljanolja.android.features.sharemessage
 
-import android.content.Context
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
@@ -24,7 +23,6 @@ import java.util.UUID.randomUUID
 class SelectShareMessageViewModel(
     private val selectMessageId: Long,
 ) : BaseViewModel() {
-    private var context: Context? = null
 
     private val _uiStateFlow = MutableStateFlow<UiState<List<ShareContact>>>(UiState())
     val uiStateFlow = _uiStateFlow.asStateFlow()
@@ -52,10 +50,6 @@ class SelectShareMessageViewModel(
             _uiStateFlow.emit(UiState(data = contacts))
             getContacts()
         }
-    }
-
-    fun setContext(context: Context) {
-        this.context = context
     }
 
     fun handleEvent(event: SelectShareMessageEvent) {

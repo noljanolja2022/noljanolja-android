@@ -56,24 +56,24 @@ private fun FAQContent(
         mutableStateOf(
             listOf(
                 QA(
-                    "What is Nolja Nolja?",
-                    "Nolja Nolja is an entertainment app. We provide video, livestream service. you can earn by watching and buy products in the shop by the points received after watching. "
+                    "What is NolgoBulja?",
+                    "NolgoBulja is an entertainment app. We provide video, livestream service. you can earn by watching and buy products in the shop by the points received after watching. "
                 ),
                 QA(
                     "What are Benefits?",
-                    "Nolja Nolja is an entertainment app. We provide video, livestream service. you can earn by watching and buy products in the shop by the points received after watching. "
+                    "NolgoBulja is an entertainment app. We provide video, livestream service. you can earn by watching and buy products in the shop by the points received after watching. "
                 ),
                 QA(
                     "How can I make purchase?",
-                    "Nolja Nolja is an entertainment app. We provide video, livestream service. you can earn by watching and buy products in the shop by the points received after watching. "
+                    "NolgoBulja is an entertainment app. We provide video, livestream service. you can earn by watching and buy products in the shop by the points received after watching. "
                 ),
                 QA(
                     "How can I get more points?",
-                    "Nolja Nolja is an entertainment app. We provide video, livestream service. you can earn by watching and buy products in the shop by the points received after watching. "
+                    "NolgoBulja is an entertainment app. We provide video, livestream service. you can earn by watching and buy products in the shop by the points received after watching. "
                 ),
                 QA(
                     "How to delete account?",
-                    "Nolja Nolja is an entertainment app. We provide video, livestream service. you can earn by watching and buy products in the shop by the points received after watching. "
+                    "NolgoBulja is an entertainment app. We provide video, livestream service. you can earn by watching and buy products in the shop by the points received after watching. "
                 ),
             )
         )

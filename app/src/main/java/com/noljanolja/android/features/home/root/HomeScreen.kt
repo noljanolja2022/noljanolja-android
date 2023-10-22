@@ -42,7 +42,7 @@ import com.noljanolja.android.features.home.play.playscreen.composable.getTokenF
 import com.noljanolja.android.features.home.root.banner.EventBannerDialog
 import com.noljanolja.android.features.home.utils.click
 import com.noljanolja.android.features.home.utils.isNavItemSelect
-import com.noljanolja.android.features.home.wallet.WalletScreen
+import com.noljanolja.android.features.home.wallet.WalletExchangeScreen
 import com.noljanolja.android.features.shop.main.ShopScreen
 import com.noljanolja.android.ui.composable.InfoDialog
 import com.noljanolja.android.ui.theme.colorBackground
@@ -206,9 +206,10 @@ private fun NavGraphBuilder.addNavigationGraph(
         PlayListScreen()
     }
     composable(HomeNavigationItem.WalletItem.route) {
-        WalletScreen(checkinViewModel = checkinViewModel, onUseNow = {
-            HomeNavigationItem.StoreItem.click(navController)
-        })
+        WalletExchangeScreen()
+//        WalletScreen(checkinViewModel = checkinViewModel, onUseNow = {
+//            HomeNavigationItem.StoreItem.click(navController)
+//        })
     }
     composable(HomeNavigationItem.StoreItem.route) {
         ShopScreen()
@@ -276,7 +277,9 @@ fun HomeBottomBar(
                 label = { Text(label, maxLines = 1) },
                 selected = isSelected,
                 onClick = {
-//                    item.click(navController)
+                    if (BuildConfig.DEBUG) {
+                        item.click(navController)
+                    }
                 },
                 colors = with(MaterialTheme.colorScheme) {
                     NavigationBarItemDefaults.colors(
