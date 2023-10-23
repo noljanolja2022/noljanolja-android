@@ -18,6 +18,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.CommonTopAppBar
+import com.noljanolja.android.ui.composable.ErrorDialog
 import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.SizeBox
@@ -41,7 +45,6 @@ import com.noljanolja.android.ui.theme.NeutralDarkGrey
 import com.noljanolja.android.ui.theme.NeutralLight
 import com.noljanolja.android.ui.theme.Orange300
 import com.noljanolja.android.ui.theme.withBold
-import com.noljanolja.android.util.formatDigitsNumber
 import com.noljanolja.android.util.secondaryTextColor
 import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
@@ -53,10 +56,18 @@ fun ExchangePointScreen(
 ) {
     val memberInfo by viewModel.memberInfoFlow.collectAsStateWithLifecycle()
     val myBalance by viewModel.myBalanceFlow.collectAsStateWithLifecycle()
+    var error by remember { mutableStateOf<Throwable?>(null) }
     ExchangePointContent(
         memberInfo = memberInfo,
         myBalance = myBalance,
         handleEvent = viewModel::handleEvent
+    )
+
+    ErrorDialog(
+        showError = error != null,
+        title = stringResource(R.string.common_error_title),
+        description = error?.message.orEmpty(),
+        onDismiss = { error = null }
     )
 }
 
@@ -125,7 +136,8 @@ fun ExchangePointContent(
                     text = stringResource(R.string.convert),
                     onClick = {
                         handleEvent(ExchangeEvent.Convert)
-                    }
+                    },
+                    isEnable = memberInfo.point > 0
                 )
             }
             Expanded()
@@ -146,12 +158,13 @@ fun MyCash(myBalance: ExchangeBalance, memberInfo: MemberInfo) {
         Row(modifier = Modifier.padding(horizontal = 8.dp)) {
             Text(
                 stringResource(R.string.my_point),
-                style = MaterialTheme.typography.bodySmall.withBold(),
+                style = MaterialTheme.typography.bodyMedium.withBold(),
                 color = NeutralLight
             )
+            SizeBox(width = 10.dp)
             Text(
                 memberInfo.point.toString(),
-                style = MaterialTheme.typography.bodySmall.withBold(),
+                style = MaterialTheme.typography.bodyMedium.withBold(),
                 color = Orange300
             )
         }

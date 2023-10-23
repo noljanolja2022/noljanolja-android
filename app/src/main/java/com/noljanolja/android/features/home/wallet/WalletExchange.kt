@@ -12,9 +12,12 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
@@ -41,11 +44,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.farimarwat.composenativeadmob.nativead.rememberNativeAdState
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.features.home.wallet.composable.WalletUserInformation
@@ -100,11 +103,15 @@ private fun WalletExchangeContent(
             )
         }
     ) {
-        Column(modifier = Modifier.fillMaxSize().padding(12.dp)) {
+        Column(
+            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(12.dp)
+        ) {
             SizeBox(height = 16.dp)
             MyPoint(memberInfo)
             SizeBox(height = 10.dp)
-            Row(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 WalletInfoDailyInfoItem(
                     modifier = Modifier.weight(1f),
                     background = R.drawable.bg_accumulated,
@@ -126,6 +133,7 @@ private fun WalletExchangeContent(
             SizeBox(height = 10.dp)
             Card(
                 modifier = Modifier.fillMaxWidth()
+                    .heightIn(min = 150.dp)
                     .clip(RoundedCornerShape(20.dp)),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
                 elevation = CardDefaults.cardElevation(4.dp),
