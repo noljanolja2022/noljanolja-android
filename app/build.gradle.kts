@@ -161,6 +161,9 @@ dependencies {
 
     implementation("com.google.android.gms:play-services-ads:22.0.0")
     implementation("io.github.farimarwat:admobnative-compose:1.2")
+
+    // Animation
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
 }
 
 kapt {

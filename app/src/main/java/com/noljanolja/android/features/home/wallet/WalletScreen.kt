@@ -113,7 +113,6 @@ private fun WalletContent(
 
     ScaffoldWithUiState(uiState = uiState) {
         val user = uiState.data?.user ?: return@ScaffoldWithUiState
-        val banners = uiState.data.banners
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -125,7 +124,6 @@ private fun WalletContent(
                     contentAlignment = Alignment.BottomCenter,
                     modifier = Modifier.padding(bottom = 16.dp)
                 ) {
-                    WalletBanners(banners = banners)
                     UserInformation(
                         user = user,
                         memberInfo = memberInfo,

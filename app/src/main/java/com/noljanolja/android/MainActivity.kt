@@ -34,7 +34,6 @@ import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.common.network.ConnectivityObserver
 import com.noljanolja.android.common.network.NetworkConnectivityObserver
-import com.noljanolja.android.ui.composable.admob.AdmobCustom
 import com.noljanolja.android.ui.theme.NoljanoljaTheme
 import com.noljanolja.core.CoreManager
 import kotlinx.coroutines.Dispatchers
@@ -77,9 +76,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.primary,
                 ) {
-                    Column(modifier = Modifier.fillMaxSize()) {
-                        AdmobCustom(modifier = Modifier.fillMaxWidth())
-                    }
                     MainScreen(navigationManager)
                 }
             }
