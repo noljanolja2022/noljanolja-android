@@ -1,5 +1,6 @@
 package com.noljanolja.android.features.home.wallet.exchange
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -42,12 +44,14 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.android.gms.ads.nativead.NativeAd
 import com.noljanolja.android.R
+import com.noljanolja.android.common.ads.nativeads.DefaultMediumNative1
+import com.noljanolja.android.common.ads.nativeads.DefaultSmallNative1
+import com.noljanolja.android.common.ads.nativeads.DynamicNative
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.ErrorDialog
 import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.ui.composable.admob.NativeAdView
 import com.noljanolja.android.ui.theme.BlueMain
 import com.noljanolja.android.ui.theme.NeutralDarkGrey
 import com.noljanolja.android.ui.theme.NeutralDeepGrey
@@ -88,6 +92,7 @@ fun ExchangePointContent(
     myBalance: ExchangeBalance,
     handleEvent: (ExchangeEvent) -> Unit,
 ) {
+    val context = LocalContext.current
     Box {
         Image(
             painterResource(R.drawable.bg_with_circle),
@@ -152,13 +157,20 @@ fun ExchangePointContent(
                 )
             }
             SizeBox(height = 50.dp)
+            (context as? Activity)?.let {
+                DynamicNative().render(
+                    DefaultMediumNative1(context = it),
+                    modifier = Modifier.fillMaxWidth().height(250.dp)
+                )
+            }
             Expanded()
-            NativeAdView(
-                adUnitId = "ca-app-pub-3940256099942544/2247696110",
-                content = {
-                    BottomNativeAd(it)
-                }
-            )
+
+//            NativeAdView(
+//                adUnitId = "ca-app-pub-3940256099942544/2247696110",
+//                content = {
+//                    BottomNativeAd(it)
+//                }
+//            )
         }
     }
 }
