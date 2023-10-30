@@ -112,6 +112,32 @@ fun MyCashAndPoint(
         if (isVisible) 1f else 0f
     }
 
+    val card1Scale by transition.animateFloat(
+        transitionSpec = {
+            if (targetState) {
+                tween(durationMillis = 500)
+            } else {
+                tween(durationMillis = 500)
+            }
+        },
+        label = ""
+    ) { isVisible ->
+        if (isVisible) 0.9f else 1f
+    }
+
+    val card2Scale by transition.animateFloat(
+        transitionSpec = {
+            if (targetState) {
+                tween(durationMillis = 500)
+            } else {
+                tween(durationMillis = 500)
+            }
+        },
+        label = ""
+    ) { isVisible ->
+        if (isVisible) 1f else 0.9f
+    }
+
     Box(
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.TopCenter
@@ -120,7 +146,7 @@ fun MyCashAndPoint(
             modifier = Modifier
                 .offset(y = card1OffsetY.dp)
                 .zIndex(card1ZIndex)
-                .scale(scale = if (card1ZIndex == 1f) 1f else 0.9f)
+                .scale(scale = card1Scale)
                 .pointerInput(Unit) {
                     detectVerticalDragGestures { change, dragAmount ->
                         if (abs(dragAmount) > 20) {
@@ -135,7 +161,7 @@ fun MyCashAndPoint(
             modifier = Modifier
                 .offset(y = card2OffsetY.dp)
                 .zIndex(card2ZIndex)
-                .scale(scale = if (card2ZIndex == 1f) 1f else 0.9f)
+                .scale(scale = card2Scale)
                 .pointerInput(Unit) {
                     detectVerticalDragGestures { change, dragAmount ->
                         if (abs(dragAmount) > 20) {

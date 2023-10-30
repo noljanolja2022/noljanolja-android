@@ -47,6 +47,8 @@ class DynamicNative(
         val enableAds by enable.collectAsState()
         if (enableAds) {
             val context = LocalContext.current as Activity
+//            val minHeight = with(LocalDensity.current) { 60.dp.toPx() }.toInt()
+
             var nativeAdView: NativeAdView? by remember { mutableStateOf(null) }
 
             AndroidView(
@@ -255,7 +257,7 @@ class DynamicNative(
 
                     override fun onAdFailedToLoad(loadAdError: LoadAdError) {
                         super.onAdFailedToLoad(loadAdError)
-                        Logger.d("Ad_native_failed $loadAdError")
+                        Logger.e("Ad_native_failed $loadAdError")
                         Firebase.analytics.logEvent("Ad_native_load_failed") {
                             param("unit_id", unitId)
                             param("message", loadAdError.message)
