@@ -404,4 +404,5 @@
     <string name="invite_friends_to_get_benefits">Invite Friends to get benefits</string>
     <string name="convert_success">Convert success</string>
     <string name="convert_error">Convert Error</string>
+    <string name="load_ads_fail">Cannot load ads, please try again</string>
 </resources>

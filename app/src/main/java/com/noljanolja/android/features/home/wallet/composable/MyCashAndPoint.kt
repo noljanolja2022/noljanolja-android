@@ -144,6 +144,7 @@ fun MyCashAndPoint(
     ) {
         MyPoint(
             modifier = Modifier
+                .clip(RoundedCornerShape(16.dp))
                 .offset(y = card1OffsetY.dp)
                 .zIndex(card1ZIndex)
                 .scale(scale = card1Scale)
@@ -159,6 +160,7 @@ fun MyCashAndPoint(
         )
         MyCash(
             modifier = Modifier
+                .clip(RoundedCornerShape(16.dp))
                 .offset(y = card2OffsetY.dp)
                 .zIndex(card2ZIndex)
                 .scale(scale = card2Scale)
@@ -184,8 +186,7 @@ private fun MyPoint(
 ) {
     val isDarkMode = isSystemInDarkTheme()
     Card(
-        modifier = modifier.fillMaxWidth().height(IntrinsicSize.Min)
-            .clip(RoundedCornerShape(16.dp)),
+        modifier = modifier.fillMaxWidth().height(IntrinsicSize.Min),
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
         ),
@@ -247,8 +248,7 @@ fun MyCash(
     myBalance: ExchangeBalance,
 ) {
     Card(
-        modifier = modifier.fillMaxWidth().height(IntrinsicSize.Min)
-            .clip(RoundedCornerShape(16.dp)),
+        modifier = modifier.fillMaxWidth().height(IntrinsicSize.Min),
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
         ),

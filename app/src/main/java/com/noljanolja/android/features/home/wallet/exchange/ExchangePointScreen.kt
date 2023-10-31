@@ -43,6 +43,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.android.gms.ads.nativead.NativeAd
 import com.noljanolja.android.R
+import com.noljanolja.android.common.ads.interstitial.AdmobInterstitial
 import com.noljanolja.android.common.ads.nativeads.DefaultMediumNative2
 import com.noljanolja.android.common.ads.nativeads.DynamicNative
 import com.noljanolja.android.ui.composable.CommonTopAppBar
@@ -58,6 +59,7 @@ import com.noljanolja.android.ui.theme.Orange300
 import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.ui.theme.withMedium
 import com.noljanolja.android.util.secondaryTextColor
+import com.noljanolja.android.util.showToast
 import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
 import org.koin.androidx.compose.getViewModel
@@ -149,7 +151,19 @@ fun ExchangePointContent(
                     containerColor = Orange300,
                     text = stringResource(R.string.convert),
                     onClick = {
-                        handleEvent(ExchangeEvent.Convert)
+                        (context as? Activity)?.let {
+                            AdmobInterstitial().show(
+                                activity = it,
+                                enableDialog = false,
+                                onCompleted = {
+                                    if (it == true) {
+                                        handleEvent(ExchangeEvent.Convert)
+                                    } else {
+                                        context.showToast(context.getString(R.string.load_ads_fail))
+                                    }
+                                }
+                            )
+                        }
                     },
                     isEnable = memberInfo.point > 0
                 )
