@@ -1,6 +1,7 @@
 package com.noljanolja.android.features.home.wallet.exchange
 
 import androidx.lifecycle.viewModelScope
+import com.noljanolja.android.R
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.util.showToast
@@ -46,9 +47,12 @@ class ExchangePointViewModel : BaseViewModel() {
         val result = coreManager.convertPoint()
         if (result.isSuccess) {
             refreshBalance()
-            context.showToast("convert success")
+            coreManager.refreshMemberInfo()
+            context.showToast(context.getString(R.string.convert_success))
         } else {
-            context.showToast("convert error")
+            result.exceptionOrNull()?.let {
+                sendError(it)
+            } ?: context.showToast(context.getString(R.string.convert_error))
         }
     }
 }

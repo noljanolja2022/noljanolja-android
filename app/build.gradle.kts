@@ -18,8 +18,8 @@ android {
         applicationId = "com.ppnyy.nolgobulja.dev"
         minSdk = 21
         targetSdk = 33
-        versionCode = 44
-        versionName = "1.1.1"
+        versionCode = 49
+        versionName = "1.1.6"
         testInstrumentationRunner = "com.noljanolja.android.InstrumentationTestRunner"
         multiDexEnabled = true
     }
@@ -41,6 +41,7 @@ android {
 
     buildFeatures {
         compose = true
+        viewBinding = true
     }
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
@@ -65,7 +66,7 @@ android {
             isShrinkResources = true
             firebaseAppDistribution {
                 artifactType = "APK"
-                serviceCredentialsFile = "key/key_distributor.json"
+                serviceCredentialsFile = "key/key_distribution.json"
                 releaseNotes = notes
                 testers =
                     "doduchieu.kstn@gmail.com, itanchi.dev@gmail.com, sangjin.d.han@gmail.com, sangjin.han@ppnyy.com, tiaddeeps@gmail.com, taduydoan123.dng@gmail.com"
@@ -77,7 +78,7 @@ android {
         debug {
             firebaseAppDistribution {
                 artifactType = "APK"
-                serviceCredentialsFile = "key/key_distributor.json"
+                serviceCredentialsFile = "key/key_distribution.json"
                 releaseNotes = notes
                 testers =
                     "doduchieu.kstn@gmail.com, itanchi.dev@gmail.com, sangjin.d.han@gmail.com, sangjin.han@ppnyy.com, tiaddeeps@gmail.com, taduydoan123.dng@gmail.com"
@@ -95,6 +96,8 @@ android {
 dependencies {
     implementation(project(":core"))
 
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
     implementation("androidx.activity:activity-compose:1.6.1")
@@ -104,6 +107,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
     implementation(project(mapOf("path" to ":firebase_auth")))
     implementation("androidx.lifecycle:lifecycle-process:2.6.0")
+    implementation("androidx.cardview:cardview:1.0.0")
     debugImplementation("androidx.compose.ui:ui-tooling")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material")
@@ -161,6 +165,9 @@ dependencies {
 
     implementation("com.google.android.gms:play-services-ads:22.0.0")
     implementation("io.github.farimarwat:admobnative-compose:1.2")
+
+    // Animation
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
 }
 
 kapt {

@@ -5,7 +5,7 @@ import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
-import com.noljanolja.core.event.domain.model.EventBanner
+import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
 import com.noljanolja.core.user.domain.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,17 +17,14 @@ class WalletViewModel : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow<UiState<WalletUIData>>(UiState())
     val uiStateFlow = _uiStateFlow.asStateFlow()
 
+    private val _myBalanceFlow = MutableStateFlow(ExchangeBalance())
+    val myBalanceFlow = _myBalanceFlow.asStateFlow()
+
     val memberInfoFlow = coreManager.getMemberInfo().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = MemberInfo()
     )
-
-    init {
-        launch {
-            refresh()
-        }
-    }
 
     fun handleEvent(event: WalletEvent) {
         launch {
@@ -46,11 +43,18 @@ class WalletViewModel : BaseViewModel() {
 
                 WalletEvent.Refresh -> {
                     refresh(forceRefresh = true)
+                    refreshBalance()
                 }
 
                 WalletEvent.CheckIn -> navigationManager.navigate(NavigationDirections.Checkin)
                 WalletEvent.Exchange -> navigationManager.navigate(NavigationDirections.ExchangeCoin)
             }
+        }
+    }
+
+    private suspend fun refreshBalance() {
+        coreManager.getExchangeBalance().getOrNull()?.let {
+            _myBalanceFlow.emit(it)
         }
     }
 
@@ -63,12 +67,10 @@ class WalletViewModel : BaseViewModel() {
             )
         )
         val user = coreManager.getCurrentUser(forceRefresh = forceRefresh).getOrNull()
-        val banners = coreManager.getEventBanners().getOrDefault(emptyList())
         _uiStateFlow.emit(
             UiState(
                 data = WalletUIData(
                     user = user,
-                    banners = banners,
                 )
             )
         )
@@ -78,5 +80,4 @@ class WalletViewModel : BaseViewModel() {
 data class WalletUIData(
     val user: User?,
     val friendNumber: Int = 100,
-    val banners: List<EventBanner> = emptyList(),
 )

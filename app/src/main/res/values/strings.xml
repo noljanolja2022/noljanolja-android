@@ -393,11 +393,16 @@
     <string name="common_exit">Exit</string>
     <string name="convert_points_to_cash">Convert points to cash</string>
     <string name="convert_now">Convert now</string>
-    <string name="my_point">My point</string>
+    <string name="my_point">My points</string>
     <string name="my_cash">My cash</string>
     <string name="tab_convert_coin_to_cash">Tap to convert Points to Cash</string>
     <string name="tab_conver_coin_description">Easy to convert. You can use Coins to\nGet more products in shop. Tap now!</string>
     <string name="convert">Convert</string>
     <string name="convert_coins">Convert coins</string>
     <string name="ignore_video">Ignore video</string>
+    <string name="earn_point_title">Earn Points\nBy Refer</string>
+    <string name="invite_friends_to_get_benefits">Invite Friends to get benefits</string>
+    <string name="convert_success">Convert success</string>
+    <string name="convert_error">Convert Error</string>
+    <string name="load_ads_fail">Cannot load ads, please try again</string>
 </resources>

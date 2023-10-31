@@ -1,6 +1,7 @@
 package com.noljanolja.android.util
 
 import android.content.Context
+import android.util.TypedValue
 import com.noljanolja.android.R
 import java.text.NumberFormat
 import kotlin.time.Duration.Companion.seconds
@@ -31,4 +32,12 @@ fun Long.formatTime(context: Context): String {
         second < 60 -> context.getString(R.string.seconds, second)
         else -> context.getString(R.string.minutes, second / 60)
     }
+}
+
+fun Float.toDp(context: Context): Float {
+    return TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP,
+        this,
+        context.resources.displayMetrics
+    )
 }
