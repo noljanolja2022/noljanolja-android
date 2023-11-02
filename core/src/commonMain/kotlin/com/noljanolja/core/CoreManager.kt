@@ -25,6 +25,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -74,27 +75,20 @@ class CoreManager : KoinComponent {
     }
 
     suspend fun getConversation(conversationId: Long): Flow<Conversation> {
-        return flow { }
-//        return conversationRepository.getConversation(conversationId)
+        return conversationRepository.getConversation(conversationId)
     }
 
     suspend fun fetchConversations(): Flow<List<Conversation>> {
-        return flow { }
-//        val conversationsFlow = conversationRepository.fetchConversations()
-//        scope.launch {
-//            streamConversations(null)
-//        }
-//        return conversationsFlow
+        val conversationsFlow = conversationRepository.fetchConversations()
+        scope.launch {
+            streamConversations(null)
+        }
+        return conversationsFlow
     }
 
-    suspend fun getLocalConversations(): Flow<List<Conversation>> {
-        return flow {}
-//        return conversationRepository.getLocalConversations()
-    }
+    suspend fun getLocalConversations() = conversationRepository.getLocalConversations()
 
-    suspend fun forceRefreshConversations() {
-//         conversationRepository.forceRefreshConversations()
-    }
+    suspend fun forceRefreshConversations() = conversationRepository.forceRefreshConversations()
 
     suspend fun sendConversationMessage(
         title: String = "",
@@ -157,7 +151,6 @@ class CoreManager : KoinComponent {
     private suspend fun streamConversations(
         token: String? = null,
     ) {
-        return
         conversationRepository.streamConversations(token)
     }
 

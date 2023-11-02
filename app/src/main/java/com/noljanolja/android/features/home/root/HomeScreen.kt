@@ -34,6 +34,7 @@ import com.noljanolja.android.BuildConfig
 import com.noljanolja.android.MyApplication
 import com.noljanolja.android.R
 import com.noljanolja.android.features.home.CheckinViewModel
+import com.noljanolja.android.features.home.conversations.ConversationsScreen
 import com.noljanolja.android.features.home.friends.FriendsScreen
 import com.noljanolja.android.features.home.play.playlist.PlayListScreen
 import com.noljanolja.android.features.home.play.playscreen.PlayVideoActivity
@@ -202,14 +203,14 @@ private fun NavGraphBuilder.addNavigationGraph(
     navController: NavHostController,
     checkinViewModel: CheckinViewModel,
 ) {
+    composable(HomeNavigationItem.ChatItem.route) {
+        ConversationsScreen()
+    }
     composable(HomeNavigationItem.WatchItem.route) {
         PlayListScreen()
     }
     composable(HomeNavigationItem.WalletItem.route) {
         WalletExchangeScreen()
-//        WalletScreen(checkinViewModel = checkinViewModel, onUseNow = {
-//            HomeNavigationItem.StoreItem.click(navController)
-//        })
     }
     composable(HomeNavigationItem.StoreItem.route) {
         ShopScreen()
@@ -226,6 +227,7 @@ fun HomeBottomBar(
     isReadAllConversations: Boolean,
 ) {
     val items = listOf(
+        HomeNavigationItem.ChatItem,
         HomeNavigationItem.WatchItem,
         HomeNavigationItem.WalletItem,
         HomeNavigationItem.StoreItem,
