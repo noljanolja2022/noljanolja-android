@@ -60,11 +60,20 @@ class SharedPreferenceHelper(private val context: Context) {
             }
         }
 
+    var convertPointCount: Int
+        get() = sharePreference.getInt(KEY_CONVERT_POINT_TIME, 0)
+        set(value) {
+            sharePreference.run {
+                edit().putInt(KEY_CONVERT_POINT_TIME, value).apply()
+            }
+        }
+
     companion object {
         const val YOUTUBE_TOKEN = "youtube_token"
         const val SHOW_NEW_CHAT_DIALOG = "show_new_chat_dialog"
         const val REQUEST_LOGIN_GOOGLE = "request_login_google"
         const val KEY_LOGIN_OTP_TIME = "key_login_otp_time"
         const val KEY_SEEN_BANNERS = "key_seen_banners"
+        const val KEY_CONVERT_POINT_TIME = "key_convert_point_time"
     }
 }

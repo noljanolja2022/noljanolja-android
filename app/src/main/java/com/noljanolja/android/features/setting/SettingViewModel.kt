@@ -3,7 +3,9 @@ package com.noljanolja.android.features.setting
 import com.noljanolja.android.BuildConfig
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
+import com.noljanolja.android.common.error.UnexpectedFailure
 import com.noljanolja.android.common.navigation.NavigationDirections
+import com.noljanolja.android.util.showToast
 import com.noljanolja.core.user.domain.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -40,8 +42,13 @@ class SettingViewModel : BaseViewModel() {
                 }
 
                 SettingEvent.Logout -> {
-                    if (coreManager.logout().getOrNull() == true) {
+                    val result = coreManager.logout()
+                    if (result.getOrNull() == true) {
                         navigationManager.navigate(NavigationDirections.Auth)
+                    } else {
+                        context.showToast(
+                            result.exceptionOrNull()?.message ?: UnexpectedFailure.message
+                        )
                     }
                 }
 

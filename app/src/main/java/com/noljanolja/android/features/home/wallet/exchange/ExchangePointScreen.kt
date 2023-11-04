@@ -1,6 +1,7 @@
 package com.noljanolja.android.features.home.wallet.exchange
 
 import android.app.Activity
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,10 +44,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.android.gms.ads.nativead.NativeAd
+import com.noljanolja.android.MyApplication
 import com.noljanolja.android.R
 import com.noljanolja.android.common.ads.interstitial.AdmobInterstitial
 import com.noljanolja.android.common.ads.nativeads.DefaultMediumNative2
 import com.noljanolja.android.common.ads.nativeads.DynamicNative
+import com.noljanolja.android.common.sharedpreference.SharedPreferenceHelper
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.ErrorDialog
 import com.noljanolja.android.ui.composable.Expanded
@@ -62,6 +66,9 @@ import com.noljanolja.android.util.secondaryTextColor
 import com.noljanolja.android.util.showToast
 import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.koin.androidx.compose.get
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -93,6 +100,8 @@ fun ExchangePointContent(
     handleEvent: (ExchangeEvent) -> Unit,
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val sharedPreferenceHelper: SharedPreferenceHelper = get()
     Box {
         Image(
             painterResource(R.drawable.bg_with_circle),
@@ -151,16 +160,12 @@ fun ExchangePointContent(
                     containerColor = Orange300,
                     text = stringResource(R.string.convert),
                     onClick = {
-                        (context as? Activity)?.let {
-                            AdmobInterstitial().show(
-                                activity = it,
-                                enableDialog = false,
-                                onCompleted = {
-                                    if (it == true) {
-                                        handleEvent(ExchangeEvent.Convert)
-                                    } else {
-                                        context.showToast(context.getString(R.string.load_ads_fail))
-                                    }
+                        scope.launch {
+                            convertPoint(
+                                context = context,
+                                sharedPreferenceHelper = sharedPreferenceHelper,
+                                onConvert = {
+                                    handleEvent(ExchangeEvent.Convert)
                                 }
                             )
                         }
@@ -173,7 +178,9 @@ fun ExchangePointContent(
             (context as? Activity)?.let {
                 DynamicNative().render(
                     DefaultMediumNative2(context = it),
-                    modifier = Modifier.fillMaxWidth().height(200.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
                 )
             }
         }
@@ -257,7 +264,8 @@ private fun BottomNativeAd(
 ) {
     val context = LocalContext.current
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .clip(RoundedCornerShape(4.dp))
             .background(Color.White)
             .padding(10.dp)
@@ -302,4 +310,31 @@ private fun BottomNativeAd(
             }
         }
     }
+}
+
+private suspend fun convertPoint(
+    context: Context,
+    sharedPreferenceHelper: SharedPreferenceHelper,
+    onConvert: () -> Unit,
+) {
+    if (false && sharedPreferenceHelper.convertPointCount % 2 == 0) {
+        onConvert()
+    } else {
+        MyApplication.clearAllPipActivities()
+        delay(50)
+        (context as? Activity)?.let {
+            AdmobInterstitial().show(
+                activity = it,
+                enableDialog = false,
+                onCompleted = {
+                    if (it == true) {
+                        onConvert()
+                    } else {
+                        context.showToast(context.getString(R.string.load_ads_fail))
+                    }
+                }
+            )
+        }
+    }
+    sharedPreferenceHelper.convertPointCount++
 }

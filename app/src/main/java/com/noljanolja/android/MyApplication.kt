@@ -16,6 +16,8 @@ import com.d2brothers.firebase_auth.AuthSdk
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.noljanolja.android.common.base.launchInMainIO
 import com.noljanolja.android.common.mobiledata.data.ContactsLoader
 import com.noljanolja.android.common.mobiledata.data.MediaLoader
@@ -99,12 +101,20 @@ class MyApplication : Application() {
         var latestConversationId: Long = 0L
         val backStackActivities = mutableListOf<Activity>()
         var isHomeShowed: Boolean = false
+
+        fun clearAllPipActivities() {
+            backStackActivities.apply {
+                forEach { it.finish() }
+                clear()
+            }
+        }
     }
 
     override fun onCreate() {
         super.onCreate()
         initKoin()
         initCoil()
+        initRemoteConfig()
         ProcessLifecycleOwner.get().lifecycle.apply {
             addObserver(object : DefaultLifecycleObserver {
                 override fun onStart(owner: LifecycleOwner) {
@@ -366,5 +376,13 @@ class MyApplication : Application() {
                 add(VideoFrameDecoder.Factory())
             }.logger(DebugLogger()).respectCacheHeaders(false).build()
         )
+    }
+
+    private fun initRemoteConfig() {
+        val remoteConfig = FirebaseRemoteConfig.getInstance()
+        val configSettings = FirebaseRemoteConfigSettings.Builder()
+            .setMinimumFetchIntervalInSeconds(3600)
+            .build()
+        remoteConfig.setConfigSettingsAsync(configSettings)
     }
 }

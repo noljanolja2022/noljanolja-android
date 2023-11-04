@@ -1,5 +1,6 @@
 package com.noljanolja.android.features.auth.login
 
+import android.app.Activity
 import android.content.Intent
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -27,10 +28,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import co.touchlab.kermit.Logger
 import com.d2brothers.firebase_auth.AuthSdk
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.handleError
 import com.noljanolja.android.common.country.Countries
@@ -121,9 +125,23 @@ private fun LoginContent(
             style = MaterialTheme.typography.bodyMedium
         )
         Expanded()
+        LoginUserNamePasswordContent(
+            onLogin = { user, password ->
+                scope.launch {
+                    val result =
+                        authSdk.signInWithEmailAndPassword(email = user, password = password)
+                    if (result.isSuccess) {
+                        handleEvent(LoginEvent.HandleLoginResult(result.getOrDefault("")))
+                    } else {
+                        context.showError(result.exceptionOrNull() ?: UnexpectedFailure)
+                    }
+                }
+            }
+        )
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.clip(RoundedCornerShape(8.dp))
+            modifier = Modifier
+                .clip(RoundedCornerShape(8.dp))
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.primaryContainer)
                 .padding(horizontal = 12.dp, vertical = 4.dp)
@@ -190,7 +208,9 @@ private fun ColumnScope.LoginPhoneContent(
         )
 
         TextField(
-            modifier = Modifier.weight(1f).padding(start = 16.dp),
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 16.dp),
             value = phone,
             onValueChange = onChangePhone,
             textStyle = MaterialTheme.typography.bodyMedium,
@@ -241,8 +261,70 @@ fun LoginVerifyEmail(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun LoginGoogleContent() {
+private fun LoginUserNamePasswordContent(onLogin: (user: String, password: String) -> Unit) {
+    var enable by remember {
+        mutableStateOf(false)
+    }
+    val context = LocalContext.current
+
+    LaunchedEffect(true) {
+        if (context !is Activity) return@LaunchedEffect
+        val remoteConfig = FirebaseRemoteConfig.getInstance()
+        remoteConfig.fetchAndActivate()
+            .addOnCompleteListener(context) { task ->
+                if (task.isSuccessful) {
+                    val value = remoteConfig.getBoolean("login_email_password")
+                    enable = value
+                    Logger.e("Fetch remote config: $value")
+                } else {
+                    Logger.e("Fetch remote config: ${task.exception}")
+                }
+            }
+    }
+
+    if (enable) {
+        var username by remember {
+            mutableStateOf("")
+        }
+        var password by remember {
+            mutableStateOf("")
+        }
+        TextField(
+            value = username,
+            onValueChange = {
+                username = it
+            },
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text(text = "Email") },
+            colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent)
+        )
+        SizeBox(height = 10.dp)
+        TextField(
+            value = password,
+            onValueChange = {
+                password = it
+            },
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text(text = "Password") },
+            colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent)
+        )
+        SizeBox(height = 25.dp)
+        PrimaryButton(
+            text = "Login",
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        ) {
+            onLogin(username.trim(), password.trim())
+        }
+        Text(
+            text = "---------- Or ----------",
+            modifier = Modifier
+                .padding(vertical = 20.dp)
+                .fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
+    }
 }
 
 @Composable

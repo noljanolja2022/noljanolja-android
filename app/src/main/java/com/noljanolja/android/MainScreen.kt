@@ -95,10 +95,7 @@ fun MainScreen(
                 when (commands) {
                     is NavigationDirections.PlayScreen -> {
                         with(context as Activity) {
-                            MyApplication.backStackActivities.apply {
-                                forEach { it.finish() }
-                                clear()
-                            }
+                            MyApplication.clearAllPipActivities()
                             startActivity(
                                 PlayVideoActivity.createIntent(
                                     this,
