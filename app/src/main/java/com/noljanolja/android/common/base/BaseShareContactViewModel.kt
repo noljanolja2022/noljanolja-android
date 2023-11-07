@@ -1,19 +1,11 @@
 package com.noljanolja.android.common.base
 
-import com.noljanolja.android.features.common.ShareContact
-import com.noljanolja.android.features.common.toShareContact
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
+import com.noljanolja.android.features.common.*
+import kotlinx.coroutines.flow.*
 
 open class BaseShareContactViewModel : BaseViewModel() {
     private val _contactsFlow = MutableStateFlow<List<ShareContact>>(emptyList())
     val contactsFlow = _contactsFlow.asStateFlow()
-
-    protected val _shareSuccessEvent = MutableSharedFlow<Unit>()
-    val shareSuccessEvent = _shareSuccessEvent.asSharedFlow()
 
     private var page: Int = 1
     private var noMoreContact: Boolean = false
@@ -26,10 +18,9 @@ open class BaseShareContactViewModel : BaseViewModel() {
 
     protected suspend fun getShareContacts() {
         if (page == 1) {
-            val conversationContacts = coreManager.getLocalConversations().first().map {
+            coreManager.getLocalConversations().firstOrNull()?.map {
                 it.toShareContact()
-            }
-            getUserContacts(conversationContacts)
+            }?.let { getUserContacts(it) }
         } else {
             val gotContacts = _contactsFlow.value
             getUserContacts(gotContacts)

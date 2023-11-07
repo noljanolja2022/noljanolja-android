@@ -1,74 +1,41 @@
 package com.noljanolja.android.features.home.play.optionsvideo
 
-import android.view.Gravity
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Block
-import androidx.compose.material.icons.filled.Link
-import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
-import androidx.compose.ui.window.DialogWindowProvider
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.SubcomposeAsyncImage
-import coil.request.ImageRequest
+import android.view.*
+import androidx.compose.animation.*
+import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.*
+import androidx.compose.material.icons.*
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
+import androidx.compose.ui.draw.*
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.vector.*
+import androidx.compose.ui.input.pointer.*
+import androidx.compose.ui.layout.*
+import androidx.compose.ui.platform.*
+import androidx.compose.ui.res.*
+import androidx.compose.ui.text.*
+import androidx.compose.ui.text.style.*
+import androidx.compose.ui.unit.*
+import androidx.compose.ui.window.*
+import androidx.lifecycle.compose.*
+import coil.compose.*
+import coil.request.*
 import com.noljanolja.android.R
-import com.noljanolja.android.common.Const
-import com.noljanolja.android.features.common.ShareContact
-import com.noljanolja.android.ui.composable.OvalAvatar
-import com.noljanolja.android.ui.composable.PrimaryButton
-import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.ui.theme.Blue00
-import com.noljanolja.android.util.getShortDescription
-import com.noljanolja.android.util.secondaryTextColor
-import com.noljanolja.android.util.showError
-import com.noljanolja.android.util.showToast
-import com.noljanolja.core.video.domain.model.Video
-import kotlinx.coroutines.flow.collectLatest
-import org.koin.androidx.compose.getViewModel
+import com.noljanolja.android.common.*
+import com.noljanolja.android.features.common.*
+import com.noljanolja.android.ui.composable.*
+import com.noljanolja.android.ui.theme.*
+import com.noljanolja.android.util.*
+import com.noljanolja.android.util.Constant.*
+import com.noljanolja.core.video.domain.model.*
+import kotlinx.coroutines.flow.*
+import org.koin.androidx.compose.*
 
 @Composable
 fun OptionVideoBottomBottomSheet(
@@ -76,11 +43,12 @@ fun OptionVideoBottomBottomSheet(
     video: Video,
     onDismissRequest: () -> Unit,
     videoViewModel: OptionsVideoViewModel = getViewModel(),
+    optionsVideoViewModel: OptionsVideoViewModel = getViewModel()
 ) {
     val context = LocalContext.current
     LaunchedEffect(videoViewModel.shareSuccessEvent) {
         videoViewModel.shareSuccessEvent.collectLatest {
-            context.showToast(context.getString(R.string.common_share_success))
+            context.showToast(it ?: context.getString(R.string.common_share_success))
             onDismissRequest()
         }
     }
@@ -90,6 +58,7 @@ fun OptionVideoBottomBottomSheet(
         }
     }
     val contacts by videoViewModel.contactsFlow.collectAsStateWithLifecycle()
+    val showConfirmDialog by optionsVideoViewModel.showConfirmDialog.collectAsStateWithLifecycle()
     var selectContact by remember {
         mutableStateOf<ShareContact?>(null)
     }
@@ -142,14 +111,16 @@ fun OptionVideoBottomBottomSheet(
                         when {
                             selectContact != null -> {
                                 ShareVideoContent(
-                                    shareContact = selectContact!!,
+                                    shareContact = selectContact,
                                     video = video,
                                     onShareVideo = { video, contact ->
                                         videoViewModel.handleEvent(
-                                            OptionsVideoEvent.ShareVideo(
-                                                video,
-                                                contact
-                                            )
+                                            contact?.let {
+                                                OptionsVideoEvent.ShareVideo(
+                                                    video,
+                                                    contact
+                                                )
+                                            }
                                         )
                                     }
                                 )
@@ -160,14 +131,34 @@ fun OptionVideoBottomBottomSheet(
                                     contacts = contacts,
                                     onSelectContact = {
                                         selectContact = it
+                                    },
+                                    onShareClick = {
+                                        optionsVideoViewModel.changeDialogState(it)
                                     }
                                 )
                             }
 
                             else -> {
-                                OptionsContent(onShare = {
-                                    isSelectConversation = true
-                                })
+                                OptionsContent(
+                                    onShare = {
+                                        when (it) {
+                                            R.string.common_share -> {
+                                                isSelectConversation = true
+                                            }
+
+                                            R.string.common_copy -> {
+                                                context.run {
+                                                    copyToClipboard(video.url)
+                                                    videoViewModel.copySuccess(getString(R.string.common_copy_success))
+                                                }
+                                            }
+
+                                            R.string.ignore_video -> {
+
+                                            }
+                                        }
+                                    }
+                                )
                             }
                         }
                     }
@@ -175,13 +166,30 @@ fun OptionVideoBottomBottomSheet(
             }
         }
     }
+    showConfirmDialog?.run {
+        ConfirmDialog(
+            appName = stringResource(
+                id = R.string.common_open_app,
+                appName
+            ),
+            onConfirmClick = {
+                context.shareToAnotherApp(
+                    videoUrl = video.url,
+                    shareToAppData = this
+                )
+                optionsVideoViewModel.changeDialogState(null)
+            }
+        ) {
+            optionsVideoViewModel.changeDialogState(null)
+        }
+    }
 }
 
 @Composable
 private fun ShareVideoContent(
-    shareContact: ShareContact,
+    shareContact: ShareContact?,
     video: Video,
-    onShareVideo: (Video, ShareContact) -> Unit,
+    onShareVideo: (Video, ShareContact?) -> Unit,
 ) {
     val context = LocalContext.current
     SizeBox(height = 24.dp)
@@ -191,10 +199,10 @@ private fun ShareVideoContent(
         color = MaterialTheme.colorScheme.onBackground
     )
     SizeBox(height = 10.dp)
-    OvalAvatar(avatar = shareContact.avatar)
+    OvalAvatar(avatar = shareContact?.avatar)
     SizeBox(height = 10.dp)
     Text(
-        shareContact.title,
+        shareContact?.title ?: "",
         maxLines = 2,
         style = MaterialTheme.typography.labelSmall,
         color = MaterialTheme.colorScheme.onBackground
@@ -243,6 +251,7 @@ private fun ShareVideoContent(
 private fun SelectConversation(
     contacts: List<ShareContact>,
     onSelectContact: (ShareContact) -> Unit,
+    onShareClick: (String) -> Unit
 ) {
     SizeBox(height = 10.dp)
     Text(
@@ -251,32 +260,35 @@ private fun SelectConversation(
         color = MaterialTheme.colorScheme.onBackground
     )
     SizeBox(height = 20.dp)
-    LazyRow(
-        modifier = Modifier
-            .height(90.dp)
-            .padding(horizontal = 12.dp)
-    ) {
-        items(contacts.size) {
-            val contact = contacts[it]
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .width(56.dp)
-                    .clickable {
-                        onSelectContact(contact)
-                    }
-            ) {
-                OvalAvatar(avatar = contact.avatar, size = 32.dp)
-                SizeBox(height = 10.dp)
-                Text(
-                    contact.title,
-                    style = MaterialTheme.typography.labelSmall,
-                    textAlign = TextAlign.Center,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(horizontal = 8.dp),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
+    if (contacts.isNotEmpty()) {
+        LazyRow(
+            modifier = Modifier
+                .height(90.dp)
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp),
+        ) {
+            items(contacts.size) {
+                val contact = contacts[it]
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .width(56.dp)
+                        .clickable {
+                            onSelectContact(contact)
+                        }
+                ) {
+                    OvalAvatar(avatar = contact.avatar, size = 40.dp)
+                    SizeBox(height = 10.dp)
+                    Text(
+                        contact.title,
+                        style = MaterialTheme.typography.labelSmall,
+                        textAlign = TextAlign.Center,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
             }
         }
     }
@@ -291,7 +303,11 @@ private fun SelectConversation(
             Image(
                 ImageVector.vectorResource(R.drawable.facebook),
                 contentDescription = null,
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier
+                    .size(48.dp)
+                    .clickable {
+                        onShareClick(AppNameShareToApp.FACEBOOK)
+                    }
             )
             SizeBox(width = 30.dp)
         }
@@ -299,15 +315,23 @@ private fun SelectConversation(
             Image(
                 ImageVector.vectorResource(R.drawable.twiter),
                 contentDescription = null,
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier
+                    .size(48.dp)
+                    .clickable {
+                        onShareClick(AppNameShareToApp.TWITTER)
+                    }
             )
             SizeBox(width = 30.dp)
         }
         item {
             Image(
-                ImageVector.vectorResource(R.drawable.titkok),
+                ImageVector.vectorResource(R.drawable.ic_whats_app),
                 contentDescription = null,
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier
+                    .size(48.dp)
+                    .clickable {
+                        onShareClick(AppNameShareToApp.WHATS_APP)
+                    }
             )
             SizeBox(width = 30.dp)
         }
@@ -315,15 +339,23 @@ private fun SelectConversation(
             Image(
                 ImageVector.vectorResource(R.drawable.telegram),
                 contentDescription = null,
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier
+                    .size(48.dp)
+                    .clickable {
+                        onShareClick(AppNameShareToApp.TELEGRAM)
+                    }
             )
             SizeBox(width = 30.dp)
         }
         item {
             Image(
-                ImageVector.vectorResource(R.drawable.twitch),
+                ImageVector.vectorResource(R.drawable.ic_messenger),
                 contentDescription = null,
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier
+                    .size(48.dp)
+                    .clickable {
+                        onShareClick(AppNameShareToApp.MESSENGER)
+                    }
             )
             SizeBox(width = 30.dp)
         }
@@ -333,21 +365,29 @@ private fun SelectConversation(
 
 @Composable
 private fun OptionsContent(
-    onShare: () -> Unit,
+    onShare: (Int) -> Unit,
 ) {
     OptionVideoRow(
         icon = ImageVector.vectorResource(id = R.drawable.ic_share),
         text = stringResource(R.string.common_share),
-        onClick = onShare
+        onClick = {
+            onShare(R.string.common_share)
+        }
     )
     OptionVideoRow(
         icon = Icons.Default.Link,
-        text = stringResource(R.string.common_copy)
-    ) {}
-    OptionVideoRow(
-        icon = Icons.Default.Block,
-        text = stringResource(R.string.ignore_video)
-    ) {}
+        text = stringResource(R.string.common_copy),
+        onClick = {
+            onShare(R.string.common_copy)
+        }
+    )
+//    OptionVideoRow(
+//        icon = Icons.Default.Block,
+//        text = stringResource(R.string.ignore_video),
+//        onClick = {
+//            onShare(R.string.ignore_video)
+//        }
+//    )
 }
 
 @Composable
@@ -370,4 +410,62 @@ private fun OptionVideoRow(
             color = MaterialTheme.colorScheme.onBackground
         )
     }
+}
+
+@Composable
+private fun ConfirmDialog(
+    appName: String,
+    onConfirmClick: () -> Unit,
+    onNegativeClick: () -> Unit
+) {
+    androidx.compose.material.AlertDialog(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(DefaultValue.ROUND_DIALOG.dp))
+            .background(Color.White),
+        title = {
+            androidx.compose.material.Text(
+                text = appName,
+                style = Typography.titleMedium
+            )
+        },
+        text = null,
+        buttons = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(DefaultValue.ROUND_DIALOG.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Text(
+                    text = stringResource(R.string.common_no).uppercase(),
+                    style = Typography.titleSmall,
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(10.dp)
+                        .clickable {
+                            onNegativeClick()
+                        },
+                    color = MaterialTheme.primaryColor(),
+                    textAlign = TextAlign.Center
+                )
+                PaddingHorizontal(DefaultValue.PADDING_HORIZONTAL_SCREEN)
+                Text(
+                    text = stringResource(R.string.common_yes).uppercase(),
+                    style = Typography.titleSmall,
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(10.dp)
+                        .clickable {
+                            onConfirmClick()
+                        },
+                    color = MaterialTheme.primaryColor(),
+                    textAlign = TextAlign.Center
+                )
+            }
+        },
+        properties = DialogProperties(),
+        backgroundColor = Color.White,
+        onDismissRequest = onNegativeClick
+    )
 }

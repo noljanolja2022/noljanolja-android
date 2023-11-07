@@ -210,7 +210,7 @@ fun HomeBottomBar(
     isReadAllConversations: Boolean,
 ) {
     val items = listOf(
-        HomeNavigationItem.ChatItem,
+//        HomeNavigationItem.ChatItem,
         HomeNavigationItem.WatchItem,
         HomeNavigationItem.WalletItem,
         HomeNavigationItem.StoreItem,
