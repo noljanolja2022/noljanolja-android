@@ -26,9 +26,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Divider
@@ -46,12 +44,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.*
+import androidx.compose.ui.text.font.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -66,9 +65,8 @@ import com.noljanolja.android.R
 import com.noljanolja.android.common.Const.VIDEO_IMAGE_RATIO
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.features.home.play.optionsvideo.OptionVideoBottomBottomSheet
-import com.noljanolja.android.ui.composable.CommonTopAppBar
-import com.noljanolja.android.ui.composable.ScaffoldWithUiState
-import com.noljanolja.android.ui.composable.SizeBox
+import com.noljanolja.android.ui.composable.*
+import com.noljanolja.android.ui.theme.*
 import com.noljanolja.android.util.getShortDescription
 import com.noljanolja.core.video.domain.model.Video
 import kotlinx.coroutines.delay
@@ -99,22 +97,77 @@ private fun PlayListContent(
         mutableStateOf<Video?>(null)
     }
     ScaffoldWithUiState(uiState = uiState, topBar = {
-        CommonTopAppBar(
-            centeredTitle = true,
-            title = stringResource(id = R.string.video_title),
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            actions = {
-                IconButton(onClick = {
-                    handleEvent(PlayListEvent.Search)
-                }) {
-                    Icon(
-                        Icons.Default.Search,
-                        contentDescription = null,
-                        modifier = Modifier.size(24.dp),
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+//        CommonTopAppBar(
+//            centeredTitle = true,
+//            title = stringResource(id = R.string.video_title),
+//            containerColor = MaterialTheme.colorScheme.primaryContainer,
+//            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+//            actions = {
+//                IconButton(onClick = {
+//                    handleEvent(PlayListEvent.Search)
+//                }) {
+//                    Icon(
+//                        Icons.Default.Search,
+//                        contentDescription = null,
+//                        modifier = Modifier.size(24.dp),
+//                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+//                    )
+//                }
+//            }
+//        )
+
+        CommonAppBarLogoTitle(
+            titleFirstLine = buildAnnotatedString {
+                withStyle(
+                    style = SpanStyle(
+                        fontSize = 24.0.sp,
+                        color = textColor()
                     )
+                ) {
+                    append(stringResource(id = R.string.video_title_part1))
                 }
+                append(" ")
+                withStyle(
+                    style = SpanStyle(
+                        fontSize = 24.0.sp,
+                        fontWeight = FontWeight(700),
+                        color = Orange300
+                    )
+                ) {
+                    append(stringResource(id = R.string.video_title_point))
+                }
+            },
+            titleSecondLine = buildAnnotatedString {
+                withStyle(
+                    style = SpanStyle(
+                        fontSize = 24.0.sp,
+                        color = textColor()
+                    )
+                ) {
+                    append(stringResource(id = R.string.video_title_by))
+                }
+                append(" ")
+                withStyle(
+                    style = SpanStyle(
+                        fontSize = 24.0.sp,
+                        fontWeight = FontWeight(700),
+                        color = PrimaryGreen
+                    )
+                ) {
+                    append(stringResource(id = R.string.video_title_watching))
+                }
+            },
+            firstIcon = Icons.Default.Settings,
+            firstIconClickListener = {
+
+            },
+            secondIcon = Icons.Default.Notifications,
+            secondIconClickListener = {
+
+            },
+            thirdIcon = Icons.Default.Search,
+            thirdIconClickListener = {
+                handleEvent(PlayListEvent.Search)
             }
         )
     }) {
@@ -124,12 +177,13 @@ private fun PlayListContent(
                 .fillMaxSize()
                 .pullRefresh(state)
         ) {
-            item {
-                HighlightVideos(videos = data.highlightVideos, onClick = {
-                    handleEvent(PlayListEvent.PlayVideo(it.id))
-                })
-                SizeBox(height = 12.dp)
-            }
+//            item {
+//                HighlightVideos(videos = data.highlightVideos, onClick = {
+//                    handleEvent(PlayListEvent.PlayVideo(it.id))
+//                })
+//                SizeBox(height = 12.dp)
+//            }
+
             watchingVideos(
                 videos = data.watchingVideos,
                 onClick = {

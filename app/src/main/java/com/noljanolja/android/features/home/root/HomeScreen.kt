@@ -1,61 +1,44 @@
 package com.noljanolja.android.features.home.root
 
-import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import android.util.*
+import androidx.activity.compose.*
+import androidx.activity.result.contract.*
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.Scope
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
+import androidx.compose.ui.draw.*
+import androidx.compose.ui.platform.*
+import androidx.compose.ui.res.*
+import androidx.compose.ui.unit.*
+import androidx.compose.ui.window.*
+import androidx.lifecycle.compose.*
+import androidx.navigation.*
+import androidx.navigation.compose.*
+import com.google.android.gms.auth.api.signin.*
+import com.google.android.gms.common.api.*
+import com.noljanolja.android.*
 import com.noljanolja.android.BuildConfig
-import com.noljanolja.android.MyApplication
 import com.noljanolja.android.R
-import com.noljanolja.android.features.home.CheckinViewModel
-import com.noljanolja.android.features.home.conversations.ConversationsScreen
-import com.noljanolja.android.features.home.friends.FriendsScreen
-import com.noljanolja.android.features.home.play.playlist.PlayListScreen
-import com.noljanolja.android.features.home.play.playscreen.PlayVideoActivity
-import com.noljanolja.android.features.home.play.playscreen.composable.getAccount
-import com.noljanolja.android.features.home.play.playscreen.composable.getTokenFromAccount
-import com.noljanolja.android.features.home.root.banner.EventBannerDialog
-import com.noljanolja.android.features.home.utils.click
-import com.noljanolja.android.features.home.utils.isNavItemSelect
-import com.noljanolja.android.features.home.wallet.WalletExchangeScreen
-import com.noljanolja.android.features.shop.main.ShopScreen
-import com.noljanolja.android.ui.composable.InfoDialog
-import com.noljanolja.android.ui.theme.colorBackground
-import com.noljanolja.android.util.findActivity
-import com.noljanolja.android.util.getClientId
-import com.noljanolja.android.util.getErrorMessage
-import com.noljanolja.android.util.showToast
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
-import kotlin.system.exitProcess
+import com.noljanolja.android.features.home.*
+import com.noljanolja.android.features.home.conversations.*
+import com.noljanolja.android.features.home.friends.*
+import com.noljanolja.android.features.home.play.playlist.*
+import com.noljanolja.android.features.home.play.playscreen.*
+import com.noljanolja.android.features.home.play.playscreen.composable.*
+import com.noljanolja.android.features.home.root.banner.*
+import com.noljanolja.android.features.home.utils.*
+import com.noljanolja.android.features.home.wallet.*
+import com.noljanolja.android.features.shop.main.*
+import com.noljanolja.android.ui.composable.*
+import com.noljanolja.android.ui.theme.*
+import com.noljanolja.android.util.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import org.koin.androidx.compose.*
+import kotlin.system.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -227,7 +210,7 @@ fun HomeBottomBar(
     isReadAllConversations: Boolean,
 ) {
     val items = listOf(
-        HomeNavigationItem.ChatItem,
+//        HomeNavigationItem.ChatItem,
         HomeNavigationItem.WatchItem,
         HomeNavigationItem.WalletItem,
         HomeNavigationItem.StoreItem,
