@@ -278,6 +278,10 @@
 
     <!--    video-->
     <string name="video_title">Let’s get points by watching</string>
+    <string name="video_title_part1">Let’s get</string>
+    <string name="video_title_point">Points</string>
+    <string name="video_title_by">By</string>
+    <string name="video_title_watching">Watching</string>
     <string name="video_list_today">Today features</string>
     <string name="video_list_watching_to_get_point">Complete watching to reward Points</string>
 

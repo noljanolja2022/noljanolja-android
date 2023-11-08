@@ -182,3 +182,10 @@ fun MaterialTheme.backgroundInPopup(darkTheme: Boolean = isSystemInDarkTheme()) 
 } else {
     colorScheme.background
 }
+
+@Composable
+fun textColor(darkTheme: Boolean = isSystemInDarkTheme()) = if (darkTheme) {
+    Color.White
+} else {
+    Color.Black
+}
