@@ -39,4 +39,4 @@ jobs:
         run: ./gradlew assembleDebug
 
       - name: Push apk to firebase
-        run: ./gradlew bundleDebug appDistributionUploadDebug --artifactType="APK"
+        run: ./gradlew assembleDebug appDistributionUploadDebug --artifactType="APK"
