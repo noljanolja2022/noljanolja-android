@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "178013335305-p5msi2e5l32a4gl6q4g4fo3jrnur934t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ppnyy.nolgobulja",
+            "certificate_hash": "d9157ac5f864158f3598accf4ec33043a3d42dd7"
+          }
+        },
+        {
+          "client_id": "178013335305-ubfkbi2cd5g63k66ivhhtitqmc1eiuk4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ppnyy.nolgobulja",
+            "certificate_hash": "be3ee8b250c4b73b3c6d79efe5a18dfb35a86a79"
+          }
+        },
+        {
           "client_id": "178013335305-3tuknh3s2ptb19tstjq4immq3t2rovn6.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -31,7 +47,7 @@
               "client_type": 3
             },
             {
-              "client_id": "178013335305-k5uo0q32lure8a4p70rvcnvv7acmfi9s.apps.googleusercontent.com",
+              "client_id": "178013335305-u139pt1c45nv77u97shthoqi2tp0jafv.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.ppnyy.nolgobulja"

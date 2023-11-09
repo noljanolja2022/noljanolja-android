@@ -1,6 +1,6 @@
 package com.noljanolja.core.media.domain.model
 
-import com.noljanolja.core.utils.Const
+import com.noljanolja.core.utils.BASE_URL
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -18,7 +18,7 @@ data class StickerPack(
     var downloading: Boolean = false,
 ) {
     fun getImageUrl() =
-        "${Const.BASE_URL}/api/v1/media/sticker-packs/$id/$trayImageFile"
+        "$BASE_URL/api/v1/media/sticker-packs/$id/$trayImageFile"
 }
 
 @Serializable

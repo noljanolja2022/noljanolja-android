@@ -43,7 +43,11 @@ class SocketManager(
         onError: suspend (error: Throwable, failData: String, newToken: String?) -> Unit,
     ) {
         val rSocket =
-            videoRSocket ?: getDefaultSocket(engine, tokenRepo, userAgent).rSocket(BASE_SOCKET_URL)
+            videoRSocket ?: getDefaultSocket(
+                engine,
+                tokenRepo,
+                userAgent
+            ).rSocket("$BASE_URL/rsocket")
                 .also {
                     videoRSocket = it
                 }
@@ -87,7 +91,7 @@ class SocketManager(
     ): Flow<String> {
         try {
             val rSocket: RSocket =
-                getDefaultSocket(engine, tokenRepo, userAgent).rSocket(BASE_SOCKET_URL)
+                getDefaultSocket(engine, tokenRepo, userAgent).rSocket("$BASE_URL/rsocket")
             // request stream
             val streamToken = token ?: tokenRepo.getToken().takeIf { !it.isNullOrBlank() }
             return streamToken?.let { streamToken ->
@@ -119,10 +123,6 @@ class SocketManager(
         } catch (e: Throwable) {
             return flow { }
         }
-    }
-
-    companion object {
-        const val BASE_SOCKET_URL = "ws://34.64.110.104/rsocket"
     }
 }
 

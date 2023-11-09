@@ -70,7 +70,7 @@ import com.noljanolja.core.conversation.domain.model.Message
 import com.noljanolja.core.conversation.domain.model.MessageAttachment
 import com.noljanolja.core.conversation.domain.model.MessageStatus
 import com.noljanolja.core.conversation.domain.model.MessageType
-import com.noljanolja.core.utils.Const
+import com.noljanolja.core.utils.BASE_URL
 
 @Composable
 fun ClickableMessage(
@@ -208,7 +208,7 @@ private fun ClickableStickerMessage(
     SubcomposeAsyncImage(
         ImageRequest.Builder(context = LocalContext.current)
             .setAnimated(true)
-            .data("${Const.BASE_URL}/api/v1/media/sticker-packs/${message.message}")
+            .data("$BASE_URL/api/v1/media/sticker-packs/${message.message}")
             .memoryCacheKey(message.message)
             .diskCacheKey(message.message)
             .build(),

@@ -6,6 +6,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.touchlab.kermit.Logger
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.util.showToast
@@ -31,6 +32,7 @@ open class BaseViewModel : ViewModel(), KoinComponent {
 
     fun sendError(e: Throwable) {
         launch {
+            Logger.e("${this.javaClass.name}: ViewModel show Error: $e")
             _errorFlow.emit(e)
         }
     }

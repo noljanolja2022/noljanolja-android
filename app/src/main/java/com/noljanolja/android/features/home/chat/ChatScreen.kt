@@ -73,7 +73,7 @@ import com.noljanolja.android.ui.theme.colorMyChatText
 import com.noljanolja.android.util.*
 import com.noljanolja.core.conversation.domain.model.*
 import com.noljanolja.core.media.domain.model.Sticker
-import com.noljanolja.core.utils.Const
+import com.noljanolja.core.utils.BASE_URL
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
@@ -1016,7 +1016,7 @@ private fun PlaceholderReplyMessage(message: Message, isMe: Boolean) {
             MessageType.STICKER -> {
                 SubcomposeAsyncImage(
                     ImageRequest.Builder(context = LocalContext.current)
-                        .data("${Const.BASE_URL}/api/v1/media/sticker-packs/${message.message}")
+                        .data("${BASE_URL}/api/v1/media/sticker-packs/${message.message}")
                         .memoryCacheKey(message.message)
                         .diskCacheKey(message.message)
                         .build(),

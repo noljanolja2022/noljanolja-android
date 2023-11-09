@@ -28,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
@@ -298,6 +299,7 @@ private fun LoginUserNamePasswordContent(onLogin: (user: String, password: Strin
             },
             modifier = Modifier.fillMaxWidth(),
             label = { Text(text = "Email") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent)
         )
         SizeBox(height = 10.dp)
@@ -308,6 +310,8 @@ private fun LoginUserNamePasswordContent(onLogin: (user: String, password: Strin
             },
             modifier = Modifier.fillMaxWidth(),
             label = { Text(text = "Password") },
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent)
         )
         SizeBox(height = 25.dp)
