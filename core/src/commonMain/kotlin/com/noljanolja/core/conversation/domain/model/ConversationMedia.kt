@@ -1,6 +1,6 @@
 package com.noljanolja.core.conversation.domain.model
 
-import com.noljanolja.core.utils.Const
+import com.noljanolja.core.utils.BASE_URL
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -21,7 +21,7 @@ data class ConversationMedia(
     }
 
     fun getAttachmentUrl(conversationId: Long) =
-        "${Const.BASE_URL}/api/v1/conversations/$conversationId/attachments/$id"
+        "$BASE_URL/api/v1/conversations/$conversationId/attachments/$id"
 
     fun getCacheKey() = "attachment$id"
 }

@@ -7,7 +7,7 @@ import com.noljanolja.core.conversation.data.model.response.GetConversationMessa
 import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.ConversationType
 import com.noljanolja.core.conversation.domain.model.MessageType
-import com.noljanolja.core.utils.Const.BASE_URL
+import com.noljanolja.core.utils.BASE_URL
 import com.noljanolja.core.utils.default
 import com.noljanolja.socket.SocketManager
 import io.ktor.client.*

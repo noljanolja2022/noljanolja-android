@@ -1,7 +1,7 @@
 package com.noljanolja.core.conversation.domain.model
 
 import com.noljanolja.core.user.domain.model.User
-import com.noljanolja.core.utils.Const.BASE_URL
+import com.noljanolja.core.utils.BASE_URL
 import com.noljanolja.core.utils.randomUUID
 import com.noljanolja.core.video.domain.model.Video
 import kotlinx.datetime.Clock

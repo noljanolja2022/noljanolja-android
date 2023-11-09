@@ -14,7 +14,7 @@ import com.noljanolja.core.user.data.model.response.GetMeResponse
 import com.noljanolja.core.user.data.model.response.GetUsersResponse
 import com.noljanolja.core.user.data.model.response.UpdateAvatarResponse
 import com.noljanolja.core.user.data.model.response.UpdateUserResponse
-import com.noljanolja.core.utils.Const.BASE_URL
+import com.noljanolja.core.utils.BASE_URL
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
