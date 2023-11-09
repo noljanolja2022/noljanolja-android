@@ -15,11 +15,11 @@ android {
     namespace = "com.noljanolja.android"
     compileSdk = 33
     defaultConfig {
-        applicationId = "com.ppnyy.nolgobulja.dev"
+        applicationId = "com.ppnyy.nolgobulja"
         minSdk = 21
         targetSdk = 33
-        versionCode = 50
-        versionName = "1.1.7"
+        versionCode = 53
+        versionName = "1.1.9"
         testInstrumentationRunner = "com.noljanolja.android.InstrumentationTestRunner"
         multiDexEnabled = true
     }
@@ -73,15 +73,19 @@ android {
             }
             proguardFiles("proguard-rules.pro")
             signingConfig = signingConfigs.getByName("release")
+            buildConfigField("String", "BASE_URL", "\"http://consumer-service.ppnyy.com\"")
+
 //            isDebuggable = true
         }
         debug {
             firebaseAppDistribution {
                 artifactType = "APK"
                 serviceCredentialsFile = "key/key_distribution.json"
+                applicationIdSuffix = ".dev"
                 releaseNotes = notes
                 testers =
                     "doduchieu.kstn@gmail.com, itanchi.dev@gmail.com, sangjin.d.han@gmail.com, sangjin.han@ppnyy.com, tiaddeeps@gmail.com, taduydoan123.dng@gmail.com"
+                buildConfigField("String", "BASE_URL", "\"http://34.64.110.104\"")
             }
         }
     }

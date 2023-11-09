@@ -13,6 +13,14 @@ android {
         minSdk = 21
         targetSdk = 33
     }
+    buildTypes {
+        debug {
+            buildConfigField("String", "BASE_URL", "\"http://34.64.110.104\"")
+        }
+        release {
+            buildConfigField("String", "BASE_URL", "\"http://consumer-service.ppnyy.com\"")
+        }
+    }
 }
 
 kotlin {

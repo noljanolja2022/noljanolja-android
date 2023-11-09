@@ -10,6 +10,7 @@ import android.os.Environment
 import android.provider.OpenableColumns
 import android.widget.Toast
 import androidx.core.content.FileProvider
+import co.touchlab.kermit.Logger
 import coil.Coil
 import coil.memory.MemoryCache
 import com.noljanolja.android.BuildConfig
@@ -31,6 +32,7 @@ fun Context.showToast(
 ) = Toast.makeText(this, text, time).show()
 
 fun Context.showError(error: Throwable, time: Int = Toast.LENGTH_LONG) {
+    Logger.e("Context show Error: $error")
     Toast.makeText(this, getErrorMessage(error), time).show()
 }
 
