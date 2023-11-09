@@ -73,8 +73,6 @@ android {
             }
             proguardFiles("proguard-rules.pro")
             signingConfig = signingConfigs.getByName("release")
-            buildConfigField("String", "BASE_URL", "\"http://consumer-service.ppnyy.com\"")
-
 //            isDebuggable = true
         }
         debug {
@@ -85,7 +83,6 @@ android {
                 releaseNotes = notes
                 testers =
                     "doduchieu.kstn@gmail.com, itanchi.dev@gmail.com, sangjin.d.han@gmail.com, sangjin.han@ppnyy.com, tiaddeeps@gmail.com, taduydoan123.dng@gmail.com"
-                buildConfigField("String", "BASE_URL", "\"http://34.64.110.104\"")
             }
         }
     }
@@ -173,6 +170,8 @@ dependencies {
 
     // Animation
     implementation("com.facebook.shimmer:shimmer:0.5.0")
+
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 }
 
 kapt {
