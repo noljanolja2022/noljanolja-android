@@ -1,68 +1,43 @@
 package com.noljanolja.android.features.home.play.playscreen
 
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.AlertDialog
-import android.app.PictureInPictureParams
-import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.os.Build
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import android.annotation.*
+import android.app.*
+import android.content.*
+import android.content.pm.*
+import android.net.*
+import android.os.*
+import androidx.activity.compose.*
+import androidx.activity.result.contract.*
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.*
+import androidx.compose.material.icons.*
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.runtime.saveable.*
+import androidx.compose.ui.*
+import androidx.compose.ui.draw.*
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.*
+import androidx.compose.ui.res.*
+import androidx.compose.ui.text.font.*
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.*
 import com.noljanolja.android.R
-import com.noljanolja.android.common.base.UiState
+import com.noljanolja.android.common.base.*
 import com.noljanolja.android.features.home.play.playscreen.PlayVideoActivity.Companion.createCustomActions
-import com.noljanolja.android.features.home.play.playscreen.composable.CommentInput
-import com.noljanolja.android.ui.composable.BackPressHandler
-import com.noljanolja.android.ui.composable.BoxWithBottomElevation
-import com.noljanolja.android.ui.composable.CircleAvatar
-import com.noljanolja.android.ui.composable.CommonTopAppBar
-import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.ui.composable.VerticalDivider
-import com.noljanolja.android.ui.composable.WarningDialog
-import com.noljanolja.android.ui.composable.youtube.YoutubeView
-import com.noljanolja.android.ui.theme.Orange300
-import com.noljanolja.android.ui.theme.withBold
-import com.noljanolja.android.util.formatFullTime
-import com.noljanolja.android.util.showToast
-import com.noljanolja.core.Failure
-import com.noljanolja.core.user.domain.model.User
-import com.noljanolja.core.video.domain.model.Comment
-import com.noljanolja.core.video.domain.model.Commenter
-import com.noljanolja.core.video.domain.model.Video
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
-import org.koin.androidx.compose.getViewModel
+import com.noljanolja.android.features.home.play.playscreen.composable.*
+import com.noljanolja.android.ui.composable.*
+import com.noljanolja.android.ui.composable.youtube.*
+import com.noljanolja.android.ui.theme.*
+import com.noljanolja.android.util.*
+import com.noljanolja.core.*
+import com.noljanolja.core.user.domain.model.*
+import com.noljanolja.core.video.domain.model.*
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.*
+import org.koin.androidx.compose.*
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -145,6 +120,7 @@ private fun VideoDetailContent(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 title = stringResource(id = R.string.video_title),
+                centeredTitle = true,
                 onBack = onBack
             )
         }
@@ -154,28 +130,6 @@ private fun VideoDetailContent(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            if (!showOnlyVideo && video != null) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.Black),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.video_earn_point, video.earnedPoints),
-                        style = MaterialTheme.typography.bodyMedium.withBold(),
-                        color = Color.White,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 5.dp)
-                    )
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_video_point),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .padding(start = 1.dp)
-                            .size(18.dp)
-                    )
-                }
-            }
             val videoModifier = if (isPipMode) {
                 Modifier
                     .fillMaxWidth()
@@ -245,9 +199,6 @@ private fun VideoInformation(video: Video) {
                 .weight(1f)
                 .padding(horizontal = 16.dp)
         )
-        IconButton(onClick = { /*TODO*/ }) {
-            Icon(Icons.Default.MoreVert, contentDescription = null)
-        }
     }
     Text(
         text = video.category.title,
@@ -328,17 +279,6 @@ private fun LazyListScope.videoComments(video: Video) {
         )
         SizeBox(height = 8.dp)
     }
-    item {
-        Row(modifier = modifier) {
-            VideoCommentSortType.values().forEachIndexed { _, commentSortType ->
-                CommentSortItem(
-                    type = commentSortType,
-                    isSelect = commentSortType == VideoCommentSortType.Popular
-                )
-                SizeBox(width = 10.dp)
-            }
-        }
-    }
     items(video.comments) {
         CommentRow(modifier = modifier, comment = it)
     }
@@ -378,7 +318,6 @@ private fun CommentRow(
 ) {
     Row(
         modifier = modifier
-            .padding(top = 10.dp)
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
             .wrapContentHeight(),
@@ -391,12 +330,11 @@ private fun CommentRow(
         ) {
             CommenterAvatar(commenter = comment.commenter)
             SizeBox(height = 12.dp)
-            VerticalDivider(modifier = Modifier.fillMaxHeight())
         }
         SizeBox(width = 15.dp)
         Column {
             Text(
-                comment.updatedAt.formatFullTime(),
+                comment.updatedAt.formatFullTimeNew(),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.outline,
             )
@@ -405,19 +343,13 @@ private fun CommentRow(
                 text = comment.commenter.name,
                 style = MaterialTheme.typography.titleMedium
             )
-            SizeBox(height = 8.dp)
-            BoxWithBottomElevation(
+            Text(
+                text = comment.comment,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(IntrinsicSize.Min)
-            ) {
-                Text(
-                    text = comment.comment,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(vertical = 10.dp, horizontal = 13.dp)
-                )
-            }
+                    .padding(bottom = 10.dp, end = 13.dp)
+            )
             SizeBox(height = 8.dp)
             Divider()
             SizeBox(height = 10.dp)

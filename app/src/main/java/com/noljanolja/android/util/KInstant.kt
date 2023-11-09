@@ -80,6 +80,10 @@ fun Instant.formatFullTime(): String {
     return this.customFormatTime("HH:mm - MMMM dd, yyyy").capitalizeLetterAt(8)
 }
 
+fun Instant.formatFullTimeNew(): String {
+    return this.customFormatTime("yyyy.MM.dd HH:mm").capitalizeLetterAt(8)
+}
+
 fun Instant.formatTransactionShortTime(): String {
     return this.customFormatTime("MMMM dd, yyyy").capitalizeFirstLetter()
 }
