@@ -49,13 +49,12 @@ import com.noljanolja.android.util.secondaryTextColor
 import com.noljanolja.android.util.showError
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
 import com.noljanolja.core.shop.domain.model.Gift
-import io.ktor.http.parametersOf
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
 fun GiftDetailScreen(
-    giftId: Long,
+    giftId: String,
     code: String,
     viewModel: GiftDetailViewModel = getViewModel { parametersOf(giftId, code) },
 ) {
@@ -136,7 +135,7 @@ private fun GiftDetailContent(
                 color = MaterialTheme.secondaryTextColor()
             )
             Divider(modifier = Modifier.padding(vertical = 30.dp))
-            if (gift.code.isNotBlank()) {
+            if (gift.qrCode.isNotBlank()) {
                 PurchasedInfo(gift)
             } else {
                 PurchaseInfo(
@@ -228,7 +227,7 @@ private fun ColumnScope.PurchasedInfo(
     gift: Gift,
 ) {
     Image(
-        painter = rememberQrBitmapPainter(gift.code),
+        painter = rememberQrBitmapPainter(gift.qrCode),
         contentDescription = null,
         modifier = Modifier
             .fillMaxWidth(0.5F)

@@ -1,5 +1,5 @@
 package com.noljanolja.core.shop.data.model.request
 
 data class BuildGiftRequest(
-    val id: Long,
+    val id: String,
 )

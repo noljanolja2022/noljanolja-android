@@ -59,9 +59,7 @@ import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.ScaffoldWithCircleBgRoundedContent
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.composable.admob.AdmobRectangle
-import com.noljanolja.android.ui.theme.BlueMain
 import com.noljanolja.android.ui.theme.NeutralDarkGrey
-import com.noljanolja.android.ui.theme.NeutralLight
 import com.noljanolja.android.ui.theme.Orange300
 import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.ui.theme.withMedium
@@ -99,50 +97,61 @@ private fun WalletExchangeContent(
     var showAdmob by remember { mutableStateOf(false) }
     ScaffoldWithCircleBgRoundedContent(
         heading = {
-            WalletUserInformation(
-                user = uiState.data?.user ?: User(),
-                memberInfo = memberInfo,
-                goToRanking = {
-                    handleEvent(WalletEvent.Ranking)
-                },
-                goToSetting = {
-                    handleEvent(WalletEvent.Setting)
-                },
-                modifier = Modifier.padding(top = 26.dp, bottom = 10.dp, start = 16.dp, end = 16.dp)
-            )
-        }
+            Column {
+                WalletUserInformation(
+                    user = uiState.data?.user ?: User(),
+                    memberInfo = memberInfo,
+                    goToRanking = {
+                        handleEvent(WalletEvent.Ranking)
+                    },
+                    goToSetting = {
+                        handleEvent(WalletEvent.Setting)
+                    },
+                    modifier = Modifier.padding(
+                        top = 26.dp,
+                        bottom = 10.dp,
+                        start = 16.dp,
+                        end = 16.dp
+                    )
+                )
+                MyCashAndPoint(
+                    memberInfo = memberInfo,
+                    myBalance = myBalance,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+                SizeBox(height = 10.dp)
+            }
+        },
+        roundedCornerShape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(12.dp)
+                .padding(16.dp)
         ) {
-            SizeBox(height = 16.dp)
-            MyCashAndPoint(memberInfo = memberInfo, myBalance = myBalance)
-            SizeBox(height = 40.dp)
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 WalletInfoDailyInfoItem(
                     modifier = Modifier.weight(1f),
                     background = R.drawable.bg_accumulated,
-                    contentColor = NeutralLight,
+                    contentColor = NeutralDarkGrey,
                     title = R.string.wallet_accumulated_point,
                     point = memberInfo.accumulatedPointsToday,
-                    pointColor = MaterialTheme.colorScheme.secondary
+                    pointColor = NeutralDarkGrey
                 )
-                SizeBox(width = 10.dp)
+                SizeBox(width = 12.dp)
                 WalletInfoDailyInfoItem(
                     modifier = Modifier.weight(1f),
                     background = R.drawable.bg_point,
                     contentColor = NeutralDarkGrey,
                     title = R.string.wallet_point_can_exchange,
                     point = memberInfo.exchangeablePoints,
-                    pointColor = BlueMain
+                    pointColor = NeutralDarkGrey
                 )
             }
-            SizeBox(height = 10.dp)
+            SizeBox(height = 20.dp)
             Card(
                 modifier = Modifier
                     .fillMaxWidth()

@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -56,6 +57,7 @@ import kotlin.math.abs
 fun MyCashAndPoint(
     memberInfo: MemberInfo,
     myBalance: ExchangeBalance,
+    modifier: Modifier = Modifier,
 ) {
     var card1Visible by remember { mutableStateOf(true) }
     val transition = updateTransition(targetState = card1Visible, label = "cardTransition")
@@ -139,7 +141,9 @@ fun MyCashAndPoint(
     }
 
     Box(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
         contentAlignment = Alignment.TopCenter
     ) {
         MyPoint(
@@ -155,7 +159,8 @@ fun MyCashAndPoint(
                         }
                     }
                 }
-                .clickable { card1Visible = !card1Visible },
+                .clickable { card1Visible = !card1Visible }
+                .padding(bottom = 24.dp),
             memberInfo = memberInfo,
         )
         MyCash(
@@ -173,7 +178,8 @@ fun MyCashAndPoint(
                 }
                 .clickable {
                     card1Visible = !card1Visible
-                },
+                }
+                .padding(bottom = 24.dp),
             myBalance = myBalance
         )
     }
@@ -186,7 +192,9 @@ private fun MyPoint(
 ) {
     val isDarkMode = isSystemInDarkTheme()
     Card(
-        modifier = modifier.fillMaxWidth().height(IntrinsicSize.Min),
+        modifier = modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min),
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
         ),
@@ -248,7 +256,9 @@ fun MyCash(
     myBalance: ExchangeBalance,
 ) {
     Card(
-        modifier = modifier.fillMaxWidth().height(IntrinsicSize.Min),
+        modifier = modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min),
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
         ),

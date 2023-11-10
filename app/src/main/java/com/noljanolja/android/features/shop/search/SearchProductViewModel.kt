@@ -52,8 +52,8 @@ class SearchProductViewModel : BaseViewModel() {
                 is SearchProductEvent.GiftDetail -> {
                     navigationManager.navigate(
                         NavigationDirections.GiftDetail(
-                            event.gift.id,
-                            event.gift.code
+                            event.gift.giftId(),
+                            event.gift.qrCode
                         )
                     )
                 }

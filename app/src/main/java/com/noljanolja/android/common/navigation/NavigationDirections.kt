@@ -449,11 +449,11 @@ object NavigationDirections {
         override val destination: String = "search_product"
     }
 
-    data class GiftDetail(val giftId: Long = 0, val code: String = "") : NavigationCommand {
+    data class GiftDetail(val giftId: String = "", val code: String = "") : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf(
             navArgument("giftId") {
-                defaultValue = 0
-                type = NavType.LongType
+                defaultValue = ""
+                type = NavType.StringType
             },
             navArgument("code") {
                 defaultValue = ""

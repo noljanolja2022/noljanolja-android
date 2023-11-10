@@ -63,7 +63,7 @@ private fun CouponsContent(
                 CouponItem(
                     gift = it,
                     onUse = {
-                        handleEvent(CouponsEvent.GiftDetail(it.id, it.code))
+                        handleEvent(CouponsEvent.GiftDetail(it.giftId(), it.qrCode))
                     }
                 )
             }
