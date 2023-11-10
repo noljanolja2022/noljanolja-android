@@ -11,6 +11,6 @@ interface ShopRepository {
     suspend fun clearAll()
     suspend fun getGifts(searchText: String): Result<List<Gift>>
     suspend fun getMyGifts(): Result<List<Gift>>
-    suspend fun getGiftDetail(id: Long): Result<Gift>
-    suspend fun buyGift(id: Long): Result<Gift>
+    suspend fun getGiftDetail(id: String): Result<Gift>
+    suspend fun buyGift(id: String): Result<Gift>
 }

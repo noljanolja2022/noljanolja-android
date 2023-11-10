@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 
 class GiftDetailViewModel(
-    private val giftId: Long,
+    private val giftId: String,
     private val code: String,
 ) : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow<UiState<GiftDetailUiData>>(
@@ -39,7 +39,7 @@ class GiftDetailViewModel(
             val gift = coreManager.getGiftDetail(giftId).getOrDefault(Gift())
             _uiStateFlow.emit(
                 UiState(
-                    data = GiftDetailUiData(gift.copy(code = code))
+                    data = GiftDetailUiData(gift.copy(qrCode = code))
                 )
             )
         }

@@ -23,6 +23,10 @@ import com.noljanolja.android.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScaffoldWithRoundedContent(
+    roundedCornerShape: RoundedCornerShape = RoundedCornerShape(
+        topStart = 40.dp,
+        topEnd = 40.dp,
+    ),
     background: @Composable (() -> Unit)? = null,
     heading: @Composable () -> Unit = {},
     content: @Composable () -> Unit = {},
@@ -45,10 +49,7 @@ fun ScaffoldWithRoundedContent(
                 heading.invoke()
                 Card(
                     modifier = Modifier.fillMaxSize(),
-                    shape = RoundedCornerShape(
-                        topStart = 40.dp,
-                        topEnd = 40.dp,
-                    ),
+                    shape = roundedCornerShape,
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
                 ) {
                     content.invoke()
@@ -60,6 +61,10 @@ fun ScaffoldWithRoundedContent(
 
 @Composable
 fun ScaffoldWithCircleBgRoundedContent(
+    roundedCornerShape: RoundedCornerShape = RoundedCornerShape(
+        topStart = 40.dp,
+        topEnd = 40.dp,
+    ),
     heading: @Composable () -> Unit = {},
     content: @Composable () -> Unit = {},
 ) {
@@ -73,6 +78,29 @@ fun ScaffoldWithCircleBgRoundedContent(
             )
         },
         heading = heading,
-        content = content
+        content = content,
+        roundedCornerShape = roundedCornerShape
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ScaffoldWithCircleBackground(
+    content: @Composable () -> Unit = {},
+    roundedCornerShape: RoundedCornerShape = RoundedCornerShape(
+        topStart = 40.dp,
+        topEnd = 40.dp,
+    ),
+) {
+    Scaffold() { paddingValues ->
+        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            Image(
+                painter = painterResource(R.drawable.bg_with_circle),
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.FillWidth,
+                contentDescription = null
+            )
+            content()
+        }
+    }
 }

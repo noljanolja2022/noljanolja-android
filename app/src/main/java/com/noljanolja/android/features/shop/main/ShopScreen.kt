@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -104,7 +103,14 @@ private fun ShopContent(
                 item {
                     ExchangeCoupons(
                         coupons = data.myGifts,
-                        onItemClick = { handleEvent(ShopEvent.GiftDetail(it.id, it.code)) },
+                        onItemClick = {
+                            handleEvent(
+                                ShopEvent.GiftDetail(
+                                    it.giftId(),
+                                    it.qrCode
+                                )
+                            )
+                        },
                         viewAllCoupons = {
                             handleEvent(ShopEvent.ViewAllCoupons)
                         }
@@ -114,7 +120,7 @@ private fun ShopContent(
                     gifts = data.gifts,
                     memberInfo = memberInfo,
                     onItemClick = {
-                        handleEvent(ShopEvent.GiftDetail(it.id, it.code))
+                        handleEvent(ShopEvent.GiftDetail(it.id, it.qrCode))
                     }
                 )
             }
@@ -224,7 +230,7 @@ private fun ExchangeCoupons(
         Icon(
             Icons.Default.ChevronRight,
             contentDescription = null,
-            tint = Color.White,
+            tint = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
                 .size(24.dp)
                 .clickable {

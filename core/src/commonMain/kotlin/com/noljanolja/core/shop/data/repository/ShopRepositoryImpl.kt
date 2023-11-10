@@ -55,7 +55,7 @@ internal class ShopRepositoryImpl(
         }
     }
 
-    override suspend fun getGiftDetail(id: Long): Result<Gift> {
+    override suspend fun getGiftDetail(id: String): Result<Gift> {
         return try {
             val response = shopApi.getGiftDetail(GetGiftRequest(id))
             if (response.isSuccessful()) {
@@ -68,7 +68,7 @@ internal class ShopRepositoryImpl(
         }
     }
 
-    override suspend fun buyGift(id: Long): Result<Gift> {
+    override suspend fun buyGift(id: String): Result<Gift> {
         return try {
             val response = shopApi.buyGift(BuildGiftRequest(id))
             if (response.isSuccessful()) {
