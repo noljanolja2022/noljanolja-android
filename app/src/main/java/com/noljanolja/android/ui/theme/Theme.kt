@@ -102,6 +102,9 @@ fun MaterialTheme.colorBackgroundTransaction(darkTheme: Boolean = isSystemInDark
     }
 
 @Composable
+fun MaterialTheme.primaryColor() = colorScheme.primary
+
+@Composable
 fun MaterialTheme.systemGreen(darkTheme: Boolean = isSystemInDarkTheme()) =
     if (darkTheme) {
         Color(0xFF34C759)

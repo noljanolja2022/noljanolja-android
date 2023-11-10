@@ -249,6 +249,7 @@
     <string name="setting_license_title">오픈소스 라이센스</string>
     <string name="setting_about_us_title">About us</string>
     <string name="common_yes">예</string>
+    <string name="common_no">아니</string>
     <string name="common_success">성공</string>
     <string name="chat_settings_title">채팅 설정</string>
     <string name="chat_settings_change_avatar">프로필 변경</string>
@@ -307,6 +308,8 @@
     <string name="wallet_every_day">매일매일</string>
     <string name="common_share">공유</string>
     <string name="common_share_success">공유 성공</string>
+    <string name="common_open_app">“Nolgu Bulgu” 는 “%s” 을 열고 싶어합니다.</string>
+    <string name="common_install_app">이 기능을 사용하려면 "%s" 을 설치하세요.</string>
     <string name="referral_receive_point">축하합니다! 나와 내가 추천한 친구 모두 %d 포인트를 얻었습니다.</string>
     <string name="invalid_referral">유효하지 않은 추천 코드</string>
     <string name="referral_code">추천 코드</string>

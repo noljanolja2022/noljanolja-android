@@ -21,6 +21,7 @@
     <string name="common_cancel">Cancel</string>
     <string name="common_confirm">Confirm</string>
     <string name="common_yes">Yes</string>
+    <string name="common_no">No</string>
     <string name="common_skip">Skip</string>
     <string name="common_error_title">Error</string>
     <string name="common_error_description">An unexpected error has occurred. Please try again.</string>
@@ -119,7 +120,7 @@
     <string name="telephone_number_service_center">1588-1588</string>
     <!--    My info-->
     <string name="my_info">My Info</string>
-    <string name="edit_member_infomation">Edit member infomation</string>
+    <string name="edit_member_infomation">Edit member information</string>
     <string name="change_password">Change Password</string>
     <string name="exchange_account_management">Exchange Account Management</string>
 
@@ -362,7 +363,9 @@
     <string name="wallet_every_day">Everyday</string>
     <string name="common_share">Share</string>
     <string name="common_share_success">Share success</string>
-    <string name="referral_receive_point">Congratulation! You and your friend have just  got %d Points from referal code.</string>
+    <string name="common_open_app">“Nolgu Bulgu” wants to open “%s”</string>
+    <string name="common_install_app">Please install "%s" to use this feature.</string>
+    <string name="referral_receive_point">Congratulation! You and your friend have just  got %d Points from referral code.</string>
     <string name="invalid_referral">Invalid referral code</string>
     <string name="referral_code">Referral code</string>
     <string name="please_enter_referral_code">Please enter referral code to get bonus gifts.</string>

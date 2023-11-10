@@ -1,9 +1,7 @@
 package com.noljanolja.android.util
 
 import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
-import android.content.Intent
+import android.content.*
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Environment
@@ -15,16 +13,16 @@ import coil.Coil
 import coil.memory.MemoryCache
 import com.noljanolja.android.BuildConfig
 import com.noljanolja.android.R
+import com.noljanolja.android.common.data.*
 import com.noljanolja.android.common.error.PhoneNotAvailableFailure
 import com.noljanolja.android.common.error.QrNotValidFailure
 import com.noljanolja.android.common.error.ValidEmailFailure
 import com.noljanolja.android.common.error.ValidPhoneFailure
 import com.noljanolja.core.file.model.FileInfo
 import okio.Path.Companion.toPath
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.util.UUID
+import java.io.*
+import java.util.*
+
 
 fun Context.showToast(
     text: String?,
@@ -181,6 +179,29 @@ fun Context.shareText(text: String) {
 
     val shareIntent = Intent.createChooser(sendIntent, null)
     startActivity(shareIntent)
+}
+
+fun Context.copyToClipboard(text: String) {
+    val clipboardManager =
+        getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clip = ClipData.newPlainText("copy", text)
+    clipboardManager.setPrimaryClip(clip)
+}
+
+fun Context.shareToAnotherApp(videoUrl: String, shareToAppData: ShareToAppData) {
+    val intent = Intent(Intent.ACTION_SEND).apply {
+        type = "text/plain"
+        putExtra(Intent.EXTRA_TEXT, videoUrl)
+        setPackage(shareToAppData.packageName)// Replace with the actual Facebook app package name
+    }
+    if (intent.resolveActivity(packageManager) == null) {
+        showToast(getString(R.string.common_install_app, shareToAppData.appName))
+    } else {
+        try {
+            startActivity(intent)
+        } catch (_: Exception) {
+        }
+    }
 }
 
 fun Context.getClientId() = if (BuildConfig.DEBUG) {
