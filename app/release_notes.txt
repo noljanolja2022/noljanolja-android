@@ -1,3 +1,4 @@
+- 1.1.12: Update new flow shop
 - 1.1.11: Update HomeScreen, Close PIP when convert point, enable Chat
 - 1.1.7: Login with email password
 - 1.1.6: Full screen ads
