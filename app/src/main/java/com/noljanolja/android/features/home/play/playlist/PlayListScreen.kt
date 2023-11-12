@@ -1,77 +1,48 @@
 package com.noljanolja.android.features.home.play.playlist
 
-import android.content.res.Configuration
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
+import android.content.res.*
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.*
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.*
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Divider
+import androidx.compose.material.pullrefresh.*
+import androidx.compose.material3.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.*
+import androidx.compose.ui.draw.*
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.layout.*
+import androidx.compose.ui.platform.*
+import androidx.compose.ui.res.*
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.*
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.SubcomposeAsyncImage
-import coil.request.ImageRequest
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
+import androidx.compose.ui.text.style.*
+import androidx.compose.ui.unit.*
+import androidx.lifecycle.compose.*
+import coil.compose.*
+import coil.request.*
+import com.google.accompanist.pager.*
 import com.noljanolja.android.R
 import com.noljanolja.android.common.Const.VIDEO_IMAGE_RATIO
-import com.noljanolja.android.common.base.UiState
-import com.noljanolja.android.features.home.play.optionsvideo.OptionVideoBottomBottomSheet
+import com.noljanolja.android.common.base.*
+import com.noljanolja.android.features.home.play.optionsvideo.*
 import com.noljanolja.android.ui.composable.*
 import com.noljanolja.android.ui.theme.*
-import com.noljanolja.android.util.getShortDescription
-import com.noljanolja.core.video.domain.model.Video
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import com.noljanolja.android.util.*
+import com.noljanolja.core.video.domain.model.*
+import kotlinx.coroutines.*
+import org.koin.androidx.compose.*
 
 @Composable
 fun PlayListScreen(
@@ -184,18 +155,20 @@ private fun PlayListContent(
 //                SizeBox(height = 12.dp)
 //            }
 
-            watchingVideos(
-                videos = data.watchingVideos,
-                onClick = {
-                    handleEvent(PlayListEvent.PlayVideo(it.id))
-                },
-                onShowAll = {
-                    handleEvent(PlayListEvent.Uncompleted)
-                }
-            )
-            item {
-                if (data.watchingVideos.isNotEmpty() && data.todayVideos.isNotEmpty()) {
-                    Divider(thickness = 1.dp, modifier = Modifier.padding(vertical = 16.dp))
+            if (data.watchingVideos.isNotEmpty()) {
+                watchingVideos(
+                    videos = data.watchingVideos,
+                    onClick = {
+                        handleEvent(PlayListEvent.PlayVideo(it.id))
+                    },
+                    onShowAll = {
+                        handleEvent(PlayListEvent.Uncompleted)
+                    }
+                )
+                item {
+                    if (data.watchingVideos.isNotEmpty() && data.todayVideos.isNotEmpty()) {
+                        Divider(thickness = 1.dp, modifier = Modifier.padding(vertical = 16.dp))
+                    }
                 }
             }
 
@@ -447,18 +420,20 @@ fun TrendingVideo(
                 onClick(video)
             }
     )
-    Text(
-        text = stringResource(id = R.string.get_point_after_watching, video.totalPoints),
-        style = MaterialTheme.typography.bodyMedium.copy(
-            fontWeight = FontWeight(700),
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            textAlign = TextAlign.Center,
-        ),
-        modifier = thumbnailModifier
-            .fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.secondary)
-            .padding(vertical = 3.dp)
-    )
+    if (video.totalPoints > 0) {
+        Text(
+            text = stringResource(id = R.string.get_point_after_watching, video.totalPoints),
+            style = MaterialTheme.typography.bodyMedium.copy(
+                fontWeight = FontWeight(700),
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                textAlign = TextAlign.Center,
+            ),
+            modifier = thumbnailModifier
+                .fillMaxWidth()
+                .background(color = MaterialTheme.colorScheme.secondary)
+                .padding(vertical = 3.dp)
+        )
+    }
     SizeBox(height = 3.dp)
     Row(
         modifier = Modifier.fillMaxWidth(),
