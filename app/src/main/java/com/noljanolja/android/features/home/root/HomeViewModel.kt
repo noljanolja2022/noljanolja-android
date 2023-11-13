@@ -50,7 +50,7 @@ class HomeViewModel(private val sharedPreferenceHelper: SharedPreferenceHelper) 
         launch {
             coreManager.getPromotedVideos().getOrNull()?.firstOrNull()?.let {
                 promotedVideo = it
-//                _eventPromotedVideoFlow.emit(it)
+                _eventPromotedVideoFlow.emit(it)
             }
         }
     }
