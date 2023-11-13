@@ -18,6 +18,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import com.noljanolja.android.R
+import com.noljanolja.android.ui.theme.shopBackground
 
 @Composable
 fun HelpDialog(
@@ -33,7 +34,6 @@ fun HelpDialog(
             properties = DialogProperties(
                 usePlatformDefaultWidth = false
             ),
-
         ) {
             val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
             dialogWindowProvider.window.setGravity(Gravity.TOP)
@@ -45,7 +45,7 @@ fun HelpDialog(
                     .padding(start = 100.dp, end = 16.dp, top = topInDp)
                     .clip(RoundedCornerShape(5.dp))
                     .clickable(enabled = false) {}
-                    .background(MaterialTheme.colorScheme.background)
+                    .background(MaterialTheme.shopBackground())
                     .padding(10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {

@@ -237,7 +237,7 @@ private fun ColumnScope.PurchasedInfo(
     Text(
         text = stringResource(id = R.string.gift_give_code_to_cashier),
         style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.green300(),
+        color = MaterialTheme.colorScheme.onBackground,
         modifier = Modifier.fillMaxWidth(),
         textAlign = TextAlign.Center
     )

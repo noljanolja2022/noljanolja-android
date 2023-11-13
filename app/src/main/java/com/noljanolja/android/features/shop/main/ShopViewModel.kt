@@ -5,6 +5,7 @@ import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
+import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
 import com.noljanolja.core.shop.domain.model.Gift
 import kotlinx.coroutines.delay
@@ -22,10 +23,8 @@ class ShopViewModel : BaseViewModel() {
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = MemberInfo()
     )
-
-    init {
-        refresh()
-    }
+    private var _giftPage = 1
+    private var _myGiftPage = 1
 
     fun handleEvent(event: ShopEvent) {
         launch {
@@ -44,7 +43,7 @@ class ShopViewModel : BaseViewModel() {
         }
     }
 
-    private fun refresh() {
+    fun refresh() {
         launch {
             val currentData = _uiStateFlow.value
             _uiStateFlow.emit(
@@ -55,9 +54,14 @@ class ShopViewModel : BaseViewModel() {
             )
             val gifts = coreManager.getGifts().getOrDefault(emptyList())
             val myGifts = coreManager.getMyGifts().getOrDefault(emptyList())
+            val myBalance = coreManager.getExchangeBalance().getOrDefault(ExchangeBalance())
             _uiStateFlow.emit(
                 UiState(
-                    data = ShopUiData(gifts = gifts, myGifts = myGifts)
+                    data = ShopUiData(
+                        gifts = gifts,
+                        myGifts = myGifts,
+                        myBalance = myBalance
+                    )
                 )
             )
         }
@@ -65,6 +69,7 @@ class ShopViewModel : BaseViewModel() {
 }
 
 data class ShopUiData(
+    val myBalance: ExchangeBalance = ExchangeBalance(),
     val gifts: List<Gift> = emptyList(),
     val myGifts: List<Gift> = emptyList(),
 )

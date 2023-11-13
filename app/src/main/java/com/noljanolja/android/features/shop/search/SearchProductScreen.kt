@@ -277,7 +277,6 @@ private fun SearchResult(
             items(gifts) {
                 ProductItem(
                     gift = it,
-                    memberPoint = memberInfo.point,
                     modifier = Modifier.weight(1F),
                     onClick = {
                         onItemClick.invoke(it)
