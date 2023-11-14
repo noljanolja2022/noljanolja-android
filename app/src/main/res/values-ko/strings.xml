@@ -255,6 +255,8 @@
     <string name="chat_settings_change_avatar">프로필 변경</string>
     <string name="video_earn_point">"+ %s 적립"</string>
     <string name="add_friend_chat_now">지금 대화하기</string>
+    <string name="add_friend_request_point">요청 포인트</string>
+    <string name="add_friend_send_point">포인트 보내기</string>
     <string name="add_friend_scan_qr_to_add">친구추가를 위해 QR 코드를 스캔해주세요</string>
     <string name="add_friend_title">친구 추가</string>
     <string name="add_friend_search_by_phone">번호로 찾기</string>

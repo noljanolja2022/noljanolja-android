@@ -10,4 +10,10 @@ sealed interface FriendsEvent {
     object OpenPhoneSettings : FriendsEvent
 
     object AddFriend : FriendsEvent
+
+    data class OpenFriendOption(
+        val friendId: String,
+        val friendName: String,
+        val friendAvatar: String
+    ) : FriendsEvent
 }

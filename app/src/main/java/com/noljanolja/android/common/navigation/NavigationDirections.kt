@@ -514,6 +514,33 @@ object NavigationDirections {
         override val destination: String = "phone_settings"
     }
 
+    data class FriendOption(
+        val friendId: String = "",
+        val friendName: String = "",
+        val friendAvatar: String = ""
+    ) : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf(
+            navArgument("friendId") {
+                defaultValue = ""
+                type = NavType.StringType
+            },
+            navArgument("friendName") {
+                defaultValue = ""
+                type = NavType.StringType
+            },
+            navArgument("friendAvatar") {
+                defaultValue = ""
+                type = NavType.StringType
+            },
+        )
+        override val options: NavOptions? = null
+        override val destination: String =
+            "friend_option?friendId={selectMessageId}&friendName={friendName}&friendAvatar={friendAvatar}"
+
+        override fun createDestination() =
+            "friend_option?friendId=$friendId&friendName=$friendName&friendAvatar=$friendAvatar"
+    }
+
     data class SelectShareMessage(
         val selectMessageId: Long,
         val fromConversationId: Long,

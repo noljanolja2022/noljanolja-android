@@ -163,6 +163,13 @@ private fun FriendsScreenContent(
                                         scrollState = scrollState,
                                         contacts = visibleContacts,
                                         onItemClick = {
+                                            handleEvent(
+                                                FriendsEvent.OpenFriendOption(
+                                                    friendId = it.id,
+                                                    friendName = it.name,
+                                                    friendAvatar = it.avatar ?: ""
+                                                )
+                                            )
                                         },
                                         loadMoreContacts = {
                                             handleEvent(FriendsEvent.LoadMore)

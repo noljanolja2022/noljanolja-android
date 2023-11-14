@@ -32,6 +32,18 @@ class FriendsViewModel : BaseViewModel() {
                     navigationManager.navigate(NavigationDirections.PhoneSettings)
                 }
 
+                is FriendsEvent.OpenFriendOption -> {
+                    event.run {
+                        navigationManager.navigate(
+                            NavigationDirections.FriendOption(
+                                friendId = friendId,
+                                friendName = friendName,
+                                friendAvatar = friendAvatar
+                            )
+                        )
+                    }
+                }
+
                 FriendsEvent.GetContacts -> getContacts()
                 FriendsEvent.SyncContacts -> syncContacts()
 

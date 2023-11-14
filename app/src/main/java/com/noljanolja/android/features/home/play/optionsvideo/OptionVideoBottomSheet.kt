@@ -449,7 +449,7 @@ private fun ConfirmDialog(
                     color = MaterialTheme.primaryColor(),
                     textAlign = TextAlign.Center
                 )
-                PaddingHorizontal(DefaultValue.PADDING_HORIZONTAL_SCREEN)
+                MarginHorizontal(DefaultValue.PADDING_HORIZONTAL_SCREEN)
                 Text(
                     text = stringResource(R.string.common_yes).uppercase(),
                     style = Typography.titleSmall,
