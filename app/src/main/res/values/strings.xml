@@ -343,10 +343,10 @@
     <string name="common_use_now">Use now</string>
     <string name="shop_order_coupon_success">Your order has been completed. Check in Exchanged Coupon.</string>
     <string name="gift_value_point">%s P</string>
-    <string name="gift_value_coin">%s Coin</string>
-    <string name="gift_holding_point">Holding points</string>
-    <string name="gift_deduction_point">Deduction point</string>
-    <string name="gift_remaining_point">Remaining points</string>
+    <string name="gift_value_coin">%s C</string>
+    <string name="gift_holding_point">Holding coins</string>
+    <string name="gift_deduction_point">Deduction coins</string>
+    <string name="gift_remaining_point">Remaining coins</string>
     <string name="gift_purchase">Purchase</string>
     <string name="gift_give_code_to_cashier">Give this Code to the cashier to get products</string>
     <string name="shop_coupon">Coupon</string>
