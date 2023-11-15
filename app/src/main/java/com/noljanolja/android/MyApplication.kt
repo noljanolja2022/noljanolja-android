@@ -360,7 +360,7 @@ class MyApplication : Application() {
                     ConversationMediaViewModel(get())
                 }
                 viewModel {
-                    FriendOptionViewModel(get())
+                    FriendOptionViewModel(get(), get())
                 }
                 viewModel {
                     FriendsViewModel()

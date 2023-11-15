@@ -12,7 +12,8 @@ import kotlinx.coroutines.flow.*
  */
 
 class FriendOptionViewModel(
-    private val friendId: String = ""
+    private val friendId: String = "",
+    private val friendName: String = ""
 ) : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow(UiState<User>())
     val uiStateFlow = _uiStateFlow.asStateFlow()
@@ -29,7 +30,13 @@ class FriendOptionViewModel(
                 FriendOptionEvent.GoBack -> navigationManager.navigate(NavigationDirections.Back)
 
                 FriendOptionEvent.GoToChatScreen -> {
-//                    navigationManager.navigate()navigate
+                    navigationManager.navigate(
+                        NavigationDirections.Chat(
+                            conversationId = 0,
+                            userIds = friendId,
+                            title = friendName,
+                        )
+                    )
                 }
             }
         }

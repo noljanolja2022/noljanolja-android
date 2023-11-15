@@ -535,7 +535,7 @@ object NavigationDirections {
         )
         override val options: NavOptions? = null
         override val destination: String =
-            "friend_option?friendId={selectMessageId}&friendName={friendName}&friendAvatar={friendAvatar}"
+            "friend_option?friendId={friendId}&friendName={friendName}&friendAvatar={friendAvatar}"
 
         override fun createDestination() =
             "friend_option?friendId=$friendId&friendName=$friendName&friendAvatar=$friendAvatar"

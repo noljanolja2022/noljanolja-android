@@ -39,7 +39,7 @@ fun FriendOptionScreen(
     friendId: String,
     friendName: String,
     friendAvatar: String,
-    viewModel: FriendOptionViewModel = getViewModel { parametersOf(friendId) }
+    viewModel: FriendOptionViewModel = getViewModel { parametersOf(friendId, friendName) }
 ) {
     viewModel.run {
         val memberInfo by memberInfoFlow.collectAsStateWithLifecycle()
@@ -152,11 +152,7 @@ private fun FriendOptionContent(
                     DefaultMediumNative2(context = it),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f)
-                        .heightIn(
-                            min = 100.dp,
-                            max = 200.dp
-                        )
+                        .wrapContentHeight()
                 )
             }
         }
@@ -180,7 +176,7 @@ private fun MyPoint(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(95.dp),
+                .height(100.dp),
             contentAlignment = Alignment.CenterStart
         ) {
             Image(
