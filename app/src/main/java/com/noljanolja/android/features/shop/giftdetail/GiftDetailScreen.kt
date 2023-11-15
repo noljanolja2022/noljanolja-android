@@ -2,9 +2,11 @@ package com.noljanolja.android.features.shop.giftdetail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -36,6 +38,10 @@ import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import coil.request.ImageRequest
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.ui.composable.CommonTopAppBar
@@ -257,7 +263,7 @@ private fun GiftImage(
     val image = gift.qrCode.takeIf { it.isNotBlank() } ?: gift.image
     SubcomposeAsyncImage(
         ImageRequest.Builder(context = LocalContext.current)
-            .data("$image")
+            .data("1$image")
             .build(),
         contentDescription = null,
         modifier = modifier
@@ -268,26 +274,54 @@ private fun GiftImage(
             SubcomposeAsyncImageContent(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight(),
+                    .aspectRatio(1f)
+                    .background(MaterialTheme.colorScheme.background),
                 contentScale = ContentScale.FillWidth
             )
         } else {
             when (painter.state) {
                 is AsyncImagePainter.State.Loading -> {
-                    Text("Loading code")
+                    LoadingImage()
                 }
 
                 is AsyncImagePainter.State.Error -> {
-                    Text("Loading code error")
+                    ImageError()
                 }
 
                 else -> SubcomposeAsyncImageContent(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentHeight(),
+                        .wrapContentHeight()
+                        .background(MaterialTheme.colorScheme.background),
                     contentScale = ContentScale.FillWidth
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun LoadingImage(modifier: Modifier = Modifier) {
+    Box {
+        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.animation_image_loading))
+        val progress by animateLottieCompositionAsState(composition)
+        LottieAnimation(
+            modifier = Modifier.align(Alignment.Center),
+            composition = composition,
+            progress = { progress }
+        )
+    }
+}
+
+@Composable
+private fun ImageError(modifier: Modifier = Modifier) {
+    Box {
+        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.animation_error_404))
+        val progress by animateLottieCompositionAsState(composition)
+        LottieAnimation(
+            modifier = Modifier.align(Alignment.Center),
+            composition = composition,
+            progress = { progress }
+        )
     }
 }
