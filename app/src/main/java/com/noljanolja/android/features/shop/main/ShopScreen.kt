@@ -66,6 +66,7 @@ import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.NeutralDarkGrey
 import com.noljanolja.android.ui.theme.Orange300
 import com.noljanolja.android.ui.theme.PrimaryGreen
+import com.noljanolja.android.ui.theme.shopItemBackground
 import com.noljanolja.android.ui.theme.textColor
 import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.ui.theme.withMedium
@@ -271,7 +272,8 @@ fun LazyListScope.shop(
                     .weight(1F),
                 onClick = {
                     onItemClick.invoke(it)
-                }
+                },
+                containerColor = MaterialTheme.shopItemBackground()
             )
             SizeBox(width = 12.dp)
             gifts.getOrNull(row * 2 + 1)?.let {
@@ -281,7 +283,8 @@ fun LazyListScope.shop(
                         .weight(1F),
                     onClick = {
                         onItemClick.invoke(it)
-                    }
+                    },
+                    containerColor = MaterialTheme.shopItemBackground()
                 )
             } ?: Box(
                 modifier = Modifier
@@ -308,7 +311,8 @@ private fun LazyListScope.vouchers(
                     .weight(1F),
                 onUse = {
                     onUse(myGifts[row * 2])
-                }
+                },
+                containerColor = MaterialTheme.shopItemBackground()
             )
             SizeBox(width = 12.dp)
             myGifts.getOrNull(row * 2 + 1)?.let {
@@ -318,7 +322,8 @@ private fun LazyListScope.vouchers(
                         .weight(1F),
                     onUse = {
                         onUse.invoke(it)
-                    }
+                    },
+                    containerColor = MaterialTheme.shopItemBackground()
                 )
             } ?: Box(
                 modifier = Modifier

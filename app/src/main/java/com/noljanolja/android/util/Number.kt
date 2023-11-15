@@ -3,11 +3,17 @@ package com.noljanolja.android.util
 import android.content.Context
 import android.util.TypedValue
 import com.noljanolja.android.R
+import java.text.DecimalFormat
 import java.text.NumberFormat
 import kotlin.time.Duration.Companion.seconds
 
 fun Int?.orZero() = this ?: 0
 fun Long?.orZero() = this ?: 0L
+
+fun Double.formatDouble(): String {
+    val decimalFormat = DecimalFormat("#.##")
+    return decimalFormat.format(this)
+}
 
 fun Number.formatDigitsNumber(): String {
     val formatter = NumberFormat.getInstance()

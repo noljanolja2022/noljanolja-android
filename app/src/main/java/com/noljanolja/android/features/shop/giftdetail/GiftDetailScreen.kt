@@ -41,13 +41,12 @@ import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.composable.WarningDialog
 import com.noljanolja.android.ui.composable.rememberQrBitmapPainter
-import com.noljanolja.android.ui.theme.green300
 import com.noljanolja.android.ui.theme.systemRed100
 import com.noljanolja.android.ui.theme.withBold
-import com.noljanolja.android.util.formatDigitsNumber
+import com.noljanolja.android.util.formatDouble
 import com.noljanolja.android.util.secondaryTextColor
 import com.noljanolja.android.util.showError
-import com.noljanolja.core.loyalty.domain.model.MemberInfo
+import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
 import com.noljanolja.core.shop.domain.model.Gift
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
@@ -61,7 +60,7 @@ fun GiftDetailScreen(
     val context = LocalContext.current
     var showPurchaseDialog by remember { mutableStateOf(false) }
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    val memberInfo by viewModel.memberInfoFlow.collectAsStateWithLifecycle()
+    val myBalance by viewModel.myBalanceFlow.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel.buyGiftSuccessEvent) {
         viewModel.buyGiftSuccessEvent.collect {
@@ -76,7 +75,7 @@ fun GiftDetailScreen(
 
     GiftDetailContent(
         uiState = uiState,
-        memberInfo = memberInfo,
+        myBalance = myBalance,
         handleEvent = viewModel::handleEvent
     )
     WarningDialog(
@@ -98,7 +97,7 @@ fun GiftDetailScreen(
 @Composable
 private fun GiftDetailContent(
     uiState: UiState<GiftDetailUiData>,
-    memberInfo: MemberInfo,
+    myBalance: ExchangeBalance,
     handleEvent: (GiftDetailEvent) -> Unit,
 ) {
     ScaffoldWithUiState(
@@ -139,7 +138,7 @@ private fun GiftDetailContent(
                 PurchasedInfo(gift)
             } else {
                 PurchaseInfo(
-                    memberInfo = memberInfo,
+                    myBalance = myBalance,
                     gift = gift,
                     onPurchase = {
                         handleEvent(GiftDetailEvent.Purchase)
@@ -152,7 +151,7 @@ private fun GiftDetailContent(
 
 @Composable
 private fun ColumnScope.PurchaseInfo(
-    memberInfo: MemberInfo,
+    myBalance: ExchangeBalance,
     gift: Gift,
     onPurchase: () -> Unit,
 ) {
@@ -168,8 +167,8 @@ private fun ColumnScope.PurchaseInfo(
         )
         Text(
             text = stringResource(
-                id = R.string.gift_value_point,
-                memberInfo.point.formatDigitsNumber()
+                id = R.string.gift_value_coin,
+                myBalance.balance.formatDouble()
             ),
             style = MaterialTheme.typography.bodyLarge.withBold()
         )
@@ -186,7 +185,7 @@ private fun ColumnScope.PurchaseInfo(
             color = MaterialTheme.secondaryTextColor()
         )
         Text(
-            text = stringResource(id = R.string.gift_value_point, gift.price.formatDigitsNumber()),
+            text = stringResource(id = R.string.gift_value_coin, gift.price.formatDouble()),
             style = MaterialTheme.typography.bodyLarge.withBold(),
             color = MaterialTheme.systemRed100()
         )
@@ -205,7 +204,7 @@ private fun ColumnScope.PurchaseInfo(
         Text(
             text = stringResource(
                 id = R.string.gift_value_point,
-                (memberInfo.point - gift.price).formatDigitsNumber()
+                (myBalance.balance - gift.price).formatDouble()
             ),
             style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.secondary
