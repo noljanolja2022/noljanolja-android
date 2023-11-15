@@ -46,6 +46,7 @@
     <string name="common_copy_success">Copied in clipboard</string>
     <string name="common_warning">Warning</string>
     <string name="common_all">All</string>
+    <string name="common_send">Send</string>
     <string name="common_download">Download</string>
 
     <!--    countries-->
