@@ -3,6 +3,8 @@ package com.noljanolja.android.ui.composable
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.*
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -12,12 +14,16 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.painter.*
 import androidx.compose.ui.graphics.vector.*
+import androidx.compose.ui.res.*
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.*
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.*
+import com.noljanolja.android.R
 import com.noljanolja.android.extensions.*
-import com.noljanolja.android.ui.theme.withMedium
+import com.noljanolja.android.ui.theme.*
 
 @Composable
 fun TwoButtonInRow(
@@ -195,10 +201,77 @@ fun AppIconButton(
     }
 }
 
+@Composable
+internal fun ButtonRadius(
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    radius: Int = 5,
+    title: String,
+    textSize: Int = 14,
+    bgColor: Color,
+    icon: Painter? = null,
+    textColor: Color = Color.White,
+    bgDisableColor: Color = NeutralDeepGrey,
+    onClick: () -> Unit
+) {
+    Button(
+        enabled = enabled,
+        onClick = onClick,
+        modifier = Modifier
+            .then(modifier),
+        shape = RoundedCornerShape(radius.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = bgColor,
+            disabledContainerColor = bgDisableColor
+        ),
+        elevation = null,
+    ) {
+        icon?.let {
+            Icon(
+                it,
+                contentDescription = null,
+                tint = textColor,
+                modifier = Modifier.size(textSize.dp)
+            )
+            MarginHorizontal(5)
+        }
+        Text(
+            text = title,
+            style = Typography.bodyMedium.copy(
+                color = textColor,
+                fontSize = textSize.sp
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
 // Preview
 @Preview
 @Composable
 private fun TwoButtonInRowPreview() {
     TwoButtonInRow(firstText = "Login", secondText = "Signup", indexFocused = 1, firstClick = { }) {
     }
+}
+
+@Preview
+@Composable
+private fun PrimaryButtonPreview() {
+    PrimaryButton(
+        text = "Test",
+        onClick = {}
+    )
+}
+
+@Preview
+@Composable
+private fun ButtonRadiusPreview() {
+    ButtonRadius(
+        title = "Test",
+        bgColor = PictonBlue,
+        textColor = Color.Black,
+        icon = painterResource(id = R.drawable.ic_chat),
+        onClick = {}
+    )
 }

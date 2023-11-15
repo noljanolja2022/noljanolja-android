@@ -1,73 +1,57 @@
 package com.noljanolja.android
 
-import android.app.Activity
-import android.content.Intent
-import android.net.Uri
-import android.provider.Settings
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.ViewModel
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navigation
-import com.noljanolja.android.common.navigation.NavObject
-import com.noljanolja.android.common.navigation.NavigationDirections
-import com.noljanolja.android.common.navigation.NavigationManager
-import com.noljanolja.android.features.addfriend.AddFriendViewModel
-import com.noljanolja.android.features.addfriend.SearchFriendResultScreen
-import com.noljanolja.android.features.addfriend.SearchFriendScreen
-import com.noljanolja.android.features.addreferral.AddReferralScreen
-import com.noljanolja.android.features.auth.countries.CountriesScreen
-import com.noljanolja.android.features.auth.login_or_signup.LoginOrSignupScreen
-import com.noljanolja.android.features.auth.otp.OTPScreen
-import com.noljanolja.android.features.auth.termdetail.TermDetailScreen
-import com.noljanolja.android.features.auth.terms_of_service.TermsOfServiceScreen
-import com.noljanolja.android.features.auth.updateprofile.UpdateProfileScreen
-import com.noljanolja.android.features.chatsettings.ChatSettingsScreen
-import com.noljanolja.android.features.conversationmedia.ConversationMediaScreen
-import com.noljanolja.android.features.edit_chat_title.EditChatTitleScreen
-import com.noljanolja.android.features.home.CheckinViewModel
-import com.noljanolja.android.features.home.chat.ChatScreen
-import com.noljanolja.android.features.home.chat_options.ChatOptionsScreen
-import com.noljanolja.android.features.home.contacts.ContactsScreen
-import com.noljanolja.android.features.home.info.MyInfoScreen
-import com.noljanolja.android.features.home.play.playscreen.PlayVideoActivity
-import com.noljanolja.android.features.home.play.search.SearchVideosScreen
-import com.noljanolja.android.features.home.play.uncompleted.UncompletedVideosScreen
-import com.noljanolja.android.features.home.root.HomeScreen
-import com.noljanolja.android.features.home.wallet.checkin.CheckinScreen
-import com.noljanolja.android.features.home.wallet.dashboard.WalletDashboardScreen
-import com.noljanolja.android.features.home.wallet.detail.TransactionDetailScreen
-import com.noljanolja.android.features.home.wallet.exchange.ExchangePointScreen
-import com.noljanolja.android.features.home.wallet.model.UiLoyaltyPoint
-import com.noljanolja.android.features.home.wallet.myranking.MyRankingScreen
-import com.noljanolja.android.features.home.wallet.transaction.TransactionsHistoryScreen
-import com.noljanolja.android.features.images.ViewImagesScreen
-import com.noljanolja.android.features.qrcode.ScanQrCodeScreen
-import com.noljanolja.android.features.referral.ReferralScreen
-import com.noljanolja.android.features.setting.SettingScreen
-import com.noljanolja.android.features.setting.more.AboutUsScreen
-import com.noljanolja.android.features.setting.more.FAQScreen
-import com.noljanolja.android.features.setting.more.LicenseScreen
-import com.noljanolja.android.features.sharemessage.SelectShareMessageScreen
-import com.noljanolja.android.features.shop.coupons.CouponsScreen
-import com.noljanolja.android.features.shop.giftdetail.GiftDetailScreen
-import com.noljanolja.android.features.shop.search.SearchProductScreen
-import com.noljanolja.android.features.splash.SplashScreen
-import com.noljanolja.android.util.orZero
-import com.noljanolja.android.util.showToast
-import com.noljanolja.android.util.toNavList
-import com.noljanolja.core.CoreManager
-import com.noljanolja.core.conversation.domain.model.ConversationType
+import android.app.*
+import android.content.*
+import android.net.*
+import android.provider.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.platform.*
+import androidx.lifecycle.*
+import androidx.navigation.*
+import androidx.navigation.compose.*
+import com.noljanolja.android.common.navigation.*
+import com.noljanolja.android.extensions.*
+import com.noljanolja.android.features.addfriend.*
+import com.noljanolja.android.features.addreferral.*
+import com.noljanolja.android.features.auth.countries.*
+import com.noljanolja.android.features.auth.login_or_signup.*
+import com.noljanolja.android.features.auth.otp.*
+import com.noljanolja.android.features.auth.termdetail.*
+import com.noljanolja.android.features.auth.terms_of_service.*
+import com.noljanolja.android.features.auth.updateprofile.*
+import com.noljanolja.android.features.chatsettings.*
+import com.noljanolja.android.features.conversationmedia.*
+import com.noljanolja.android.features.edit_chat_title.*
+import com.noljanolja.android.features.home.*
+import com.noljanolja.android.features.home.chat.*
+import com.noljanolja.android.features.home.chat_options.*
+import com.noljanolja.android.features.home.contacts.*
+import com.noljanolja.android.features.home.friendoption.*
+import com.noljanolja.android.features.home.info.*
+import com.noljanolja.android.features.home.play.playscreen.*
+import com.noljanolja.android.features.home.play.search.*
+import com.noljanolja.android.features.home.play.uncompleted.*
+import com.noljanolja.android.features.home.root.*
+import com.noljanolja.android.features.home.wallet.checkin.*
+import com.noljanolja.android.features.home.wallet.dashboard.*
+import com.noljanolja.android.features.home.wallet.detail.*
+import com.noljanolja.android.features.home.wallet.exchange.*
+import com.noljanolja.android.features.home.wallet.model.*
+import com.noljanolja.android.features.home.wallet.myranking.*
+import com.noljanolja.android.features.home.wallet.transaction.*
+import com.noljanolja.android.features.images.*
+import com.noljanolja.android.features.qrcode.*
+import com.noljanolja.android.features.referral.*
+import com.noljanolja.android.features.setting.*
+import com.noljanolja.android.features.setting.more.*
+import com.noljanolja.android.features.sharemessage.*
+import com.noljanolja.android.features.shop.coupons.*
+import com.noljanolja.android.features.shop.giftdetail.*
+import com.noljanolja.android.features.shop.search.*
+import com.noljanolja.android.features.splash.*
+import com.noljanolja.android.util.*
+import com.noljanolja.core.*
+import com.noljanolja.core.conversation.domain.model.*
 import org.koin.androidx.compose.get
 import org.koin.androidx.compose.getViewModel
 
@@ -183,6 +167,21 @@ private fun NavGraphBuilder.addContactsGraph() {
 
 private fun NavGraphBuilder.addChatGraph() {
     val chatDirection = NavigationDirections.Chat()
+    with(NavigationDirections.FriendOption()) {
+        composable(
+            destination,
+            arguments
+        ) {
+            val friendId = it.arguments?.getString("friendId")
+            val friendName = it.arguments?.getString("friendName")
+            val friendAvatar = it.arguments?.getString("friendAvatar")
+            FriendOptionScreen(
+                friendId = friendId.convertToString(),
+                friendName = friendName.convertToString(),
+                friendAvatar = friendAvatar.convertToString()
+            )
+        }
+    }
     composable(
         chatDirection.destination,
         chatDirection.arguments,

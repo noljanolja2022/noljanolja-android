@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.*
  */
 
 @Composable
-fun PaddingHorizontal(width: Int = 0) {
+fun MarginHorizontal(width: Int = 0) {
     Spacer(
         modifier = Modifier
             .width(width.dp)
@@ -21,7 +21,7 @@ fun PaddingHorizontal(width: Int = 0) {
 }
 
 @Composable
-fun PaddingVertical(height: Int = 0) {
+fun MarginVertical(height: Int = 0) {
     Spacer(
         modifier = Modifier
             .height(height.dp)

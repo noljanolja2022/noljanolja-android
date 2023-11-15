@@ -24,3 +24,5 @@ val LightGreen = Color(0xFFB8EB42)
 val Bronze = Color(0xFF904500)
 val Green300 = Color(0xFF4F6D00)
 val Green100 = Color(0xFFAED94A)
+
+val PictonBlue = Color(0xFF4EABF4)

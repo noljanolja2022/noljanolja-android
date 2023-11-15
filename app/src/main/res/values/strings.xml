@@ -309,6 +309,8 @@
     <string name="chat_settings_change_avatar">Change avatar</string>
     <string name="video_earn_point">+ Earn %s</string>
     <string name="add_friend_chat_now">Chat now</string>
+    <string name="add_friend_request_point">Request point</string>
+    <string name="add_friend_send_point">Send Point</string>
     <string name="add_friend_scan_qr_to_add">Scan this QR code to add me</string>
     <string name="add_friend_title">Add friend</string>
     <string name="add_friend_search_by_phone">Search by phone number</string>
