@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -263,7 +264,7 @@ private fun GiftImage(
     val image = gift.qrCode.takeIf { it.isNotBlank() } ?: gift.image
     SubcomposeAsyncImage(
         ImageRequest.Builder(context = LocalContext.current)
-            .data("1$image")
+            .data(image)
             .build(),
         contentDescription = null,
         modifier = modifier
@@ -302,13 +303,13 @@ private fun GiftImage(
 
 @Composable
 private fun LoadingImage(modifier: Modifier = Modifier) {
-    Box {
-        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.animation_image_loading))
-        val progress by animateLottieCompositionAsState(composition)
-        LottieAnimation(
-            modifier = Modifier.align(Alignment.Center),
-            composition = composition,
-            progress = { progress }
+    Box(
+        modifier = modifier.fillMaxWidth().aspectRatio(1f)
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
