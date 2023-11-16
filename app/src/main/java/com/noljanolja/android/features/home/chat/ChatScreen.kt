@@ -35,6 +35,7 @@ import coil.request.*
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.*
 import com.noljanolja.android.features.home.chat.components.*
+import com.noljanolja.android.features.home.chat_options.*
 import com.noljanolja.android.ui.composable.*
 import com.noljanolja.android.ui.theme.*
 import com.noljanolja.android.util.*
@@ -436,11 +437,11 @@ private fun MessageList(
                     nextMessage != null && message.createdAt.isSameDate(nextMessage.createdAt)
                 val sameDateWithPreviousMessage =
                     prevMessage != null && message.createdAt.isSameDate(prevMessage.createdAt)
-                val isFirstMessageByAuthorSameDay = isFirstMessageBySender ||
+                val isFirstMessageByAuthorSameDay = isLastMessageBySender ||
+                        !sameDateWithNextMessage && (sameDateWithPreviousMessage || prevMessage == null)
+                val isLastMessageByAuthorSameDay = isFirstMessageBySender ||
                         sameDateWithNextMessage && !sameDateWithPreviousMessage ||
                         nextMessage == null
-                val isLastMessageByAuthorSameDay = isLastMessageBySender ||
-                        !sameDateWithNextMessage && (sameDateWithPreviousMessage || prevMessage == null)
 
                 if (prevMessage != null && !message.createdAt.isSameDate(prevMessage.createdAt)) {
                     item {
@@ -449,6 +450,11 @@ private fun MessageList(
                 }
 
                 item(key = message.localId) {
+                    val showReaction by remember {
+                        derivedStateOf {
+                            message.reactions.isNotEmpty()
+                        }
+                    }
                     MessageRow(
                         conversationId = conversationId,
                         message = message,
@@ -457,6 +463,7 @@ private fun MessageList(
                         isLastMessageByAuthorSameDay = isLastMessageByAuthorSameDay,
                         handleEvent = handleEvent,
                         reactIcons = reactIcons,
+                        showReaction = showReaction,
                         onMessageReply = onMessageReply
                     )
                 }
@@ -798,6 +805,9 @@ private fun ChatItemBubble(
     var selectMessage by remember {
         mutableStateOf<Message?>(null)
     }
+    var showDialogConfirmDelete by remember {
+        mutableStateOf(false)
+    }
 
     Box(contentAlignment = alignment) {
         Column(
@@ -894,12 +904,7 @@ private fun ChatItemBubble(
                 onMessageReply.invoke(message)
             },
             onDelete = {
-                handleEvent(
-                    ChatEvent.DeleteMessage(
-                        messageId = message.id,
-                        removeForSelfOnly = false
-                    )
-                )
+                showDialogConfirmDelete = true
             },
             onShare = {
                 handleEvent(
@@ -912,6 +917,22 @@ private fun ChatItemBubble(
             selectMessage = null
         }
     }
+    WarningDialog(
+        isWarning = showDialogConfirmDelete,
+        title = stringResource(id = R.string.chat_delete_message_title),
+        content = stringResource(id = R.string.chat_delete_message),
+        dismissText = stringResource(id = R.string.common_no),
+        confirmText = stringResource(id = R.string.common_yes),
+        onDismiss = { showDialogConfirmDelete = false },
+        onConfirm = {
+            handleEvent(
+                ChatEvent.DeleteMessage(
+                    messageId = message.id,
+                    removeForSelfOnly = false
+                )
+            )
+        }
+    )
 }
 
 @Composable

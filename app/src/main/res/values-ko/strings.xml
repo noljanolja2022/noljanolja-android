@@ -167,6 +167,8 @@
     <string name="chat_message_event_left">%s 님이 채팅방을 나가셨습니다.</string>
     <string name="chat_message_event_joined">%s 님이 %s 님을 채팅방에 초대하였습니다.</string>
     <string name="chat_removed_conversation">채팅방 %s에서 탈퇴되었습니다.</string>
+    <string name="chat_delete_message_title">이 메시지를 삭제하시겠습니까?</string>
+    <string name="chat_delete_message">이 메시지는 채팅 화면에서 삭제됩니다.</string>
     <string name="chat_action_album">갤러리</string>
     <string name="chat_action_camera">카메라</string>
     <string name="chat_action_events">이벤트</string>
