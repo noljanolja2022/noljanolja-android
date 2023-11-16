@@ -1,18 +1,23 @@
 package com.noljanolja.android.features.shop.giftdetail
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,27 +32,32 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
+import coil.compose.SubcomposeAsyncImage
+import coil.compose.SubcomposeAsyncImageContent
+import coil.request.ImageRequest
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.ui.composable.CommonTopAppBar
-import com.noljanolja.android.ui.composable.Expanded
+import com.noljanolja.android.ui.composable.DividerElevation
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.composable.WarningDialog
-import com.noljanolja.android.ui.composable.rememberQrBitmapPainter
-import com.noljanolja.android.ui.theme.green300
+import com.noljanolja.android.ui.theme.Orange300
 import com.noljanolja.android.ui.theme.systemRed100
 import com.noljanolja.android.ui.theme.withBold
-import com.noljanolja.android.util.formatDigitsNumber
+import com.noljanolja.android.util.formatDouble
 import com.noljanolja.android.util.secondaryTextColor
 import com.noljanolja.android.util.showError
-import com.noljanolja.core.loyalty.domain.model.MemberInfo
+import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
 import com.noljanolja.core.shop.domain.model.Gift
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
@@ -61,7 +71,7 @@ fun GiftDetailScreen(
     val context = LocalContext.current
     var showPurchaseDialog by remember { mutableStateOf(false) }
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    val memberInfo by viewModel.memberInfoFlow.collectAsStateWithLifecycle()
+    val myBalance by viewModel.myBalanceFlow.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel.buyGiftSuccessEvent) {
         viewModel.buyGiftSuccessEvent.collect {
@@ -76,7 +86,7 @@ fun GiftDetailScreen(
 
     GiftDetailContent(
         uiState = uiState,
-        memberInfo = memberInfo,
+        myBalance = myBalance,
         handleEvent = viewModel::handleEvent
     )
     WarningDialog(
@@ -98,7 +108,7 @@ fun GiftDetailScreen(
 @Composable
 private fun GiftDetailContent(
     uiState: UiState<GiftDetailUiData>,
-    memberInfo: MemberInfo,
+    myBalance: ExchangeBalance,
     handleEvent: (GiftDetailEvent) -> Unit,
 ) {
     ScaffoldWithUiState(
@@ -113,38 +123,70 @@ private fun GiftDetailContent(
     ) {
         val data = uiState.data ?: return@ScaffoldWithUiState
         val gift = data.gift
+        val isPurchased = gift.qrCode.isNotBlank()
         Column(
-            Modifier
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState())
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface)
         ) {
-            AsyncImage(
-                model = gift.image,
-                contentDescription = null,
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1.2F),
-                contentScale = ContentScale.FillBounds
-            )
-            SizeBox(height = 20.dp)
-            Text(text = gift.name, fontSize = 22.sp, color = MaterialTheme.secondaryTextColor())
-            Text(text = gift.brand.name, style = MaterialTheme.typography.titleLarge)
-            Text(
-                text = gift.description,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.secondaryTextColor()
-            )
-            Divider(modifier = Modifier.padding(vertical = 30.dp))
-            if (gift.qrCode.isNotBlank()) {
-                PurchasedInfo(gift)
-            } else {
-                PurchaseInfo(
-                    memberInfo = memberInfo,
-                    gift = gift,
-                    onPurchase = {
-                        handleEvent(GiftDetailEvent.Purchase)
-                    }
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                GiftImage(
+                    gift = data.gift,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
                 )
+                Column(
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
+                ) {
+                    Text(
+                        text = gift.name,
+                        fontSize = 22.sp,
+                        color = MaterialTheme.secondaryTextColor()
+                    )
+                    Text(text = gift.brand.name, style = MaterialTheme.typography.titleLarge)
+                    Text(
+                        text = gift.description,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.secondaryTextColor()
+                    )
+                    SizeBox(height = 15.dp)
+                }
+                Divider(thickness = 1.dp)
+
+                if (!isPurchased) {
+                    Column(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(vertical = 10.dp, horizontal = 16.dp)
+                    ) {
+                        PurchaseInfo(myBalance = myBalance, gift = gift)
+                    }
+                }
+            }
+            if (!isPurchased) {
+                DividerElevation()
+                Surface(
+                    modifier = Modifier.fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.background).padding(
+                            horizontal = 16.dp,
+                            vertical = 24.dp
+                        ),
+                ) {
+                    PrimaryButton(
+                        text = stringResource(id = R.string.gift_purchase).uppercase(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp),
+                        onClick = {
+                            handleEvent(GiftDetailEvent.Purchase)
+                        }
+                    )
+                }
             }
         }
     }
@@ -152,10 +194,27 @@ private fun GiftDetailContent(
 
 @Composable
 private fun ColumnScope.PurchaseInfo(
-    memberInfo: MemberInfo,
+    myBalance: ExchangeBalance,
     gift: Gift,
-    onPurchase: () -> Unit,
 ) {
+    SizeBox(height = 15.dp)
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = stringResource(id = R.string.gift_deduction_point),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.secondaryTextColor()
+        )
+        Text(
+            text = stringResource(id = R.string.gift_value_coin, gift.price.formatDouble()),
+            style = MaterialTheme.typography.bodyLarge.withBold(),
+            color = MaterialTheme.systemRed100()
+        )
+    }
+    SizeBox(height = 8.dp)
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -168,30 +227,14 @@ private fun ColumnScope.PurchaseInfo(
         )
         Text(
             text = stringResource(
-                id = R.string.gift_value_point,
-                memberInfo.point.formatDigitsNumber()
+                id = R.string.gift_value_coin,
+                myBalance.balance.formatDouble()
             ),
             style = MaterialTheme.typography.bodyLarge.withBold()
         )
     }
     SizeBox(height = 8.dp)
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = stringResource(id = R.string.gift_deduction_point),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.secondaryTextColor()
-        )
-        Text(
-            text = stringResource(id = R.string.gift_value_point, gift.price.formatDigitsNumber()),
-            style = MaterialTheme.typography.bodyLarge.withBold(),
-            color = MaterialTheme.systemRed100()
-        )
-    }
-    SizeBox(height = 8.dp)
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -204,41 +247,82 @@ private fun ColumnScope.PurchaseInfo(
         )
         Text(
             text = stringResource(
-                id = R.string.gift_value_point,
-                (memberInfo.point - gift.price).formatDigitsNumber()
+                id = R.string.gift_value_coin,
+                (myBalance.balance - gift.price).formatDouble()
             ),
             style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
-            color = MaterialTheme.colorScheme.secondary
+            color = Orange300
         )
     }
-    SizeBox(height = 50.dp)
-    Expanded()
-    PrimaryButton(
-        text = stringResource(id = R.string.gift_purchase).uppercase(),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp),
-        onClick = onPurchase
-    )
 }
 
 @Composable
-private fun ColumnScope.PurchasedInfo(
+private fun GiftImage(
     gift: Gift,
+    modifier: Modifier = Modifier,
 ) {
-    Image(
-        painter = rememberQrBitmapPainter(gift.qrCode),
+    val image = gift.qrCode.takeIf { it.isNotBlank() } ?: gift.image
+    SubcomposeAsyncImage(
+        ImageRequest.Builder(context = LocalContext.current)
+            .data(image)
+            .build(),
         contentDescription = null,
-        modifier = Modifier
-            .fillMaxWidth(0.5F)
-            .align(Alignment.CenterHorizontally),
-    )
-    SizeBox(height = 15.dp)
-    Text(
-        text = stringResource(id = R.string.gift_give_code_to_cashier),
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onBackground,
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center
-    )
+        modifier = modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+    ) {
+        if (gift.qrCode.isBlank()) {
+            SubcomposeAsyncImageContent(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .background(MaterialTheme.colorScheme.background),
+                contentScale = ContentScale.FillWidth
+            )
+        } else {
+            when (painter.state) {
+                is AsyncImagePainter.State.Loading -> {
+                    LoadingImage()
+                }
+
+                is AsyncImagePainter.State.Error -> {
+                    ImageError()
+                }
+
+                else -> SubcomposeAsyncImageContent(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .background(MaterialTheme.colorScheme.background),
+                    contentScale = ContentScale.FillWidth
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun LoadingImage(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier.fillMaxWidth().aspectRatio(1f)
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(
+            color = MaterialTheme.colorScheme.onBackground
+        )
+    }
+}
+
+@Composable
+private fun ImageError(modifier: Modifier = Modifier) {
+    Box {
+        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.animation_error_404))
+        val progress by animateLottieCompositionAsState(composition)
+        LottieAnimation(
+            modifier = Modifier.align(Alignment.Center),
+            composition = composition,
+            progress = { progress }
+        )
+    }
 }

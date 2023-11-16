@@ -1,18 +1,15 @@
 package com.noljanolja.android.features.shop.giftdetail
 
-import androidx.lifecycle.viewModelScope
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.base.launchInMain
 import com.noljanolja.android.common.error.UnexpectedFailure
-import com.noljanolja.core.loyalty.domain.model.MemberInfo
+import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
 import com.noljanolja.core.shop.domain.model.Gift
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 
 class GiftDetailViewModel(
     private val giftId: String,
@@ -25,11 +22,9 @@ class GiftDetailViewModel(
     )
     val uiStateFlow = _uiStateFlow.asStateFlow()
 
-    val memberInfoFlow = coreManager.getMemberInfo().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = MemberInfo()
-    )
+    private val _myBalanceFlow = MutableStateFlow(ExchangeBalance())
+
+    val myBalanceFlow = _myBalanceFlow.asStateFlow()
 
     private val _buyGiftSuccessEvent = MutableSharedFlow<Boolean>()
     val buyGiftSuccessEvent = _buyGiftSuccessEvent
@@ -42,6 +37,11 @@ class GiftDetailViewModel(
                     data = GiftDetailUiData(gift.copy(qrCode = code))
                 )
             )
+        }
+        launch {
+            coreManager.getExchangeBalance().getOrNull()?.let {
+                _myBalanceFlow.emit(it)
+            }
         }
     }
 

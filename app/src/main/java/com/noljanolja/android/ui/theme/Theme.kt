@@ -87,6 +87,13 @@ fun MaterialTheme.colorBackground(darkTheme: Boolean = isSystemInDarkTheme()) = 
 }
 
 @Composable
+fun MaterialTheme.shopItemBackground(darkTheme: Boolean = isSystemInDarkTheme()) = if (darkTheme) {
+    DeeperGrey.copy(alpha = 0.3f)
+} else {
+    NeutralLight
+}
+
+@Composable
 fun MaterialTheme.shopBackground(darkTheme: Boolean = isSystemInDarkTheme()) = if (darkTheme) {
     DeeperGrey
 } else {

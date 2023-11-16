@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -30,13 +31,14 @@ import com.noljanolja.core.shop.domain.model.Gift
 fun CouponItem(
     gift: Gift,
     modifier: Modifier = Modifier,
+    containerColor: Color = MaterialTheme.colorScheme.background,
     onUse: () -> Unit,
 ) {
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background,
+            containerColor = containerColor
         ),
-        elevation = CardDefaults.cardElevation(10.dp),
+        elevation = CardDefaults.cardElevation(15.dp),
         modifier = modifier.wrapContentSize()
     ) {
         Column(
