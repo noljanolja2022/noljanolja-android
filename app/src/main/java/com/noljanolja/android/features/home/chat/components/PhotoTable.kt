@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -35,7 +36,9 @@ import coil.request.ImageRequest
 import com.noljanolja.android.R
 import com.noljanolja.android.services.PermissionChecker
 import com.noljanolja.android.services.PermissionChecker.Companion.IMAGE_PERMISSION
-import com.noljanolja.android.ui.composable.Rationale
+import com.noljanolja.android.ui.composable.*
+import com.noljanolja.android.ui.composable.ButtonRadius
+import com.noljanolja.android.ui.theme.*
 
 @OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -118,25 +121,44 @@ fun GridContent(
     mediaList: List<Pair<Uri, Long?>>,
     selectedMedia: List<Uri>,
     onMediaSelect: (List<Uri>, Boolean) -> Unit,
+    isShowSendButton: Boolean = false,
+    onSendButtonClick: () -> Unit = {}
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
-        contentPadding = PaddingValues(3.dp),
-        verticalArrangement = Arrangement.spacedBy(3.dp),
-        horizontalArrangement = Arrangement.spacedBy(3.dp),
+    Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        items(mediaList.size) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                val itemMedia = mediaList[it]
-                PhotoItem(
-                    uri = itemMedia.first,
-                    durationInMil = itemMedia.second,
-                    isSelected = selectedMedia.contains(itemMedia.first),
-                    indexSelected = selectedMedia.indexOf(itemMedia.first).plus(1),
-                    onMediaSelect = onMediaSelect
-                )
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
+            contentPadding = PaddingValues(3.dp),
+            verticalArrangement = Arrangement.spacedBy(3.dp),
+            horizontalArrangement = Arrangement.spacedBy(3.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        ) {
+            items(mediaList.size) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    val itemMedia = mediaList[it]
+                    PhotoItem(
+                        uri = itemMedia.first,
+                        durationInMil = itemMedia.second,
+                        isSelected = selectedMedia.contains(itemMedia.first),
+                        indexSelected = selectedMedia.indexOf(itemMedia.first).plus(1),
+                        onMediaSelect = onMediaSelect
+                    )
+                }
             }
+        }
+        if(isShowSendButton) {
+            ButtonRadius(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 10.dp)
+                    .height(48.dp),
+                title = stringResource(id = R.string.common_send),
+                bgColor = PrimaryGreen,
+                onClick = onSendButtonClick
+            )
         }
     }
 }

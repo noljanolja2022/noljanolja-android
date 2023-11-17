@@ -1,85 +1,52 @@
 package com.noljanolja.android.features.home.chat
 
-import android.annotation.SuppressLint
-import android.net.Uri
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import android.annotation.*
+import android.net.*
+import android.util.*
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.*
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Photo
-import androidx.compose.material.icons.outlined.Error
+import androidx.compose.material.icons.*
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.*
+import androidx.compose.ui.draw.*
+import androidx.compose.ui.focus.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.EmojiSupportMatch
-import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.input.nestedscroll.*
+import androidx.compose.ui.layout.*
+import androidx.compose.ui.platform.*
+import androidx.compose.ui.res.*
+import androidx.compose.ui.text.*
+import androidx.compose.ui.text.style.*
+import androidx.compose.ui.unit.*
 import androidx.compose.ui.unit.max
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
-import coil.compose.SubcomposeAsyncImage
-import coil.request.ImageRequest
+import androidx.lifecycle.*
+import androidx.lifecycle.compose.*
+import coil.compose.*
+import coil.request.*
 import com.noljanolja.android.R
-import com.noljanolja.android.common.base.UiState
-import com.noljanolja.android.features.home.chat.components.ChatInput
-import com.noljanolja.android.features.home.chat.components.ChatMessageMenuDialog
-import com.noljanolja.android.features.home.chat.components.ChatMessageReactionsDialog
-import com.noljanolja.android.features.home.chat.components.ChatReactions
-import com.noljanolja.android.features.home.chat.components.ClickableMessage
-import com.noljanolja.android.features.home.chat.components.GridContent
-import com.noljanolja.android.ui.composable.CommonTopAppBar
-import com.noljanolja.android.ui.composable.FullSizeWithBottomSheet
-import com.noljanolja.android.ui.composable.InfiniteListHandler
-import com.noljanolja.android.ui.composable.OvalAvatar
-import com.noljanolja.android.ui.composable.ScaffoldWithUiState
-import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.ui.composable.VerticalDivider
-import com.noljanolja.android.ui.theme.BlueGray
-import com.noljanolja.android.ui.theme.colorMyChatText
+import com.noljanolja.android.common.base.*
+import com.noljanolja.android.features.home.chat.components.*
+import com.noljanolja.android.features.home.chat_options.*
+import com.noljanolja.android.ui.composable.*
+import com.noljanolja.android.ui.theme.*
 import com.noljanolja.android.util.*
 import com.noljanolja.core.conversation.domain.model.*
-import com.noljanolja.core.media.domain.model.Sticker
-import com.noljanolja.core.utils.BASE_URL
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
-import org.koin.core.parameter.parametersOf
+import com.noljanolja.core.media.domain.model.*
+import com.noljanolja.core.utils.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import org.koin.androidx.compose.*
+import org.koin.core.parameter.*
+import kotlin.Pair
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -142,45 +109,84 @@ fun ChatScreenContent(
     }
     val bottomSheetState = rememberBottomSheetScaffoldState()
     val chatFocusRequester = remember { FocusRequester() }
-
-    FullSizeWithBottomSheet(modalSheetState = bottomSheetState, sheetContent = {
-        Column(
-            modifier = Modifier
-                .heightIn(max = (LocalConfiguration.current.screenHeightDp * 0.9f).dp)
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            Row(
-                modifier = Modifier
-                    .height(54.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    stringResource(id = R.string.common_all),
-                    style = MaterialTheme.typography.titleMedium
-                )
-                IconButton(onClick = {
-                    scope.launch {
-                        bottomSheetState.bottomSheetState.collapse()
-                    }
-                }) {
-                    Icon(Icons.Default.Close, contentDescription = null)
-                }
-            }
-            GridContent(
-                mediaList = mediaList,
-                selectedMedia = selectedMedia,
-                onMediaSelect = { mediaSelect: List<Uri>, isAdd: Boolean ->
-                    when (isAdd) {
-                        true -> selectedMedia.addAll(mediaSelect)
-                        false -> selectedMedia.removeAll(mediaSelect)
-                    }
-                }
-            )
+    val isShowSendButton by remember {
+        derivedStateOf {
+            selectedMedia.isNotEmpty() && bottomSheetState.bottomSheetState.isExpanded
         }
-    }) {
+    }
+
+    FullSizeWithBottomSheet(
+        modalSheetState = bottomSheetState,
+        sheetContent = {
+            Column(
+                modifier = Modifier
+                    .heightIn(max = (LocalConfiguration.current.screenHeightDp * 0.9f).dp)
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .height(54.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        stringResource(id = R.string.common_all),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    IconButton(onClick = {
+                        scope.launch {
+                            bottomSheetState.bottomSheetState.collapse()
+                        }
+                    }) {
+                        Icon(Icons.Default.Close, contentDescription = null)
+                    }
+                }
+                GridContent(
+                    mediaList = mediaList,
+                    selectedMedia = selectedMedia,
+                    onMediaSelect = { mediaSelect: List<Uri>, isAdd: Boolean ->
+                        when (isAdd) {
+                            true -> selectedMedia.addAll(mediaSelect)
+                            false -> selectedMedia.removeAll(mediaSelect)
+                        }
+                    },
+                    isShowSendButton = isShowSendButton,
+                    onSendButtonClick = {
+                        val mess = Message(
+                            message = "",
+                            type = MessageType.PHOTO,
+                            attachments = selectedMedia.mapNotNull {
+                                val fileInfo =
+                                    context.loadFileInfo(it) ?: return@mapNotNull null
+                                MessageAttachment(
+                                    name = "",
+                                    originalName = fileInfo.name,
+                                    type = fileInfo.contentType,
+                                    size = fileInfo.contents.size.toLong(),
+                                    contents = fileInfo.contents,
+                                    localPath = fileInfo.path.toString(),
+                                )
+                            },
+                        )
+
+                        handleEvent(
+                            ChatEvent.SendMessage(
+                                message = mess,
+                                replyToMessageId = tempReplyMessage?.id
+                            )
+                        )
+
+                        scope.launch {
+                            selectedMedia.clear()
+                            bottomSheetState.bottomSheetState.collapse()
+                        }
+                    }
+                )
+            }
+        }
+    ) {
         ScaffoldWithUiState(
             uiState = chatUiState,
             topBar = {
@@ -431,11 +437,11 @@ private fun MessageList(
                     nextMessage != null && message.createdAt.isSameDate(nextMessage.createdAt)
                 val sameDateWithPreviousMessage =
                     prevMessage != null && message.createdAt.isSameDate(prevMessage.createdAt)
-                val isFirstMessageByAuthorSameDay = isFirstMessageBySender ||
-                    sameDateWithNextMessage && !sameDateWithPreviousMessage ||
-                    nextMessage == null
-                val isLastMessageByAuthorSameDay = isLastMessageBySender ||
-                    !sameDateWithNextMessage && (sameDateWithPreviousMessage || prevMessage == null)
+                val isFirstMessageByAuthorSameDay = isLastMessageBySender ||
+                        !sameDateWithNextMessage && (sameDateWithPreviousMessage || prevMessage == null)
+                val isLastMessageByAuthorSameDay = isFirstMessageBySender ||
+                        sameDateWithNextMessage && !sameDateWithPreviousMessage ||
+                        nextMessage == null
 
                 if (prevMessage != null && !message.createdAt.isSameDate(prevMessage.createdAt)) {
                     item {
@@ -444,6 +450,11 @@ private fun MessageList(
                 }
 
                 item(key = message.localId) {
+                    val showReaction by remember {
+                        derivedStateOf {
+                            message.reactions.isNotEmpty()
+                        }
+                    }
                     MessageRow(
                         conversationId = conversationId,
                         message = message,
@@ -452,6 +463,7 @@ private fun MessageList(
                         isLastMessageByAuthorSameDay = isLastMessageByAuthorSameDay,
                         handleEvent = handleEvent,
                         reactIcons = reactIcons,
+                        showReaction = showReaction,
                         onMessageReply = onMessageReply
                     )
                 }
@@ -577,7 +589,8 @@ fun MessageRow(
                     modifier = Modifier
                         .padding(end = 4.dp)
                         .weight(1f),
-                    handleEvent = handleEvent
+                    handleEvent = handleEvent,
+                    isSeen = message.seenBy.isNotEmpty()
                 )
                 val modifier = Modifier
                     .width(20.dp)
@@ -594,23 +607,23 @@ fun MessageRow(
 
                     else -> if (message.sender.isMe) {
                         Box(modifier = modifier) {
-                            message.seenUsers.filter { !it.isMe }.takeIf { it.isNotEmpty() }
-                                ?.forEachIndexed { index, userSeen ->
-                                    AsyncImage(
-                                        ImageRequest.Builder(context = context)
-                                            .data(userSeen.getAvatarUrl())
-                                            .placeholder(R.drawable.placeholder_account)
-                                            .error(R.drawable.placeholder_account)
-                                            .fallback(R.drawable.placeholder_account)
-                                            .build(),
-                                        contentDescription = null,
-                                        modifier = Modifier
-                                            .padding(start = (6 * index).dp)
-                                            .size(13.dp)
-                                            .clip(RoundedCornerShape(13.dp)),
-                                        contentScale = ContentScale.FillBounds,
-                                    )
-                                }
+//                            message.seenUsers.filter { !it.isMe }.takeIf { it.isNotEmpty() }
+//                                ?.forEachIndexed { index, userSeen ->
+//                                    AsyncImage(
+//                                        ImageRequest.Builder(context = context)
+//                                            .data(userSeen.getAvatarUrl())
+//                                            .placeholder(R.drawable.placeholder_account)
+//                                            .error(R.drawable.placeholder_account)
+//                                            .fallback(R.drawable.placeholder_account)
+//                                            .build(),
+//                                        contentDescription = null,
+//                                        modifier = Modifier
+//                                            .padding(start = (6 * index).dp)
+//                                            .size(13.dp)
+//                                            .clip(RoundedCornerShape(13.dp)),
+//                                        contentScale = ContentScale.FillBounds,
+//                                    )
+//                                }
                         }
                     }
                 }
@@ -631,6 +644,7 @@ private fun AuthorAndTextMessage(
     showReaction: Boolean,
     onMessageReply: (Message) -> Unit,
     handleEvent: (ChatEvent) -> Unit,
+    isSeen: Boolean
 ) {
     Column(
         modifier = modifier,
@@ -667,7 +681,8 @@ private fun AuthorAndTextMessage(
                     showReaction = showReaction,
                     reactIcons = reactIcons,
                     onMessageReply = onMessageReply,
-                    handleEvent = handleEvent
+                    handleEvent = handleEvent,
+                    isSeen = isSeen
                 )
             }
         }
@@ -757,6 +772,7 @@ private fun ChatItemBubble(
     showReaction: Boolean,
     onMessageReply: (Message) -> Unit,
     handleEvent: (ChatEvent) -> Unit,
+    isSeen: Boolean
 ) {
     val isMe = message.sender.isMe
     var backgroundBubbleShape: Shape = MessageChatBubbleShape.getChatBubbleShape(
@@ -792,6 +808,9 @@ private fun ChatItemBubble(
     val alignment = if (isMe) Alignment.BottomEnd else Alignment.BottomStart
     var selectMessage by remember {
         mutableStateOf<Message?>(null)
+    }
+    var showDialogConfirmDelete by remember {
+        mutableStateOf(false)
     }
 
     Box(contentAlignment = alignment) {
@@ -847,7 +866,8 @@ private fun ChatItemBubble(
                         onMessageLongClick = {
                             selectMessage = message
                         },
-                        handleEvent = handleEvent
+                        handleEvent = handleEvent,
+                        isSeen = isSeen && isMe
                     )
                 }
             }
@@ -889,12 +909,7 @@ private fun ChatItemBubble(
                 onMessageReply.invoke(message)
             },
             onDelete = {
-                handleEvent(
-                    ChatEvent.DeleteMessage(
-                        messageId = message.id,
-                        removeForSelfOnly = false
-                    )
-                )
+                showDialogConfirmDelete = true
             },
             onShare = {
                 handleEvent(
@@ -907,6 +922,22 @@ private fun ChatItemBubble(
             selectMessage = null
         }
     }
+    WarningDialog(
+        isWarning = showDialogConfirmDelete,
+        title = stringResource(id = R.string.chat_delete_message_title),
+        content = stringResource(id = R.string.chat_delete_message),
+        dismissText = stringResource(id = R.string.common_no),
+        confirmText = stringResource(id = R.string.common_yes),
+        onDismiss = { showDialogConfirmDelete = false },
+        onConfirm = {
+            handleEvent(
+                ChatEvent.DeleteMessage(
+                    messageId = message.id,
+                    removeForSelfOnly = false
+                )
+            )
+        }
+    )
 }
 
 @Composable

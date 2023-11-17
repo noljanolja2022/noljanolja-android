@@ -23,7 +23,7 @@ data class Message(
     val joinParticipants: List<User> = listOf(),
     val type: MessageType = MessageType.UNDEFINED,
     val status: MessageStatus = MessageStatus.SENDING,
-    val seenBy: List<String> = emptyList(),
+    var seenBy: List<String> = emptyList(),
     val reactions: List<MessageReaction> = emptyList(),
     val replyToMessage: Message? = null,
     val isDeleted: Boolean = false,

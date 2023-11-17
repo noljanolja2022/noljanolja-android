@@ -183,8 +183,8 @@ fun ChatOptionsContent(
         isWarning = showLeaveChatDialog,
         title = stringResource(id = R.string.edit_chat_warning_leave_title),
         content = stringResource(id = R.string.edit_chat_warning_leave_description),
-        dismissText = stringResource(id = R.string.common_disagree),
-        confirmText = stringResource(id = R.string.common_agree),
+        dismissText = stringResource(id = R.string.common_no),
+        confirmText = stringResource(id = R.string.common_yes),
         onDismiss = { showLeaveChatDialog = false },
         onConfirm = {
             handleEvent(ChatOptionsEvent.LeaveConversation)
@@ -195,8 +195,8 @@ fun ChatOptionsContent(
         isWarning = showAssignAdminChatDialog,
         title = stringResource(id = R.string.edit_chat_warning_admin_title),
         content = stringResource(id = R.string.edit_chat_warning_admin_description),
-        dismissText = stringResource(id = R.string.common_disagree),
-        confirmText = stringResource(id = R.string.common_agree),
+        dismissText = stringResource(id = R.string.common_no),
+        confirmText = stringResource(id = R.string.common_yes),
         onDismiss = { showAssignAdminChatDialog = false },
         onConfirm = {
             scope.launch {
@@ -212,8 +212,8 @@ fun ChatOptionsContent(
         isWarning = showBlockParticipantDialog,
         title = stringResource(id = R.string.edit_chat_warning_block_title),
         content = stringResource(id = R.string.edit_chat_warning_block_description),
-        dismissText = stringResource(id = R.string.common_disagree),
-        confirmText = stringResource(id = R.string.common_agree),
+        dismissText = stringResource(id = R.string.common_no),
+        confirmText = stringResource(id = R.string.common_yes),
         onDismiss = { showBlockParticipantDialog = false },
         onConfirm = {
             selectParticipant?.let {
@@ -226,8 +226,8 @@ fun ChatOptionsContent(
         isWarning = showRemoveParticipantChatDialog,
         title = stringResource(id = R.string.edit_chat_warning_remove_title),
         content = stringResource(id = R.string.edit_chat_warning_remove_description),
-        dismissText = stringResource(id = R.string.common_disagree),
-        confirmText = stringResource(id = R.string.common_agree),
+        dismissText = stringResource(id = R.string.common_no),
+        confirmText = stringResource(id = R.string.common_yes),
         onDismiss = { showRemoveParticipantChatDialog = false },
         onConfirm = {
             scope.launch {
