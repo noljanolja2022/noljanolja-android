@@ -274,13 +274,13 @@ private fun SearchQrAndContact(
             modifier = Modifier.weight(1f),
             onClick = onSearchQr
         )
-        SizeBox(width = 12.dp)
-        SearchItem(
-            title = stringResource(id = R.string.add_friend_add_by_contact),
-            icon = Icons.Default.Contacts,
-            modifier = Modifier.weight(1f),
-            onClick = {}
-        )
+//        SizeBox(width = 12.dp)
+//        SearchItem(
+//            title = stringResource(id = R.string.add_friend_add_by_contact),
+//            icon = Icons.Default.Contacts,
+//            modifier = Modifier.weight(1f),
+//            onClick = {}
+//        )
     }
 }
 
