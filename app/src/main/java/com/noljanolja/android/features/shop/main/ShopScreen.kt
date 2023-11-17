@@ -192,7 +192,6 @@ private fun SearchProductHeader(
             hint = stringResource(id = R.string.shop_search_products),
             onSearch = {},
             enabled = false,
-            background = MaterialTheme.colorScheme.background.copy(alpha = 0.8f),
         )
     }
     HelpDialog(
