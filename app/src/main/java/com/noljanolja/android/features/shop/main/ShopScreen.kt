@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -98,6 +99,7 @@ private fun ShopContent(
         ) {
             SearchProductHeader(
                 goToSearch = { handleEvent(ShopEvent.Search) },
+                onSubmit = {}
             )
             SizeBox(height = 20.dp)
             Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
@@ -137,7 +139,21 @@ private fun ShopContent(
 @Composable
 private fun SearchProductHeader(
     goToSearch: () -> Unit,
+    onSubmit: (String) -> Unit,
 ) {
+    var isSearchFocus by remember {
+        mutableStateOf(false)
+    }
+    val focusManager = LocalFocusManager.current
+    var searchText by remember {
+        mutableStateOf("")
+    }
+
+    val backgroundColor = if (isSearchFocus) {
+        MaterialTheme.colorScheme.primary
+    } else {
+        MaterialTheme.shopBackground()
+    }
     var isShowHelp by remember {
         mutableStateOf(false)
     }
@@ -151,7 +167,7 @@ private fun SearchProductHeader(
                     bottomEnd = 10.dp
                 )
             )
-            .background(MaterialTheme.shopBackground())
+            .background(backgroundColor)
             .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 6.dp)
     ) {
         Row(
@@ -186,13 +202,22 @@ private fun SearchProductHeader(
         SizeBox(height = 8.dp)
         SearchBar(
             modifier = Modifier
-                .fillMaxWidth()
-                .clickable { goToSearch.invoke() },
-            searchText = "",
+                .fillMaxWidth(),
+            searchText = searchText,
             hint = stringResource(id = R.string.shop_search_products),
-            onSearch = {},
-            enabled = false,
+            onSearch = {
+                searchText = it
+            },
             background = MaterialTheme.colorScheme.background.copy(alpha = 0.8f),
+            onFocusChange = {
+                isSearchFocus = it.isFocused
+            },
+            onSearchButton = {
+                if (searchText.isNotBlank()) {
+                    onSubmit(searchText)
+                    focusManager.clearFocus()
+                }
+            }
         )
     }
     HelpDialog(
