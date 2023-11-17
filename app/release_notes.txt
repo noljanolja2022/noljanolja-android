@@ -1,3 +1,4 @@
+- 1.1.15: Update shop list
 - 1.1.14: Update Gift detail screen
 - 1.1.13: Update UI shop
 - 1.1.12: Update new flow shop
