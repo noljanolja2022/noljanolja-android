@@ -589,7 +589,8 @@ fun MessageRow(
                     modifier = Modifier
                         .padding(end = 4.dp)
                         .weight(1f),
-                    handleEvent = handleEvent
+                    handleEvent = handleEvent,
+                    isSeen = message.seenBy.isNotEmpty()
                 )
                 val modifier = Modifier
                     .width(20.dp)
@@ -606,23 +607,23 @@ fun MessageRow(
 
                     else -> if (message.sender.isMe) {
                         Box(modifier = modifier) {
-                            message.seenUsers.filter { !it.isMe }.takeIf { it.isNotEmpty() }
-                                ?.forEachIndexed { index, userSeen ->
-                                    AsyncImage(
-                                        ImageRequest.Builder(context = context)
-                                            .data(userSeen.getAvatarUrl())
-                                            .placeholder(R.drawable.placeholder_account)
-                                            .error(R.drawable.placeholder_account)
-                                            .fallback(R.drawable.placeholder_account)
-                                            .build(),
-                                        contentDescription = null,
-                                        modifier = Modifier
-                                            .padding(start = (6 * index).dp)
-                                            .size(13.dp)
-                                            .clip(RoundedCornerShape(13.dp)),
-                                        contentScale = ContentScale.FillBounds,
-                                    )
-                                }
+//                            message.seenUsers.filter { !it.isMe }.takeIf { it.isNotEmpty() }
+//                                ?.forEachIndexed { index, userSeen ->
+//                                    AsyncImage(
+//                                        ImageRequest.Builder(context = context)
+//                                            .data(userSeen.getAvatarUrl())
+//                                            .placeholder(R.drawable.placeholder_account)
+//                                            .error(R.drawable.placeholder_account)
+//                                            .fallback(R.drawable.placeholder_account)
+//                                            .build(),
+//                                        contentDescription = null,
+//                                        modifier = Modifier
+//                                            .padding(start = (6 * index).dp)
+//                                            .size(13.dp)
+//                                            .clip(RoundedCornerShape(13.dp)),
+//                                        contentScale = ContentScale.FillBounds,
+//                                    )
+//                                }
                         }
                     }
                 }
@@ -643,6 +644,7 @@ private fun AuthorAndTextMessage(
     showReaction: Boolean,
     onMessageReply: (Message) -> Unit,
     handleEvent: (ChatEvent) -> Unit,
+    isSeen: Boolean
 ) {
     Column(
         modifier = modifier,
@@ -679,7 +681,8 @@ private fun AuthorAndTextMessage(
                     showReaction = showReaction,
                     reactIcons = reactIcons,
                     onMessageReply = onMessageReply,
-                    handleEvent = handleEvent
+                    handleEvent = handleEvent,
+                    isSeen = isSeen
                 )
             }
         }
@@ -769,6 +772,7 @@ private fun ChatItemBubble(
     showReaction: Boolean,
     onMessageReply: (Message) -> Unit,
     handleEvent: (ChatEvent) -> Unit,
+    isSeen: Boolean
 ) {
     val isMe = message.sender.isMe
     var backgroundBubbleShape: Shape = MessageChatBubbleShape.getChatBubbleShape(
@@ -862,7 +866,8 @@ private fun ChatItemBubble(
                         onMessageLongClick = {
                             selectMessage = message
                         },
-                        handleEvent = handleEvent
+                        handleEvent = handleEvent,
+                        isSeen = isSeen && isMe
                     )
                 }
             }

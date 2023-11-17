@@ -51,8 +51,8 @@ fun Instant.humanReadableTime(): String {
     }
 }
 
-fun Instant.chatMessageBubbleTime(): String {
-    return this.customFormatTime("hh:mm")
+fun Instant.chatMessageBubbleTime(isSeen: Boolean = false): String {
+    return this.customFormatTime("hh:mm ${if (isSeen) "✓" else ""}")
 }
 
 fun Instant.isSameDate(other: Instant): Boolean {

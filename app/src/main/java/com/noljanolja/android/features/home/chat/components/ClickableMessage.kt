@@ -38,6 +38,7 @@ fun ClickableMessage(
     message: Message,
     onMessageLongClick: (Message) -> Unit,
     handleEvent: (ChatEvent) -> Unit,
+    isSeen: Boolean
 ) {
     message.shareVideo?.let { video ->
         ClickableVideoMessage(
@@ -59,6 +60,7 @@ fun ClickableMessage(
                 modifier = Modifier
                     .padding(vertical = 5.dp, horizontal = 10.dp),
                 onMessageLongClick = onMessageLongClick,
+                isSeen = isSeen
             )
         }
 
@@ -67,6 +69,7 @@ fun ClickableMessage(
                 message = message,
                 conversationId = conversationId,
                 modifier = Modifier,
+                isSeen = isSeen,
                 onMessageLongClick = onMessageLongClick,
                 onMessageClick = {
                     handleEvent(
@@ -106,6 +109,7 @@ private fun ClickableTextMessage(
     message: Message,
     modifier: Modifier,
     onMessageLongClick: (Message) -> Unit,
+    isSeen: Boolean
 ) {
     val context = LocalContext.current
     val isMe = message.sender.isMe
@@ -117,7 +121,7 @@ private fun ClickableTextMessage(
             )
         )
         withStyle(SpanStyle(color = Color.Transparent)) {
-            append(" " + message.createdAt.chatMessageBubbleTime())
+            append(" " + message.createdAt.chatMessageBubbleTime(isSeen))
         }
     }.toAnnotatedString()
     Box {
@@ -144,7 +148,7 @@ private fun ClickableTextMessage(
             }
         )
         Text(
-            message.createdAt.chatMessageBubbleTime(),
+            text = message.createdAt.chatMessageBubbleTime(isSeen),
             style = TextStyle(
                 fontSize = 12.sp,
                 color = if (isMe) {
@@ -157,15 +161,6 @@ private fun ClickableTextMessage(
                 .align(Alignment.BottomEnd)
                 .padding(bottom = 5.dp, end = 10.dp)
         )
-//        Icon(
-//            painter = painterResource(id = R.drawable.ic_seen),
-//            contentDescription = null,
-//            modifier = Modifier
-//                .align(Alignment.BottomEnd)
-//                .size(7.dp)
-//                .padding(bottom = 5.dp, end = 10.dp),
-//            tint = MaterialTheme.colorMyChatText()
-//        )
     }
 }
 
@@ -193,6 +188,7 @@ fun ClickablePhotoMessage(
     message: Message,
     conversationId: Long,
     modifier: Modifier,
+    isSeen: Boolean,
     onMessageLongClick: (Message) -> Unit,
     onMessageClick: (Message) -> Unit,
 ) {
@@ -220,7 +216,7 @@ fun ClickablePhotoMessage(
                         key = "${message.localId}/${attachment.originalName}",
                         contentScale = ContentScale.FillWidth,
                         isMe = message.sender.isMe,
-                        time = message.createdAt.chatMessageBubbleTime(),
+                        time = message.createdAt.chatMessageBubbleTime(isSeen),
                         timeAlign = TextAlign.End,
                         onLongClick = {
                             onMessageLongClick.invoke(message)
@@ -250,6 +246,7 @@ fun ClickablePhotoMessage(
                             attachments = message.attachments.filterIndexed { index, _ -> index >= row * maxAttachmentPerRow && index < (row + 1) * maxAttachmentPerRow },
                             maxAttachmentPerRow = maxAttachmentPerRow,
                             notShowImages = (size - 4).takeIf { it > 0 && row > 0 },
+                            isSeen = isSeen,
                             onLongClick = {
                                 onMessageLongClick.invoke(message)
                             },
@@ -272,6 +269,7 @@ fun AttachmentRow(
     notShowImages: Int? = null,
     attachments: List<MessageAttachment>,
     maxAttachmentPerRow: Int,
+    isSeen: Boolean,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
 ) {
@@ -300,7 +298,7 @@ fun AttachmentRow(
                             uri = attachment.getPhotoUri(conversationId).toUri(),
                             key = "${message.localId}/${attachment.originalName}",
                             isMe = message.sender.isMe,
-                            time = message.createdAt.chatMessageBubbleTime(),
+                            time = message.createdAt.chatMessageBubbleTime(isSeen),
                             timeAlign = if (isMe) TextAlign.Start else TextAlign.End,
                             onLongClick = onLongClick,
                             onClick = onClick

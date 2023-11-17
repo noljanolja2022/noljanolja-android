@@ -1,30 +1,18 @@
 package com.noljanolja.android.features.home.chat
 
-import android.net.Uri
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
-import com.noljanolja.android.MyApplication
-import com.noljanolja.android.common.base.BaseViewModel
-import com.noljanolja.android.common.base.UiState
-import com.noljanolja.android.common.base.launch
-import com.noljanolja.android.common.base.launchInMain
-import com.noljanolja.android.common.mobiledata.data.MediaLoader
-import com.noljanolja.android.common.navigation.NavigationDirections
-import com.noljanolja.core.conversation.domain.model.Conversation
-import com.noljanolja.core.conversation.domain.model.ConversationType
-import com.noljanolja.core.conversation.domain.model.Message
-import com.noljanolja.core.user.domain.model.User
-import com.noljanolja.core.utils.isNormalType
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.withContext
-import org.koin.core.component.inject
-import java.util.UUID.randomUUID
+import android.net.*
+import androidx.lifecycle.*
+import com.noljanolja.android.*
+import com.noljanolja.android.common.base.*
+import com.noljanolja.android.common.mobiledata.data.*
+import com.noljanolja.android.common.navigation.*
+import com.noljanolja.core.conversation.domain.model.*
+import com.noljanolja.core.user.domain.model.*
+import com.noljanolja.core.utils.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import org.koin.core.component.*
+import java.util.UUID.*
 
 class ChatViewModel(
     savedStateHandle: SavedStateHandle,
@@ -134,9 +122,9 @@ class ChatViewModel(
                     replyToMessageId = replyToMessageId,
                 )
                     .takeIf { it > 0L && conversationId == 0L }?.let {
-                    conversationId = it
-                    fetchConversation(onlyLocalData = true)
-                }
+                        conversationId = it
+                        fetchConversation(onlyLocalData = true)
+                    }
             }
         }
     }
@@ -162,6 +150,21 @@ class ChatViewModel(
             if (conversationId != 0L) {
                 MyApplication.latestConversationId = conversationId
                 coreManager.getConversation(conversationId).collect { conversation ->
+                    var tempUserSeenId: String? = null
+                    val firstIndex = conversation.messages.run {
+                        indexOf(firstOrNull { it.seenBy.isNotEmpty() })
+                    }
+                    for (index in firstIndex..conversation.messages.size) {
+                        conversation.messages.getOrNull(index)?.run {
+                            if (seenBy.isNotEmpty()) {
+                                tempUserSeenId = seenBy.firstOrNull()
+                            } else {
+                                tempUserSeenId?.let {
+                                    seenBy = listOf(it)
+                                }
+                            }
+                        }
+                    }
                     forceUpdateConversationMessage(conversation)
                     updateUiState(conversation)
                 }
