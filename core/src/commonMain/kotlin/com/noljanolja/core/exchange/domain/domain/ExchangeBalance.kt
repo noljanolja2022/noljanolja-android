@@ -5,4 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ExchangeBalance(
     val balance: Double = 0.0,
+    val giftCount: Int = 0,
 )
