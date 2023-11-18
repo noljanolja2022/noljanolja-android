@@ -228,7 +228,7 @@ private fun ColumnScope.PurchaseInfo(
         Text(
             text = stringResource(
                 id = R.string.gift_value_coin,
-                myBalance.balance.formatDouble()
+                myBalance.balance.toInt().toString(),
             ),
             style = MaterialTheme.typography.bodyLarge.withBold()
         )
@@ -248,7 +248,7 @@ private fun ColumnScope.PurchaseInfo(
         Text(
             text = stringResource(
                 id = R.string.gift_value_coin,
-                (myBalance.balance - gift.price).formatDouble()
+                (myBalance.balance - gift.price).toInt().toString()
             ),
             style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
             color = Orange300

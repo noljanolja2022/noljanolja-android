@@ -46,6 +46,7 @@
     <string name="common_copy_success">Copied in clipboard</string>
     <string name="common_warning">Warning</string>
     <string name="common_all">All</string>
+    <string name="common_send">Send</string>
     <string name="common_download">Download</string>
 
     <!--    countries-->
@@ -206,6 +207,8 @@
     <string name="chat_message_event_left">%s has left the conversation</string>
     <string name="chat_message_event_joined">%s has invited %s</string>
     <string name="chat_removed_conversation">You has removed from conversation %s</string>
+    <string name="chat_delete_message_title">You want to delete this message?</string>
+    <string name="chat_delete_message">This message will be deleted on your chat screen.</string>
 
     <string name="chat_action_album">Album</string>
     <string name="chat_action_camera">Camera</string>

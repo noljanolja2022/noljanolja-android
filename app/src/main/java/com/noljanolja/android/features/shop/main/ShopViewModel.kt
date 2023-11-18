@@ -33,6 +33,10 @@ class ShopViewModel : BaseViewModel() {
         initialValue = emptyList()
     )
 
+    init {
+        refresh()
+    }
+
     fun handleEvent(event: ShopEvent) {
         launch {
             when (event) {

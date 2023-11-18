@@ -39,9 +39,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.*
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.touchlab.kermit.Logger
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
@@ -104,7 +104,13 @@ private fun ConversationMediaContent(
             ) {
                 tabs.forEachIndexed { index, title ->
                     Tab(
-                        text = { Text(title) },
+                        text = {
+                            Text(
+                                text = title,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        },
                         selected = tabIndex == index,
                         onClick = { tabIndex = index }
                     )
@@ -268,9 +274,11 @@ private fun LinksContent(
 private fun LinkItem(link: ConversationMedia) {
     val context = LocalContext.current
     Row(
-        modifier = Modifier.fillMaxWidth().clickable {
-            context.openUrl(link.originalName)
-        }
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                context.openUrl(link.originalName)
+            }
     ) {
         SubcomposeAsyncImage(
             ImageRequest.Builder(context = LocalContext.current)

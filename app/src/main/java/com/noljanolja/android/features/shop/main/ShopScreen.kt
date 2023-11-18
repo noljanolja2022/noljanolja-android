@@ -27,7 +27,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -69,9 +68,9 @@ fun ShopScreen(
     viewModel: ShopViewModel = getViewModel(),
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    LaunchedEffect(true) {
-        viewModel.refresh()
-    }
+//    LaunchedEffect(true) {
+//        viewModel.refresh()
+//    }
     ShopContent(
         uiState = uiState,
         handleEvent = viewModel::handleEvent
@@ -139,21 +138,7 @@ private fun ShopContent(
 @Composable
 private fun SearchProductHeader(
     goToSearch: () -> Unit,
-    onSubmit: (String) -> Unit,
 ) {
-    var isSearchFocus by remember {
-        mutableStateOf(false)
-    }
-    val focusManager = LocalFocusManager.current
-    var searchText by remember {
-        mutableStateOf("")
-    }
-
-    val backgroundColor = if (isSearchFocus) {
-        MaterialTheme.colorScheme.primary
-    } else {
-        MaterialTheme.shopBackground()
-    }
     var isShowHelp by remember {
         mutableStateOf(false)
     }
@@ -202,22 +187,12 @@ private fun SearchProductHeader(
         SizeBox(height = 8.dp)
         SearchBar(
             modifier = Modifier
-                .fillMaxWidth(),
-            searchText = searchText,
+                .fillMaxWidth()
+                .clickable { goToSearch.invoke() },
+            searchText = "",
             hint = stringResource(id = R.string.shop_search_products),
-            onSearch = {
-                searchText = it
-            },
-            background = MaterialTheme.colorScheme.background.copy(alpha = 0.8f),
-            onFocusChange = {
-                isSearchFocus = it.isFocused
-            },
-            onSearchButton = {
-                if (searchText.isNotBlank()) {
-                    onSubmit(searchText)
-                    focusManager.clearFocus()
-                }
-            }
+            onSearch = {},
+            enabled = false,
         )
     }
     HelpDialog(
@@ -354,7 +329,7 @@ private fun MyCash(
                 )
                 SizeBox(width = 10.dp)
                 Text(
-                    text = myBalance.balance.toString(),
+                    text = myBalance.balance.toInt().toString(),
                     style = TextStyle(
                         fontSize = 22.sp,
                         lineHeight = 28.sp,
