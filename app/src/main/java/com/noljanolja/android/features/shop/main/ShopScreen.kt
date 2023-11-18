@@ -27,7 +27,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,9 +67,9 @@ fun ShopScreen(
     viewModel: ShopViewModel = getViewModel(),
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    LaunchedEffect(true) {
-        viewModel.refresh()
-    }
+//    LaunchedEffect(true) {
+//        viewModel.refresh()
+//    }
     ShopContent(
         uiState = uiState,
         handleEvent = viewModel::handleEvent
@@ -328,7 +327,7 @@ private fun MyCash(
                 )
                 SizeBox(width = 10.dp)
                 Text(
-                    text = myBalance.balance.toString(),
+                    text = myBalance.balance.toInt().toString(),
                     style = TextStyle(
                         fontSize = 22.sp,
                         lineHeight = 28.sp,

@@ -296,7 +296,7 @@ fun MyCash(
                     )
                     SizeBox(width = 10.dp)
                     Text(
-                        text = myBalance.balance.toString(),
+                        text = myBalance.balance.toInt().toString(),
                         style = TextStyle(
                             fontSize = 28.sp,
                             lineHeight = 36.sp,

@@ -26,6 +26,10 @@ class ShopViewModel : BaseViewModel() {
     private var _giftPage = 1
     private var _myGiftPage = 1
 
+    init {
+        refresh()
+    }
+
     fun handleEvent(event: ShopEvent) {
         launch {
             when (event) {

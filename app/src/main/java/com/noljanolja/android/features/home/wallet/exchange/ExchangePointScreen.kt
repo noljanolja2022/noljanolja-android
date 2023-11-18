@@ -62,6 +62,7 @@ import com.noljanolja.android.ui.theme.NeutralLight
 import com.noljanolja.android.ui.theme.Orange300
 import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.ui.theme.withMedium
+import com.noljanolja.android.util.formatDigitsNumber
 import com.noljanolja.android.util.secondaryTextColor
 import com.noljanolja.android.util.showToast
 import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
@@ -204,7 +205,7 @@ fun MyCash(myBalance: ExchangeBalance, memberInfo: MemberInfo) {
             )
             SizeBox(width = 10.dp)
             Text(
-                memberInfo.point.toString(),
+                memberInfo.point.formatDigitsNumber(),
                 style = MaterialTheme.typography.bodyMedium.withBold(),
                 color = Orange300
             )
@@ -243,7 +244,7 @@ fun MyCash(myBalance: ExchangeBalance, memberInfo: MemberInfo) {
                     )
                     SizeBox(width = 10.dp)
                     Text(
-                        text = myBalance.balance.toString(),
+                        text = myBalance.balance.toInt().toString(),
                         style = TextStyle(
                             fontSize = 28.sp,
                             lineHeight = 36.sp,
