@@ -57,6 +57,10 @@ class SearchProductViewModel : BaseViewModel() {
                         )
                     )
                 }
+
+                is SearchProductEvent.ViewAllCoupons -> {
+                    navigationManager.navigate(NavigationDirections.Coupons)
+                }
             }
         }
     }

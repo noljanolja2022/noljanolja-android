@@ -117,7 +117,9 @@ private fun SearchProductContent(
                 onItemClick = {
                     handleEvent(SearchProductEvent.GiftDetail(it))
                 },
-                onViewCoupons = {}
+                onViewCoupons = {
+                    handleEvent(SearchProductEvent.ViewAllCoupons)
+                }
             )
         }
     }

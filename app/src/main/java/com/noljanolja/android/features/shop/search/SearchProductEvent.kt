@@ -8,4 +8,5 @@ sealed interface SearchProductEvent {
     object ClearAll : SearchProductEvent
     data class Clear(val text: String) : SearchProductEvent
     data class GiftDetail(val gift: Gift) : SearchProductEvent
+    object ViewAllCoupons : SearchProductEvent
 }
