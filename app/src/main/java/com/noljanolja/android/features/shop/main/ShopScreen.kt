@@ -36,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -50,6 +49,7 @@ import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.features.shop.composable.CouponItem
 import com.noljanolja.android.features.shop.composable.GiftItem
 import com.noljanolja.android.features.shop.composable.HelpDialog
+import com.noljanolja.android.features.shop.composable.MyCashAndVoucher
 import com.noljanolja.android.features.shop.composable.ProductItem
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SearchBar
@@ -68,9 +68,6 @@ fun ShopScreen(
     viewModel: ShopViewModel = getViewModel(),
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-//    LaunchedEffect(true) {
-//        viewModel.refresh()
-//    }
     ShopContent(
         uiState = uiState,
         handleEvent = viewModel::handleEvent
@@ -98,23 +95,11 @@ private fun ShopContent(
         ) {
             SearchProductHeader(
                 goToSearch = { handleEvent(ShopEvent.Search) },
-                onSubmit = {}
             )
             SizeBox(height = 20.dp)
-            Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-                MyCash(
-                    myBalance = uiState.data.myBalance,
-                    modifier = Modifier.weight(1f)
-                )
-                SizeBox(width = 16.dp)
-                MyVouchers(
-                    giftCount = uiState.data.myBalance.giftCount,
-                    modifier = Modifier.weight(1f).clickable {
-                        handleEvent(ShopEvent.ViewAllCoupons)
-                    }
-                )
+            MyCashAndVoucher(myBalance = uiState.data.myBalance) {
+                handleEvent(ShopEvent.ViewAllCoupons)
             }
-
             SizeBox(height = 20.dp)
             ProductsAndVouchers(
                 gifts = data.gifts,
@@ -152,7 +137,7 @@ private fun SearchProductHeader(
                     bottomEnd = 10.dp
                 )
             )
-            .background(backgroundColor)
+            .background(MaterialTheme.shopBackground())
             .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 6.dp)
     ) {
         Row(
