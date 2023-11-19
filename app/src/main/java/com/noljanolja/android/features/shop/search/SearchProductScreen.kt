@@ -9,9 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -37,15 +37,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
-import com.noljanolja.android.features.shop.composable.ProductItem
+import com.noljanolja.android.features.shop.composable.GiftItem
+import com.noljanolja.android.features.shop.composable.MyCashAndVoucher
 import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.SearchBar
 import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.ui.composable.UserPoint
 import com.noljanolja.android.ui.theme.NeutralGrey
+import com.noljanolja.android.ui.theme.shopBackground
 import com.noljanolja.android.ui.theme.withMedium
-import com.noljanolja.android.util.formatDigitsNumber
-import com.noljanolja.core.loyalty.domain.model.MemberInfo
+import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
 import com.noljanolja.core.shop.domain.model.Gift
 import org.koin.androidx.compose.getViewModel
 
@@ -55,11 +55,11 @@ fun SearchProductScreen(
 ) {
     val searchKeys by viewModel.searchKeys.collectAsStateWithLifecycle()
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    val memberInfo by viewModel.memberInfoFlow.collectAsStateWithLifecycle()
+    val myBalance by viewModel.myBalanceFlow.collectAsStateWithLifecycle()
     SearchProductContent(
         searchKeys = searchKeys,
         uiState = uiState,
-        memberInfo = memberInfo,
+        myBalance = myBalance,
         handleEvent = viewModel::handleEvent
     )
 }
@@ -67,8 +67,8 @@ fun SearchProductScreen(
 @Composable
 private fun SearchProductContent(
     searchKeys: List<String>,
-    memberInfo: MemberInfo,
     uiState: UiState<SearchGiftUiData>,
+    myBalance: ExchangeBalance,
     handleEvent: (SearchProductEvent) -> Unit,
 ) {
     var isSearchFocus by remember {
@@ -78,18 +78,13 @@ private fun SearchProductContent(
     var searchText by remember {
         mutableStateOf("")
     }
-
-    val backgroundColor = if (isSearchFocus) {
-        MaterialTheme.colorScheme.background
-    } else {
-        MaterialTheme.colorScheme.primary
-    }
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundColor)
+            .background(MaterialTheme.shopBackground())
     ) {
         SearchProductHeader(
+            isSearchFocus = isSearchFocus,
             searchText = searchText,
             onSearchChange = {
                 searchText = it
@@ -120,10 +115,13 @@ private fun SearchProductContent(
         } else {
             val data = uiState.data ?: return@Column
             SearchResult(
-                memberInfo = memberInfo,
+                myBalance = myBalance,
                 gifts = data.gifts,
                 onItemClick = {
                     handleEvent(SearchProductEvent.GiftDetail(it))
+                },
+                onViewCoupons = {
+                    handleEvent(SearchProductEvent.ViewAllCoupons)
                 }
             )
         }
@@ -132,6 +130,7 @@ private fun SearchProductContent(
 
 @Composable
 private fun SearchProductHeader(
+    isSearchFocus: Boolean,
     searchText: String,
     onSearchChange: (String) -> Unit,
     onFocusChange: (Boolean) -> Unit,
@@ -141,6 +140,21 @@ private fun SearchProductHeader(
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
 
+    val background = if (isSearchFocus) {
+        MaterialTheme.colorScheme.primaryContainer
+    } else {
+        MaterialTheme.shopBackground()
+    }
+    val contentColor = if (isSearchFocus) {
+        MaterialTheme.colorScheme.onPrimaryContainer
+    } else {
+        MaterialTheme.colorScheme.onBackground
+    }
+    val searchBackground = if (isSearchFocus) {
+        MaterialTheme.colorScheme.background
+    } else {
+        MaterialTheme.colorScheme.onBackground.copy(alpha = 0.04f)
+    }
     LaunchedEffect(true) {
         focusRequester.requestFocus()
     }
@@ -152,7 +166,7 @@ private fun SearchProductHeader(
                     bottomEnd = 10.dp
                 )
             )
-            .background(MaterialTheme.colorScheme.primaryContainer)
+            .background(background)
             .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 6.dp)
     ) {
         Row(
@@ -163,7 +177,7 @@ private fun SearchProductHeader(
             Text(
                 text = stringResource(id = R.string.shop_welcome_nolja_shop),
                 style = MaterialTheme.typography.titleSmall.withMedium(),
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+                color = contentColor
             )
         }
         SizeBox(height = 5.dp)
@@ -171,7 +185,7 @@ private fun SearchProductHeader(
             Icon(
                 Icons.Default.ArrowBack,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                tint = contentColor,
                 modifier = Modifier.clickable {
                     onBack.invoke()
                 }
@@ -183,7 +197,7 @@ private fun SearchProductHeader(
                 searchText = searchText,
                 hint = stringResource(id = R.string.shop_search_products),
                 onSearch = onSearchChange,
-                background = MaterialTheme.colorScheme.background,
+                background = searchBackground,
                 onFocusChange = {
                     onFocusChange.invoke(it.isFocused)
                 },
@@ -258,31 +272,24 @@ private fun SearchHistory(
 
 @Composable
 private fun SearchResult(
-    memberInfo: MemberInfo,
+    myBalance: ExchangeBalance,
     gifts: List<Gift>,
+    onViewCoupons: () -> Unit,
     onItemClick: (Gift) -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = 10.dp, horizontal = 16.dp)
-    ) {
-        UserPoint(point = memberInfo.point.formatDigitsNumber())
-        SizeBox(height = 16.dp)
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(gifts) {
-                ProductItem(
-                    gift = it,
-                    modifier = Modifier.weight(1F),
-                    onClick = {
-                        onItemClick.invoke(it)
-                    }
-                )
-            }
+    SizeBox(height = 20.dp)
+    MyCashAndVoucher(myBalance = myBalance) {
+        onViewCoupons()
+    }
+    SizeBox(height = 20.dp)
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        items(gifts) {
+            GiftItem(
+                gift = it,
+                onClick = {
+                    onItemClick(it)
+                },
+            )
         }
     }
 }

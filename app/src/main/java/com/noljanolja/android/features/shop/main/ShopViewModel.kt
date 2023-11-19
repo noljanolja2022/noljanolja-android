@@ -23,8 +23,6 @@ class ShopViewModel : BaseViewModel() {
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = MemberInfo()
     )
-    private var _giftPage = 1
-    private var _myGiftPage = 1
 
     init {
         refresh()

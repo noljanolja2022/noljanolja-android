@@ -49,6 +49,7 @@ import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.features.shop.composable.CouponItem
 import com.noljanolja.android.features.shop.composable.GiftItem
 import com.noljanolja.android.features.shop.composable.HelpDialog
+import com.noljanolja.android.features.shop.composable.MyCashAndVoucher
 import com.noljanolja.android.features.shop.composable.ProductItem
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SearchBar
@@ -67,9 +68,6 @@ fun ShopScreen(
     viewModel: ShopViewModel = getViewModel(),
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-//    LaunchedEffect(true) {
-//        viewModel.refresh()
-//    }
     ShopContent(
         uiState = uiState,
         handleEvent = viewModel::handleEvent
@@ -99,20 +97,9 @@ private fun ShopContent(
                 goToSearch = { handleEvent(ShopEvent.Search) },
             )
             SizeBox(height = 20.dp)
-            Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-                MyCash(
-                    myBalance = uiState.data.myBalance,
-                    modifier = Modifier.weight(1f)
-                )
-                SizeBox(width = 16.dp)
-                MyVouchers(
-                    giftCount = uiState.data.myBalance.giftCount,
-                    modifier = Modifier.weight(1f).clickable {
-                        handleEvent(ShopEvent.ViewAllCoupons)
-                    }
-                )
+            MyCashAndVoucher(myBalance = uiState.data.myBalance) {
+                handleEvent(ShopEvent.ViewAllCoupons)
             }
-
             SizeBox(height = 20.dp)
             ProductsAndVouchers(
                 gifts = data.gifts,
