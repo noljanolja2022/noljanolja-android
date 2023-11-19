@@ -27,7 +27,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,6 +49,7 @@ import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.features.shop.composable.CouponItem
 import com.noljanolja.android.features.shop.composable.GiftItem
 import com.noljanolja.android.features.shop.composable.HelpDialog
+import com.noljanolja.android.features.shop.composable.MyCashAndVoucher
 import com.noljanolja.android.features.shop.composable.ProductItem
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SearchBar
@@ -68,9 +68,6 @@ fun ShopScreen(
     viewModel: ShopViewModel = getViewModel(),
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    LaunchedEffect(true) {
-        viewModel.refresh()
-    }
     ShopContent(
         uiState = uiState,
         handleEvent = viewModel::handleEvent
@@ -100,20 +97,9 @@ private fun ShopContent(
                 goToSearch = { handleEvent(ShopEvent.Search) },
             )
             SizeBox(height = 20.dp)
-            Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-                MyCash(
-                    myBalance = uiState.data.myBalance,
-                    modifier = Modifier.weight(1f)
-                )
-                SizeBox(width = 16.dp)
-                MyVouchers(
-                    giftCount = uiState.data.myBalance.giftCount,
-                    modifier = Modifier.weight(1f).clickable {
-                        handleEvent(ShopEvent.ViewAllCoupons)
-                    }
-                )
+            MyCashAndVoucher(myBalance = uiState.data.myBalance) {
+                handleEvent(ShopEvent.ViewAllCoupons)
             }
-
             SizeBox(height = 20.dp)
             ProductsAndVouchers(
                 gifts = data.gifts,
@@ -192,7 +178,6 @@ private fun SearchProductHeader(
             hint = stringResource(id = R.string.shop_search_products),
             onSearch = {},
             enabled = false,
-            background = MaterialTheme.colorScheme.background.copy(alpha = 0.8f),
         )
     }
     HelpDialog(
@@ -329,7 +314,7 @@ private fun MyCash(
                 )
                 SizeBox(width = 10.dp)
                 Text(
-                    text = myBalance.balance.toString(),
+                    text = myBalance.balance.toInt().toString(),
                     style = TextStyle(
                         fontSize = 22.sp,
                         lineHeight = 28.sp,

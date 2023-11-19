@@ -9,9 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -37,15 +37,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
-import com.noljanolja.android.features.shop.composable.ProductItem
+import com.noljanolja.android.features.shop.composable.GiftItem
+import com.noljanolja.android.features.shop.composable.MyCashAndVoucher
 import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.SearchBar
 import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.ui.composable.UserPoint
 import com.noljanolja.android.ui.theme.NeutralGrey
+import com.noljanolja.android.ui.theme.shopBackground
 import com.noljanolja.android.ui.theme.withMedium
-import com.noljanolja.android.util.formatDigitsNumber
-import com.noljanolja.core.loyalty.domain.model.MemberInfo
+import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
 import com.noljanolja.core.shop.domain.model.Gift
 import org.koin.androidx.compose.getViewModel
 
@@ -59,7 +59,6 @@ fun SearchProductScreen(
     SearchProductContent(
         searchKeys = searchKeys,
         uiState = uiState,
-        memberInfo = memberInfo,
         handleEvent = viewModel::handleEvent
     )
 }
@@ -67,7 +66,6 @@ fun SearchProductScreen(
 @Composable
 private fun SearchProductContent(
     searchKeys: List<String>,
-    memberInfo: MemberInfo,
     uiState: UiState<SearchGiftUiData>,
     handleEvent: (SearchProductEvent) -> Unit,
 ) {
@@ -78,16 +76,10 @@ private fun SearchProductContent(
     var searchText by remember {
         mutableStateOf("")
     }
-
-    val backgroundColor = if (isSearchFocus) {
-        MaterialTheme.colorScheme.background
-    } else {
-        MaterialTheme.colorScheme.primary
-    }
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundColor)
+            .background(MaterialTheme.shopBackground())
     ) {
         SearchProductHeader(
             searchText = searchText,
@@ -120,11 +112,12 @@ private fun SearchProductContent(
         } else {
             val data = uiState.data ?: return@Column
             SearchResult(
-                memberInfo = memberInfo,
+                myBalance = ExchangeBalance(),
                 gifts = data.gifts,
                 onItemClick = {
                     handleEvent(SearchProductEvent.GiftDetail(it))
-                }
+                },
+                onViewCoupons = {}
             )
         }
     }
@@ -258,31 +251,24 @@ private fun SearchHistory(
 
 @Composable
 private fun SearchResult(
-    memberInfo: MemberInfo,
+    myBalance: ExchangeBalance,
     gifts: List<Gift>,
+    onViewCoupons: () -> Unit,
     onItemClick: (Gift) -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = 10.dp, horizontal = 16.dp)
-    ) {
-        UserPoint(point = memberInfo.point.formatDigitsNumber())
-        SizeBox(height = 16.dp)
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(gifts) {
-                ProductItem(
-                    gift = it,
-                    modifier = Modifier.weight(1F),
-                    onClick = {
-                        onItemClick.invoke(it)
-                    }
-                )
-            }
+    SizeBox(height = 20.dp)
+    MyCashAndVoucher(myBalance = myBalance) {
+        onViewCoupons()
+    }
+    SizeBox(height = 20.dp)
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        items(gifts) {
+            GiftItem(
+                gift = it,
+                onClick = {
+                    onItemClick(it)
+                },
+            )
         }
     }
 }

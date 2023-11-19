@@ -66,7 +66,7 @@ android {
             isShrinkResources = true
             firebaseAppDistribution {
                 artifactType = "APK"
-                serviceCredentialsFile = "key/key_distribution.json"
+                serviceCredentialsFile = "key/key_distributor.json"
                 releaseNotes = notes
                 testers =
                     "doduchieu.kstn@gmail.com, itanchi.dev@gmail.com, sangjin.d.han@gmail.com, sangjin.han@ppnyy.com, tiaddeeps@gmail.com, taduydoan123.dng@gmail.com"
@@ -78,7 +78,7 @@ android {
         debug {
             firebaseAppDistribution {
                 artifactType = "APK"
-                serviceCredentialsFile = "key/key_distribution.json"
+                serviceCredentialsFile = "key/key_distributor.json"
                 applicationIdSuffix = ".dev"
                 releaseNotes = notes
                 testers =
