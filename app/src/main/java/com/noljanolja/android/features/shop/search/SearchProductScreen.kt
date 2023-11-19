@@ -55,7 +55,6 @@ fun SearchProductScreen(
 ) {
     val searchKeys by viewModel.searchKeys.collectAsStateWithLifecycle()
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    val memberInfo by viewModel.memberInfoFlow.collectAsStateWithLifecycle()
     SearchProductContent(
         searchKeys = searchKeys,
         uiState = uiState,
@@ -82,6 +81,7 @@ private fun SearchProductContent(
             .background(MaterialTheme.shopBackground())
     ) {
         SearchProductHeader(
+            isSearchFocus = isSearchFocus,
             searchText = searchText,
             onSearchChange = {
                 searchText = it
@@ -125,6 +125,7 @@ private fun SearchProductContent(
 
 @Composable
 private fun SearchProductHeader(
+    isSearchFocus: Boolean,
     searchText: String,
     onSearchChange: (String) -> Unit,
     onFocusChange: (Boolean) -> Unit,
@@ -134,6 +135,21 @@ private fun SearchProductHeader(
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
 
+    val background = if (isSearchFocus) {
+        MaterialTheme.colorScheme.primaryContainer
+    } else {
+        MaterialTheme.shopBackground()
+    }
+    val contentColor = if (isSearchFocus) {
+        MaterialTheme.colorScheme.onPrimaryContainer
+    } else {
+        MaterialTheme.colorScheme.onBackground
+    }
+    val searchBackground = if (isSearchFocus) {
+        MaterialTheme.colorScheme.background
+    } else {
+        MaterialTheme.colorScheme.onBackground.copy(alpha = 0.04f)
+    }
     LaunchedEffect(true) {
         focusRequester.requestFocus()
     }
@@ -145,7 +161,7 @@ private fun SearchProductHeader(
                     bottomEnd = 10.dp
                 )
             )
-            .background(MaterialTheme.colorScheme.primaryContainer)
+            .background(background)
             .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 6.dp)
     ) {
         Row(
@@ -156,7 +172,7 @@ private fun SearchProductHeader(
             Text(
                 text = stringResource(id = R.string.shop_welcome_nolja_shop),
                 style = MaterialTheme.typography.titleSmall.withMedium(),
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+                color = contentColor
             )
         }
         SizeBox(height = 5.dp)
@@ -164,7 +180,7 @@ private fun SearchProductHeader(
             Icon(
                 Icons.Default.ArrowBack,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                tint = contentColor,
                 modifier = Modifier.clickable {
                     onBack.invoke()
                 }
@@ -176,7 +192,7 @@ private fun SearchProductHeader(
                 searchText = searchText,
                 hint = stringResource(id = R.string.shop_search_products),
                 onSearch = onSearchChange,
-                background = MaterialTheme.colorScheme.background,
+                background = searchBackground,
                 onFocusChange = {
                     onFocusChange.invoke(it.isFocused)
                 },
