@@ -1,5 +1,6 @@
 package com.noljanolja.android.features.shop.main
 
+import android.util.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -192,6 +193,7 @@ fun LazyListScope.giftItems(
     gifts: List<Gift>,
     onItemClick: (Gift) -> Unit,
 ) {
+    Log.e("TTT", "shop: $gifts", )
     items(gifts) {
         GiftItem(
             gift = it,

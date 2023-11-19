@@ -26,5 +26,6 @@ class Constant {
         const val ROUND_RECTANGLE = 20
         const val PADDING_HORIZONTAL_SCREEN = 20
         const val ROUND_DIALOG = 10
+        const val TWEEN_ANIMATION_TIME = 300
     }
 }

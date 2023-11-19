@@ -26,3 +26,5 @@ val Green300 = Color(0xFF4F6D00)
 val Green100 = Color(0xFFAED94A)
 
 val PictonBlue = Color(0xFF4EABF4)
+
+val Platinum = Color(0xFFE6E6E6)
