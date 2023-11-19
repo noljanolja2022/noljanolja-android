@@ -55,9 +55,11 @@ fun SearchProductScreen(
 ) {
     val searchKeys by viewModel.searchKeys.collectAsStateWithLifecycle()
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val myBalance by viewModel.myBalanceFlow.collectAsStateWithLifecycle()
     SearchProductContent(
         searchKeys = searchKeys,
         uiState = uiState,
+        myBalance = myBalance,
         handleEvent = viewModel::handleEvent
     )
 }
@@ -66,6 +68,7 @@ fun SearchProductScreen(
 private fun SearchProductContent(
     searchKeys: List<String>,
     uiState: UiState<SearchGiftUiData>,
+    myBalance: ExchangeBalance,
     handleEvent: (SearchProductEvent) -> Unit,
 ) {
     var isSearchFocus by remember {
@@ -112,7 +115,7 @@ private fun SearchProductContent(
         } else {
             val data = uiState.data ?: return@Column
             SearchResult(
-                myBalance = ExchangeBalance(),
+                myBalance = myBalance,
                 gifts = data.gifts,
                 onItemClick = {
                     handleEvent(SearchProductEvent.GiftDetail(it))

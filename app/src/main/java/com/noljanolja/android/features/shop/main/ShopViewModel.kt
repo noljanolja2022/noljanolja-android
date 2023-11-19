@@ -12,7 +12,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 class ShopViewModel : BaseViewModel() {
@@ -23,14 +22,6 @@ class ShopViewModel : BaseViewModel() {
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = MemberInfo()
-    )
-
-    val searchKeys = coreManager.getSearchHistories().map {
-        it.sortedByDescending { it.updatedAt }.map { it.text }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
     )
 
     init {

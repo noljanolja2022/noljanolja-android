@@ -5,6 +5,7 @@ import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
+import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
 import com.noljanolja.core.shop.domain.model.Gift
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +29,9 @@ class SearchProductViewModel : BaseViewModel() {
         initialValue = MemberInfo()
     )
 
+    private val _myBalanceFlow = MutableStateFlow<ExchangeBalance>(ExchangeBalance())
+    val myBalanceFlow = _myBalanceFlow.asStateFlow()
+
     val searchKeys = coreManager.getSearchHistories().map {
         it.sortedByDescending { it.updatedAt }.map { it.text }
     }.stateIn(
@@ -35,6 +39,13 @@ class SearchProductViewModel : BaseViewModel() {
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
+
+    init {
+        launch {
+            val myBalance = coreManager.getExchangeBalance().getOrDefault(ExchangeBalance())
+            _myBalanceFlow.emit(myBalance)
+        }
+    }
 
     fun handleEvent(event: SearchProductEvent) {
         launch {
@@ -76,4 +87,5 @@ class SearchProductViewModel : BaseViewModel() {
 
 data class SearchGiftUiData(
     val gifts: List<Gift> = emptyList(),
+    val myBalance: ExchangeBalance = ExchangeBalance(),
 )
