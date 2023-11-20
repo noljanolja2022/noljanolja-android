@@ -199,3 +199,10 @@ fun textColor(darkTheme: Boolean = isSystemInDarkTheme()) = if (darkTheme) {
 } else {
     Color.Black
 }
+
+@Composable
+fun backgroundChoseItemColor(darkTheme: Boolean = isSystemInDarkTheme()) = if (darkTheme) {
+    NeutralDarkGrey
+} else {
+    Platinum
+}

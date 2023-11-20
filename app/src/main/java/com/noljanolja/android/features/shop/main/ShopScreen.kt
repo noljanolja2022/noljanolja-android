@@ -1,5 +1,6 @@
 package com.noljanolja.android.features.shop.main
 
+import android.util.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -51,14 +52,13 @@ import com.noljanolja.android.features.shop.composable.GiftItem
 import com.noljanolja.android.features.shop.composable.HelpDialog
 import com.noljanolja.android.features.shop.composable.MyCashAndVoucher
 import com.noljanolja.android.features.shop.composable.ProductItem
-import com.noljanolja.android.ui.composable.ScaffoldWithUiState
-import com.noljanolja.android.ui.composable.SearchBar
-import com.noljanolja.android.ui.composable.SizeBox
+import com.noljanolja.android.ui.composable.*
 import com.noljanolja.android.ui.theme.Orange300
 import com.noljanolja.android.ui.theme.shopBackground
 import com.noljanolja.android.ui.theme.shopItemBackground
 import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.ui.theme.withMedium
+import com.noljanolja.core.commons.*
 import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
 import com.noljanolja.core.shop.domain.model.Gift
 import org.koin.androidx.compose.getViewModel
@@ -99,6 +99,20 @@ private fun ShopContent(
             SizeBox(height = 20.dp)
             MyCashAndVoucher(myBalance = uiState.data.myBalance) {
                 handleEvent(ShopEvent.ViewAllCoupons)
+            }
+            if (uiState.data.category.isNotEmpty()) {
+                MarginVertical(15)
+                ListTypes(
+                    types = uiState.data.category,
+                    onItemClick = {
+                        handleEvent(
+                            ShopEvent.ViewGiftType(
+                                categoryId = it.id,
+                                categoryName = it.name
+                            )
+                        )
+                    }
+                )
             }
             SizeBox(height = 20.dp)
             ProductsAndVouchers(
