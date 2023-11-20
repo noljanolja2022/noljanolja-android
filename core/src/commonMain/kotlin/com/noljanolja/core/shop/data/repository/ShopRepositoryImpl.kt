@@ -1,9 +1,9 @@
 package com.noljanolja.core.shop.data.repository
 
+import com.noljanolja.core.commons.*
 import com.noljanolja.core.shop.data.datasource.SearchLocalDatasource
 import com.noljanolja.core.shop.data.datasource.ShopApi
-import com.noljanolja.core.shop.data.model.request.BuildGiftRequest
-import com.noljanolja.core.shop.data.model.request.GetGiftRequest
+import com.noljanolja.core.shop.data.model.request.*
 import com.noljanolja.core.shop.domain.model.Gift
 import com.noljanolja.core.shop.domain.model.SearchKey
 import com.noljanolja.core.shop.domain.repository.ShopRepository
@@ -29,9 +29,22 @@ internal class ShopRepositoryImpl(
         shopLocalDatasource.deleteByScreen(SCREEN)
     }
 
-    override suspend fun getGifts(searchText: String): Result<List<Gift>> {
+    override suspend fun getCategories(request: GetCategoriesRequest): Result<List<ItemChoose>?>{
         return try {
-            val response = shopApi.getGifts(searchText)
+            val response = shopApi.getCategories(request)
+            if (response.isSuccessful()) {
+                Result.success(response.data)
+            } else {
+                Result.failure(Throwable(response.message))
+            }
+        } catch (e: Throwable) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getGifts(searchText: String, categoryId: String): Result<List<Gift>> {
+        return try {
+            val response = shopApi.getGifts(searchText, categoryId)
             if (response.isSuccessful()) {
                 Result.success(response.data)
             } else {

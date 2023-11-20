@@ -7,12 +7,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.platform.*
 import androidx.compose.ui.unit.*
 import androidx.lifecycle.compose.*
-import com.noljanolja.android.features.home.friendoption.*
 import com.noljanolja.android.features.shop.composable.*
 import com.noljanolja.android.ui.composable.*
+import com.noljanolja.android.ui.theme.*
 import com.noljanolja.core.shop.domain.model.*
 import org.koin.androidx.compose.*
 import org.koin.core.parameter.*
@@ -37,7 +36,6 @@ fun ProductByCategoryScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ProductByCategoryContent(
     categoryName: String,
@@ -56,14 +54,33 @@ private fun ProductByCategoryContent(
             },
             centeredTitle = true
         )
-        gifts?.let {
+        if (gifts.isNullOrEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.shopBackground()),
+                contentAlignment = Alignment.Center
+            ) {
+                if (gifts != null) {
+                    Text(
+                        text = "Nothing Here",
+                        color = textColor()
+                    )
+                } else {
+                    LoadingScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
+                }
+            }
+        } else {
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
-                    .background(Color.White)
+                    .background(MaterialTheme.shopBackground())
                     .padding(top = 12.dp)
             ) {
-                items(it) {
+                items(gifts) {
                     GiftItem(
                         gift = it,
                         onClick = { gift ->
@@ -72,8 +89,6 @@ private fun ProductByCategoryContent(
                     )
                 }
             }
-        } ?: LoadingScreen(
-            modifier = Modifier.weight(1f)
-        )
+        }
     }
 }

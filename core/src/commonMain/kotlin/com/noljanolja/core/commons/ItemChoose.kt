@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ItemChoose(
     val id: String = "",
-    val image: String = "",
+    val image: String? = "",
     val name: String = "",
     var isSelected: Boolean = false
 )

@@ -23,9 +23,9 @@ internal fun ItemType(
     item: ItemChoose,
     borderColor: Color = Color.Transparent,
     borderColorSelected: Color = Color.Transparent,
-    textColor: Color = Color.Black,
+    textColor: Color = textColor(),
     textColorSelected: Color = Color.Black,
-    bgColor: Color = Platinum,
+    bgColor: Color = backgroundChoseItemColor(),
     bgColorSelected: Color = PrimaryGreen,
     onItemClick: (ItemChoose) -> Unit,
 ) {

@@ -13,9 +13,9 @@ class ProductByCategoryViewModel(
     private val categoryId: String = ""
 ) : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow(
-        UiState(
+        UiState<MutableList<Gift>>(
             loading = true,
-            data = mutableListOf<Gift>()
+            data = null
         )
     )
     val uiStateFlow = _uiStateFlow.asStateFlow()
@@ -26,7 +26,7 @@ class ProductByCategoryViewModel(
 
     fun handleEvent(event: ProductByCategoryEvent) {
         launch {
-            when(event) {
+            when (event) {
                 ProductByCategoryEvent.GoBack -> navigationManager.navigate(NavigationDirections.Back)
 
                 is ProductByCategoryEvent.GiftDetail -> navigationManager.navigate(
@@ -38,7 +38,7 @@ class ProductByCategoryViewModel(
 
     private fun getProductByCategory() {
         launch {
-            val gifts = coreManager.getGifts().getOrDefault(emptyList())
+            val gifts = coreManager.getGifts(categoryId = categoryId).getOrDefault(emptyList())
             _uiStateFlow.emit(
                 UiState(
                     loading = false,

@@ -1,9 +1,7 @@
 package com.noljanolja.core.shop.data.datasource
 
-import com.noljanolja.core.shop.data.model.request.BuildGiftRequest
-import com.noljanolja.core.shop.data.model.request.GetGiftRequest
-import com.noljanolja.core.shop.data.model.response.GetGiftResponse
-import com.noljanolja.core.shop.data.model.response.GetGiftsResponse
+import com.noljanolja.core.shop.data.model.request.*
+import com.noljanolja.core.shop.data.model.response.*
 import com.noljanolja.core.utils.BASE_URL
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -11,11 +9,28 @@ import io.ktor.client.request.get
 import io.ktor.client.request.post
 
 class ShopApi(private val client: HttpClient) {
-    suspend fun getGifts(searchText: String): GetGiftsResponse {
+    suspend fun getCategories(request: GetCategoriesRequest): GetCategoriesResponse {
+        return client.get("$BASE_URL/api/v1/gifts/categories") {
+            url {
+                request.run {
+                    parameters.append("page", page.toString())
+                    parameters.append("pageSize", pageSize.toString())
+                    query?.let {
+                        parameters.append("query", it)
+                    }
+                }
+            }
+        }.body()
+    }
+
+    suspend fun getGifts(searchText: String, categoryId: String): GetGiftsResponse {
         return client.get("$BASE_URL/api/v1/gifts") {
             url {
                 searchText.takeIf { it.isNotBlank() }?.let {
                     parameters.append("name", it)
+                }
+                categoryId.takeIf { it.isNotBlank() }?.let {
+                    parameters.append("categoryId", it)
                 }
             }
         }.body()
