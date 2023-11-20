@@ -449,6 +449,28 @@ object NavigationDirections {
         override val destination: String = "search_product"
     }
 
+    data class ProductByCategory(
+        val categoryId: String = "",
+        val categoryName: String = ""
+    ) : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf(
+            navArgument("categoryId") {
+                defaultValue = ""
+                type = NavType.StringType
+            },
+            navArgument("categoryName") {
+                defaultValue = ""
+                type = NavType.StringType
+            },
+        )
+        override val options = null
+        override val destination: String =
+            "product_by_category?categoryId={categoryId}&categoryName={categoryName}"
+
+        override fun createDestination() =
+            "product_by_category?categoryId=$categoryId&categoryName=$categoryName"
+    }
+
     data class GiftDetail(val giftId: String = "", val code: String = "") : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf(
             navArgument("giftId") {

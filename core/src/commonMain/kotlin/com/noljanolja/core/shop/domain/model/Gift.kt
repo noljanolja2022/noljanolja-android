@@ -1,10 +1,11 @@
 package com.noljanolja.core.shop.domain.model
 
+import com.noljanolja.core.commons.*
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class Gift(
-    val brand: Brand = Brand(),
+    val brand: ItemChoose = ItemChoose(),
     val description: String = "",
     val endTime: String = "",
     val giftNo: Int = 0,
@@ -17,10 +18,3 @@ data class Gift(
 ) {
     fun giftId() = giftId.takeIf { it.isNotBlank() } ?: id
 }
-
-@Serializable
-data class Brand(
-    val id: String = "",
-    val image: String = "",
-    val name: String = "",
-)

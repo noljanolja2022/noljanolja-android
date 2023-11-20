@@ -22,7 +22,7 @@ import kotlinx.coroutines.*
 internal fun ListTypes(
     modifier: Modifier = Modifier,
     types: MutableList<ItemChoose>,
-    onItemClick: () -> Unit,
+    onItemClick: (ItemChoose) -> Unit,
     paddingHorizontal: Int = PADDING_HORIZONTAL_SCREEN
 ) {
     val listTypeState = rememberLazyListState()
@@ -45,25 +45,25 @@ internal fun ListTypes(
         ) { type ->
             ItemType(
                 item = type,
-                onItemClick =
-                {
-                    if (types.indexOf(it) != -1) {
-                        val newValue = it.copy(isSelected = !it.isSelected)
-                        types[types.indexOf(it)] = newValue
-                        types.run {
-                            sortBy { item ->
-                                item.id
-                            }
-                            sortByDescending { item ->
-                                item.isSelected
-                            }
-                            coroutineScope.launch {
-                                delay(TWEEN_ANIMATION_TIME.toLong())
-                                listTypeState.animateScrollToItem(0)
-                                onItemClick()
-                            }
-                        }
-                    }
+                onItemClick = {
+//                    if (types.indexOf(it) != -1) {
+//                        val newValue = it.copy(isSelected = !it.isSelected)
+//                        types[types.indexOf(it)] = newValue
+//                        types.run {
+//                            sortBy { item ->
+//                                item.id
+//                            }
+//                            sortByDescending { item ->
+//                                item.isSelected
+//                            }
+//                            coroutineScope.launch {
+//                                delay(TWEEN_ANIMATION_TIME.toLong())
+//                                listTypeState.animateScrollToItem(0)
+//                                onItemClick()
+//                            }
+//                        }
+//                    }
+                    onItemClick(it)
                 },
                 modifier = Modifier.animateItemPlacement(
                     tween(durationMillis = TWEEN_ANIMATION_TIME)
