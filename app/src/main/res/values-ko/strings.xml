@@ -298,6 +298,10 @@
     <string name="gift_purchase">구매</string>
     <string name="gift_give_code_to_cashier">제품을 구매하기 위해 매장에서 이 코드(QR)를 보여주세요.</string>
     <string name="shop_coupon">쿠폰</string>
+    <string name="shop_section_top_feature">주요 기능</string>
+    <string name="shop_section_today_offers">오늘의 제안</string>
+    <string name="shop_section_recommended">추천</string>
+    <string name="shop_section_for_you">당신을 위한</string>
     <string name="chat_action_reply">답장</string>
     <string name="chat_action_forward">전달</string>
     <string name="chat_action_copy">복사</string>

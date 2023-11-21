@@ -1,26 +1,16 @@
 package com.noljanolja.android.features.shop.main
 
 import android.util.*
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Help
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Icon
@@ -35,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.res.painterResource
@@ -53,11 +44,8 @@ import com.noljanolja.android.features.shop.composable.HelpDialog
 import com.noljanolja.android.features.shop.composable.MyCashAndVoucher
 import com.noljanolja.android.features.shop.composable.ProductItem
 import com.noljanolja.android.ui.composable.*
-import com.noljanolja.android.ui.theme.Orange300
-import com.noljanolja.android.ui.theme.shopBackground
-import com.noljanolja.android.ui.theme.shopItemBackground
-import com.noljanolja.android.ui.theme.withBold
-import com.noljanolja.android.ui.theme.withMedium
+import com.noljanolja.android.ui.theme.*
+import com.noljanolja.android.util.Constant.*
 import com.noljanolja.core.commons.*
 import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
 import com.noljanolja.core.shop.domain.model.Gift
@@ -209,9 +197,7 @@ fun LazyListScope.giftItems(
     items(gifts) {
         GiftItem(
             gift = it,
-            onClick = {
-                onItemClick(it)
-            },
+            onClick = onItemClick,
         )
     }
 }
@@ -241,9 +227,7 @@ fun LazyListScope.shop(
                     gift = it,
                     modifier = Modifier
                         .weight(1F),
-                    onClick = {
-                        onItemClick.invoke(it)
-                    },
+                    onClick = onItemClick,
                     containerColor = MaterialTheme.shopItemBackground()
                 )
             } ?: Box(
@@ -388,7 +372,6 @@ private fun MyVouchers(
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun ProductsAndVouchers(
     gifts: List<Gift>,
@@ -397,6 +380,54 @@ private fun ProductsAndVouchers(
     onUse: (Gift) -> Unit,
 ) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item {
+            ProductSectionList(
+                gifts = gifts,
+                title = stringResource(id = R.string.shop_section_top_feature),
+                containerColor = PrimaryGreen,
+                titleColor = Color.Black,
+                paddingTop = DefaultValue.PADDING_VIEW_SCREEN,
+                paddingBottom = DefaultValue.PADDING_VIEW_SCREEN,
+                onItemClick = onItemClick
+            )
+        }
+        item {
+            ProductSectionList(
+                gifts = gifts,
+                title = stringResource(id = R.string.shop_section_today_offers),
+                onItemClick = onItemClick
+            )
+        }
+        item {
+            ProductSectionList(
+                gifts = gifts,
+                title = stringResource(id = R.string.shop_section_recommended),
+                onItemClick = onItemClick
+            )
+        }
+        item {
+            MarginVertical(DefaultValue.PADDING_VIEW_SCREEN)
+            Row {
+                Text(
+                    text = stringResource(id = R.string.shop_section_for_you),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .padding(
+                            start = DefaultValue.PADDING_VIEW_SCREEN.dp,
+                            end = DefaultValue.PADDING_VIEW.dp
+                        )
+                )
+                MarginHorizontal(DefaultValue.PADDING_VIEW)
+                Icon(
+                    imageVector = Icons.Default.NavigateNext,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        }
         giftItems(
             gifts = gifts,
             onItemClick = onItemClick
