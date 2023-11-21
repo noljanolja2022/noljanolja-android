@@ -355,6 +355,10 @@
     <string name="gift_purchase">Purchase</string>
     <string name="gift_give_code_to_cashier">Give this Code to the cashier to get products</string>
     <string name="shop_coupon">Voucher wallet</string>
+    <string name="shop_section_top_feature">Top Features</string>
+    <string name="shop_section_today_offers">Today offers</string>
+    <string name="shop_section_recommended">Recommended</string>
+    <string name="shop_section_for_you">For you</string>
     <string name="chat_action_reply">Reply</string>
     <string name="chat_action_forward">Forward</string>
     <string name="chat_action_copy">Copy</string>

@@ -23,8 +23,9 @@ class Constant {
     object DefaultValue {
         const val PADDING_VIEW = 5
         const val PADDING_ICON = 7
-        const val ROUND_RECTANGLE = 20
+        const val ROUND_RECTANGLE = 10
         const val PADDING_HORIZONTAL_SCREEN = 20
+        const val PADDING_VIEW_SCREEN = 16
         const val ROUND_DIALOG = 10
         const val TWEEN_ANIMATION_TIME = 300
     }
