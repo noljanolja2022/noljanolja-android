@@ -401,7 +401,7 @@
     <string name="term_detail_description">Welcome to NolgoBulja. Please read our terms of service carefully.</string>
     <string name="common_phone">Phone</string>
     <string name="login_google_description">Welcome to NolgoBulja. Please connect your Google account to continue.</string>
-    <string name="login_google_button">Connect with Google</string>
+    <string name="login_google_button">Login with Google</string>
     <string name="coming_soon">Welcome to NolgoBulja. We will be coming soon. Thank you.</string>
     <string name="common_exit">Exit</string>
     <string name="convert_points_to_cash">Convert points to cash</string>

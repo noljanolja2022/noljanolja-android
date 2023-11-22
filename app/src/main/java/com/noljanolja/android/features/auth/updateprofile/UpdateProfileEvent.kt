@@ -15,4 +15,5 @@ sealed interface UpdateProfileEvent {
     ) : UpdateProfileEvent
 
     object DismissError : UpdateProfileEvent
+    object OpenCountryList : UpdateProfileEvent
 }
