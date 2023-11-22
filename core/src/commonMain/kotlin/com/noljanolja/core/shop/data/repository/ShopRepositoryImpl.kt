@@ -29,7 +29,7 @@ internal class ShopRepositoryImpl(
         shopLocalDatasource.deleteByScreen(SCREEN)
     }
 
-    override suspend fun getCategories(request: GetCategoriesRequest): Result<List<ItemChoose>?>{
+    override suspend fun getCategories(request: GetCategoriesRequest): Result<List<ItemChoose>?> {
         return try {
             val response = shopApi.getCategories(request)
             if (response.isSuccessful()) {
@@ -42,9 +42,13 @@ internal class ShopRepositoryImpl(
         }
     }
 
-    override suspend fun getGifts(searchText: String, categoryId: String): Result<List<Gift>> {
+    override suspend fun getGifts(
+        searchText: String,
+        categoryId: String,
+        isFeatured: Boolean?
+    ): Result<List<Gift>> {
         return try {
-            val response = shopApi.getGifts(searchText, categoryId)
+            val response = shopApi.getGifts(searchText, categoryId, isFeatured)
             if (response.isSuccessful()) {
                 Result.success(response.data)
             } else {
