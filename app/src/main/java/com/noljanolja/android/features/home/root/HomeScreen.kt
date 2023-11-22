@@ -209,6 +209,7 @@ fun HomeBottomBar(
     navController: NavHostController,
     isReadAllConversations: Boolean,
 ) {
+    //test
     val items = listOf(
         HomeNavigationItem.FriendsItem,
         HomeNavigationItem.ChatItem,
