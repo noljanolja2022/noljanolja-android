@@ -71,6 +71,7 @@ import com.noljanolja.android.features.sharemessage.SelectShareMessageViewModel
 import com.noljanolja.android.features.shop.coupons.CouponsViewModel
 import com.noljanolja.android.features.shop.giftdetail.GiftDetailViewModel
 import com.noljanolja.android.features.shop.main.ShopViewModel
+import com.noljanolja.android.features.shop.productbycategory.*
 import com.noljanolja.android.features.shop.search.SearchProductViewModel
 import com.noljanolja.android.features.splash.SplashViewModel
 import com.noljanolja.android.services.PermissionChecker
@@ -329,6 +330,9 @@ class MyApplication : Application() {
                 }
                 viewModel {
                     SearchProductViewModel()
+                }
+                viewModel {
+                    ProductByCategoryViewModel(get())
                 }
                 viewModel { (giftId: String, code: String) -> GiftDetailViewModel(giftId, code) }
                 viewModel {

@@ -48,7 +48,8 @@ import com.noljanolja.android.features.setting.more.*
 import com.noljanolja.android.features.sharemessage.*
 import com.noljanolja.android.features.shop.coupons.*
 import com.noljanolja.android.features.shop.giftdetail.*
-import com.noljanolja.android.features.shop.search.*
+import com.noljanolja.android.features.shop.productbycategory.*
+import com.noljanolja.android.features.shop.search.SearchProductScreen
 import com.noljanolja.android.features.splash.*
 import com.noljanolja.android.util.*
 import com.noljanolja.core.*
@@ -338,6 +339,16 @@ private fun NavGraphBuilder.addShopGraph() {
     with(NavigationDirections.SearchProduct) {
         composable(destination, arguments) {
             SearchProductScreen()
+        }
+    }
+    with(NavigationDirections.ProductByCategory()) {
+        composable(destination, arguments) {
+            val categoryId = it.arguments?.getString("categoryId")
+            val categoryName = it.arguments?.getString("categoryName")
+            ProductByCategoryScreen(
+                categoryId = categoryId.convertToString(),
+                categoryName = categoryName.convertToString()
+            )
         }
     }
     with(NavigationDirections.GiftDetail()) {

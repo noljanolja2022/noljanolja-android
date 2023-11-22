@@ -14,6 +14,7 @@ import com.noljanolja.core.exchange.domain.repository.ExchangeRepository
 import com.noljanolja.core.loyalty.domain.model.LoyaltyType
 import com.noljanolja.core.loyalty.domain.repository.LoyaltyRepository
 import com.noljanolja.core.media.domain.repository.MediaRepository
+import com.noljanolja.core.shop.data.model.request.*
 import com.noljanolja.core.shop.domain.repository.ShopRepository
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.user.domain.repository.UserRepository
@@ -388,7 +389,10 @@ class CoreManager : KoinComponent {
 
     suspend fun clearAllSearch() = shopRepository.clearAll()
     suspend fun clearTextSearch(text: String) = shopRepository.clearText(text)
-    suspend fun getGifts(searchText: String = "") = shopRepository.getGifts(searchText)
+    suspend fun getCategories(request: GetCategoriesRequest) =
+        shopRepository.getCategories(request)
+    suspend fun getGifts(searchText: String = "", categoryId: String = "") =
+        shopRepository.getGifts(searchText, categoryId)
     suspend fun getMyGifts() = shopRepository.getMyGifts()
     suspend fun getGiftDetail(giftId: String) = shopRepository.getGiftDetail(giftId)
     suspend fun buyGift(giftId: String) = shopRepository.buyGift(giftId)

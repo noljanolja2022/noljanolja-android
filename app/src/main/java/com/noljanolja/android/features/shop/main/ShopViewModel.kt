@@ -5,8 +5,10 @@ import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
+import com.noljanolja.core.commons.*
 import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
+import com.noljanolja.core.shop.data.model.request.*
 import com.noljanolja.core.shop.domain.model.Gift
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,7 +38,19 @@ class ShopViewModel : BaseViewModel() {
                     NavigationDirections.GiftDetail(event.giftId, event.code)
                 )
 
+                is ShopEvent.ViewGiftType -> {
+                    if (event.categoryId.isNotBlank()) {
+                        navigationManager.navigate(
+                            NavigationDirections.ProductByCategory(
+                                event.categoryId,
+                                event.categoryName
+                            )
+                        )
+                    }
+                }
+
                 ShopEvent.ViewAllCoupons -> navigationManager.navigate(NavigationDirections.Coupons)
+
                 ShopEvent.Refresh -> {
                     delay(200)
                     refresh()
@@ -57,16 +71,35 @@ class ShopViewModel : BaseViewModel() {
             val gifts = coreManager.getGifts().getOrDefault(emptyList())
             val myGifts = coreManager.getMyGifts().getOrDefault(emptyList())
             val myBalance = coreManager.getExchangeBalance().getOrDefault(ExchangeBalance())
+            val categories = coreManager.getCategories(
+                GetCategoriesRequest(
+                    page = 1,
+                    pageSize = 100,
+                    query = null
+                )
+            ).getOrDefault(emptyList())
             _uiStateFlow.emit(
                 UiState(
                     data = ShopUiData(
                         gifts = gifts,
                         myGifts = myGifts,
-                        myBalance = myBalance
+                        myBalance = myBalance,
+                        category = convertToCategoriesList(categories?.toMutableList())
                     )
                 )
             )
         }
+    }
+
+    private fun convertToCategoriesList(oldList: List<ItemChoose>?): MutableList<ItemChoose> {
+        val newList = mutableListOf(
+            ItemChoose(
+                name = "All",
+                isSelected = true
+            )
+        )
+        oldList?.let(newList::addAll)
+        return newList
     }
 }
 
@@ -74,4 +107,5 @@ data class ShopUiData(
     val myBalance: ExchangeBalance = ExchangeBalance(),
     val gifts: List<Gift> = emptyList(),
     val myGifts: List<Gift> = emptyList(),
+    val category: MutableList<ItemChoose> = mutableListOf()
 )
