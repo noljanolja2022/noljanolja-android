@@ -5,6 +5,7 @@ import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.base.launchInMain
 import com.noljanolja.android.common.error.UnexpectedFailure
+import com.noljanolja.android.common.navigation.*
 import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
 import com.noljanolja.core.shop.domain.model.Gift
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -32,9 +33,17 @@ class GiftDetailViewModel(
     init {
         launch {
             val gift = coreManager.getGiftDetail(giftId).getOrDefault(Gift())
+            val giftsByCategory =
+                coreManager.getGifts(categoryId = gift.category.id).getOrDefault(emptyList())
+                    .toMutableList()
+            giftsByCategory.remove(gift)
+
             _uiStateFlow.emit(
                 UiState(
-                    data = GiftDetailUiData(gift.copy(qrCode = code))
+                    data = GiftDetailUiData(
+                        gift = gift.copy(qrCode = code),
+                        giftsByCategory = giftsByCategory
+                    )
                 )
             )
         }
@@ -51,6 +60,10 @@ class GiftDetailViewModel(
                 GiftDetailEvent.Back -> back()
 
                 GiftDetailEvent.Purchase -> purchase()
+
+                is GiftDetailEvent.GiftDetail -> navigationManager.navigate(
+                    NavigationDirections.GiftDetail(event.giftId, event.code)
+                )
             }
         }
     }
@@ -62,8 +75,19 @@ class GiftDetailViewModel(
         )
         val response = coreManager.buyGift(giftId)
         response.getOrNull()?.let {
+            val giftsByCategory =
+                coreManager.getGifts(categoryId = it.category.id).getOrDefault(emptyList())
+                    .toMutableList()
+            giftsByCategory.remove(it)
             _buyGiftSuccessEvent.emit(true)
-            _uiStateFlow.emit(UiState(data = GiftDetailUiData(it)))
+            _uiStateFlow.emit(
+                UiState(
+                    data = GiftDetailUiData(
+                        gift = it,
+                        giftsByCategory = giftsByCategory
+                    )
+                )
+            )
             launchInMain {
                 coreManager.refreshMemberInfo()
             }
@@ -78,4 +102,5 @@ class GiftDetailViewModel(
 
 data class GiftDetailUiData(
     val gift: Gift,
+    val giftsByCategory: MutableList<Gift>
 )

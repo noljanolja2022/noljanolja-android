@@ -359,6 +359,7 @@
     <string name="shop_section_today_offers">Today offers</string>
     <string name="shop_section_recommended">Recommended</string>
     <string name="shop_section_for_you">For you</string>
+    <string name="shop_section_maybe_you_like">Maybe you like</string>
     <string name="chat_action_reply">Reply</string>
     <string name="chat_action_forward">Forward</string>
     <string name="chat_action_copy">Copy</string>

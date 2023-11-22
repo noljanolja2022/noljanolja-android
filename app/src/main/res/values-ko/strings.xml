@@ -302,6 +302,7 @@
     <string name="shop_section_today_offers">오늘의 제안</string>
     <string name="shop_section_recommended">추천</string>
     <string name="shop_section_for_you">당신을 위한</string>
+    <string name="shop_section_maybe_you_like">아마도 당신은 좋아할 것입니다</string>
     <string name="chat_action_reply">답장</string>
     <string name="chat_action_forward">전달</string>
     <string name="chat_action_copy">복사</string>
