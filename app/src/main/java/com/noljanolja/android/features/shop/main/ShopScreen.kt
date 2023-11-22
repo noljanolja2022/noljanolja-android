@@ -85,21 +85,24 @@ private fun ShopContent(
                 )
             }
             SizeBox(height = 20.dp)
-            ProductsAndVouchers(
-                gifts = data.gifts,
-                myGifts = data.myGifts,
-                onItemClick = {
-                    handleEvent(ShopEvent.GiftDetail(it.id, it.qrCode))
-                },
-                onUse = {
-                    handleEvent(
-                        ShopEvent.GiftDetail(
-                            it.giftId(),
-                            it.qrCode
+            data.run {
+                ProductsAndVouchers(
+                    gifts = gifts,
+                    topFeatureGifts = topFeatureGifts,
+                    myGifts = myGifts,
+                    onItemClick = {
+                        handleEvent(ShopEvent.GiftDetail(it.id, it.qrCode))
+                    },
+                    onUse = {
+                        handleEvent(
+                            ShopEvent.GiftDetail(
+                                it.giftId(),
+                                it.qrCode
+                            )
                         )
-                    )
-                }
-            )
+                    }
+                )
+            }
         }
     }
 }
@@ -345,6 +348,7 @@ private fun MyVouchers(
 @Composable
 private fun ProductsAndVouchers(
     gifts: List<Gift>,
+    topFeatureGifts: List<Gift>,
     myGifts: List<Gift>,
     onItemClick: (Gift) -> Unit,
     onUse: (Gift) -> Unit,
@@ -355,7 +359,7 @@ private fun ProductsAndVouchers(
             .verticalScroll(rememberScrollState())
     ) {
         ProductSectionList(
-            gifts = gifts,
+            gifts = topFeatureGifts,
             title = stringResource(id = R.string.shop_section_top_feature),
             containerColor = PrimaryGreen,
             titleColor = Color.Black,

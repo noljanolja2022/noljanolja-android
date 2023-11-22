@@ -23,7 +23,11 @@ class ShopApi(private val client: HttpClient) {
         }.body()
     }
 
-    suspend fun getGifts(searchText: String, categoryId: String): GetGiftsResponse {
+    suspend fun getGifts(
+        searchText: String,
+        categoryId: String,
+        isFeatured: Boolean?
+    ): GetGiftsResponse {
         return client.get("$BASE_URL/api/v1/gifts") {
             url {
                 searchText.takeIf { it.isNotBlank() }?.let {
@@ -31,6 +35,9 @@ class ShopApi(private val client: HttpClient) {
                 }
                 categoryId.takeIf { it.isNotBlank() }?.let {
                     parameters.append("categoryId", it)
+                }
+                isFeatured?.let {
+                    parameters.append("isFeatured", it.toString())
                 }
             }
         }.body()
