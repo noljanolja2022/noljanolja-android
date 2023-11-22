@@ -27,7 +27,7 @@ class ShopApi(private val client: HttpClient) {
         return client.get("$BASE_URL/api/v1/gifts") {
             url {
                 searchText.takeIf { it.isNotBlank() }?.let {
-                    parameters.append("name", it)
+                    parameters.append("query", it)
                 }
                 categoryId.takeIf { it.isNotBlank() }?.let {
                     parameters.append("categoryId", it)
