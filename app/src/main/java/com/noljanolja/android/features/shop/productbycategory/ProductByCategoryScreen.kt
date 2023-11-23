@@ -7,8 +7,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.res.*
 import androidx.compose.ui.unit.*
 import androidx.lifecycle.compose.*
+import com.noljanolja.android.R
 import com.noljanolja.android.features.shop.composable.*
 import com.noljanolja.android.ui.composable.*
 import com.noljanolja.android.ui.theme.*
@@ -63,7 +65,7 @@ private fun ProductByCategoryContent(
             ) {
                 if (gifts != null) {
                     Text(
-                        text = "Nothing Here",
+                        text = stringResource(id = R.string.shop_all_sold_out),
                         color = textColor()
                     )
                 } else {

@@ -17,6 +17,7 @@ import androidx.compose.ui.*
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.*
+import androidx.compose.ui.modifier.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.*
@@ -353,40 +354,59 @@ private fun ProductsAndVouchers(
     onItemClick: (Gift) -> Unit,
     onUse: (Gift) -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+    if (gifts.isEmpty()
+        && topFeatureGifts.isEmpty()
     ) {
-        ProductSectionList(
-            gifts = topFeatureGifts,
-            title = stringResource(id = R.string.shop_section_top_feature),
-            containerColor = PrimaryGreen,
-            titleColor = Color.Black,
-            paddingTop = DefaultValue.PADDING_VIEW_SCREEN,
-            paddingBottom = DefaultValue.PADDING_VIEW_SCREEN,
-            onItemClick = onItemClick
-        )
-        ProductSectionList(
-            gifts = gifts,
-            title = stringResource(id = R.string.shop_section_today_offers),
-            onItemClick = onItemClick
-        )
-        ProductSectionList(
-            gifts = gifts,
-            title = stringResource(id = R.string.shop_section_recommended),
-            onItemClick = onItemClick
-        )
-        MarginVertical(DefaultValue.PADDING_VIEW_SCREEN)
-        SectionTitle(
-            title = stringResource(id = R.string.shop_section_for_you),
-            icon = Icons.Default.NavigateNext
-        )
-        gifts.forEach {
-            GiftItem(
-                gift = it,
-                onClick = onItemClick,
+        Box{
+            Text(
+                text = stringResource(id = R.string.shop_all_sold_out),
+                color = textColor()
             )
+        }
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+            if (topFeatureGifts.isNotEmpty()) {
+                ProductSectionList(
+                    gifts = topFeatureGifts,
+                    title = stringResource(id = R.string.shop_section_top_feature),
+                    containerColor = PrimaryGreen,
+                    titleColor = Color.Black,
+                    paddingTop = DefaultValue.PADDING_VIEW_SCREEN,
+                    paddingBottom = DefaultValue.PADDING_VIEW_SCREEN,
+                    onItemClick = onItemClick
+                )
+            }
+            if (gifts.isNotEmpty()) {
+                ProductSectionList(
+                    gifts = gifts,
+                    title = stringResource(id = R.string.shop_section_today_offers),
+                    onItemClick = onItemClick
+                )
+            }
+            if (gifts.isNotEmpty()) {
+                ProductSectionList(
+                    gifts = gifts,
+                    title = stringResource(id = R.string.shop_section_recommended),
+                    onItemClick = onItemClick
+                )
+            }
+            if (gifts.isNotEmpty()) {
+                MarginVertical(DefaultValue.PADDING_VIEW_SCREEN)
+                SectionTitle(
+                    title = stringResource(id = R.string.shop_section_for_you),
+                    icon = Icons.Default.NavigateNext
+                )
+                gifts.forEach {
+                    GiftItem(
+                        gift = it,
+                        onClick = onItemClick,
+                    )
+                }
+            }
         }
     }
 }
