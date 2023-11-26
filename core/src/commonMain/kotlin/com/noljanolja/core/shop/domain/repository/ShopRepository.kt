@@ -12,7 +12,12 @@ interface ShopRepository {
     suspend fun clearText(text: String)
     suspend fun clearAll()
     suspend fun getCategories(request: GetCategoriesRequest): Result<List<ItemChoose>?>
-    suspend fun getGifts(searchText: String, categoryId: String, isFeatured: Boolean? = null): Result<List<Gift>>
+    suspend fun getGifts(
+        searchText: String,
+        categoryId: String,
+        isFeatured: Boolean? = null,
+        isTodayOffer: Boolean? = null
+    ): Result<List<Gift>>
     suspend fun getMyGifts(): Result<List<Gift>>
     suspend fun getGiftDetail(id: String): Result<Gift>
     suspend fun buyGift(id: String): Result<Gift>

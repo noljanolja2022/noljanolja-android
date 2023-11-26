@@ -133,23 +133,18 @@ internal fun ProductSectionList(
                 }
         )
         createHorizontalChain(tvTitle, btnSeeAll, chainStyle = ChainStyle.Packed)
-        LazyRow(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .constrainAs(listData) {
                     top.linkTo(tvTitle.bottom, PADDING_VIEW.dp)
-                },
-            state = rememberLazyListState(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            contentPadding = PaddingValues(horizontal = PADDING_VIEW_SCREEN.dp)
+                }
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = PADDING_VIEW_SCREEN.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            items(
-                items = gifts,
-                key = { realEstate ->
-                    realEstate.toString()
-                },
-            ) { gift ->
+            gifts.forEach { gift ->
                 ProductSection(
                     gift = gift,
                     onItemClick = onItemClick

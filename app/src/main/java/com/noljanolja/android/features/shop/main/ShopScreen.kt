@@ -91,6 +91,7 @@ private fun ShopContent(
                     gifts = gifts,
                     topFeatureGifts = topFeatureGifts,
                     myGifts = myGifts,
+                    todayOfferGifts = todayOfferGift,
                     onItemClick = {
                         handleEvent(ShopEvent.GiftDetail(it.id, it.qrCode))
                     },
@@ -350,6 +351,7 @@ private fun MyVouchers(
 private fun ProductsAndVouchers(
     gifts: List<Gift>,
     topFeatureGifts: List<Gift>,
+    todayOfferGifts: List<Gift>,
     myGifts: List<Gift>,
     onItemClick: (Gift) -> Unit,
     onUse: (Gift) -> Unit,
@@ -380,9 +382,9 @@ private fun ProductsAndVouchers(
                     onItemClick = onItemClick
                 )
             }
-            if (gifts.isNotEmpty()) {
+            if (todayOfferGifts.isNotEmpty()) {
                 ProductSectionList(
-                    gifts = gifts,
+                    gifts = todayOfferGifts,
                     title = stringResource(id = R.string.shop_section_today_offers),
                     onItemClick = onItemClick
                 )
