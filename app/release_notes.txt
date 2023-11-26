@@ -1,3 +1,4 @@
+- 1.1.22: Add today offer and fix lag
 - 1.1.21: Add text to Korean league and search by category name, and get Top feature
 - 1.1.20: Fix shop screen scroll and add List maybe you like in detail product
 - 1.1.19: Enable chat tab, soft tab and add product sections
