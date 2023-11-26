@@ -26,7 +26,8 @@ class ShopApi(private val client: HttpClient) {
     suspend fun getGifts(
         searchText: String,
         categoryId: String,
-        isFeatured: Boolean?
+        isFeatured: Boolean?,
+        isTodayOffer: Boolean?
     ): GetGiftsResponse {
         return client.get("$BASE_URL/api/v1/gifts") {
             url {
@@ -38,6 +39,9 @@ class ShopApi(private val client: HttpClient) {
                 }
                 isFeatured?.let {
                     parameters.append("isFeatured", it.toString())
+                }
+                isTodayOffer?.let {
+                    parameters.append("isTodayOffer", it.toString())
                 }
             }
         }.body()

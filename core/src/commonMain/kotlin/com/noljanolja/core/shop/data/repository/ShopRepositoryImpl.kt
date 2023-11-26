@@ -45,10 +45,16 @@ internal class ShopRepositoryImpl(
     override suspend fun getGifts(
         searchText: String,
         categoryId: String,
-        isFeatured: Boolean?
+        isFeatured: Boolean?,
+        isTodayOffer: Boolean?
     ): Result<List<Gift>> {
         return try {
-            val response = shopApi.getGifts(searchText, categoryId, isFeatured)
+            val response = shopApi.getGifts(
+                searchText,
+                categoryId,
+                isFeatured,
+                isTodayOffer
+            )
             if (response.isSuccessful()) {
                 Result.success(response.data)
             } else {

@@ -224,10 +224,10 @@
     <string name="transaction_detail_time">시간</string>
     <string name="my_ranking_title">내 순위</string>
     <string name="video_title">동영상 보고 포인트 적립하기</string>
-    <string name="video_title_part1">Let’s get</string>
-    <string name="video_title_point">Points</string>
-    <string name="video_title_by">By</string>
-    <string name="video_title_watching">Watching</string>
+    <string name="video_title_part1">매일매일</string>
+    <string name="video_title_point">포인트 적립해요</string>
+    <string name="video_title_by">쉽게</string>
+    <string name="video_title_watching">보고 즐기면서</string>
     <string name="video_list_today">오늘의 인기영상</string>
     <string name="video_list_watching_to_get_point">시청을 완료하고 포인트를 받으세요!</string>
     <string name="video_detail_views">조회수</string>
