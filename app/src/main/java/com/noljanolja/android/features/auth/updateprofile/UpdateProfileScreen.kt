@@ -25,6 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -201,7 +202,11 @@ fun UpdateProfileContent(
                                 Icon(Icons.Outlined.Cancel, contentDescription = null)
                             }
                         }
-                    }
+                    },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        textColor = MaterialTheme.colorScheme.onBackground
+                    ),
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
                 )
                 SizeBox(height = 8.dp)
 
@@ -242,6 +247,10 @@ fun UpdateProfileContent(
                             }
                         }
                     },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        textColor = MaterialTheme.colorScheme.onBackground,
+                    ),
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
                 )
 
                 SizeBox(height = 8.dp)

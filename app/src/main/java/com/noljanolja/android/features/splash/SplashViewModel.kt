@@ -48,7 +48,7 @@ class SplashViewModel : BaseViewModel() {
                         )
                     } else {
                         navigationManager.navigate(
-                            NavigationDirections.Home
+                            NavigationDirections.UpdateProfile
                         )
                     }
                 }
