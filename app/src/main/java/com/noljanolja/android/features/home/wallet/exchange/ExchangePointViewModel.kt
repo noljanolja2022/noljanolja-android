@@ -6,6 +6,7 @@ import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.util.showToast
 import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
+import com.noljanolja.core.exchange.domain.domain.ExchangeRate
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,9 +23,17 @@ class ExchangePointViewModel : BaseViewModel() {
     private val _myBalanceFlow = MutableStateFlow(ExchangeBalance())
     val myBalanceFlow = _myBalanceFlow.asStateFlow()
 
+    private val _exchangeRateFlow = MutableStateFlow(ExchangeRate())
+    val exchangeRateFlow = _exchangeRateFlow.asStateFlow()
+
     init {
         launch {
             refreshBalance()
+        }
+        launch {
+            coreManager.getExchangeRate().getOrNull()?.let {
+                _exchangeRateFlow.emit(it)
+            }
         }
     }
 
