@@ -69,6 +69,8 @@ class ShopViewModel : BaseViewModel() {
                 )
             )
             val gifts = coreManager.getGifts().getOrDefault(emptyList())
+            val topFeatureGifts = coreManager.getGifts(isFeatured = true).getOrDefault(emptyList())
+            val todayOfferGifts = coreManager.getGifts(isTodayOffer = true).getOrDefault(emptyList())
             val myGifts = coreManager.getMyGifts().getOrDefault(emptyList())
             val myBalance = coreManager.getExchangeBalance().getOrDefault(ExchangeBalance())
             val categories = coreManager.getCategories(
@@ -82,7 +84,9 @@ class ShopViewModel : BaseViewModel() {
                 UiState(
                     data = ShopUiData(
                         gifts = gifts,
+                        topFeatureGifts = topFeatureGifts,
                         myGifts = myGifts,
+                        todayOfferGift = todayOfferGifts,
                         myBalance = myBalance,
                         category = convertToCategoriesList(categories?.toMutableList())
                     )
@@ -106,6 +110,8 @@ class ShopViewModel : BaseViewModel() {
 data class ShopUiData(
     val myBalance: ExchangeBalance = ExchangeBalance(),
     val gifts: List<Gift> = emptyList(),
+    val topFeatureGifts: List<Gift> = emptyList(),
+    val todayOfferGift: List<Gift> = emptyList(),
     val myGifts: List<Gift> = emptyList(),
     val category: MutableList<ItemChoose> = mutableListOf()
 )

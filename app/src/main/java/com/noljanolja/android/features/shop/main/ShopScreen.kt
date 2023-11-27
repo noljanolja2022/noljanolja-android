@@ -4,52 +4,35 @@ import android.util.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.*
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.*
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material.pullrefresh.*
+import androidx.compose.material3.*
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
+import androidx.compose.ui.draw.*
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.accompanist.pager.ExperimentalPagerApi
+import androidx.compose.ui.layout.*
+import androidx.compose.ui.modifier.*
+import androidx.compose.ui.res.*
+import androidx.compose.ui.text.*
+import androidx.compose.ui.text.font.*
+import androidx.compose.ui.unit.*
+import androidx.lifecycle.compose.*
 import com.noljanolja.android.R
-import com.noljanolja.android.common.base.UiState
-import com.noljanolja.android.features.shop.composable.CouponItem
-import com.noljanolja.android.features.shop.composable.GiftItem
-import com.noljanolja.android.features.shop.composable.HelpDialog
-import com.noljanolja.android.features.shop.composable.MyCashAndVoucher
-import com.noljanolja.android.features.shop.composable.ProductItem
+import com.noljanolja.android.common.base.*
+import com.noljanolja.android.features.shop.composable.*
 import com.noljanolja.android.ui.composable.*
 import com.noljanolja.android.ui.theme.*
 import com.noljanolja.android.util.Constant.*
 import com.noljanolja.core.commons.*
-import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
-import com.noljanolja.core.shop.domain.model.Gift
-import org.koin.androidx.compose.getViewModel
+import com.noljanolja.core.exchange.domain.domain.*
+import com.noljanolja.core.shop.domain.model.*
+import org.koin.androidx.compose.*
 
 @Composable
 fun ShopScreen(
@@ -103,21 +86,25 @@ private fun ShopContent(
                 )
             }
             SizeBox(height = 20.dp)
-            ProductsAndVouchers(
-                gifts = data.gifts,
-                myGifts = data.myGifts,
-                onItemClick = {
-                    handleEvent(ShopEvent.GiftDetail(it.id, it.qrCode))
-                },
-                onUse = {
-                    handleEvent(
-                        ShopEvent.GiftDetail(
-                            it.giftId(),
-                            it.qrCode
+            data.run {
+                ProductsAndVouchers(
+                    gifts = gifts,
+                    topFeatureGifts = topFeatureGifts,
+                    myGifts = myGifts,
+                    todayOfferGifts = todayOfferGift,
+                    onItemClick = {
+                        handleEvent(ShopEvent.GiftDetail(it.id, it.qrCode))
+                    },
+                    onUse = {
+                        handleEvent(
+                            ShopEvent.GiftDetail(
+                                it.giftId(),
+                                it.qrCode
+                            )
                         )
-                    )
-                }
-            )
+                    }
+                )
+            }
         }
     }
 }
@@ -187,18 +174,6 @@ private fun SearchProductHeader(
         topPosition = topHelpPosition
     ) {
         isShowHelp = false
-    }
-}
-
-fun LazyListScope.giftItems(
-    gifts: List<Gift>,
-    onItemClick: (Gift) -> Unit,
-) {
-    items(gifts) {
-        GiftItem(
-            gift = it,
-            onClick = onItemClick,
-        )
     }
 }
 
@@ -375,62 +350,65 @@ private fun MyVouchers(
 @Composable
 private fun ProductsAndVouchers(
     gifts: List<Gift>,
+    topFeatureGifts: List<Gift>,
+    todayOfferGifts: List<Gift>,
     myGifts: List<Gift>,
     onItemClick: (Gift) -> Unit,
     onUse: (Gift) -> Unit,
 ) {
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        item {
-            ProductSectionList(
-                gifts = gifts,
-                title = stringResource(id = R.string.shop_section_top_feature),
-                containerColor = PrimaryGreen,
-                titleColor = Color.Black,
-                paddingTop = DefaultValue.PADDING_VIEW_SCREEN,
-                paddingBottom = DefaultValue.PADDING_VIEW_SCREEN,
-                onItemClick = onItemClick
+    if (gifts.isEmpty()
+        && topFeatureGifts.isEmpty()
+    ) {
+        Box{
+            Text(
+                text = stringResource(id = R.string.shop_all_sold_out),
+                color = textColor()
             )
         }
-        item {
-            ProductSectionList(
-                gifts = gifts,
-                title = stringResource(id = R.string.shop_section_today_offers),
-                onItemClick = onItemClick
-            )
-        }
-        item {
-            ProductSectionList(
-                gifts = gifts,
-                title = stringResource(id = R.string.shop_section_recommended),
-                onItemClick = onItemClick
-            )
-        }
-        item {
-            MarginVertical(DefaultValue.PADDING_VIEW_SCREEN)
-            Row {
-                Text(
-                    text = stringResource(id = R.string.shop_section_for_you),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .padding(
-                            start = DefaultValue.PADDING_VIEW_SCREEN.dp,
-                            end = DefaultValue.PADDING_VIEW.dp
-                        )
-                )
-                MarginHorizontal(DefaultValue.PADDING_VIEW)
-                Icon(
-                    imageVector = Icons.Default.NavigateNext,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.size(24.dp)
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+            if (topFeatureGifts.isNotEmpty()) {
+                ProductSectionList(
+                    gifts = topFeatureGifts,
+                    title = stringResource(id = R.string.shop_section_top_feature),
+                    containerColor = PrimaryGreen,
+                    titleColor = Color.Black,
+                    paddingTop = DefaultValue.PADDING_VIEW_SCREEN,
+                    paddingBottom = DefaultValue.PADDING_VIEW_SCREEN,
+                    onItemClick = onItemClick
                 )
             }
+            if (todayOfferGifts.isNotEmpty()) {
+                ProductSectionList(
+                    gifts = todayOfferGifts,
+                    title = stringResource(id = R.string.shop_section_today_offers),
+                    onItemClick = onItemClick
+                )
+            }
+            if (gifts.isNotEmpty()) {
+                ProductSectionList(
+                    gifts = gifts,
+                    title = stringResource(id = R.string.shop_section_recommended),
+                    onItemClick = onItemClick
+                )
+            }
+            if (gifts.isNotEmpty()) {
+                MarginVertical(DefaultValue.PADDING_VIEW_SCREEN)
+                SectionTitle(
+                    title = stringResource(id = R.string.shop_section_for_you),
+                    icon = Icons.Default.NavigateNext
+                )
+                gifts.forEach {
+                    GiftItem(
+                        gift = it,
+                        onClick = onItemClick,
+                    )
+                }
+            }
         }
-        giftItems(
-            gifts = gifts,
-            onItemClick = onItemClick
-        )
     }
 }

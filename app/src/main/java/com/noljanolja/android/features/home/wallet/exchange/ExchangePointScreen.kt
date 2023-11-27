@@ -66,6 +66,7 @@ import com.noljanolja.android.util.formatDigitsNumber
 import com.noljanolja.android.util.secondaryTextColor
 import com.noljanolja.android.util.showToast
 import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
+import com.noljanolja.core.exchange.domain.domain.ExchangeRate
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -78,10 +79,12 @@ fun ExchangePointScreen(
 ) {
     val memberInfo by viewModel.memberInfoFlow.collectAsStateWithLifecycle()
     val myBalance by viewModel.myBalanceFlow.collectAsStateWithLifecycle()
+    val exchangeRate by viewModel.exchangeRateFlow.collectAsStateWithLifecycle()
     var error by remember { mutableStateOf<Throwable?>(null) }
     ExchangePointContent(
         memberInfo = memberInfo,
         myBalance = myBalance,
+        exchangeRate = exchangeRate,
         handleEvent = viewModel::handleEvent
     )
 
@@ -98,6 +101,7 @@ fun ExchangePointScreen(
 fun ExchangePointContent(
     memberInfo: MemberInfo,
     myBalance: ExchangeBalance,
+    exchangeRate: ExchangeRate,
     handleEvent: (ExchangeEvent) -> Unit,
 ) {
     val context = LocalContext.current
@@ -164,6 +168,7 @@ fun ExchangePointContent(
                         scope.launch {
                             convertPoint(
                                 context = context,
+                                rewardRecurringAmount = exchangeRate.rewardRecurringAmount,
                                 sharedPreferenceHelper = sharedPreferenceHelper,
                                 onConvert = {
                                     handleEvent(ExchangeEvent.Convert)
@@ -315,10 +320,11 @@ private fun BottomNativeAd(
 
 private suspend fun convertPoint(
     context: Context,
+    rewardRecurringAmount: Int,
     sharedPreferenceHelper: SharedPreferenceHelper,
     onConvert: () -> Unit,
 ) {
-    if (false && sharedPreferenceHelper.convertPointCount % 2 == 0) {
+    if (rewardRecurringAmount == 0 || (sharedPreferenceHelper.convertPointCount + 1) % rewardRecurringAmount != 0) {
         onConvert()
     } else {
         MyApplication.clearAllPipActivities()

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE resources [<!ENTITY kakao_api_key "15d1b0d5dde51ea18a397effc5f25e3c">]>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name" translatable="false">NolgoBulja</string>
     <string name="app_channel_id" translatable="false">noljanolja_notification_channel</string>
     <string name="app_channel_name" translatable="false">noljanolja</string>
@@ -118,7 +118,7 @@
     <string name="hello_user">Hello %s</string>
     <string name="service_guide">Service Guide</string>
     <string name="custom_service_center">Custom service center</string>
-    <string name="telephone_number_service_center">1588-1588</string>
+    <string name="telephone_number_service_center" tools:ignore="TypographyDashes">1588-1588</string>
     <!--    My info-->
     <string name="my_info">My Info</string>
     <string name="edit_member_infomation">Edit member information</string>
@@ -349,9 +349,9 @@
     <string name="shop_order_coupon_success">Your order has been completed. Check in Exchanged Coupon.</string>
     <string name="gift_value_point">%s P</string>
     <string name="gift_value_coin">%s C</string>
-    <string name="gift_holding_point">Holding coins</string>
-    <string name="gift_deduction_point">Deduction coins</string>
-    <string name="gift_remaining_point">Remaining coins</string>
+    <string name="gift_holding_point">Holding cash</string>
+    <string name="gift_deduction_point">Deduction cash</string>
+    <string name="gift_remaining_point">Remaining cash</string>
     <string name="gift_purchase">Purchase</string>
     <string name="gift_give_code_to_cashier">Give this Code to the cashier to get products</string>
     <string name="shop_coupon">Voucher wallet</string>
@@ -359,6 +359,7 @@
     <string name="shop_section_today_offers">Today offers</string>
     <string name="shop_section_recommended">Recommended</string>
     <string name="shop_section_for_you">For you</string>
+    <string name="shop_section_maybe_you_like">Maybe you like</string>
     <string name="chat_action_reply">Reply</string>
     <string name="chat_action_forward">Forward</string>
     <string name="chat_action_copy">Copy</string>
@@ -373,7 +374,7 @@
     <string name="wallet_every_day">Everyday</string>
     <string name="common_share">Share</string>
     <string name="common_share_success">Share success</string>
-    <string name="common_open_app">“Nolgu Bulgu” wants to open “%s”</string>
+    <string name="common_open_app">“NolgoBulja” wants to open “%s”</string>
     <string name="common_install_app">Please install "%s" to use this feature.</string>
     <string name="referral_receive_point">Congratulation! You and your friend have just  got %d Points from referral code.</string>
     <string name="invalid_referral">Invalid referral code</string>
@@ -413,9 +414,9 @@
     <string name="my_point">My points</string>
     <string name="my_cash">My cash</string>
     <string name="tab_convert_coin_to_cash">Tap to convert Points to Cash</string>
-    <string name="tab_conver_coin_description">Easy to convert. You can use Coins to\nGet more products in shop. Tap now!</string>
+    <string name="tab_conver_coin_description">Easy to convert. You can use Cash to\nGet more products in shop. Tap now!</string>
     <string name="convert">Convert</string>
-    <string name="convert_coins">Convert coins</string>
+    <string name="convert_coins">Convert cash</string>
     <string name="ignore_video">Ignore video</string>
     <string name="earn_point_title">Earn Points\nBy Refer</string>
     <string name="invite_friends_to_get_benefits">Invite Friends to get benefits</string>
@@ -423,4 +424,5 @@
     <string name="convert_error">Convert Error</string>
     <string name="load_ads_fail">Cannot load ads, please try again</string>
     <string name="common_cash">Cash</string>
+    <string name="shop_all_sold_out">All products are sold out</string>
 </resources>
