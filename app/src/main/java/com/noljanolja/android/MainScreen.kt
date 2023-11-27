@@ -14,6 +14,7 @@ import com.noljanolja.android.extensions.*
 import com.noljanolja.android.features.addfriend.*
 import com.noljanolja.android.features.addreferral.*
 import com.noljanolja.android.features.auth.countries.*
+import com.noljanolja.android.features.auth.login.LoginScreen
 import com.noljanolja.android.features.auth.login_or_signup.*
 import com.noljanolja.android.features.auth.otp.*
 import com.noljanolja.android.features.auth.termdetail.*
@@ -420,7 +421,7 @@ private fun NavGraphBuilder.addSplashGraph() {
 
 private fun NavGraphBuilder.addAuthGraph() {
     composable(NavigationDirections.Auth.destination) { backStack ->
-        LoginOrSignupScreen(backStack.savedStateHandle)
+        LoginScreen(backStack.savedStateHandle)
     }
     composable(NavigationDirections.CountryPicker.destination) {
         CountriesScreen()
@@ -436,8 +437,8 @@ private fun NavGraphBuilder.addAuthGraph() {
             }
         }
     }
-    composable(NavigationDirections.UpdateProfile.destination) {
-        UpdateProfileScreen()
+    composable(NavigationDirections.UpdateProfile.destination) { backStack ->
+        UpdateProfileScreen(backStack.savedStateHandle)
     }
     composable(NavigationDirections.AddReferral.destination) {
         AddReferralScreen()

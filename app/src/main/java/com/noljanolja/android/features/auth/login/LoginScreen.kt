@@ -12,9 +12,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -22,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -45,10 +48,10 @@ import com.noljanolja.android.common.country.getFlagEmoji
 import com.noljanolja.android.common.error.UnexpectedFailure
 import com.noljanolja.android.features.auth.common.component.VerifyEmail
 import com.noljanolja.android.features.auth.login.component.LoginButton
-import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.SecondaryButton
 import com.noljanolja.android.ui.composable.SizeBox
+import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.util.showError
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
@@ -114,37 +117,39 @@ private fun LoginContent(
         }
     }
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.primaryContainer)
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.logo),
+            contentDescription = null,
+            modifier = Modifier
+                .padding(horizontal = 90.dp, vertical = 50.dp)
+                .fillMaxWidth(),
+            contentScale = ContentScale.FillWidth
+        )
         Text(
             stringResource(id = R.string.common_login),
-            style = MaterialTheme.typography.displaySmall
+            style = MaterialTheme.typography.displaySmall.withBold()
         )
         Text(
             stringResource(R.string.login_google_description),
             modifier = Modifier.fillMaxWidth(),
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center
         )
-        Expanded()
-        LoginUserNamePasswordContent(
-            onLogin = { user, password ->
-                scope.launch {
-                    val result =
-                        authSdk.signInWithEmailAndPassword(email = user, password = password)
-                    if (result.isSuccess) {
-                        handleEvent(LoginEvent.HandleLoginResult(result.getOrDefault("")))
-                    } else {
-                        context.showError(result.exceptionOrNull() ?: UnexpectedFailure)
-                    }
-                }
-            }
-        )
+        SizeBox(height = 20.dp)
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
+                .padding()
                 .clip(RoundedCornerShape(8.dp))
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.primaryContainer)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(horizontal = 12.dp, vertical = 4.dp)
                 .clickable {
                     AuthSdk.authenticateGoogle(context, googleLauncher)
@@ -159,11 +164,25 @@ private fun LoginContent(
             SizeBox(width = 8.dp)
             Text(
                 stringResource(R.string.login_google_button),
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.bodySmall
             )
         }
-        Expanded()
+
+        LoginUserNamePasswordContent(
+            onLogin = { user, password ->
+                scope.launch {
+                    val result =
+                        authSdk.signInWithEmailAndPassword(email = user, password = password)
+                    if (result.isSuccess) {
+                        handleEvent(LoginEvent.HandleLoginResult(result.getOrDefault("")))
+                    } else {
+                        context.showError(result.exceptionOrNull() ?: UnexpectedFailure)
+                    }
+                }
+            }
+        )
+
     }
 }
 
@@ -292,6 +311,13 @@ private fun LoginUserNamePasswordContent(onLogin: (user: String, password: Strin
         var password by remember {
             mutableStateOf("")
         }
+        Text(
+            text = "---------- Or ----------",
+            modifier = Modifier
+                .padding(vertical = 20.dp)
+                .fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
         TextField(
             value = username,
             onValueChange = {
@@ -300,7 +326,12 @@ private fun LoginUserNamePasswordContent(onLogin: (user: String, password: Strin
             modifier = Modifier.fillMaxWidth(),
             label = { Text(text = "Email") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent)
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color.Transparent,
+                focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                textColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                unfocusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
         )
         SizeBox(height = 10.dp)
         TextField(
@@ -312,22 +343,23 @@ private fun LoginUserNamePasswordContent(onLogin: (user: String, password: Strin
             label = { Text(text = "Password") },
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent)
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color.Transparent,
+                focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                textColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                unfocusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+
+            )
         )
         SizeBox(height = 25.dp)
         PrimaryButton(
-            text = "Login",
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            text = stringResource(id = R.string.common_login),
+            containerColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.onBackground
         ) {
             onLogin(username.trim(), password.trim())
         }
-        Text(
-            text = "---------- Or ----------",
-            modifier = Modifier
-                .padding(vertical = 20.dp)
-                .fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
+        SizeBox(height = 25.dp)
     }
 }
 

@@ -2,13 +2,18 @@ package com.noljanolja.android.features.auth.updateprofile
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.telephony.PhoneNumberUtils
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -20,19 +25,24 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
 import com.noljanolja.android.R
+import com.noljanolja.android.common.country.Countries
+import com.noljanolja.android.common.country.Country
+import com.noljanolja.android.common.country.DEFAULT_CODE
+import com.noljanolja.android.common.country.getFlagEmoji
 import com.noljanolja.android.features.auth.updateprofile.components.AvatarInput
 import com.noljanolja.android.features.auth.updateprofile.components.DoBInput
-import com.noljanolja.android.features.auth.updateprofile.components.GenderInput
-import com.noljanolja.android.features.auth.updateprofile.components.NameInput
-import com.noljanolja.android.features.auth.updateprofile.components.PhoneInput
 import com.noljanolja.android.ui.composable.ErrorDialog
 import com.noljanolja.android.ui.composable.LoadingDialog
+import com.noljanolja.android.ui.composable.OutlinedTextField
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.SizeBox
+import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.util.loadFileInfo
 import com.noljanolja.android.util.toUri
 import com.noljanolja.core.user.domain.model.Gender
@@ -47,10 +57,14 @@ import java.time.LocalDate
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun UpdateProfileScreen(
+    savedStateHandle: SavedStateHandle,
     viewModel: UpdateProfileViewModel = getViewModel(),
 ) {
+    val countryCode = savedStateHandle.get<String>("countryCode")
+    savedStateHandle.remove<String>("countryCode")
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     UpdateProfileContent(
+        countryCode = countryCode,
         uiState = uiState,
         userFlow = viewModel.userFlow,
         handleEvent = viewModel::handleEvent,
@@ -60,10 +74,12 @@ fun UpdateProfileScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdateProfileContent(
+    countryCode: String?,
     uiState: UpdateProfileUiState,
     userFlow: StateFlow<User?>,
     handleEvent: (UpdateProfileEvent) -> Unit,
 ) {
+    var showErrorPhoneNumber by remember { mutableStateOf(false) }
     val genders =
         remember { mutableStateListOf(Gender.MALE.name, Gender.FEMALE.name, Gender.OTHER.name) }
     var showAvatarInputDialog by rememberSaveable { mutableStateOf(false) }
@@ -74,48 +90,41 @@ fun UpdateProfileContent(
     var gender by rememberSaveable { mutableStateOf<String?>(null) }
     var dob by rememberSaveable { mutableStateOf<LocalDate?>(null) }
     val isRegisterEnable = name.isNotBlank()
-
+    val selectCountry by remember {
+        mutableStateOf(
+            Countries.find {
+                it.nameCode == countryCode
+            }
+        )
+    }
+    var country by remember {
+        mutableStateOf(
+            Countries.first {
+                it.nameCode == (countryCode ?: DEFAULT_CODE)
+            }
+        )
+    }
     LaunchedEffect(userFlow) {
         userFlow.collectLatest {
             it?.let { user ->
+                val phoneAndCode =
+                    convertPhoneAndCode(selectCountry?.phoneCode, user.phone.orEmpty())
                 avatar = user.avatar?.toUri()
                 name = user.name
-                phone = user.phone.orEmpty()
+                phone = phoneAndCode.second
                 gender = user.gender?.name
                 dob = user.dob?.toJavaLocalDate()
+                country = phoneAndCode.first
             }
         }
     }
 
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
-
-//    when (registerViewState) {
-//        is ViewState.Error -> {
-//            loading = false
-//            error = registerViewState.cause
-//        }
-//        is ViewState.Loading -> {
-//            loading = true
-//            error = null
-//        }
-//        is ViewState.Idle -> {
-//            loading = false
-//            error = null
-//        }
-//        else -> {
-//            loading = false
-//            error = null
-//        }
-//    }
-
-//    LaunchedEffect(avatar) {
-//        avatar?.let {
-//            context.contentResolver.openInputStream(it)?.let {
-//                handleEvent(UpdateProfileEvent.UploadAvatar(it.readBytes()))
-//            }
-//        }
-//    }
+    val countryInteractionSource = remember { MutableInteractionSource() }
+    if (countryInteractionSource.collectIsPressedAsState().value) {
+        focusManager.clearFocus(true)
+    }
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Scaffold(
@@ -128,17 +137,17 @@ fun UpdateProfileContent(
                 ),
         ) {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(it)
+                    .padding(horizontal = 16.dp)
                     .verticalScroll(rememberScrollState())
             ) {
-                Spacer(modifier = Modifier.height(100.dp))
-
+                SizeBox(height = 20.dp)
                 Box(
-                    modifier = Modifier.size(106.dp),
+                    modifier = Modifier.size(123.dp),
                     contentAlignment = Alignment.BottomEnd,
                 ) {
                     val imageModifier = Modifier
@@ -172,70 +181,151 @@ fun UpdateProfileContent(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(36.dp))
-
-                NameInput(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    focusManager = focusManager,
-                    label = stringResource(R.string.update_profile_name),
-                    name = name,
-                    maxNameLength = maxNameLength,
-                    onNameChange = { if (it.trim().length <= maxNameLength) name = it }
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "User information",
+                    style = MaterialTheme.typography.bodyLarge.withBold(),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.fillMaxWidth()
                 )
                 SizeBox(height = 8.dp)
-                PhoneInput(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    focusManager = focusManager,
-                    label = stringResource(R.string.common_phone),
-                    phone = phone,
-                    onPhoneChange = { phone = it }
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Name") },
+                    modifier = Modifier.fillMaxWidth(),
+                    trailingIcon = {
+                        if (name.isNotBlank()) {
+                            IconButton(onClick = {
+                                name = ""
+                            }) {
+                                Icon(Icons.Outlined.Cancel, contentDescription = null)
+                            }
+                        }
+                    },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        textColor = MaterialTheme.colorScheme.onBackground
+                    ),
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
+                )
+                SizeBox(height = 8.dp)
+
+                OutlinedTextField(
+                    value = phone,
+                    onValueChange = { phone = it },
+                    label = {
+                        if (phone.isNotBlank()) {
+                            Text("Phone")
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.clickable {
+                                handleEvent(UpdateProfileEvent.OpenCountryList)
+                            }
+                        ) {
+                            Text(
+                                text = country.getFlagEmoji(),
+                                modifier = Modifier.padding(horizontal = 7.dp)
+                                    .clip(RoundedCornerShape(3.dp))
+                                    .background(MaterialTheme.colorScheme.surface)
+                                    .padding(5.dp)
+                            )
+                            Text(text = "+${country.phoneCode}")
+                            Icon(Icons.Default.KeyboardArrowDown, contentDescription = null)
+                        }
+
+                    },
+                    trailingIcon = {
+                        if (phone.isNotBlank()) {
+                            IconButton(onClick = {
+                                phone = ""
+                            }) {
+                                Icon(Icons.Outlined.Cancel, contentDescription = null)
+                            }
+                        }
+                    },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        textColor = MaterialTheme.colorScheme.onBackground,
+                    ),
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
                 )
 
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                ) {
-                    DoBInput(
-                        modifier = Modifier.weight(1f),
-                        focusManager = focusManager,
-                        label = stringResource(R.string.update_profile_dob),
-                        dob = dob,
-                        onDoBChange = { dob = it }
-                    )
-
-                    Spacer(modifier = Modifier.width(16.dp))
-
-                    GenderInput(
-                        modifier = Modifier.weight(1f),
-                        label = stringResource(R.string.update_profile_gender),
-                        gender = gender,
-                        genders = genders,
-                        onGenderChange = { gender = it },
-                    )
+                SizeBox(height = 8.dp)
+                DoBInput(
+                    modifier = Modifier.fillMaxWidth(),
+                    focusManager = focusManager,
+                    label = stringResource(R.string.update_profile_dob),
+                    dob = dob,
+                    onDoBChange = { dob = it }
+                )
+                SizeBox(height = 8.dp)
+                Text(
+                    text = stringResource(R.string.update_profile_gender),
+                    style = MaterialTheme.typography.bodyLarge.withBold(),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                SizeBox(height = 12.dp)
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    genders.forEachIndexed { index, value ->
+                        if (index > 0) {
+                            SizeBox(width = 12.dp)
+                        }
+                        Box(
+                            modifier = Modifier.weight(1f)
+                                .height(46.dp)
+                                .clip(RoundedCornerShape(6.dp))
+                                .border(
+                                    width = 1.dp,
+                                    color = if (gender == value) {
+                                        MaterialTheme.colorScheme.primaryContainer
+                                    } else {
+                                        MaterialTheme.colorScheme.onBackground
+                                    },
+                                    shape = RoundedCornerShape(6.dp)
+                                ).background(
+                                    if (gender == value) {
+                                        MaterialTheme.colorScheme.primaryContainer
+                                    } else {
+                                        MaterialTheme.colorScheme.background
+                                    }
+                                )
+                                .clickable {
+                                    gender = value
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(text = value, style = MaterialTheme.typography.bodyLarge)
+                        }
+                    }
                 }
-
                 Spacer(modifier = Modifier.height(54.dp))
                 PrimaryButton(
                     onClick = {
                         val fileInfo = avatar?.let { context.loadFileInfo(it) }
-                        handleEvent(
-                            UpdateProfileEvent.Update(
-                                name.trim(),
-                                phone,
-                                dob?.toKotlinLocalDate(),
-                                gender?.let { Gender.valueOf(it) },
-                                files = fileInfo?.contents,
-                                fileName = fileInfo?.name,
-                                fileType = fileInfo?.contentType.orEmpty()
+                        val formattedPhoneNumber =
+                            PhoneNumberUtils.formatNumberToE164(
+                                phone.trim(),
+                                country.nameCode.uppercase()
                             )
-                        )
+                        if (formattedPhoneNumber == null) {
+                            showErrorPhoneNumber = true
+                        } else {
+                            handleEvent(
+                                UpdateProfileEvent.Update(
+                                    name.trim(),
+                                    formattedPhoneNumber,
+                                    dob?.toKotlinLocalDate(),
+                                    gender?.let { Gender.valueOf(it) },
+                                    files = fileInfo?.contents,
+                                    fileName = fileInfo?.name,
+                                    fileType = fileInfo?.contentType.orEmpty()
+                                )
+                            )
+                        }
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -268,4 +358,21 @@ fun UpdateProfileContent(
             onDismiss = { handleEvent(UpdateProfileEvent.DismissError) }
         )
     }
+
+    ErrorDialog(
+        showError = showErrorPhoneNumber,
+        title = stringResource(R.string.login_invalid_phone_title),
+        description = stringResource(R.string.login_invalid_phone_description)
+    ) {
+        showErrorPhoneNumber = false
+    }
+}
+
+private fun convertPhoneAndCode(code: String?, phone: String): Pair<Country, String> {
+    val phoneCode =
+        Countries.find { phone.startsWith("+${it.phoneCode}") }?.phoneCode ?: DEFAULT_CODE
+    return Countries.first { it.phoneCode == (code ?: phoneCode) } to phone.replace(
+        "+$phoneCode",
+        ""
+    )
 }

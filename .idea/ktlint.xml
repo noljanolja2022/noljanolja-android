@@ -9,6 +9,7 @@
         <option value="trailing-comma" />
         <option value="final-newline" />
         <option value="trailing-comma-on-call-site" />
+        <option value="no-blank-line-before-rbrace" />
       </list>
     </disabledRules>
   </component>

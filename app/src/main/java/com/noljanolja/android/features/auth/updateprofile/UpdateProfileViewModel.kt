@@ -40,6 +40,10 @@ class UpdateProfileViewModel : BaseViewModel() {
                     event.fileType,
                     event.files,
                 )
+
+                UpdateProfileEvent.OpenCountryList -> {
+                    navigationManager.navigate(NavigationDirections.CountryPicker)
+                }
             }
         }
     }
