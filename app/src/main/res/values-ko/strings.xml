@@ -371,4 +371,5 @@
     <string name="convert_now">지금 바꾸기</string>
     <string name="common_play">재생</string>
     <string name="shop_all_sold_out">모든 상품이 품절되었습니다</string>
+    <string name="shop_brands">브랜드</string>
 </resources>

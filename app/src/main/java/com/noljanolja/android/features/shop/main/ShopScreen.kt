@@ -92,7 +92,16 @@ private fun ShopContent(
                     topFeatureGifts = topFeatureGifts,
                     myGifts = myGifts,
                     todayOfferGifts = todayOfferGift,
-                    onItemClick = {
+                    brands = brands,
+                    onBrandItemClick = {
+                        handleEvent(
+                            ShopEvent.ViewGiftType(
+                                categoryId = it.id,
+                                categoryName = it.name
+                            )
+                        )
+                    },
+                    onGiftItemClick = {
                         handleEvent(ShopEvent.GiftDetail(it.id, it.qrCode))
                     },
                     onUse = {
@@ -352,14 +361,16 @@ private fun ProductsAndVouchers(
     gifts: List<Gift>,
     topFeatureGifts: List<Gift>,
     todayOfferGifts: List<Gift>,
+    onGiftItemClick: (Gift) -> Unit,
+    brands: List<ItemChoose>,
+    onBrandItemClick: (ItemChoose) -> Unit,
     myGifts: List<Gift>,
-    onItemClick: (Gift) -> Unit,
     onUse: (Gift) -> Unit,
 ) {
     if (gifts.isEmpty()
         && topFeatureGifts.isEmpty()
     ) {
-        Box{
+        Box {
             Text(
                 text = stringResource(id = R.string.shop_all_sold_out),
                 color = textColor()
@@ -379,21 +390,37 @@ private fun ProductsAndVouchers(
                     titleColor = Color.Black,
                     paddingTop = DefaultValue.PADDING_VIEW_SCREEN,
                     paddingBottom = DefaultValue.PADDING_VIEW_SCREEN,
-                    onItemClick = onItemClick
+                    onItemClick = onGiftItemClick
+                )
+            }
+            if (brands.isNotEmpty()) {
+                HorizontalSectionList(
+                    items = brands,
+                    title = stringResource(id = R.string.shop_brands),
+                    titleColor = Color.Black,
+                    containerColor = Orange00,
+                    paddingTop = 5,
+                    paddingBottom = 5,
+                    itemContent = { brand ->
+                        BrandItem(
+                            brand = brand,
+                            onItemClick = onBrandItemClick
+                        )
+                    }
                 )
             }
             if (todayOfferGifts.isNotEmpty()) {
                 ProductSectionList(
                     gifts = todayOfferGifts,
                     title = stringResource(id = R.string.shop_section_today_offers),
-                    onItemClick = onItemClick
+                    onItemClick = onGiftItemClick
                 )
             }
             if (gifts.isNotEmpty()) {
                 ProductSectionList(
                     gifts = gifts,
                     title = stringResource(id = R.string.shop_section_recommended),
-                    onItemClick = onItemClick
+                    onItemClick = onGiftItemClick
                 )
             }
             if (gifts.isNotEmpty()) {
@@ -405,10 +432,38 @@ private fun ProductsAndVouchers(
                 gifts.forEach {
                     GiftItem(
                         gift = it,
-                        onClick = onItemClick,
+                        onClick = onGiftItemClick,
                     )
                 }
             }
         }
     }
+}
+
+@Composable
+private fun ProductSectionList(
+    modifier: Modifier = Modifier,
+    title: String,
+    gifts: List<Gift>,
+    containerColor: Color = Color.Transparent,
+    titleColor: Color = MaterialTheme.colorScheme.onBackground,
+    paddingTop: Int = DefaultValue.PADDING_HORIZONTAL_SCREEN,
+    paddingBottom: Int = 0,
+    onItemClick: (Gift) -> Unit
+) {
+    HorizontalSectionList(
+        modifier = modifier,
+        items = gifts,
+        title = title,
+        containerColor = containerColor,
+        titleColor = titleColor,
+        paddingTop = paddingTop,
+        paddingBottom = paddingBottom,
+        itemContent = { gift ->
+            ProductSection(
+                gift = gift,
+                onItemClick = onItemClick
+            )
+        }
+    )
 }

@@ -195,6 +195,43 @@ internal fun ProductSection(
     }
 }
 
+@Composable
+internal fun BrandItem(
+    modifier: Modifier = Modifier,
+    brand: ItemChoose,
+    containerColor: Color = Color.Transparent,
+    onItemClick: (ItemChoose) -> Unit
+) {
+    Column(
+        modifier = modifier
+            .background(containerColor)
+            .padding()
+            .clickable {
+                onItemClick(brand)
+            },
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        AsyncImage(
+            model = brand.image,
+            contentDescription = null,
+            modifier = Modifier
+                .size(64.dp)
+                .clip(
+                    RoundedCornerShape(5)
+                )
+                .background(Color.White)
+                .padding(5.dp)
+        )
+        Text(
+            text = brand.name,
+            style = Typography.bodySmall.copy(
+                color = Color.Black,
+                textAlign = TextAlign.Center
+            )
+        )
+    }
+}
+
 @Preview
 @Composable
 private fun PreviewProductSection() {

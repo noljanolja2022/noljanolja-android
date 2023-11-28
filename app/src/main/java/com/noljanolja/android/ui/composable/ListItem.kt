@@ -84,15 +84,15 @@ internal fun ListTypes(
 }
 
 @Composable
-internal fun ProductSectionList(
+internal fun <T>HorizontalSectionList(
     modifier: Modifier = Modifier,
     title: String,
-    gifts: List<Gift>,
+    items: List<T>,
     containerColor: Color = Color.Transparent,
     titleColor: Color = MaterialTheme.colorScheme.onBackground,
     paddingTop: Int = PADDING_HORIZONTAL_SCREEN,
     paddingBottom: Int = 0,
-    onItemClick: (Gift) -> Unit
+    itemContent: @Composable (T) -> Unit
 ) {
     ConstraintLayout(
         modifier = modifier
@@ -144,11 +144,8 @@ internal fun ProductSectionList(
                 .padding(horizontal = PADDING_VIEW_SCREEN.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            gifts.forEach { gift ->
-                ProductSection(
-                    gift = gift,
-                    onItemClick = onItemClick
-                )
+            items.forEach { item ->
+                itemContent(item)
             }
         }
         Spacer(

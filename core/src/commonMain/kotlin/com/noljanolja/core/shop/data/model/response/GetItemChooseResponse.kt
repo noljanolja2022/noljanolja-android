@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
  */
 
 @Serializable
-data class GetCategoriesResponse(
+data class GetItemChooseResponse(
     override val code: Int,
     override val message: String,
     override val data: List<ItemChoose>? = null,
