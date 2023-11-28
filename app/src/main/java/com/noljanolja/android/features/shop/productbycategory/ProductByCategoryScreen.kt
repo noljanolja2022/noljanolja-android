@@ -16,7 +16,6 @@ import com.noljanolja.android.ui.composable.*
 import com.noljanolja.android.ui.theme.*
 import com.noljanolja.core.shop.domain.model.*
 import org.koin.androidx.compose.*
-import org.koin.core.parameter.*
 
 /**
  * Created by tuyen.dang on 11/20/2023.
@@ -24,11 +23,16 @@ import org.koin.core.parameter.*
 
 @Composable
 fun ProductByCategoryScreen(
-    categoryId: String = "",
-    categoryName: String = "",
-    viewModel: ProductByCategoryViewModel = getViewModel { parametersOf(categoryId) }
+    brandId: String,
+    categoryId: String,
+    categoryName: String,
+    viewModel: ProductByCategoryViewModel = getViewModel()
 ) {
     viewModel.run {
+        getProductByCategoryOrBrand(
+            categoryId = categoryId,
+            brandId = brandId
+        )
         val uiState by uiStateFlow.collectAsStateWithLifecycle()
         ProductByCategoryContent(
             categoryName = categoryName,
@@ -76,19 +80,47 @@ private fun ProductByCategoryContent(
                 }
             }
         } else {
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .background(MaterialTheme.shopBackground())
-                    .padding(top = 12.dp)
-            ) {
-                items(gifts) {
-                    GiftItem(
-                        gift = it,
-                        onClick = { gift ->
-                            handleEvent(ProductByCategoryEvent.GiftDetail(gift.id, gift.qrCode))
-                        },
-                    )
+            if (gifts.size > 100) {
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(1f)
+                        .background(MaterialTheme.shopBackground())
+                        .padding(top = 12.dp)
+                ) {
+                    items(gifts) {
+                        GiftItem(
+                            gift = it,
+                            onClick = { gift ->
+                                handleEvent(ProductByCategoryEvent.GiftDetail(gift.id, gift.qrCode))
+                            },
+                        )
+                    }
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .background(MaterialTheme.shopBackground())
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        MarginVertical(12)
+                        gifts.forEach {
+                            GiftItem(
+                                gift = it,
+                                onClick = { gift ->
+                                    handleEvent(
+                                        ProductByCategoryEvent.GiftDetail(
+                                            gift.id,
+                                            gift.qrCode
+                                        )
+                                    )
+                                },
+                            )
+                        }
+                    }
                 }
             }
         }

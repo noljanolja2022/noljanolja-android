@@ -37,25 +37,28 @@ class ShopApi(private val client: HttpClient) {
         }.body()
     }
 
-    suspend fun getGifts(
-        searchText: String,
-        categoryId: String,
-        isFeatured: Boolean?,
-        isTodayOffer: Boolean?
-    ): GetGiftsResponse {
+    suspend fun getGifts(request: GetGiftListRequest): GetGiftsResponse {
         return client.get("$BASE_URL/api/v1/gifts") {
-            url {
-                searchText.takeIf { it.isNotBlank() }?.let {
-                    parameters.append("query", it)
-                }
-                categoryId.takeIf { it.isNotBlank() }?.let {
-                    parameters.append("categoryId", it)
-                }
-                isFeatured?.let {
-                    parameters.append("isFeatured", it.toString())
-                }
-                isTodayOffer?.let {
-                    parameters.append("isTodayOffer", it.toString())
+            request.run {
+                url {
+                    searchText.takeIf { it.isNotBlank() }?.let {
+                        parameters.append("query", it)
+                    }
+                    categoryId.takeIf { it.isNotBlank() }?.let {
+                        parameters.append("categoryId", it)
+                    }
+                    brandId.takeIf { it.isNotBlank() }?.let {
+                        parameters.append("brandId", it)
+                    }
+                    isFeatured?.let {
+                        parameters.append("isFeatured", it.toString())
+                    }
+                    isTodayOffer?.let {
+                        parameters.append("isTodayOffer", it.toString())
+                    }
+                    isRecommended?.let {
+                        parameters.append("isRecommended", it.toString())
+                    }
                 }
             }
         }.body()

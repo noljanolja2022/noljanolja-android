@@ -92,11 +92,12 @@ private fun ShopContent(
                     topFeatureGifts = topFeatureGifts,
                     myGifts = myGifts,
                     todayOfferGifts = todayOfferGift,
+                    recommendsGift = recommendsGift,
                     brands = brands,
                     onBrandItemClick = {
                         handleEvent(
                             ShopEvent.ViewGiftType(
-                                categoryId = it.id,
+                                brandId = it.id,
                                 categoryName = it.name
                             )
                         )
@@ -361,6 +362,7 @@ private fun ProductsAndVouchers(
     gifts: List<Gift>,
     topFeatureGifts: List<Gift>,
     todayOfferGifts: List<Gift>,
+    recommendsGift: List<Gift>,
     onGiftItemClick: (Gift) -> Unit,
     brands: List<ItemChoose>,
     onBrandItemClick: (ItemChoose) -> Unit,
@@ -416,9 +418,9 @@ private fun ProductsAndVouchers(
                     onItemClick = onGiftItemClick
                 )
             }
-            if (gifts.isNotEmpty()) {
+            if (recommendsGift.isNotEmpty()) {
                 ProductSectionList(
-                    gifts = gifts,
+                    gifts = recommendsGift,
                     title = stringResource(id = R.string.shop_section_recommended),
                     onItemClick = onGiftItemClick
                 )

@@ -1,20 +1,15 @@
 package com.noljanolja.android.features.shop.main
 
-import androidx.lifecycle.viewModelScope
-import com.noljanolja.android.common.base.BaseViewModel
-import com.noljanolja.android.common.base.UiState
-import com.noljanolja.android.common.base.launch
-import com.noljanolja.android.common.navigation.NavigationDirections
+import androidx.lifecycle.*
+import com.noljanolja.android.common.base.*
+import com.noljanolja.android.common.navigation.*
 import com.noljanolja.core.commons.*
-import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
-import com.noljanolja.core.loyalty.domain.model.MemberInfo
+import com.noljanolja.core.exchange.domain.domain.*
+import com.noljanolja.core.loyalty.domain.model.*
 import com.noljanolja.core.shop.data.model.request.*
-import com.noljanolja.core.shop.domain.model.Gift
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
+import com.noljanolja.core.shop.domain.model.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
 class ShopViewModel : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow<UiState<ShopUiData>>(UiState(loading = true))
@@ -39,13 +34,16 @@ class ShopViewModel : BaseViewModel() {
                 )
 
                 is ShopEvent.ViewGiftType -> {
-                    if (event.categoryId.isNotBlank()) {
-                        navigationManager.navigate(
-                            NavigationDirections.ProductByCategory(
-                                event.categoryId,
-                                event.categoryName
+                    event.run {
+                        if (categoryId.isNotBlank() || brandId.isNotBlank()) {
+                            navigationManager.navigate(
+                                NavigationDirections.ProductByCategory(
+                                    brandId = brandId,
+                                    categoryId = categoryId,
+                                    categoryName = categoryName
+                                )
                             )
-                        )
+                        }
                     }
                 }
 
@@ -68,10 +66,18 @@ class ShopViewModel : BaseViewModel() {
                     data = currentData.data
                 )
             )
-            val gifts = coreManager.getGifts().getOrDefault(emptyList())
-            val topFeatureGifts = coreManager.getGifts(isFeatured = true).getOrDefault(emptyList())
+            val gifts = coreManager.getGifts(GetGiftListRequest()).getOrDefault(emptyList())
+            val topFeatureGifts = coreManager.getGifts(
+                GetGiftListRequest(isFeatured = true)
+            ).getOrDefault(emptyList())
             val todayOfferGifts =
-                coreManager.getGifts(isTodayOffer = true).getOrDefault(emptyList())
+                coreManager.getGifts(
+                    GetGiftListRequest(isTodayOffer = true)
+                ).getOrDefault(emptyList())
+            val recommendsGift =
+                coreManager.getGifts(
+                    GetGiftListRequest(isRecommended = true)
+                ).getOrDefault(emptyList())
             val myGifts = coreManager.getMyGifts().getOrDefault(emptyList())
             val myBalance = coreManager.getExchangeBalance().getOrDefault(ExchangeBalance())
             val brands = coreManager.getBrands(
@@ -96,6 +102,7 @@ class ShopViewModel : BaseViewModel() {
                         topFeatureGifts = topFeatureGifts,
                         myGifts = myGifts,
                         todayOfferGift = todayOfferGifts,
+                        recommendsGift = recommendsGift,
                         myBalance = myBalance,
                         brands = brands ?: emptyList(),
                         category = convertToCategoriesList(categories?.toMutableList())
@@ -122,6 +129,7 @@ data class ShopUiData(
     val gifts: List<Gift> = emptyList(),
     val topFeatureGifts: List<Gift> = emptyList(),
     val todayOfferGift: List<Gift> = emptyList(),
+    val recommendsGift: List<Gift> = emptyList(),
     val myGifts: List<Gift> = emptyList(),
     val brands: List<ItemChoose> = mutableListOf(),
     val category: MutableList<ItemChoose> = mutableListOf()

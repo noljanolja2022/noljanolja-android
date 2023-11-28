@@ -5,7 +5,11 @@ sealed interface ShopEvent {
 
     data class GiftDetail(val giftId: String, val code: String) : ShopEvent
 
-    data class ViewGiftType(val categoryId: String, val categoryName: String) : ShopEvent
+    data class ViewGiftType(
+        val brandId: String = "",
+        val categoryId: String = "",
+        val categoryName: String
+    ) : ShopEvent
 
     object ViewAllCoupons : ShopEvent
 

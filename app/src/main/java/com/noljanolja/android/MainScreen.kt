@@ -14,8 +14,7 @@ import com.noljanolja.android.extensions.*
 import com.noljanolja.android.features.addfriend.*
 import com.noljanolja.android.features.addreferral.*
 import com.noljanolja.android.features.auth.countries.*
-import com.noljanolja.android.features.auth.login.LoginScreen
-import com.noljanolja.android.features.auth.login_or_signup.*
+import com.noljanolja.android.features.auth.login.*
 import com.noljanolja.android.features.auth.otp.*
 import com.noljanolja.android.features.auth.termdetail.*
 import com.noljanolja.android.features.auth.terms_of_service.*
@@ -49,7 +48,7 @@ import com.noljanolja.android.features.sharemessage.*
 import com.noljanolja.android.features.shop.coupons.*
 import com.noljanolja.android.features.shop.giftdetail.*
 import com.noljanolja.android.features.shop.productbycategory.*
-import com.noljanolja.android.features.shop.search.SearchProductScreen
+import com.noljanolja.android.features.shop.search.*
 import com.noljanolja.android.features.splash.*
 import com.noljanolja.android.util.*
 import com.noljanolja.core.*
@@ -343,9 +342,11 @@ private fun NavGraphBuilder.addShopGraph() {
     }
     with(NavigationDirections.ProductByCategory()) {
         composable(destination, arguments) {
+            val brandId = it.arguments?.getString("brandId")
             val categoryId = it.arguments?.getString("categoryId")
             val categoryName = it.arguments?.getString("categoryName")
             ProductByCategoryScreen(
+                brandId = brandId.convertToString(),
                 categoryId = categoryId.convertToString(),
                 categoryName = categoryName.convertToString()
             )
