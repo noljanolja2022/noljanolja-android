@@ -70,16 +70,25 @@ class ShopViewModel : BaseViewModel() {
             )
             val gifts = coreManager.getGifts().getOrDefault(emptyList())
             val topFeatureGifts = coreManager.getGifts(isFeatured = true).getOrDefault(emptyList())
-            val todayOfferGifts = coreManager.getGifts(isTodayOffer = true).getOrDefault(emptyList())
+            val todayOfferGifts =
+                coreManager.getGifts(isTodayOffer = true).getOrDefault(emptyList())
             val myGifts = coreManager.getMyGifts().getOrDefault(emptyList())
             val myBalance = coreManager.getExchangeBalance().getOrDefault(ExchangeBalance())
-            val categories = coreManager.getCategories(
-                GetCategoriesRequest(
+            val brands = coreManager.getBrands(
+                GetItemChooseRequest(
                     page = 1,
                     pageSize = 100,
                     query = null
                 )
             ).getOrDefault(emptyList())
+            val categories = coreManager.getCategories(
+                GetItemChooseRequest(
+                    page = 1,
+                    pageSize = 100,
+                    query = null
+                )
+            ).getOrDefault(emptyList())
+
             _uiStateFlow.emit(
                 UiState(
                     data = ShopUiData(
@@ -88,6 +97,7 @@ class ShopViewModel : BaseViewModel() {
                         myGifts = myGifts,
                         todayOfferGift = todayOfferGifts,
                         myBalance = myBalance,
+                        brands = brands ?: emptyList(),
                         category = convertToCategoriesList(categories?.toMutableList())
                     )
                 )
@@ -113,5 +123,6 @@ data class ShopUiData(
     val topFeatureGifts: List<Gift> = emptyList(),
     val todayOfferGift: List<Gift> = emptyList(),
     val myGifts: List<Gift> = emptyList(),
+    val brands: List<ItemChoose> = mutableListOf(),
     val category: MutableList<ItemChoose> = mutableListOf()
 )

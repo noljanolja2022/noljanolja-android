@@ -9,7 +9,21 @@ import io.ktor.client.request.get
 import io.ktor.client.request.post
 
 class ShopApi(private val client: HttpClient) {
-    suspend fun getCategories(request: GetCategoriesRequest): GetCategoriesResponse {
+    suspend fun getBrands(request: GetItemChooseRequest): GetItemChooseResponse {
+        return client.get("$BASE_URL/api/v1/gifts/brands") {
+            url {
+                request.run {
+                    parameters.append("page", page.toString())
+                    parameters.append("pageSize", pageSize.toString())
+                    query?.let {
+                        parameters.append("query", it)
+                    }
+                }
+            }
+        }.body()
+    }
+
+    suspend fun getCategories(request: GetItemChooseRequest): GetItemChooseResponse {
         return client.get("$BASE_URL/api/v1/gifts/categories") {
             url {
                 request.run {

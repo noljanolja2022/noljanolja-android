@@ -29,7 +29,20 @@ internal class ShopRepositoryImpl(
         shopLocalDatasource.deleteByScreen(SCREEN)
     }
 
-    override suspend fun getCategories(request: GetCategoriesRequest): Result<List<ItemChoose>?> {
+    override suspend fun getBrands(request: GetItemChooseRequest): Result<List<ItemChoose>?> {
+        return try {
+            val response = shopApi.getBrands(request)
+            if (response.isSuccessful()) {
+                Result.success(response.data)
+            } else {
+                Result.failure(Throwable(response.message))
+            }
+        } catch (e: Throwable) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getCategories(request: GetItemChooseRequest): Result<List<ItemChoose>?> {
         return try {
             val response = shopApi.getCategories(request)
             if (response.isSuccessful()) {

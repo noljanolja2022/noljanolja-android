@@ -11,7 +11,8 @@ interface ShopRepository {
     fun insertKey(text: String)
     suspend fun clearText(text: String)
     suspend fun clearAll()
-    suspend fun getCategories(request: GetCategoriesRequest): Result<List<ItemChoose>?>
+    suspend fun getBrands(request: GetItemChooseRequest): Result<List<ItemChoose>?>
+    suspend fun getCategories(request: GetItemChooseRequest): Result<List<ItemChoose>?>
     suspend fun getGifts(
         searchText: String,
         categoryId: String,
