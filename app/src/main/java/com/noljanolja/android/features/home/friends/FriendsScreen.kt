@@ -106,7 +106,7 @@ private fun FriendsScreenContent(
                 .padding(padding)
         ) {
             FriendHeading(onAddFriend = {
-                handleEvent(FriendsEvent.AddFriend)
+                handleEvent(FriendsEvent.InviteFriend)
             })
             Card(
                 modifier = Modifier.fillMaxSize(),

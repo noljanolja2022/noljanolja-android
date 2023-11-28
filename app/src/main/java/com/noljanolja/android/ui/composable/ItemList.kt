@@ -205,7 +205,7 @@ internal fun BrandItem(
     Column(
         modifier = modifier
             .background(containerColor)
-            .padding()
+            .width(64.dp)
             .clickable {
                 onItemClick(brand)
             },
@@ -227,7 +227,9 @@ internal fun BrandItem(
             style = Typography.bodySmall.copy(
                 color = Color.Black,
                 textAlign = TextAlign.Center
-            )
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
