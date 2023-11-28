@@ -152,7 +152,7 @@ class VideoDetailViewModel() : BaseViewModel() {
     private suspend fun trackVideoProgress(state: PlayerConstants.PlayerState, durationMs: Long) {
         val event = when (state) {
             PlayerConstants.PlayerState.PAUSED -> VideoProgressEvent.PAUSE
-            PlayerConstants.PlayerState.ENDED -> VideoProgressEvent.FINISH
+            PlayerConstants.PlayerState.ENDED -> VideoProgressEvent.PLAY
             PlayerConstants.PlayerState.PLAYING -> VideoProgressEvent.PLAY
             else -> return
         }
