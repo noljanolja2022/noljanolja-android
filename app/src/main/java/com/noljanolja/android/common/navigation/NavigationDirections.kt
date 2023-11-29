@@ -450,10 +450,15 @@ object NavigationDirections {
     }
 
     data class ProductByCategory(
+        val brandId: String = "",
         val categoryId: String = "",
-        val categoryName: String = ""
+        val categoryName: String = "",
     ) : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf(
+            navArgument("brandId") {
+                defaultValue = ""
+                type = NavType.StringType
+            },
             navArgument("categoryId") {
                 defaultValue = ""
                 type = NavType.StringType
@@ -465,10 +470,10 @@ object NavigationDirections {
         )
         override val options = null
         override val destination: String =
-            "product_by_category?categoryId={categoryId}&categoryName={categoryName}"
+            "product_by_category?brandId={brandId}&categoryId={categoryId}&categoryName={categoryName}"
 
         override fun createDestination() =
-            "product_by_category?categoryId=$categoryId&categoryName=$categoryName"
+            "product_by_category?brandId=$brandId&categoryId=$categoryId&categoryName=$categoryName"
     }
 
     data class GiftDetail(val giftId: String = "", val code: String = "") : NavigationCommand {

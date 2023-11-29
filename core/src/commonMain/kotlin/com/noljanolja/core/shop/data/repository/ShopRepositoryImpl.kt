@@ -55,19 +55,9 @@ internal class ShopRepositoryImpl(
         }
     }
 
-    override suspend fun getGifts(
-        searchText: String,
-        categoryId: String,
-        isFeatured: Boolean?,
-        isTodayOffer: Boolean?
-    ): Result<List<Gift>> {
+    override suspend fun getGifts(request: GetGiftListRequest): Result<List<Gift>> {
         return try {
-            val response = shopApi.getGifts(
-                searchText,
-                categoryId,
-                isFeatured,
-                isTodayOffer
-            )
+            val response = shopApi.getGifts(request)
             if (response.isSuccessful()) {
                 Result.success(response.data)
             } else {

@@ -7,6 +7,7 @@ import com.noljanolja.android.common.base.launchInMain
 import com.noljanolja.android.common.error.UnexpectedFailure
 import com.noljanolja.android.common.navigation.*
 import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
+import com.noljanolja.core.shop.data.model.request.*
 import com.noljanolja.core.shop.domain.model.Gift
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,7 +35,9 @@ class GiftDetailViewModel(
         launch {
             val gift = coreManager.getGiftDetail(giftId).getOrDefault(Gift())
             val giftsByCategory =
-                coreManager.getGifts(categoryId = gift.category.id).getOrDefault(emptyList())
+                coreManager.getGifts(
+                    GetGiftListRequest(categoryId = gift.category.id)
+                ).getOrDefault(emptyList())
                     .toMutableList()
             giftsByCategory.remove(gift)
 
@@ -76,8 +79,9 @@ class GiftDetailViewModel(
         val response = coreManager.buyGift(giftId)
         response.getOrNull()?.let {
             val giftsByCategory =
-                coreManager.getGifts(categoryId = it.category.id).getOrDefault(emptyList())
-                    .toMutableList()
+                coreManager.getGifts(
+                    GetGiftListRequest(categoryId = it.category.id)
+                ).getOrDefault(emptyList()).toMutableList()
             giftsByCategory.remove(it)
             _buyGiftSuccessEvent.emit(true)
             _uiStateFlow.emit(

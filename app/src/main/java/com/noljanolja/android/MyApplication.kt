@@ -332,7 +332,7 @@ class MyApplication : Application() {
                     SearchProductViewModel()
                 }
                 viewModel {
-                    ProductByCategoryViewModel(get())
+                    ProductByCategoryViewModel()
                 }
                 viewModel { (giftId: String, code: String) -> GiftDetailViewModel(giftId, code) }
                 viewModel {

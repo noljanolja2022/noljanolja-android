@@ -7,6 +7,7 @@ import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
+import com.noljanolja.core.shop.data.model.request.*
 import com.noljanolja.core.shop.domain.model.Gift
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -80,7 +81,9 @@ class SearchProductViewModel : BaseViewModel() {
         val currentUiValue = _uiStateFlow.value.data
         coreManager.insertSearchKey(text)
         _uiStateFlow.emit(UiState(loading = true, data = currentUiValue))
-        val gifts = coreManager.getGifts(text).getOrDefault(emptyList())
+        val gifts = coreManager.getGifts(
+            GetGiftListRequest(searchText = text)
+        ).getOrDefault(emptyList())
         _uiStateFlow.emit(UiState(data = currentUiValue!!.copy(gifts = gifts)))
     }
 }
