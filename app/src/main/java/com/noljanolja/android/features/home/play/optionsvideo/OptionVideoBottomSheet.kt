@@ -41,6 +41,7 @@ import org.koin.androidx.compose.*
 fun OptionVideoBottomBottomSheet(
     visible: Boolean = false,
     video: Video,
+    isFromReferral: Boolean = false,
     onDismissRequest: () -> Unit,
     videoViewModel: OptionsVideoViewModel = getViewModel(),
     optionsVideoViewModel: OptionsVideoViewModel = getViewModel()
@@ -63,7 +64,13 @@ fun OptionVideoBottomBottomSheet(
         mutableStateOf<ShareContact?>(null)
     }
     var isSelectConversation by remember {
+        mutableStateOf(isFromReferral)
+    }
+    var isShowContactList by remember {
         mutableStateOf(false)
+    }
+    var isLoading by remember {
+        optionsVideoViewModel.isLoading
     }
     if (visible) {
         Dialog(
@@ -109,7 +116,7 @@ fun OptionVideoBottomBottomSheet(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         when {
-                            selectContact != null -> {
+                            selectContact != null && !isFromReferral -> {
                                 ShareVideoContent(
                                     shareContact = selectContact,
                                     video = video,
@@ -130,12 +137,33 @@ fun OptionVideoBottomBottomSheet(
                                 SelectConversation(
                                     contacts = contacts,
                                     onSelectContact = {
-                                        selectContact = it
+                                        it?.let {
+                                            selectContact = it
+                                            if (isFromReferral) {
+                                                isLoading = true
+
+                                                videoViewModel.handleEvent(
+                                                    selectContact?.let { content ->
+                                                        OptionsVideoEvent.ShareReferralCode(
+                                                            message = context.getString(R.string.message_referral),
+                                                            referralCode = video.title,
+                                                            shareContact = content
+                                                        )
+                                                    }
+                                                )
+                                            }
+                                        } ?: run {
+                                            isShowContactList = true
+                                        }
                                     },
                                     onShareClick = {
                                         optionsVideoViewModel.changeDialogState(it)
                                     }
                                 )
+                            }
+
+                            isShowContactList -> {
+                                ContactListContent()
                             }
 
                             else -> {
@@ -163,6 +191,12 @@ fun OptionVideoBottomBottomSheet(
                         }
                     }
                 }
+                if (isLoading) {
+                    LoadingScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
+                }
             }
         }
     }
@@ -182,6 +216,17 @@ fun OptionVideoBottomBottomSheet(
         ) {
             optionsVideoViewModel.changeDialogState(null)
         }
+    }
+}
+
+@Composable
+private fun ContactListContent(
+
+) {
+    Box(
+        modifier = Modifier.fillMaxHeight(0.9f).background(Color.Red)
+    ) {
+
     }
 }
 
@@ -250,7 +295,7 @@ private fun ShareVideoContent(
 @Composable
 private fun SelectConversation(
     contacts: List<ShareContact>,
-    onSelectContact: (ShareContact) -> Unit,
+    onSelectContact: (ShareContact?) -> Unit,
     onShareClick: (String) -> Unit
 ) {
     SizeBox(height = 10.dp)
@@ -281,6 +326,36 @@ private fun SelectConversation(
                     SizeBox(height = 10.dp)
                     Text(
                         contact.title,
+                        style = MaterialTheme.typography.labelSmall,
+                        textAlign = TextAlign.Center,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            }
+            item {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .width(56.dp)
+                        .clickable {
+                            onSelectContact(null)
+                        }
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_search),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(RoundedCornerShape((40 / 3).dp))
+                            .background(PrimaryGreen)
+                            .padding(5.dp)
+                    )
+                    SizeBox(height = 10.dp)
+                    Text(
+                        text = stringResource(id = R.string.common_more),
                         style = MaterialTheme.typography.labelSmall,
                         textAlign = TextAlign.Center,
                         maxLines = 2,

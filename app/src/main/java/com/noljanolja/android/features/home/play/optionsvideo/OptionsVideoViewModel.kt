@@ -1,5 +1,6 @@
 package com.noljanolja.android.features.home.play.optionsvideo
 
+import androidx.compose.runtime.*
 import androidx.lifecycle.*
 import com.noljanolja.android.common.base.BaseShareContactViewModel
 import com.noljanolja.android.common.base.launch
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.*
 class OptionsVideoViewModel : BaseShareContactViewModel() {
     private val _showConfirmDialog = MutableStateFlow<ShareToAppData?>(null)
     internal val showConfirmDialog = _showConfirmDialog.asStateFlow()
+    internal val isLoading = mutableStateOf(false)
 
     protected val _shareSuccessEvent = MutableSharedFlow<String?>()
     val shareSuccessEvent = _shareSuccessEvent.asSharedFlow()
@@ -66,8 +68,74 @@ class OptionsVideoViewModel : BaseShareContactViewModel() {
                     video = event.video,
                     shareContact = event.shareContact
                 )
+
+                is OptionsVideoEvent.ShareReferralCode -> event.run {
+                    shareReferralCode(
+                        message = message,
+                        referralCode = referralCode,
+                        shareContact = shareContact
+                    )
+                }
+
                 else -> {}
             }
+        }
+    }
+
+    private suspend fun shareReferralCode(
+        message: String,
+        referralCode: String,
+        shareContact: ShareContact?
+    ) {
+        val sendMessage = Message(
+            message = message,
+            type = MessageType.PLAINTEXT
+        )
+        val referralMessage = Message(
+            message = referralCode,
+            type = MessageType.PLAINTEXT
+        )
+        shareContact?.conversationId?.let {
+            val result = coreManager.sendConversationsMessage(
+                conversationIds = listOf(shareContact.conversationId),
+                message = sendMessage,
+                userIds = emptyList(),
+            )
+            val resultReferral = coreManager.sendConversationsMessage(
+                conversationIds = listOf(shareContact.conversationId),
+                message = referralMessage,
+                userIds = emptyList(),
+            )
+            isLoading.value = false
+            if (result.isSuccess && resultReferral.isSuccess) {
+                _shareSuccessEvent.emit(null)
+                navigationManager.navigate(NavigationDirections.Chat(it))
+            } else {
+                sendError(result.exceptionOrUnDefined())
+            }
+            return
+        }
+        shareContact?.userId?.let {
+            val me = coreManager.getCurrentUser().getOrNull()
+            val result = coreManager.sendConversationsMessage(
+                conversationIds = listOf(0L),
+                userIds = listOfNotNull(it, me?.id),
+                message = sendMessage,
+                title = shareContact.title
+            )
+            val resultReferral = coreManager.sendConversationsMessage(
+                conversationIds = listOf(0L),
+                userIds = listOfNotNull(it, me?.id),
+                message = referralMessage,
+                title = shareContact.title
+            )
+            isLoading.value = false
+            if (result.isSuccess && resultReferral.isSuccess) {
+                _shareSuccessEvent.emit(null)
+            } else {
+                sendError(result.exceptionOrUnDefined())
+            }
+            return
         }
     }
 

@@ -5,4 +5,11 @@ import com.noljanolja.core.video.domain.model.Video
 
 sealed interface OptionsVideoEvent {
     data class ShareVideo(val video: Video, val shareContact: ShareContact?) : OptionsVideoEvent
+
+    data class ShareReferralCode(
+        val message: String,
+        val referralCode: String,
+        val shareContact: ShareContact?
+    ) : OptionsVideoEvent
+
 }
