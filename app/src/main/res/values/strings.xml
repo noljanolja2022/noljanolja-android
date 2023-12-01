@@ -47,6 +47,7 @@
     <string name="common_warning">Warning</string>
     <string name="common_all">All</string>
     <string name="common_send">Send</string>
+    <string name="common_send_to">Send to</string>
     <string name="common_download">Download</string>
     <string name="common_more">More</string>
 

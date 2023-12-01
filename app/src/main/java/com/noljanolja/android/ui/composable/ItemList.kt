@@ -3,19 +3,24 @@ package com.noljanolja.android.ui.composable
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.*
+import androidx.compose.material.icons.*
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.*
+import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.text.style.*
 import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
 import androidx.constraintlayout.compose.*
 import coil.compose.*
+import coil.request.*
 import com.noljanolja.android.R
+import com.noljanolja.android.features.common.*
 import com.noljanolja.android.ui.theme.*
 import com.noljanolja.android.util.*
 import com.noljanolja.android.util.Constant.DefaultValue.ROUND_RECTANGLE
@@ -25,6 +30,61 @@ import com.noljanolja.core.shop.domain.model.*
 /**
  * Created by tuyen.dang on 11/19/2023.
  */
+
+@Composable
+internal fun ContactRow(
+    modifier: Modifier = Modifier,
+    contact: ShareContact,
+    selected: Boolean = false,
+    onClick: (ShareContact) -> Unit,
+) {
+    Row(
+        modifier = modifier
+            .clickable { onClick(contact) }
+            .padding(vertical = 15.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        val context = LocalContext.current
+        SubcomposeAsyncImage(
+            ImageRequest.Builder(context = context)
+                .data(contact.avatar)
+                .placeholder(R.drawable.placeholder_account)
+                .error(R.drawable.placeholder_account)
+                .fallback(R.drawable.placeholder_account)
+                .build(),
+            contentDescription = null,
+            modifier = Modifier
+                .size(40.dp)
+                .clip(RoundedCornerShape(13.dp)),
+            contentScale = ContentScale.Crop
+        )
+        Text(
+            text = contact.title,
+            modifier = Modifier
+                .padding(start = 15.dp)
+                .weight(1F),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+
+        val modifier = Modifier.size(20.dp)
+        if (selected) {
+            Icon(
+                Icons.Filled.CheckCircle,
+                contentDescription = null,
+                modifier = modifier,
+                tint = MaterialTheme.colorScheme.primary
+            )
+        } else {
+            Icon(
+                Icons.Filled.RadioButtonUnchecked,
+                contentDescription = null,
+                modifier = modifier,
+                tint = MaterialTheme.colorScheme.outline
+            )
+        }
+    }
+}
 
 @Composable
 internal fun ItemType(
