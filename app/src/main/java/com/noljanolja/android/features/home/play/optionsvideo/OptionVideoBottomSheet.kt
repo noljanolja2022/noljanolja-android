@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.*
 import androidx.compose.material.icons.*
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
@@ -41,6 +42,7 @@ import org.koin.androidx.compose.*
 fun OptionVideoBottomBottomSheet(
     visible: Boolean = false,
     video: Video,
+    isFromReferral: Boolean = false,
     onDismissRequest: () -> Unit,
     videoViewModel: OptionsVideoViewModel = getViewModel(),
     optionsVideoViewModel: OptionsVideoViewModel = getViewModel()
@@ -62,8 +64,14 @@ fun OptionVideoBottomBottomSheet(
     var selectContact by remember {
         mutableStateOf<ShareContact?>(null)
     }
+    var selectContactInList by remember {
+        mutableStateOf<ShareContact?>(null)
+    }
     var isSelectConversation by remember {
-        mutableStateOf(false)
+        mutableStateOf(isFromReferral)
+    }
+    var isLoading by remember {
+        optionsVideoViewModel.isLoading
     }
     if (visible) {
         Dialog(
@@ -109,7 +117,7 @@ fun OptionVideoBottomBottomSheet(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         when {
-                            selectContact != null -> {
+                            selectContact != null && !isFromReferral -> {
                                 ShareVideoContent(
                                     shareContact = selectContact,
                                     video = video,
@@ -126,15 +134,54 @@ fun OptionVideoBottomBottomSheet(
                                 )
                             }
 
+                            selectContact == ShareContact() -> {
+                                ContactListContent(
+                                    contacts = contacts,
+                                    selectedContact = selectContactInList,
+                                    onItemClick = {
+                                        selectContactInList = it
+                                    },
+                                    onClickHide = {
+                                        onDismissRequest()
+                                    },
+                                    onSendToUser = {
+                                        isLoading = true
+                                        videoViewModel.handleEvent(
+                                            selectContactInList?.let { content ->
+                                                OptionsVideoEvent.ShareReferralCode(
+                                                    message = context.getString(R.string.message_referral),
+                                                    referralCode = video.title,
+                                                    shareContact = content
+                                                )
+                                            }
+                                        )
+                                    },
+                                    loadMoreContacts = {}
+                                )
+                            }
+
                             isSelectConversation -> {
                                 SelectConversation(
                                     contacts = contacts,
                                     onSelectContact = {
                                         selectContact = it
+                                        if (isFromReferral && it != ShareContact()) {
+                                            isLoading = true
+                                            videoViewModel.handleEvent(
+                                                selectContact?.let { content ->
+                                                    OptionsVideoEvent.ShareReferralCode(
+                                                        message = context.getString(R.string.message_referral),
+                                                        referralCode = video.title,
+                                                        shareContact = content
+                                                    )
+                                                }
+                                            )
+                                        }
                                     },
                                     onShareClick = {
                                         optionsVideoViewModel.changeDialogState(it)
-                                    }
+                                    },
+                                    isFromReferral = isFromReferral
                                 )
                             }
 
@@ -163,8 +210,17 @@ fun OptionVideoBottomBottomSheet(
                         }
                     }
                 }
+                if (isLoading) {
+                    LoadingScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
+                }
             }
         }
+    } else {
+        selectContact = null
+        selectContactInList = null
     }
     showConfirmDialog?.run {
         ConfirmDialog(
@@ -181,6 +237,74 @@ fun OptionVideoBottomBottomSheet(
             }
         ) {
             optionsVideoViewModel.changeDialogState(null)
+        }
+    }
+}
+
+@Composable
+private fun ContactListContent(
+    contacts: List<ShareContact>,
+    selectedContact: ShareContact?,
+    onItemClick: (ShareContact) -> Unit,
+    onClickHide: () -> Unit,
+    onSendToUser: () -> Unit,
+    loadMoreContacts: () -> Unit
+) {
+    val configuration = LocalConfiguration.current
+    Column(
+        modifier = Modifier
+            .height((configuration.screenHeightDp * 0.8f).dp)
+            .fillMaxWidth()
+            .padding(20.dp)
+    ) {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                modifier = Modifier.weight(1f),
+                text = stringResource(id = R.string.common_send_to),
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center
+            )
+            Icon(
+                imageVector = Icons.Rounded.Close,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(20.dp)
+                    .clickable {
+                        onClickHide()
+                    },
+                tint = MaterialTheme.colorScheme.onBackground,
+            )
+        }
+        MarginVertical(20)
+        SearchBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { },
+            searchText = "",
+            hint = stringResource(id = R.string.common_search),
+            onSearch = {},
+            enabled = false,
+        )
+        MarginVertical(20)
+        ContactList(
+            modifier = Modifier
+                .weight(1f),
+            contacts = contacts,
+            scrollState = rememberLazyListState(),
+            selectedContacts = if (selectedContact != null) listOf(selectedContact) else listOf(),
+            onItemClick = onItemClick,
+            loadMoreContacts = loadMoreContacts
+        )
+        if (selectedContact != null) {
+            ButtonRadius(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                title = stringResource(id = R.string.common_send).uppercase(),
+                bgColor = PrimaryGreen
+            ) {
+                onSendToUser()
+            }
         }
     }
 }
@@ -251,7 +375,8 @@ private fun ShareVideoContent(
 private fun SelectConversation(
     contacts: List<ShareContact>,
     onSelectContact: (ShareContact) -> Unit,
-    onShareClick: (String) -> Unit
+    onShareClick: (String) -> Unit,
+    isFromReferral: Boolean
 ) {
     SizeBox(height = 10.dp)
     Text(
@@ -288,6 +413,38 @@ private fun SelectConversation(
                         modifier = Modifier.padding(horizontal = 8.dp),
                         color = MaterialTheme.colorScheme.onBackground
                     )
+                }
+            }
+            if (isFromReferral) {
+                item {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .width(56.dp)
+                            .clickable {
+                                onSelectContact(ShareContact())
+                            }
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_search),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(RoundedCornerShape((40 / 3).dp))
+                                .background(PrimaryGreen)
+                                .padding(5.dp)
+                        )
+                        SizeBox(height = 10.dp)
+                        Text(
+                            text = stringResource(id = R.string.common_more),
+                            style = MaterialTheme.typography.labelSmall,
+                            textAlign = TextAlign.Center,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(horizontal = 8.dp),
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
                 }
             }
         }

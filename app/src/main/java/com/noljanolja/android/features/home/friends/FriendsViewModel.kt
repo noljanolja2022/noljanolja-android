@@ -55,6 +55,10 @@ class FriendsViewModel : BaseViewModel() {
                 FriendsEvent.AddFriend -> {
                     navigationManager.navigate(NavigationDirections.AddFriend)
                 }
+
+                FriendsEvent.InviteFriend -> {
+                    navigationManager.navigate(NavigationDirections.Referral)
+                }
             }
         }
     }

@@ -24,8 +24,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
+import com.noljanolja.android.features.home.play.optionsvideo.*
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
@@ -50,9 +50,9 @@ import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.withBold
 import com.noljanolja.android.ui.theme.withMedium
 import com.noljanolja.android.util.secondaryTextColor
-import com.noljanolja.android.util.shareText
 import com.noljanolja.android.util.showToast
 import com.noljanolja.core.user.domain.model.User
+import com.noljanolja.core.video.domain.model.*
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -74,6 +74,9 @@ private fun ReferralContent(
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
     val code = uiState.data?.referralCode.orEmpty()
+    var isShowShareDialog by remember {
+        mutableStateOf(false)
+    }
     ScaffoldWithUiState(
         uiState = uiState,
         topBar = {
@@ -88,7 +91,8 @@ private fun ReferralContent(
         }
     ) {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .background(MaterialTheme.colorScheme.secondaryContainer)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -101,7 +105,9 @@ private fun ReferralContent(
                     painter = painterResource(id = R.drawable.benefits_bg),
                     contentDescription = null,
                     contentScale = ContentScale.FillWidth,
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 36.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 36.dp)
                 )
                 Row(
                     modifier = Modifier
@@ -111,8 +117,10 @@ private fun ReferralContent(
                     Text(
                         code,
                         style = MaterialTheme.typography.bodyLarge.withBold(),
-                        modifier = Modifier.background(MaterialTheme.colorScheme.background)
-                            .padding(horizontal = 30.dp).fillMaxHeight()
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(horizontal = 30.dp)
+                            .fillMaxHeight()
                             .wrapContentHeight(align = Alignment.CenterVertically),
                         textAlign = TextAlign.Center,
                         maxLines = 1
@@ -120,12 +128,14 @@ private fun ReferralContent(
                     Text(
                         stringResource(id = R.string.common_copy),
                         style = MaterialTheme.typography.bodySmall.withBold(),
-                        modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer)
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.primaryContainer)
                             .clickable {
                                 clipboardManager.setText(AnnotatedString(code))
                                 context.showToast(context.getString(R.string.common_copy_success))
                             }
-                            .padding(horizontal = 22.dp).fillMaxHeight()
+                            .padding(horizontal = 22.dp)
+                            .fillMaxHeight()
                             .wrapContentHeight(align = Alignment.CenterVertically),
                         textAlign = TextAlign.Center,
                         maxLines = 1,
@@ -135,9 +145,11 @@ private fun ReferralContent(
             }
             PrimaryButton(
                 text = stringResource(id = R.string.send_invite_link),
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 13.dp).height(52.dp)
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 13.dp)
+                    .height(52.dp)
             ) {
-                context.shareText(code)
+                isShowShareDialog = true
             }
             Text(
                 stringResource(id = R.string.how_to_refer),
@@ -184,6 +196,17 @@ private fun ReferralContent(
             )
         }
     }
+    OptionVideoBottomBottomSheet(
+        visible = isShowShareDialog,
+        video = Video(
+            title = code,
+            url = stringResource(id = R.string.message_referral).plus("\n$code")
+        ),
+        onDismissRequest = {
+            isShowShareDialog = false
+        },
+        isFromReferral = true
+    )
 }
 
 @Composable
@@ -196,7 +219,9 @@ private fun RowScope.ReferralDirectionItem(
         Image(
             painterResource(id = image),
             contentDescription = null,
-            modifier = Modifier.size(98.dp).clip(CircleShape),
+            modifier = Modifier
+                .size(98.dp)
+                .clip(CircleShape),
             contentScale = ContentScale.Crop
         )
         Text(

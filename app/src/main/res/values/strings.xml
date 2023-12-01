@@ -47,7 +47,9 @@
     <string name="common_warning">Warning</string>
     <string name="common_all">All</string>
     <string name="common_send">Send</string>
+    <string name="common_send_to">Send to</string>
     <string name="common_download">Download</string>
+    <string name="common_more">More</string>
 
     <!--    countries-->
     <string name="country_kr">South Korea</string>
@@ -426,4 +428,5 @@
     <string name="common_cash">Cash</string>
     <string name="shop_all_sold_out">All products are sold out</string>
     <string name="shop_brands">Brands</string>
+    <string name="message_referral">www.nolgubulgu.com\nJoin now to get benefits\nUp to 1000 points!!!</string>
 </resources>

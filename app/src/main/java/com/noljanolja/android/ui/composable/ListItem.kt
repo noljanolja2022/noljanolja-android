@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.text.font.*
 import androidx.compose.ui.unit.*
 import androidx.constraintlayout.compose.*
+import com.noljanolja.android.features.common.*
 import com.noljanolja.android.util.*
 import com.noljanolja.android.util.Constant.DefaultValue.PADDING_HORIZONTAL_SCREEN
 import com.noljanolja.android.util.Constant.DefaultValue.PADDING_VIEW
@@ -26,6 +27,29 @@ import kotlinx.coroutines.*
 /**
  * Created by tuyen.dang on 11/20/2023.
  */
+
+@Composable
+internal fun ContactList(
+    modifier: Modifier = Modifier,
+    contacts: List<ShareContact>,
+    scrollState: LazyListState,
+    selectedContacts: List<ShareContact>,
+    onItemClick: (ShareContact) -> Unit,
+    loadMoreContacts: () -> Unit,
+) {
+    LazyColumn(
+        modifier = modifier,
+        state = scrollState
+    ) {
+        items(contacts) { contact ->
+            ContactRow(
+                contact = contact,
+                selected = selectedContacts.contains(contact)
+            ) { onItemClick(it) }
+        }
+    }
+    InfiniteListHandler(scrollState, onLoadMore = loadMoreContacts)
+}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
