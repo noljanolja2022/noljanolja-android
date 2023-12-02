@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.*
 import androidx.lifecycle.compose.*
 import androidx.navigation.*
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
 import com.google.android.gms.auth.api.signin.*
 import com.google.android.gms.common.api.*
@@ -193,7 +194,23 @@ private fun NavGraphBuilder.addNavigationGraph(
         PlayListScreen()
     }
     composable(HomeNavigationItem.WalletItem.route) {
-        WalletExchangeScreen()
+        WalletExchangeScreen(
+            onNavigateToShop = {
+                navController.navigate(HomeNavigationItem.StoreItem.route) {
+                    // Pop up to the start destination of the graph to
+                    // avoid building up a large stack of destinations
+                    // on the back stack as users select items
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    // Avoid multiple copies of the same destination when
+                    // reselecting the same item
+                    launchSingleTop = true
+                    // Restore state when reselecting a previously selected item
+                    restoreState = true
+                }
+            }
+        )
     }
     composable(HomeNavigationItem.StoreItem.route) {
         ShopScreen()

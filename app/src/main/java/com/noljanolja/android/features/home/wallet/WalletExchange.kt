@@ -45,7 +45,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -54,15 +53,10 @@ import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.features.home.wallet.composable.MyCashAndPoint
 import com.noljanolja.android.features.home.wallet.composable.WalletUserInformation
-import com.noljanolja.android.ui.composable.Expanded
-import com.noljanolja.android.ui.composable.PrimaryButton
-import com.noljanolja.android.ui.composable.ScaffoldWithCircleBgRoundedContent
-import com.noljanolja.android.ui.composable.SizeBox
+import com.noljanolja.android.ui.composable.*
+import com.noljanolja.android.ui.composable.ButtonRadius
 import com.noljanolja.android.ui.composable.admob.AdmobRectangle
-import com.noljanolja.android.ui.theme.NeutralDarkGrey
-import com.noljanolja.android.ui.theme.Orange300
-import com.noljanolja.android.ui.theme.withBold
-import com.noljanolja.android.ui.theme.withMedium
+import com.noljanolja.android.ui.theme.*
 import com.noljanolja.android.util.formatDigitsNumber
 import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
@@ -71,6 +65,7 @@ import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun WalletExchangeScreen(
+    onNavigateToShop: () -> Unit,
     viewModel: WalletViewModel = getViewModel(),
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
@@ -83,7 +78,8 @@ fun WalletExchangeScreen(
         uiState = uiState,
         memberInfo = memberInfo,
         myBalance = myBalance,
-        handleEvent = viewModel::handleEvent
+        handleEvent = viewModel::handleEvent,
+        onWalletPointClick = onNavigateToShop
     )
 }
 
@@ -93,6 +89,7 @@ private fun WalletExchangeContent(
     memberInfo: MemberInfo,
     myBalance: ExchangeBalance,
     handleEvent: (WalletEvent) -> Unit,
+    onWalletPointClick: () -> Unit
 ) {
     var showAdmob by remember { mutableStateOf(false) }
     ScaffoldWithCircleBgRoundedContent(
@@ -143,13 +140,29 @@ private fun WalletExchangeContent(
                 )
                 SizeBox(width = 12.dp)
                 WalletInfoDailyInfoItem(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable {
+                            onWalletPointClick()
+                        }
+                    ,
                     background = R.drawable.bg_point,
                     contentColor = NeutralDarkGrey,
                     title = R.string.wallet_point_can_exchange,
                     point = memberInfo.exchangeablePoints,
                     pointColor = NeutralDarkGrey
                 )
+            }
+            SizeBox(height = 20.dp)
+            ButtonRadius(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                title = stringResource(id = R.string.transaction_history).uppercase(),
+                bgColor = PrimaryGreen,
+                icon = painterResource(id = R.drawable.ic_history)
+            ) {
+                handleEvent(WalletEvent.TransactionHistory)
             }
             SizeBox(height = 20.dp)
             Card(
