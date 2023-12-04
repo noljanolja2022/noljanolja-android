@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.noljanolja.android.ui.composable.CircleAvatar
 import com.noljanolja.android.ui.composable.Expanded
-import com.noljanolja.android.ui.composable.RankingRow
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
 import com.noljanolja.core.user.domain.model.User
@@ -52,7 +51,7 @@ fun WalletUserInformation(
                 ),
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
-            memberInfo?.currentTier?.let { RankingRow(tier = it, onClick = goToRanking) }
+//            memberInfo?.currentTier?.let { RankingRow(tier = it, onClick = goToRanking) }
         }
         Expanded()
         IconButton(
