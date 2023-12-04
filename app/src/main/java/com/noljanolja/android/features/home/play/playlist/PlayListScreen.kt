@@ -21,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.*
-import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.*
@@ -127,14 +126,6 @@ private fun PlayListContent(
                 ) {
                     append(stringResource(id = R.string.video_title_watching))
                 }
-            },
-            firstIcon = Icons.Default.Settings,
-            firstIconClickListener = {
-
-            },
-            secondIcon = Icons.Default.Notifications,
-            secondIconClickListener = {
-
             },
             thirdIcon = Icons.Default.Search,
             thirdIconClickListener = {
