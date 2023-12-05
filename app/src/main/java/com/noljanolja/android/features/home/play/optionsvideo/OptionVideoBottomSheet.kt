@@ -38,11 +38,14 @@ import com.noljanolja.core.video.domain.model.*
 import kotlinx.coroutines.flow.*
 import org.koin.androidx.compose.*
 
+const val KEY_IGNORE_VIDEO = "ignore_video"
+
 @Composable
 fun OptionVideoBottomBottomSheet(
     visible: Boolean = false,
     video: Video,
     isFromReferral: Boolean = false,
+    onIgnoreVideoSuccess: () -> Unit = {},
     onDismissRequest: () -> Unit,
     videoViewModel: OptionsVideoViewModel = getViewModel(),
     optionsVideoViewModel: OptionsVideoViewModel = getViewModel()
@@ -50,7 +53,12 @@ fun OptionVideoBottomBottomSheet(
     val context = LocalContext.current
     LaunchedEffect(videoViewModel.shareSuccessEvent) {
         videoViewModel.shareSuccessEvent.collectLatest {
-            context.showToast(it ?: context.getString(R.string.common_share_success))
+            if (it == KEY_IGNORE_VIDEO) {
+                onIgnoreVideoSuccess()
+                context.showToast(context.getString(R.string.common_share_success))
+            } else {
+                context.showToast(it ?: context.getString(R.string.common_share_success))
+            }
             onDismissRequest()
         }
     }
@@ -201,7 +209,7 @@ fun OptionVideoBottomBottomSheet(
                                             }
 
                                             R.string.ignore_video -> {
-
+                                                optionsVideoViewModel.handleEvent(OptionsVideoEvent.IgnoreVideo(video.id))
                                             }
                                         }
                                     }
@@ -522,7 +530,7 @@ private fun SelectConversation(
 
 @Composable
 private fun OptionsContent(
-    onShare: (Int) -> Unit,
+    onShare: (Int) -> Unit
 ) {
     OptionVideoRow(
         icon = ImageVector.vectorResource(id = R.drawable.ic_share),
@@ -538,13 +546,13 @@ private fun OptionsContent(
             onShare(R.string.common_copy)
         }
     )
-//    OptionVideoRow(
-//        icon = Icons.Default.Block,
-//        text = stringResource(R.string.ignore_video),
-//        onClick = {
-//            onShare(R.string.ignore_video)
-//        }
-//    )
+    OptionVideoRow(
+        icon = Icons.Default.Block,
+        text = stringResource(R.string.ignore_video),
+        onClick = {
+            onShare(R.string.ignore_video)
+        }
+    )
 }
 
 @Composable

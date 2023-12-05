@@ -171,6 +171,20 @@ internal class VideoRepositoryImpl(
         }
     }
 
+    override suspend fun ignoreVideo(videoId: String): Result<Boolean> {
+        return try {
+            val response =
+                videoApi.ignoreVideo(videoId)
+            if (response.isSuccessful()) {
+                Result.success(true)
+            } else {
+                throw Throwable("Ignore video error")
+            }
+        }catch (e: Throwable) {
+            Result.failure(e)
+        }
+    }
+
     private suspend fun updateLocalVideo(video: Video) {
         localVideoDataSource.upsertCategory(video.category)
         localVideoDataSource.upsertChannel(video.channel)

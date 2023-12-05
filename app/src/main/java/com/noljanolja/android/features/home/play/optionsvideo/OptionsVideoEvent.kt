@@ -12,4 +12,7 @@ sealed interface OptionsVideoEvent {
         val shareContact: ShareContact?
     ) : OptionsVideoEvent
 
+    data class IgnoreVideo(
+        val videoId: String,
+    ) : OptionsVideoEvent
 }

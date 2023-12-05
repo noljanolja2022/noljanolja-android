@@ -321,6 +321,7 @@
     <string name="wallet_every_day">매일매일</string>
     <string name="common_share">공유</string>
     <string name="common_share_success">공유 성공</string>
+    <string name="common_ignore_success">성공 무시</string>
     <string name="common_open_app">“NolgoBulja” 는 “%s” 을 열고 싶어합니다.</string>
     <string name="common_install_app">이 기능을 사용하려면 "%s"을 설치해야합니다.</string>
     <string name="referral_receive_point">축하합니다! 친구 추천을 통해 %d 포인트를 획득하였습니다.</string>

@@ -182,6 +182,9 @@ private fun PlayListContent(
             onDismissRequest = {
                 selectOptionsVideo = null
             },
+            onIgnoreVideoSuccess = {
+                handleEvent(PlayListEvent.Refresh)
+            }
         )
     }
 }

@@ -77,9 +77,23 @@ class OptionsVideoViewModel : BaseShareContactViewModel() {
                     )
                 }
 
+                is OptionsVideoEvent.IgnoreVideo -> {
+                    ignoreVideo(event.videoId)
+                }
+
                 else -> {}
             }
         }
+    }
+
+    private suspend fun ignoreVideo(videoId: String) {
+        val result = coreManager.ignoreVideo(videoId)
+        if (result.isSuccess) {
+            _shareSuccessEvent.emit(KEY_IGNORE_VIDEO)
+        } else {
+            sendError(result.exceptionOrUnDefined())
+        }
+        return
     }
 
     private suspend fun shareReferralCode(

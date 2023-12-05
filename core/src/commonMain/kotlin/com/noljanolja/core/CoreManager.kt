@@ -91,6 +91,8 @@ class CoreManager : KoinComponent {
 
     suspend fun forceRefreshConversations() = conversationRepository.forceRefreshConversations()
 
+    suspend fun ignoreVideo(videoId: String) = videoRepository.ignoreVideo(videoId)
+
     suspend fun sendConversationMessage(
         title: String = "",
         conversationId: Long,
