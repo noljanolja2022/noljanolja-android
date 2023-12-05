@@ -74,6 +74,11 @@ internal class VideoApi(private val client: HttpClient) {
         }.body()
     }
 
+    suspend fun ignoreVideo(videoId: String): ResponseWithoutData {
+        return client.post("$BASE_URL/api/v1/media/videos/$videoId/ignores") {
+        }.body()
+    }
+
     suspend fun getPromotedVideo(): GetPromotedVideosResponse {
         return client.get("$BASE_URL/api/v1/media/videos/promoted")
             .body()

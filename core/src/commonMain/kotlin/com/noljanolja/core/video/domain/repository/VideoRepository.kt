@@ -39,6 +39,8 @@ interface VideoRepository {
         youtubeToken: String,
     ): Result<Boolean>
 
+    suspend fun ignoreVideo(videoId: String): Result<Boolean>
+
     suspend fun clearSearchHistories()
 
     suspend fun clearSearchText(text: String)

@@ -131,6 +131,9 @@ private fun SearchVideosContent(
             onDismissRequest = {
                 selectOptionsVideo = null
             },
+            onIgnoreVideoSuccess = {
+                handleEvent(SearchVideosEvent.Search(searchText))
+            }
         )
     }
 }

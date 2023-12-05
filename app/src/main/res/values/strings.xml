@@ -376,6 +376,7 @@
     <string name="wallet_every_day">Everyday</string>
     <string name="common_share">Share</string>
     <string name="common_share_success">Share success</string>
+    <string name="common_ignore_success">Ignore success</string>
     <string name="common_open_app">“NolgoBulja” wants to open “%s”</string>
     <string name="common_install_app">Please install "%s" to use this feature.</string>
     <string name="referral_receive_point">Congratulation! You and your friend have just  got %d Points from referral code.</string>
