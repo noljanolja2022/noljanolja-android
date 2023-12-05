@@ -1,8 +1,6 @@
 package com.noljanolja.android.features.shop.main
 
-import android.util.*
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.*
@@ -17,7 +15,6 @@ import androidx.compose.ui.*
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.*
-import androidx.compose.ui.modifier.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.*
@@ -372,7 +369,11 @@ private fun ProductsAndVouchers(
     if (gifts.isEmpty()
         && topFeatureGifts.isEmpty()
     ) {
-        Box {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
             Text(
                 text = stringResource(id = R.string.shop_all_sold_out),
                 color = textColor()

@@ -1,29 +1,25 @@
 package com.noljanolja.android.ui.composable
 
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.*
-import androidx.compose.material.icons.filled.*
+import androidx.compose.foundation.shape.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
+import androidx.compose.ui.draw.*
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.painter.*
 import androidx.compose.ui.graphics.vector.*
 import androidx.compose.ui.res.*
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.*
 import androidx.compose.ui.text.style.*
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
 import com.noljanolja.android.R
-import com.noljanolja.android.extensions.*
 import com.noljanolja.android.ui.theme.*
+import com.noljanolja.android.util.Constant.DefaultValue.BUTTON_HEIGHT
+import com.noljanolja.android.util.Constant.DefaultValue.BUTTON_TITLE
+import com.noljanolja.android.util.Constant.DefaultValue.PADDING_ICON
 
 @Composable
 fun TwoButtonInRow(
@@ -208,6 +204,7 @@ internal fun ButtonRadius(
     radius: Int = 5,
     title: String,
     textSize: Int = 14,
+    height: Int = BUTTON_HEIGHT,
     bgColor: Color,
     icon: Painter? = null,
     textColor: Color = Color.White,
@@ -218,6 +215,7 @@ internal fun ButtonRadius(
         enabled = enabled,
         onClick = onClick,
         modifier = Modifier
+            .height(height.dp)
             .then(modifier),
         shape = RoundedCornerShape(radius.dp),
         colors = ButtonDefaults.buttonColors(
@@ -247,6 +245,67 @@ internal fun ButtonRadius(
     }
 }
 
+@Composable
+internal fun ButtonTextWithToggle(
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    radius: Int = 5,
+    title: String,
+    textSize: Int = 14,
+    textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
+    height: Int = BUTTON_TITLE,
+    bgColor: Color = MaterialTheme.colorScheme.background,
+    textColor: Color = MaterialTheme.colorScheme.onBackground,
+    bgDisableColor: Color = MaterialTheme.colorScheme.surface,
+    onClick: () -> Unit = {},
+    checked: Boolean? = null,
+    onCheckedChange: (Boolean) -> Unit = {}
+) {
+    ElevatedButton(
+        enabled = enabled,
+        onClick = onClick,
+        modifier = Modifier
+            .height(height.dp)
+            .then(modifier),
+        shape = RoundedCornerShape(radius.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = bgColor,
+            disabledContainerColor = bgDisableColor
+        )
+    ) {
+        Text(
+            modifier = Modifier
+                .weight(1f)
+                .padding(vertical = PADDING_ICON.dp),
+            text = title,
+            style = textStyle.copy(
+                color = textColor,
+                fontSize = textSize.sp,
+                platformStyle = PlatformTextStyle(
+                    includeFontPadding = false
+                )
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        checked?.let {
+            Switch(
+                modifier = Modifier
+                    .height(30.dp)
+                    .width(50.dp),
+                checked = checked,
+                onCheckedChange = onCheckedChange,
+                colors = SwitchDefaults.colors(
+                    uncheckedBorderColor = Color.Transparent,
+                    uncheckedThumbColor = MaterialTheme.colorScheme.surfaceVariant,
+                    uncheckedTrackColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    checkedThumbColor = MaterialTheme.colorScheme.background
+                ),
+            )
+        }
+    }
+}
+
 // Preview
 @Preview
 @Composable
@@ -272,6 +331,17 @@ private fun ButtonRadiusPreview() {
         bgColor = PictonBlue,
         textColor = Color.Black,
         icon = painterResource(id = R.drawable.ic_chat),
+        onClick = {}
+    )
+}
+
+@Preview
+@Composable
+private fun ButtonTextPreview() {
+    ButtonTextWithToggle(
+        title = "Test",
+        bgColor = PictonBlue,
+        textColor = Color.Black,
         onClick = {}
     )
 }

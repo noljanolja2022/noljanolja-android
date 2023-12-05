@@ -26,7 +26,10 @@ class Constant {
         const val ROUND_RECTANGLE = 10
         const val PADDING_HORIZONTAL_SCREEN = 20
         const val PADDING_VIEW_SCREEN = 16
+        const val PADDING_VERTICAL_SCREEN = 24
         const val ROUND_DIALOG = 10
+        const val BUTTON_HEIGHT = 48
+        const val BUTTON_TITLE = 56
         const val TWEEN_ANIMATION_TIME = 300
     }
 }
