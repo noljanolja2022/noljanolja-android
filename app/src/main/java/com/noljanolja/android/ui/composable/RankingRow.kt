@@ -24,7 +24,11 @@ import com.noljanolja.android.util.getTitle
 import com.noljanolja.core.loyalty.domain.model.MemberTier
 
 @Composable
-fun RankingRow(tier: MemberTier, onClick: () -> Unit) {
+fun RankingRow(
+    modifier: Modifier = Modifier,
+    tier: MemberTier,
+    onClick: () -> Unit
+) {
     val containerColor: Color = tier.getBackgroundColor()
     val contentColor: Color
     val context = LocalContext.current
@@ -48,7 +52,7 @@ fun RankingRow(tier: MemberTier, onClick: () -> Unit) {
         }
     }
     Row(
-        modifier = Modifier
+        modifier = modifier
             .height(26.dp)
             .clip(RoundedCornerShape(20.dp))
             .background(containerColor)

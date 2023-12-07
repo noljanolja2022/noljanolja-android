@@ -1,37 +1,85 @@
 package com.noljanolja.android.features.setting
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import android.net.*
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.*
+import androidx.compose.material.icons.*
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.*
+import androidx.compose.ui.*
+import androidx.compose.ui.draw.*
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.layout.*
+import androidx.compose.ui.platform.*
+import androidx.compose.ui.res.*
+import androidx.compose.ui.text.style.*
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.constraintlayout.compose.*
+import androidx.lifecycle.compose.*
+import coil.compose.*
 import com.noljanolja.android.BuildConfig
 import com.noljanolja.android.R
+import com.noljanolja.android.extensions.*
+import com.noljanolja.android.features.auth.updateprofile.components.*
 import com.noljanolja.android.ui.composable.*
-import com.noljanolja.android.ui.theme.withBold
-import org.koin.androidx.compose.getViewModel
+import com.noljanolja.android.ui.theme.*
+import com.noljanolja.android.util.*
+import com.noljanolja.android.util.Constant.DefaultValue.PADDING_HORIZONTAL_SCREEN
+import com.noljanolja.android.util.Constant.DefaultValue.PADDING_VERTICAL_SCREEN
+import com.noljanolja.android.util.Constant.DefaultValue.PADDING_VIEW
+import com.noljanolja.android.util.Constant.DefaultValue.PADDING_VIEW_SCREEN
+import com.noljanolja.core.loyalty.domain.model.*
+import com.noljanolja.core.user.domain.model.*
+import org.koin.androidx.compose.*
 
 @Composable
 fun SettingScreen(
     viewModel: SettingViewModel = getViewModel(),
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val memberInfo by viewModel.memberInfoFlow.collectAsStateWithLifecycle()
+    var isShowSuccessToast by remember {
+        mutableStateOf(false)
+    }
+    LaunchedEffect(
+        key1 = viewModel.updateUserEvent,
+        block = {
+            viewModel.updateUserEvent.collect {
+                isShowSuccessToast = it
+            }
+        }
+    )
     SettingContent(
         uiState = uiState,
+        memberInfo = memberInfo,
         handleEvent = viewModel::handleEvent,
+    )
+    ComposeToast(
+        isVisible = isShowSuccessToast,
+        onDismiss = {
+            isShowSuccessToast = false
+        },
+        content = {
+            Box(
+                modifier = Modifier
+                    .size(84.dp)
+                    .clip(RoundedCornerShape(30.dp))
+                    .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f))
+                    .align(Alignment.Center)
+            ) {
+                Icon(
+                    Icons.Default.Check,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(64.dp)
+                        .align(Alignment.Center),
+                    tint = MaterialTheme.colorScheme.background
+                )
+            }
+        }
     )
 }
 
@@ -39,17 +87,34 @@ fun SettingScreen(
 @Composable
 private fun SettingContent(
     uiState: SettingUIState,
+    memberInfo: MemberInfo,
     handleEvent: (SettingEvent) -> Unit,
 ) {
     val user = uiState.user
     var isShowLogoutDialog by remember {
         mutableStateOf(false)
     }
+    var isShowClearCatchDialog by remember {
+        mutableStateOf(false)
+    }
+    val context = LocalContext.current
+    var avatar by rememberSaveable { mutableStateOf<Uri?>(null) }
+    var showAvatarInputDialog by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(key1 = avatar, block = {
+        context.loadFileInfo(avatar)?.let {
+            handleEvent(
+                SettingEvent.ChangeAvatar(
+                    it
+                )
+            )
+        }
+    })
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             CommonTopAppBar(
                 title = stringResource(id = R.string.common_setting),
+                centeredTitle = true,
                 onBack = {
                     handleEvent(SettingEvent.Back)
                 },
@@ -60,143 +125,246 @@ private fun SettingContent(
     ) {
         Column(
             modifier = Modifier
-                .padding(it)
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+                .background(MaterialTheme.colorScheme.surface)
         ) {
-            PrimaryListTile(
+            Column(
                 modifier = Modifier
-                    .padding(vertical = 10.dp, horizontal = 16.dp)
-                    .padding(top = 18.dp),
-                title = {
-                    Text(
-                        text = stringResource(id = R.string.setting_exchange_account_management),
-                        style = MaterialTheme.typography.bodyLarge,
+                    .padding(it)
+                    .weight(1f)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .verticalScroll(rememberScrollState())
+                    .padding(
+                        horizontal = PADDING_VIEW_SCREEN.dp
                     )
-                },
-                trailingDrawable = R.drawable.ic_forward,
-            )
-            CommonListTile(
-                modifier = Modifier
-                    .padding(vertical = 10.dp, horizontal = 16.dp),
-                title = {
-                    Text(
-                        text = stringResource(id = R.string.setting_name),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                },
-                trailing = {
-                    Row {
-                        Text(
-                            user?.name.orEmpty(),
-                            style = MaterialTheme.typography.bodyLarge.withBold()
+            ) {
+                MarginVertical(10)
+                ConstraintLayout(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            color = MaterialTheme.colorScheme.background,
+                            shape = RoundedCornerShape(5.dp),
                         )
-                        SizeBox(width = 24.dp)
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_edit),
-                            contentDescription = null
+                        .padding(
+                            vertical = PADDING_VIEW_SCREEN.dp,
+                            horizontal = PADDING_VERTICAL_SCREEN.dp
+                        )
+                ) {
+                    val (
+                        imgAvar,
+                        btnChange,
+                        tvTitleRanking,
+                        tvMemberRank,
+                        tvTitleName,
+                        tvName,
+                        tvTitlePhone,
+                        tvPhone,
+                        tvTileGender,
+                        tvGender,
+                        horizontalChain
+                    ) = createRefs()
+                    user?.avatar?.let {
+                        SubcomposeAsyncImage(
+                            it,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(52.dp)
+                                .clip(CircleShape)
+                                .constrainAs(imgAvar) {
+                                    top.linkTo(parent.top, PADDING_VIEW_SCREEN.dp)
+                                    linkTo(start = parent.start, end = parent.end)
+                                },
+                            contentScale = ContentScale.Crop,
+                        )
+                    } ?: CircleAvatar(
+                        modifier = Modifier.constrainAs(imgAvar) {
+                            top.linkTo(parent.top, PADDING_VIEW_SCREEN.dp)
+                            linkTo(start = parent.start, end = parent.end)
+                        },
+                        user = user ?: User(),
+                        size = 52.dp
+                    )
+                    Box(
+                        modifier = Modifier
+                            .heightIn(min = 26.dp)
+                            .clip(RoundedCornerShape(5.dp))
+                            .background(MaterialTheme.colorScheme.primaryContainer)
+                            .clickable {
+                                showAvatarInputDialog = true
+                            }
+                            .padding(vertical = 3.dp, horizontal = 13.dp)
+                            .constrainAs(btnChange) {
+                                top.linkTo(imgAvar.bottom, 10.dp)
+                                linkTo(start = imgAvar.start, end = imgAvar.end)
+                            }
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.chat_settings_change_avatar),
+                            modifier = Modifier
+                                .align(
+                                    Alignment.Center,
+                                ),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
-                }
-            )
-            CommonListTile(
-                modifier = Modifier
-                    .padding(vertical = 10.dp, horizontal = 16.dp),
-                title = {
+                    Text(
+                        text = stringResource(id = R.string.my_ranking_title),
+                        style = MaterialTheme.typography.titleSmall,
+                        modifier = Modifier.constrainAs(tvTitleRanking) {
+                            start.linkTo(parent.start)
+                            top.linkTo(btnChange.bottom, PADDING_HORIZONTAL_SCREEN.dp)
+                        },
+                    )
+                    RankingRow(
+                        tier = memberInfo.currentTier,
+                        onClick = {},
+                        modifier = Modifier.constrainAs(tvMemberRank) {
+                            start.linkTo(horizontalChain.end)
+                            linkTo(tvTitleRanking.top, tvTitleRanking.bottom)
+                        }
+                    )
+                    Text(
+                        text = stringResource(id = R.string.setting_name),
+                        style = MaterialTheme.typography.titleSmall,
+                        modifier = Modifier.constrainAs(tvTitleName) {
+                            start.linkTo(parent.start)
+                            top.linkTo(tvMemberRank.bottom, 15.dp)
+                        },
+                    )
+                    Text(
+                        text = user?.name.convertToString(),
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.constrainAs(tvName) {
+                            start.linkTo(horizontalChain.end, 20.dp)
+                            linkTo(tvTitleName.top, tvTitleName.bottom)
+                        }
+                    )
                     Text(
                         text = stringResource(id = R.string.setting_phone_number),
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = MaterialTheme.typography.titleSmall,
+                        modifier = Modifier.constrainAs(tvTitlePhone) {
+                            start.linkTo(parent.start)
+                            top.linkTo(tvName.bottom, 15.dp)
+                        },
                     )
-                },
-                trailing = {
+                    Spacer(
+                        modifier = Modifier.constrainAs(horizontalChain) {
+                            start.linkTo(tvTitlePhone.end)
+                            top.linkTo(parent.top)
+                        }
+                    )
                     Text(
-                        user?.phone?.hidePhoneNumber().orEmpty(),
-                        style = MaterialTheme.typography.bodyMedium.withBold()
+                        text = user?.phone?.hidePhoneNumber().convertToString(),
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.constrainAs(tvPhone) {
+                            start.linkTo(horizontalChain.end, 20.dp)
+                            linkTo(tvTitlePhone.top, tvTitlePhone.bottom)
+                        }
+                    )
+                    Text(
+                        text = stringResource(id = R.string.update_profile_gender),
+                        style = MaterialTheme.typography.titleSmall,
+                        modifier = Modifier.constrainAs(tvTileGender) {
+                            start.linkTo(parent.start)
+                            top.linkTo(tvPhone.bottom, 15.dp)
+                        },
+                    )
+                    Text(
+                        text = user?.gender?.name.convertToString(),
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.constrainAs(tvGender) {
+                            start.linkTo(horizontalChain.end, 20.dp)
+                            linkTo(tvTileGender.top, tvTileGender.bottom)
+                        }
                     )
                 }
-            )
-            Divider(modifier = Modifier.padding(top = 10.dp, bottom = 20.dp))
-            ListTileWithToggleButton(
+                MarginVertical(5)
+                ButtonTextWithToggle(
+                    title = stringResource(id = R.string.setting_push_notification),
+                    checked = uiState.allowPushNotification,
+                    onCheckedChange = {
+                        handleEvent(SettingEvent.TogglePushNotification)
+                    },
+                )
+                MarginVertical(PADDING_VIEW)
+                ButtonTextWithToggle(
+                    title = stringResource(R.string.setting_clear_cache_data),
+                    onClick = {
+                        isShowClearCatchDialog = true
+                    }
+                )
+                MarginVertical(PADDING_VIEW)
+                ButtonTextWithToggle(
+                    title = stringResource(id = R.string.setting_open_source_licence),
+                    onClick = {
+                        handleEvent(SettingEvent.Licence)
+                    }
+                )
+                MarginVertical(PADDING_VIEW)
+                ButtonTextWithToggle(
+                    title = stringResource(id = R.string.setting_faq),
+                    onClick = {
+                        handleEvent(SettingEvent.FAQ)
+                    }
+                )
+                MarginVertical(40)
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    text = stringResource(
+                        id = R.string.setting_current_version,
+                        BuildConfig.VERSION_NAME
+                    ),
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = MaterialTheme.colorScheme.onSurface.copy(0.5f)
+                    ),
+                    textAlign = TextAlign.Center
+                )
+                MarginVertical(20)
+            }
+            Box(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 10.dp),
-                title = {
-                    Text(
-                        text = stringResource(id = R.string.setting_push_notification),
-                        style = MaterialTheme.typography.bodyLarge,
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(
+                        horizontal = PADDING_VIEW_SCREEN.dp,
+                        vertical = PADDING_VERTICAL_SCREEN.dp
                     )
-                },
-                checked = uiState.allowPushNotification,
-                onCheckedChange = {
-                    handleEvent(SettingEvent.TogglePushNotification)
-                },
-            )
-            Divider(modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
-            PrimaryListTile(
-                modifier = Modifier
-                    .padding(vertical = 10.dp, horizontal = 16.dp),
-                title = {
-                    Text(
-                        text = stringResource(id = R.string.setting_clear_cache_data),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                },
-                onClick = { handleEvent(SettingEvent.ClearCacheData) },
-            )
-            PrimaryListTile(
-                modifier = Modifier
-                    .padding(vertical = 10.dp, horizontal = 16.dp),
-                title = {
-                    Text(
-                        text = stringResource(id = R.string.setting_open_source_licence),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                },
-                onClick = {
-                    handleEvent(SettingEvent.Licence)
-                }
-            )
-            Divider(modifier = Modifier.padding(bottom = 10.dp))
-            PrimaryListTile(
-                modifier = Modifier
-                    .padding(vertical = 10.dp, horizontal = 16.dp),
-                title = {
-                    Text(
-                        text = stringResource(id = R.string.setting_faq),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                },
-                onClick = {
-                    handleEvent(SettingEvent.FAQ)
-                }
-            )
-            PrimaryListTile(
-                modifier = Modifier
-                    .padding(vertical = 10.dp, horizontal = 16.dp),
-                title = {
-                    Text(
-                        text = stringResource(
-                            id = R.string.setting_current_version,
-                            BuildConfig.VERSION_NAME
-                        ),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                },
-            )
-            SizeBox(height = 30.dp)
-            Expanded()
-            PrimaryButton(
-                text = stringResource(id = R.string.common_log_out).uppercase(),
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth(),
-                onClick = {
+            ) {
+                ButtonRadius(
+                    modifier = Modifier.fillMaxWidth(),
+                    title = stringResource(id = R.string.common_log_out).uppercase(),
+                    bgColor = PrimaryGreen,
+                    textColor = Color.Black
+                ) {
                     isShowLogoutDialog = true
                 }
-            )
-            SizeBox(height = 24.dp)
+            }
         }
     }
-
+    AvatarInput(
+        isShown = showAvatarInputDialog,
+        onAvatarInput = { uri ->
+            uri?.let { avatar = it }
+            showAvatarInputDialog = false
+        },
+    )
+    WarningDialog(
+        title = stringResource(R.string.confirm_clear_cache_title),
+        content = stringResource(R.string.confirm_clear_cache_message),
+        isWarning = isShowClearCatchDialog,
+        dismissText = stringResource(R.string.common_no),
+        confirmText = stringResource(R.string.common_yes),
+        onDismiss = {
+            isShowClearCatchDialog = false
+        },
+        onConfirm = {
+            isShowClearCatchDialog = false
+            handleEvent(SettingEvent.ClearCacheData)
+        }
+    )
     if (isShowLogoutDialog) {
         WarningDialog(
             title = null,

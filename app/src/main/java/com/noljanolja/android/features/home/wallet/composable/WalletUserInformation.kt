@@ -56,7 +56,7 @@ fun WalletUserInformation(
         Expanded()
         IconButton(
             onClick = goToSetting,
-            modifier = Modifier.align(Alignment.Bottom)
+            modifier = Modifier.align(Alignment.CenterVertically)
         ) {
             Icon(
                 Icons.Filled.Settings,

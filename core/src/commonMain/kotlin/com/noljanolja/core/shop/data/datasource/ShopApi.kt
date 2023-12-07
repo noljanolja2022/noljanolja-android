@@ -18,6 +18,7 @@ class ShopApi(private val client: HttpClient) {
                     query?.let {
                         parameters.append("query", it)
                     }
+                    parameters.append("locale", "KR")
                 }
             }
         }.body()
@@ -32,6 +33,7 @@ class ShopApi(private val client: HttpClient) {
                     query?.let {
                         parameters.append("query", it)
                     }
+                    parameters.append("locale", "KR")
                 }
             }
         }.body()
@@ -59,6 +61,7 @@ class ShopApi(private val client: HttpClient) {
                     isRecommended?.let {
                         parameters.append("isRecommended", it.toString())
                     }
+                    parameters.append("locale", "KR")
                 }
             }
         }.body()
