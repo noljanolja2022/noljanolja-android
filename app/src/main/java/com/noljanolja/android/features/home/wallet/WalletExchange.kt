@@ -1,8 +1,6 @@
 package com.noljanolja.android.features.home.wallet
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,18 +13,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Help
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -132,11 +124,10 @@ private fun WalletExchangeContent(
             ) {
                 WalletInfoDailyInfoItem(
                     modifier = Modifier.weight(1f),
-                    background = R.drawable.bg_accumulated,
-                    contentColor = NeutralDarkGrey,
+                    contentColor = Orange00,
                     title = R.string.wallet_accumulated_point,
                     point = memberInfo.accumulatedPointsToday,
-                    pointColor = NeutralDarkGrey
+                    pointColor = MaterialTheme.colorScheme.onBackground
                 )
                 SizeBox(width = 12.dp)
                 WalletInfoDailyInfoItem(
@@ -144,13 +135,11 @@ private fun WalletExchangeContent(
                         .weight(1f)
                         .clickable {
                             onWalletPointClick()
-                        }
-                    ,
-                    background = R.drawable.bg_point,
-                    contentColor = NeutralDarkGrey,
+                        },
+                    contentColor = BlueMain,
                     title = R.string.wallet_point_can_exchange,
                     point = memberInfo.exchangeablePoints,
-                    pointColor = NeutralDarkGrey
+                    pointColor = MaterialTheme.colorScheme.onBackground
                 )
             }
             SizeBox(height = 20.dp)
@@ -160,6 +149,7 @@ private fun WalletExchangeContent(
                     .height(48.dp),
                 title = stringResource(id = R.string.transaction_history).uppercase(),
                 bgColor = PrimaryGreen,
+                textColor = Color.Black,
                 icon = painterResource(id = R.drawable.ic_history)
             ) {
                 handleEvent(WalletEvent.TransactionHistory)
@@ -310,60 +300,53 @@ private fun MyPoint(
 @Composable
 fun WalletInfoDailyInfoItem(
     modifier: Modifier = Modifier,
-    background: Int,
     title: Int,
     point: Long,
     contentColor: Color,
     pointColor: Color,
 ) {
-    Card(
+    Surface(
         modifier = modifier
-            .aspectRatio(1f)
-            .clip(RoundedCornerShape(20.dp)),
-        elevation = CardDefaults.cardElevation(4.dp),
+            .aspectRatio(1f),
+        shape = RoundedCornerShape(20.dp),
+        shadowElevation = 10.dp,
+        color = MaterialTheme.colorScheme.background
     ) {
-        Box {
-            Image(
-                painter = painterResource(background),
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.FillBounds
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(20.dp))
+                .padding(horizontal = 10.dp)
+        ) {
+            Text(
+                stringResource(title),
+                style = MaterialTheme.typography.titleMedium,
+                color = pointColor,
+                textAlign = TextAlign.Center,
+                maxLines = 2,
             )
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 10.dp)
-            ) {
+            SizeBox(height = 10.dp)
+            Row {
                 Text(
-                    stringResource(title),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = contentColor,
-                    textAlign = TextAlign.Center,
-                    maxLines = 2,
+                    text = point.formatDigitsNumber(),
+                    style = TextStyle(
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 35.sp,
+                        color = contentColor
+                    )
                 )
-                SizeBox(height = 10.dp)
-                Row {
-                    Text(
-                        text = point.formatDigitsNumber(),
-                        style = TextStyle(
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            lineHeight = 35.sp,
-                            color = contentColor
-                        )
+                Text(
+                    " P",
+                    style = TextStyle(
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 35.sp,
+                        color = pointColor
                     )
-                    Text(
-                        " P",
-                        style = TextStyle(
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            lineHeight = 35.sp,
-                            color = pointColor
-                        )
-                    )
-                }
+                )
             }
         }
     }
