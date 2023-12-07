@@ -39,6 +39,7 @@ fun OvalAvatar(
 
 @Composable
 fun CircleAvatar(
+    modifier: Modifier = Modifier,
     size: Dp = 40.dp,
     user: User,
 ) {
@@ -51,7 +52,7 @@ fun CircleAvatar(
             .fallback(R.drawable.placeholder_account)
             .build(),
         contentDescription = null,
-        modifier = Modifier
+        modifier = modifier
             .size(size)
             .clip(CircleShape),
         contentScale = ContentScale.Crop

@@ -430,4 +430,6 @@
     <string name="shop_all_sold_out">All products are sold out</string>
     <string name="shop_brands">Brands</string>
     <string name="message_referral">www.nolgubulgu.com\nJoin now to get benefits\nUp to 1000 points!!!</string>
+    <string name="confirm_clear_cache_title">Are you sure to clear cache data?</string>
+    <string name="confirm_clear_cache_message">All your cache will be deleted after you do this action.</string>
 </resources>
