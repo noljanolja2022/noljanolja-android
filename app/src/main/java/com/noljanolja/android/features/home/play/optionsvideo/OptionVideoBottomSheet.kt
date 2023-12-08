@@ -55,7 +55,7 @@ fun OptionVideoBottomBottomSheet(
         videoViewModel.shareSuccessEvent.collectLatest {
             if (it == KEY_IGNORE_VIDEO) {
                 onIgnoreVideoSuccess()
-                context.showToast(context.getString(R.string.common_share_success))
+                context.showToast(context.getString(R.string.common_ignore_success))
             } else {
                 context.showToast(it ?: context.getString(R.string.common_share_success))
             }
