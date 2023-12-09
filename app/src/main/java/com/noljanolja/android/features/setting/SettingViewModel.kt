@@ -84,7 +84,13 @@ class SettingViewModel : BaseViewModel() {
                 files = file.contents
             )
             if (result.isSuccess) {
-                coreManager.getCurrentUser(forceRefresh = true, onlyLocal = false)
+                coreManager.getCurrentUser(forceRefresh = true, onlyLocal = false).getOrNull()?.let {
+                    _uiStateFlow.emit(
+                        SettingUIState(
+                            user = it
+                        )
+                    )
+                }
                 _updateUserEvent.emit(true)
             } else {
                 result.exceptionOrNull()?.let {

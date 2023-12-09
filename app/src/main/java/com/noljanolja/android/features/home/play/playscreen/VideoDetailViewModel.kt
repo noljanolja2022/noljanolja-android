@@ -6,6 +6,7 @@ import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.sharedpreference.SharedPreferenceHelper
+import com.noljanolja.android.extensions.convertToLong
 import com.noljanolja.android.ui.composable.youtube.YoutubeViewWithFullScreen
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.video.data.model.request.VideoProgressEvent
@@ -156,7 +157,9 @@ class VideoDetailViewModel() : BaseViewModel() {
             PlayerConstants.PlayerState.PLAYING -> VideoProgressEvent.PLAY
             else -> return
         }
-        if (lastTrackEvent == null || lastTrackEvent!!.first != event || durationMs !in lastTrackEvent!!.second..(lastTrackEvent!!.second + delayTimeTrackProgress)) {
+        if (lastTrackEvent == null || lastTrackEvent?.first != event
+            || durationMs !in lastTrackEvent?.second.convertToLong()..(lastTrackEvent?.second.convertToLong() + delayTimeTrackProgress)
+        ) {
             coreManager.trackVideoProgress(
                 videoId = videoId,
                 event = event,
