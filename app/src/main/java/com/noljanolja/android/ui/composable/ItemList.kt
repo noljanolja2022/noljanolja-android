@@ -133,6 +133,7 @@ internal fun ProductSection(
     onItemClick: (Gift) -> Unit
 ) {
     val roundedCornerShape = RoundedCornerShape(ROUND_RECTANGLE.dp)
+    val configuration = LocalConfiguration.current
     gift.run {
         Surface(
             modifier = modifier
@@ -144,7 +145,9 @@ internal fun ProductSection(
             ConstraintLayout(
                 modifier = modifier
                     .wrapContentHeight()
-                    .width(140.dp)
+                    .width(
+                        (140 * if (configuration.fontScale < 1.5) configuration.fontScale else 1.5f).dp
+                    )
                     .clip(roundedCornerShape)
                     .background(
                         color = MaterialTheme.colorScheme.background,
