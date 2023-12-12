@@ -111,7 +111,8 @@ private fun WalletExchangeContent(
                 SizeBox(height = 10.dp)
             }
         },
-        roundedCornerShape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp)
+        roundedCornerShape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp),
+        backgroundBottomColor = MaterialTheme.shopBackground()
     ) {
         Column(
             modifier = Modifier

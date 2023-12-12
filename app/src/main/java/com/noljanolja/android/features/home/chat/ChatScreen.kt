@@ -661,9 +661,9 @@ private fun AuthorAndTextMessage(
                     maxChatItemWidth
                 )
             }
-        if (isLastMessageByAuthorSameDay && !message.sender.isMe) {
-            Spacer(modifier = Modifier.height(12.dp))
-        }
+//        if (isLastMessageByAuthorSameDay && !message.sender.isMe) {
+//            Spacer(modifier = Modifier.height(12.dp))
+//        }
         Row(
             verticalAlignment = Alignment.Bottom
         ) {
@@ -838,7 +838,7 @@ private fun ChatItemBubble(
                                 .size(12.dp),
                             tint = backgroundBubbleColor
                         )
-                    } else if (conversationType == ConversationType.SINGLE) {
+                    } else {
                         Icon(
                             painterResource(id = R.drawable.ic_chat_arrow),
                             contentDescription = null,

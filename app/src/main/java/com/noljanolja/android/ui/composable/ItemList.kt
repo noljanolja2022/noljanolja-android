@@ -20,6 +20,7 @@ import androidx.constraintlayout.compose.*
 import coil.compose.*
 import coil.request.*
 import com.noljanolja.android.R
+import com.noljanolja.android.extensions.*
 import com.noljanolja.android.features.common.*
 import com.noljanolja.android.ui.theme.*
 import com.noljanolja.android.util.*
@@ -133,7 +134,6 @@ internal fun ProductSection(
     onItemClick: (Gift) -> Unit
 ) {
     val roundedCornerShape = RoundedCornerShape(ROUND_RECTANGLE.dp)
-    val configuration = LocalConfiguration.current
     gift.run {
         Surface(
             modifier = modifier
@@ -146,7 +146,7 @@ internal fun ProductSection(
                 modifier = modifier
                     .wrapContentHeight()
                     .width(
-                        (140 * if (configuration.fontScale < 1.5) configuration.fontScale else 1.5f).dp
+                        (140 * getScaleSize()).dp
                     )
                     .clip(roundedCornerShape)
                     .background(
@@ -268,7 +268,7 @@ internal fun BrandItem(
     Column(
         modifier = modifier
             .background(containerColor)
-            .width(64.dp)
+            .width((64 * getScaleSize()).dp)
             .clickable {
                 onItemClick(brand)
             },
@@ -278,7 +278,7 @@ internal fun BrandItem(
             model = brand.image,
             contentDescription = null,
             modifier = Modifier
-                .size(64.dp)
+                .size((64 * getScaleSize()).dp)
                 .clip(
                     RoundedCornerShape(5)
                 )

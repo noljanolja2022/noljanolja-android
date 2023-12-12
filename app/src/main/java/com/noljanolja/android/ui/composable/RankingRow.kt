@@ -18,6 +18,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.noljanolja.android.extensions.getScaleSize
 import com.noljanolja.android.features.home.wallet.composable.TierIcon
 import com.noljanolja.android.util.getBackgroundColor
 import com.noljanolja.android.util.getTitle
@@ -53,7 +54,7 @@ fun RankingRow(
     }
     Row(
         modifier = modifier
-            .height(26.dp)
+            .height((26 * getScaleSize()).dp)
             .clip(RoundedCornerShape(20.dp))
             .background(containerColor)
             .clickable { onClick() }
