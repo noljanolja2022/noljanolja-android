@@ -31,5 +31,6 @@ class Constant {
         const val BUTTON_HEIGHT = 48
         const val BUTTON_TITLE = 56
         const val TWEEN_ANIMATION_TIME = 300
+        const val MAX_SCALE_OF_SIZE = 1.5f
     }
 }
