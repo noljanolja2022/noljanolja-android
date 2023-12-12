@@ -22,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.noljanolja.android.R
@@ -72,7 +73,10 @@ private fun MyCash(
             Text(
                 stringResource(R.string.my_cash),
                 style = MaterialTheme.typography.bodyLarge.withBold(),
-                color = Orange300
+                color = Orange300,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(horizontal = 5.dp)
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -119,7 +123,10 @@ private fun MyVouchers(
             Text(
                 stringResource(R.string.shop_coupon),
                 style = MaterialTheme.typography.bodyLarge.withBold(),
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(horizontal = 5.dp)
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically

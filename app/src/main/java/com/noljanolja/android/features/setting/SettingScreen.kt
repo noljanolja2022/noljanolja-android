@@ -233,7 +233,7 @@ private fun SettingContent(
                         tier = memberInfo.currentTier,
                         onClick = {},
                         modifier = Modifier.constrainAs(tvMemberRank) {
-                            start.linkTo(horizontalChain.end)
+                            linkTo(horizontalChain.end, parent.end)
                             linkTo(tvTitleRanking.top, tvTitleRanking.bottom)
                         }
                     )

@@ -13,6 +13,7 @@ import androidx.compose.ui.layout.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.*
+import androidx.compose.ui.text.style.*
 import androidx.compose.ui.unit.*
 import androidx.constraintlayout.compose.*
 import com.noljanolja.android.R
@@ -96,6 +97,9 @@ fun CommonAppBarTitle(
                 lineHeight = 24.sp,
                 color = color
             ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(start = 10.dp)
         )
     }
 }
