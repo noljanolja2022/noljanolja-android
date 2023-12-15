@@ -128,8 +128,8 @@ class MyApplication : Application() {
                 }
 
                 override fun onStop(owner: LifecycleOwner) {
-                    clearAllPipActivities()
                     isAppInForeground = false
+                    if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) clearAllPipActivities()
                     Logger.d("Noljanolja: backgrounded: ${ProcessLifecycleOwner.get().lifecycle.currentState.name}")
                 }
 

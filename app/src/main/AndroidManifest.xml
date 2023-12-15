@@ -51,7 +51,7 @@
         <activity
             android:name=".features.home.play.playscreen.PlayVideoActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
-            android:exported="true"
+            android:taskAffinity=".features.home.play.playscreen.PlayVideoActivity"
             android:supportsPictureInPicture="true"
             android:theme="@style/Theme.Noljanolja" />
         <activity
