@@ -279,12 +279,6 @@
     <string name="transaction_detail">Detail Transaction</string>
     <string name="transaction_detail_status">Status</string>
     <string name="transaction_detail_time">Time</string>
-    <string name="transaction_detail_type">Type</string>
-    <string name="transaction_detail_code">Transaction code</string>
-    <string name="transaction_detail_video_name">Video name</string>
-    <string name="transaction_detail_video_state">Complete state</string>
-    <string name="transaction_detail_video_complete">Complete now</string>
-    <string name="transaction_detail_video_send_report">Send report</string>
 
     <string name="my_ranking_title">My ranking</string>
 
