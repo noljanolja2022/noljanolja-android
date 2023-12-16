@@ -5,6 +5,11 @@ package com.noljanolja.android.util
  */
 
 class Constant {
+    object LocaleDefine {
+        const val KOREAN = "KR"
+        const val INDIAN = "IN"
+    }
+
     object PackageShareToApp {
         const val FACEBOOK_PACKAGE = "com.facebook.katana"
         const val TWITTER_PACKAGE = "com.twitter.android"

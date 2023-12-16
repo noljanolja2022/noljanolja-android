@@ -1,59 +1,36 @@
 package com.noljanolja.android.features.home.wallet
 
 import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Help
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.*
+import androidx.compose.material.icons.*
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
+import androidx.compose.ui.draw.*
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.layout.*
+import androidx.compose.ui.platform.*
+import androidx.compose.ui.res.*
+import androidx.compose.ui.text.*
+import androidx.compose.ui.text.font.*
+import androidx.compose.ui.text.style.*
+import androidx.compose.ui.unit.*
+import androidx.compose.ui.window.*
+import androidx.lifecycle.compose.*
 import com.noljanolja.android.R
-import com.noljanolja.android.common.base.UiState
-import com.noljanolja.android.features.home.wallet.composable.MyCashAndPoint
-import com.noljanolja.android.features.home.wallet.composable.WalletUserInformation
+import com.noljanolja.android.common.base.*
+import com.noljanolja.android.extensions.*
+import com.noljanolja.android.features.home.wallet.composable.*
 import com.noljanolja.android.ui.composable.*
-import com.noljanolja.android.ui.composable.ButtonRadius
-import com.noljanolja.android.ui.composable.admob.AdmobRectangle
+import com.noljanolja.android.ui.composable.admob.*
 import com.noljanolja.android.ui.theme.*
-import com.noljanolja.android.util.formatDigitsNumber
-import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
-import com.noljanolja.core.loyalty.domain.model.MemberInfo
-import com.noljanolja.core.user.domain.model.User
-import org.koin.androidx.compose.getViewModel
+import com.noljanolja.android.util.*
+import com.noljanolja.core.exchange.domain.domain.*
+import com.noljanolja.core.loyalty.domain.model.*
+import com.noljanolja.core.user.domain.model.*
+import org.koin.androidx.compose.*
 
 @Composable
 fun WalletExchangeScreen(
@@ -75,6 +52,7 @@ fun WalletExchangeScreen(
     )
 }
 
+@OptIn(ExperimentalTextApi::class)
 @Composable
 private fun WalletExchangeContent(
     uiState: UiState<WalletUIData>,
@@ -83,7 +61,20 @@ private fun WalletExchangeContent(
     handleEvent: (WalletEvent) -> Unit,
     onWalletPointClick: () -> Unit
 ) {
+    var context = LocalContext.current
     var showAdmob by remember { mutableStateOf(false) }
+    var pointOfDayLineCount by remember {
+        mutableStateOf(0)
+    }
+    var pointLineCount by remember {
+        mutableStateOf(0)
+    }
+    var titlePointOfDay by remember {
+        mutableStateOf(context.getString(R.string.wallet_accumulated_point))
+    }
+    var titlePoint by remember {
+        mutableStateOf(context.getString(R.string.wallet_point_can_exchange))
+    }
     ScaffoldWithCircleBgRoundedContent(
         heading = {
             Column {
@@ -126,9 +117,18 @@ private fun WalletExchangeContent(
                 WalletInfoDailyInfoItem(
                     modifier = Modifier.weight(1f),
                     contentColor = Orange00,
-                    title = R.string.wallet_accumulated_point,
+                    title = titlePointOfDay,
                     point = memberInfo.accumulatedPointsToday,
-                    pointColor = MaterialTheme.colorScheme.onBackground
+                    pointColor = MaterialTheme.colorScheme.onBackground,
+                    onTextLayout = {
+                        if (pointOfDayLineCount != it) {
+                            pointOfDayLineCount = it
+                            titlePointOfDay = titlePointOfDay.addLine(
+                                textLine = pointOfDayLineCount,
+                                anotherLine = pointLineCount
+                            )
+                        }
+                    }
                 )
                 SizeBox(width = 12.dp)
                 WalletInfoDailyInfoItem(
@@ -138,9 +138,18 @@ private fun WalletExchangeContent(
                             onWalletPointClick()
                         },
                     contentColor = BlueMain,
-                    title = R.string.wallet_point_can_exchange,
+                    title = titlePoint,
                     point = memberInfo.exchangeablePoints,
-                    pointColor = MaterialTheme.colorScheme.onBackground
+                    pointColor = MaterialTheme.colorScheme.onBackground,
+                    onTextLayout = {
+                        if (pointLineCount != it) {
+                            pointLineCount = it
+                            titlePoint = titlePoint.addLine(
+                                textLine = pointLineCount,
+                                anotherLine = pointOfDayLineCount
+                            )
+                        }
+                    }
                 )
             }
             SizeBox(height = 20.dp)
@@ -301,14 +310,14 @@ private fun MyPoint(
 @Composable
 fun WalletInfoDailyInfoItem(
     modifier: Modifier = Modifier,
-    title: Int,
+    title: String,
     point: Long,
     contentColor: Color,
     pointColor: Color,
+    onTextLayout: (Int) -> Unit
 ) {
     Surface(
-        modifier = modifier
-            .aspectRatio(1f),
+        modifier = modifier,
         shape = RoundedCornerShape(20.dp),
         shadowElevation = 10.dp,
         color = MaterialTheme.colorScheme.background
@@ -319,14 +328,17 @@ fun WalletInfoDailyInfoItem(
             modifier = Modifier
                 .fillMaxSize()
                 .clip(RoundedCornerShape(20.dp))
-                .padding(horizontal = 10.dp)
+                .padding(horizontal = 10.dp, vertical = 24.dp)
         ) {
             Text(
-                stringResource(title),
-                style = MaterialTheme.typography.titleMedium,
+                text = title,
+                style = MaterialTheme.typography.titleSmall,
                 color = pointColor,
                 textAlign = TextAlign.Center,
-                maxLines = 2,
+                maxLines = 4,
+                onTextLayout = { textLayoutResult: TextLayoutResult ->
+                    onTextLayout(textLayoutResult.lineCount)
+                }
             )
             SizeBox(height = 10.dp)
             Row {

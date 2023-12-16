@@ -1,17 +1,13 @@
 package com.noljanolja.android.features.shop.giftdetail
 
-import com.noljanolja.android.common.base.BaseViewModel
-import com.noljanolja.android.common.base.UiState
-import com.noljanolja.android.common.base.launch
-import com.noljanolja.android.common.base.launchInMain
-import com.noljanolja.android.common.error.UnexpectedFailure
+import com.noljanolja.android.*
+import com.noljanolja.android.common.base.*
+import com.noljanolja.android.common.error.*
 import com.noljanolja.android.common.navigation.*
-import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
+import com.noljanolja.core.exchange.domain.domain.*
 import com.noljanolja.core.shop.data.model.request.*
-import com.noljanolja.core.shop.domain.model.Gift
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import com.noljanolja.core.shop.domain.model.*
+import kotlinx.coroutines.flow.*
 
 class GiftDetailViewModel(
     private val giftId: String,
@@ -36,7 +32,10 @@ class GiftDetailViewModel(
             val gift = coreManager.getGiftDetail(giftId).getOrDefault(Gift())
             val giftsByCategory =
                 coreManager.getGifts(
-                    GetGiftListRequest(categoryId = gift.category.id)
+                    GetGiftListRequest(
+                        categoryId = gift.category.id,
+                        locale = MyApplication.localeSystem
+                    )
                 ).getOrDefault(emptyList())
                     .toMutableList()
             giftsByCategory.remove(gift)
@@ -80,7 +79,10 @@ class GiftDetailViewModel(
         response.getOrNull()?.let {
             val giftsByCategory =
                 coreManager.getGifts(
-                    GetGiftListRequest(categoryId = it.category.id)
+                    GetGiftListRequest(
+                        categoryId = it.category.id,
+                        locale = MyApplication.localeSystem
+                    )
                 ).getOrDefault(emptyList()).toMutableList()
             giftsByCategory.remove(it)
             _buyGiftSuccessEvent.emit(true)

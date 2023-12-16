@@ -1,5 +1,6 @@
 package com.noljanolja.android.features.shop.productbycategory
 
+import com.noljanolja.android.*
 import com.noljanolja.android.common.base.*
 import com.noljanolja.android.common.navigation.*
 import com.noljanolja.core.shop.data.model.request.*
@@ -39,7 +40,8 @@ class ProductByCategoryViewModel() : BaseViewModel() {
             val gifts = coreManager.getGifts(
                 GetGiftListRequest(
                     categoryId = categoryId,
-                    brandId = brandId
+                    brandId = brandId,
+                    locale = MyApplication.localeSystem
                 )
             ).getOrDefault(emptyList())
             _uiStateFlow.emit(

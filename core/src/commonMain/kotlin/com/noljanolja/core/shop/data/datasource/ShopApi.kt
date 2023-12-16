@@ -2,11 +2,10 @@ package com.noljanolja.core.shop.data.datasource
 
 import com.noljanolja.core.shop.data.model.request.*
 import com.noljanolja.core.shop.data.model.response.*
-import com.noljanolja.core.utils.BASE_URL
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.get
-import io.ktor.client.request.post
+import com.noljanolja.core.utils.*
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
 
 class ShopApi(private val client: HttpClient) {
     suspend fun getBrands(request: GetItemChooseRequest): GetItemChooseResponse {
@@ -18,7 +17,7 @@ class ShopApi(private val client: HttpClient) {
                     query?.let {
                         parameters.append("query", it)
                     }
-                    parameters.append("locale", "KR")
+                    parameters.append("locale", locale)
                 }
             }
         }.body()
@@ -33,7 +32,7 @@ class ShopApi(private val client: HttpClient) {
                     query?.let {
                         parameters.append("query", it)
                     }
-                    parameters.append("locale", "KR")
+                    parameters.append("locale", locale)
                 }
             }
         }.body()
@@ -61,7 +60,7 @@ class ShopApi(private val client: HttpClient) {
                     isRecommended?.let {
                         parameters.append("isRecommended", it.toString())
                     }
-                    parameters.append("locale", "KR")
+                    parameters.append("locale", locale)
                 }
             }
         }.body()
