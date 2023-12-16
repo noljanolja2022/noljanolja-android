@@ -1,96 +1,86 @@
 package com.noljanolja.android
 
-import android.app.Activity
-import android.app.Application
-import android.content.Context
-import android.os.Build
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ProcessLifecycleOwner
+import android.app.*
+import android.content.*
+import android.os.*
+import androidx.lifecycle.*
 import co.touchlab.kermit.Logger
-import coil.Coil
-import coil.ImageLoader
-import coil.decode.VideoFrameDecoder
-import coil.util.DebugLogger
-import com.d2brothers.firebase_auth.AuthSdk
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
-import com.noljanolja.android.common.base.launchInMainIO
-import com.noljanolja.android.common.mobiledata.data.ContactsLoader
-import com.noljanolja.android.common.mobiledata.data.MediaLoader
-import com.noljanolja.android.common.mobiledata.data.StickersLoader
-import com.noljanolja.android.common.navigation.NavigationManager
-import com.noljanolja.android.common.sharedpreference.SharedPreferenceHelper
-import com.noljanolja.android.common.user.data.AuthDataSourceImpl
-import com.noljanolja.android.common.user.data.TokenRepoImpl
-import com.noljanolja.android.features.addfriend.AddFriendViewModel
-import com.noljanolja.android.features.addreferral.AddReferralViewModel
-import com.noljanolja.android.features.auth.countries.CountriesViewModel
-import com.noljanolja.android.features.auth.forget.ForgotViewModel
-import com.noljanolja.android.features.auth.login.LoginViewModel
-import com.noljanolja.android.features.auth.login_or_signup.LoginOrSignupViewModel
-import com.noljanolja.android.features.auth.otp.OTPViewModel
-import com.noljanolja.android.features.auth.signup.SignupViewModel
-import com.noljanolja.android.features.auth.terms_of_service.TermsOfServiceViewModel
-import com.noljanolja.android.features.auth.updateprofile.UpdateProfileViewModel
-import com.noljanolja.android.features.chatsettings.ChatSettingsViewModel
-import com.noljanolja.android.features.conversationmedia.ConversationMediaViewModel
-import com.noljanolja.android.features.edit_chat_title.EditChatTitleViewModel
-import com.noljanolja.android.features.home.CheckinViewModel
-import com.noljanolja.android.features.home.chat.ChatViewModel
-import com.noljanolja.android.features.home.chat_options.ChatOptionsViewModel
-import com.noljanolja.android.features.home.contacts.ContactsViewModel
-import com.noljanolja.android.features.home.conversations.ConversationsViewModel
+import coil.*
+import coil.decode.*
+import coil.util.*
+import com.d2brothers.firebase_auth.*
+import com.google.firebase.analytics.ktx.*
+import com.google.firebase.crashlytics.ktx.*
+import com.google.firebase.ktx.*
+import com.google.firebase.remoteconfig.*
+import com.noljanolja.android.common.base.*
+import com.noljanolja.android.common.mobiledata.data.*
+import com.noljanolja.android.common.navigation.*
+import com.noljanolja.android.common.sharedpreference.*
+import com.noljanolja.android.common.user.data.*
+import com.noljanolja.android.features.addfriend.*
+import com.noljanolja.android.features.addreferral.*
+import com.noljanolja.android.features.auth.countries.*
+import com.noljanolja.android.features.auth.forget.*
+import com.noljanolja.android.features.auth.login.*
+import com.noljanolja.android.features.auth.login_or_signup.*
+import com.noljanolja.android.features.auth.otp.*
+import com.noljanolja.android.features.auth.signup.*
+import com.noljanolja.android.features.auth.terms_of_service.*
+import com.noljanolja.android.features.auth.updateprofile.*
+import com.noljanolja.android.features.chatsettings.*
+import com.noljanolja.android.features.conversationmedia.*
+import com.noljanolja.android.features.edit_chat_title.*
+import com.noljanolja.android.features.home.*
+import com.noljanolja.android.features.home.chat.*
+import com.noljanolja.android.features.home.chat_options.*
+import com.noljanolja.android.features.home.contacts.*
+import com.noljanolja.android.features.home.conversations.*
 import com.noljanolja.android.features.home.friendoption.*
 import com.noljanolja.android.features.home.friends.*
-import com.noljanolja.android.features.home.info.MyInfoViewModel
-import com.noljanolja.android.features.home.menu.MenuViewModel
-import com.noljanolja.android.features.home.mypage.MyPageViewModel
-import com.noljanolja.android.features.home.play.optionsvideo.OptionsVideoViewModel
-import com.noljanolja.android.features.home.play.playlist.PlayListViewModel
-import com.noljanolja.android.features.home.play.playscreen.VideoDetailViewModel
-import com.noljanolja.android.features.home.play.search.SearchVideosViewModel
-import com.noljanolja.android.features.home.play.uncompleted.UncompletedVideoViewModel
-import com.noljanolja.android.features.home.require_login.RequireLoginViewModel
-import com.noljanolja.android.features.home.root.HomeViewModel
-import com.noljanolja.android.features.home.wallet.WalletViewModel
-import com.noljanolja.android.features.home.wallet.dashboard.WalletDashboardViewModel
-import com.noljanolja.android.features.home.wallet.detail.TransactionDetailViewModel
-import com.noljanolja.android.features.home.wallet.exchange.ExchangePointViewModel
-import com.noljanolja.android.features.home.wallet.myranking.MyRankingViewModel
-import com.noljanolja.android.features.home.wallet.transaction.TransactionHistoryViewModel
-import com.noljanolja.android.features.images.ViewImagesViewModel
-import com.noljanolja.android.features.qrcode.ScanQrCodeViewModel
-import com.noljanolja.android.features.referral.ReferralViewModel
-import com.noljanolja.android.features.setting.SettingViewModel
-import com.noljanolja.android.features.setting.more.AppInfoViewModel
-import com.noljanolja.android.features.sharemessage.SelectShareMessageViewModel
-import com.noljanolja.android.features.shop.coupons.CouponsViewModel
-import com.noljanolja.android.features.shop.giftdetail.GiftDetailViewModel
-import com.noljanolja.android.features.shop.main.ShopViewModel
+import com.noljanolja.android.features.home.info.*
+import com.noljanolja.android.features.home.menu.*
+import com.noljanolja.android.features.home.mypage.*
+import com.noljanolja.android.features.home.play.optionsvideo.*
+import com.noljanolja.android.features.home.play.playlist.*
+import com.noljanolja.android.features.home.play.playscreen.*
+import com.noljanolja.android.features.home.play.search.*
+import com.noljanolja.android.features.home.play.uncompleted.*
+import com.noljanolja.android.features.home.require_login.*
+import com.noljanolja.android.features.home.root.*
+import com.noljanolja.android.features.home.wallet.*
+import com.noljanolja.android.features.home.wallet.dashboard.*
+import com.noljanolja.android.features.home.wallet.detail.*
+import com.noljanolja.android.features.home.wallet.exchange.*
+import com.noljanolja.android.features.home.wallet.myranking.*
+import com.noljanolja.android.features.home.wallet.transaction.*
+import com.noljanolja.android.features.images.*
+import com.noljanolja.android.features.qrcode.*
+import com.noljanolja.android.features.referral.*
+import com.noljanolja.android.features.setting.*
+import com.noljanolja.android.features.setting.more.*
+import com.noljanolja.android.features.sharemessage.*
+import com.noljanolja.android.features.shop.coupons.*
+import com.noljanolja.android.features.shop.giftdetail.*
+import com.noljanolja.android.features.shop.main.*
 import com.noljanolja.android.features.shop.productbycategory.*
-import com.noljanolja.android.features.shop.search.SearchProductViewModel
-import com.noljanolja.android.features.splash.SplashViewModel
-import com.noljanolja.android.services.PermissionChecker
-import com.noljanolja.android.services.analytics.AppAnalytics
-import com.noljanolja.android.services.analytics.firebase.FirebaseLogger
-import com.noljanolja.android.services.analytics.firebase.FirebaseTracker
-import com.noljanolja.android.util.getClientId
-import com.noljanolja.core.CoreManager
-import com.noljanolja.core.di.initKoin
-import com.noljanolja.core.service.ktor.KtorClient
-import com.noljanolja.core.service.ktor.KtorConfig
-import com.noljanolja.core.user.data.datasource.AuthDataSource
-import com.noljanolja.socket.SocketUserAgent
-import com.noljanolja.socket.TokenRepo
-import okhttp3.OkHttpClient
-import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.dsl.viewModel
-import org.koin.core.qualifier.named
-import org.koin.dsl.module
+import com.noljanolja.android.features.shop.search.*
+import com.noljanolja.android.features.splash.*
+import com.noljanolja.android.services.*
+import com.noljanolja.android.services.analytics.*
+import com.noljanolja.android.services.analytics.firebase.*
+import com.noljanolja.android.util.*
+import com.noljanolja.android.util.Constant.*
+import com.noljanolja.core.*
+import com.noljanolja.core.di.*
+import com.noljanolja.core.service.ktor.*
+import com.noljanolja.core.user.data.datasource.*
+import com.noljanolja.socket.*
+import okhttp3.*
+import org.koin.android.ext.android.*
+import org.koin.androidx.viewmodel.dsl.*
+import org.koin.core.qualifier.*
+import org.koin.dsl.*
 
 class MyApplication : Application() {
 
@@ -103,6 +93,7 @@ class MyApplication : Application() {
         var latestConversationId: Long = 0L
         val backStackActivities = mutableListOf<Activity>()
         var isHomeShowed: Boolean = false
+        var localeSystem: String = LocaleDefine.KOREAN
 
         fun clearAllPipActivities() {
             backStackActivities.apply {
@@ -114,6 +105,7 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        if (getLocaleSystem().country == LocaleDefine.INDIAN) localeSystem = LocaleDefine.INDIAN
         initKoin()
         initCoil()
         initRemoteConfig()
@@ -129,7 +121,7 @@ class MyApplication : Application() {
 
                 override fun onStop(owner: LifecycleOwner) {
                     isAppInForeground = false
-                    if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) clearAllPipActivities()
+                    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) clearAllPipActivities()
                     Logger.d("Noljanolja: backgrounded: ${ProcessLifecycleOwner.get().lifecycle.currentState.name}")
                 }
 
@@ -222,12 +214,7 @@ class MyApplication : Application() {
                         get(),
                         get()
                     ) {
-                        val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            this@MyApplication.resources.configuration.locales[0]
-                        } else {
-                            this@MyApplication.resources.configuration.locale
-                        }
-                        locale.language
+                        getLocaleSystem().language
                     }
                 }
                 single<AuthDataSource> {
@@ -375,6 +362,12 @@ class MyApplication : Application() {
                 }
             }
         )
+    }
+
+    private fun getLocaleSystem() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        resources.configuration.locales[0]
+    } else {
+        resources.configuration.locale
     }
 
     private fun initCoil() {

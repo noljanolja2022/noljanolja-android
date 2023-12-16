@@ -7,5 +7,6 @@ package com.noljanolja.core.shop.data.model.request
 data class GetItemChooseRequest(
     val page: Int,
     val pageSize: Int,
-    val query: String? = null
+    val query: String? = null,
+    val locale: String
 )

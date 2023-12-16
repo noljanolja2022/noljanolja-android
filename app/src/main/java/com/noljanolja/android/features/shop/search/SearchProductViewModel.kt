@@ -1,19 +1,14 @@
 package com.noljanolja.android.features.shop.search
 
-import androidx.lifecycle.viewModelScope
-import com.noljanolja.android.common.base.BaseViewModel
-import com.noljanolja.android.common.base.UiState
-import com.noljanolja.android.common.base.launch
-import com.noljanolja.android.common.navigation.NavigationDirections
-import com.noljanolja.core.exchange.domain.domain.ExchangeBalance
-import com.noljanolja.core.loyalty.domain.model.MemberInfo
+import androidx.lifecycle.*
+import com.noljanolja.android.*
+import com.noljanolja.android.common.base.*
+import com.noljanolja.android.common.navigation.*
+import com.noljanolja.core.exchange.domain.domain.*
+import com.noljanolja.core.loyalty.domain.model.*
 import com.noljanolja.core.shop.data.model.request.*
-import com.noljanolja.core.shop.domain.model.Gift
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import com.noljanolja.core.shop.domain.model.*
+import kotlinx.coroutines.flow.*
 
 class SearchProductViewModel : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow(
@@ -82,7 +77,10 @@ class SearchProductViewModel : BaseViewModel() {
         coreManager.insertSearchKey(text)
         _uiStateFlow.emit(UiState(loading = true, data = currentUiValue))
         val gifts = coreManager.getGifts(
-            GetGiftListRequest(searchText = text)
+            GetGiftListRequest(
+                searchText = text,
+                locale = MyApplication.localeSystem
+            )
         ).getOrDefault(emptyList())
         _uiStateFlow.emit(UiState(data = currentUiValue!!.copy(gifts = gifts)))
     }

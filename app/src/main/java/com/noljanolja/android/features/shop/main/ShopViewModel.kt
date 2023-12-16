@@ -1,6 +1,7 @@
 package com.noljanolja.android.features.shop.main
 
 import androidx.lifecycle.*
+import com.noljanolja.android.*
 import com.noljanolja.android.common.base.*
 import com.noljanolja.android.common.navigation.*
 import com.noljanolja.core.commons.*
@@ -66,17 +67,30 @@ class ShopViewModel : BaseViewModel() {
                     data = currentData.data
                 )
             )
-            val gifts = coreManager.getGifts(GetGiftListRequest()).getOrDefault(emptyList())
+            val gifts = coreManager.getGifts(
+                GetGiftListRequest(
+                    locale = MyApplication.localeSystem
+                )
+            ).getOrDefault(emptyList())
             val topFeatureGifts = coreManager.getGifts(
-                GetGiftListRequest(isFeatured = true)
+                GetGiftListRequest(
+                    isFeatured = true,
+                    locale = MyApplication.localeSystem
+                )
             ).getOrDefault(emptyList())
             val todayOfferGifts =
                 coreManager.getGifts(
-                    GetGiftListRequest(isTodayOffer = true)
+                    GetGiftListRequest(
+                        isTodayOffer = true,
+                        locale = MyApplication.localeSystem
+                    )
                 ).getOrDefault(emptyList())
             val recommendsGift =
                 coreManager.getGifts(
-                    GetGiftListRequest(isRecommended = true)
+                    GetGiftListRequest(
+                        isRecommended = true,
+                        locale = MyApplication.localeSystem
+                    )
                 ).getOrDefault(emptyList())
             val myGifts = coreManager.getMyGifts().getOrDefault(emptyList())
             val myBalance = coreManager.getExchangeBalance().getOrDefault(ExchangeBalance())
@@ -84,14 +98,16 @@ class ShopViewModel : BaseViewModel() {
                 GetItemChooseRequest(
                     page = 1,
                     pageSize = 100,
-                    query = null
+                    query = null,
+                    locale = MyApplication.localeSystem
                 )
             ).getOrDefault(emptyList())
             val categories = coreManager.getCategories(
                 GetItemChooseRequest(
                     page = 1,
                     pageSize = 100,
-                    query = null
+                    query = null,
+                    locale = MyApplication.localeSystem
                 )
             ).getOrDefault(emptyList())
 
