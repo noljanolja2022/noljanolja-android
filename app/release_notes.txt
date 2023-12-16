@@ -1,3 +1,4 @@
+- 1.1.27: Fix dark mode and scale mode, update add locale in Shop API
 - 1.1.26: Update dark mode and scale mode
 - 1.1.25: Update wallet screen, wallet setting and add ignore video
 - 1.1.24: Update referral friend flow and change navigate to transaction history
