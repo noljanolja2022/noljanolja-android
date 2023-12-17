@@ -1,25 +1,17 @@
 package com.noljanolja.android.common.base
 
-import android.content.Context
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
-import com.noljanolja.android.common.navigation.NavigationDirections
-import com.noljanolja.android.common.navigation.NavigationManager
-import com.noljanolja.android.util.showToast
-import com.noljanolja.core.CoreManager
-import com.noljanolja.core.utils.defaultJson
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
+import android.content.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.platform.*
+import androidx.lifecycle.*
+import co.touchlab.kermit.*
+import com.noljanolja.android.common.navigation.*
+import com.noljanolja.android.util.*
+import com.noljanolja.core.*
+import com.noljanolja.core.utils.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import org.koin.core.component.*
 
 open class BaseViewModel : ViewModel(), KoinComponent {
     protected val navigationManager: NavigationManager by inject()
@@ -40,6 +32,32 @@ open class BaseViewModel : ViewModel(), KoinComponent {
     fun back() {
         launch {
             navigationManager.navigate(NavigationDirections.Back)
+        }
+    }
+
+    open fun <Any> callMultipleApisOnThread(
+        requests: List<BaseFunCallAPI<out Any>>,
+        onEachSuccess: (Any?, String) -> Unit = { _, _ -> },
+        onEachError: (String) -> Unit = { _ -> },
+        onFinish: suspend () -> Unit = {}
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            requests.map { request ->
+                async {
+                    request.run {
+                        val result = funCallAPI.invoke()
+                        if (result.isSuccess) {
+                            onEachSuccess(
+                                result.getOrDefault(null),
+                                key
+                            )
+                        } else {
+                            onEachError(key)
+                        }
+                    }
+                }
+            }.awaitAll()
+            onFinish()
         }
     }
 }
