@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.noljanolja.android.*
 import com.noljanolja.android.common.base.*
 import com.noljanolja.android.common.navigation.*
+import com.noljanolja.android.extensions.*
 import com.noljanolja.core.commons.*
 import com.noljanolja.core.exchange.domain.domain.*
 import com.noljanolja.core.loyalty.domain.model.*
@@ -13,6 +14,17 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
 class ShopViewModel : BaseViewModel() {
+    companion object {
+        const val KEY_GIFTS = "gifts"
+        const val KEY_TODAY_FEATURE_GIFTS = "topFeatureGifts"
+        const val KEY_TODAY_OFFERS_GIFTS = "todayOfferGifts"
+        const val KEY_RECOMMENDS_GIFTS = "recommendsGift"
+        const val KEY_MY_GIFTS = "myGifts"
+        const val KEY_MY_BALANCE = "myBalance"
+        const val KEY_BRANDS = "brands"
+        const val KEY_CATEGORIES = "categories"
+    }
+
     private val _uiStateFlow = MutableStateFlow<UiState<ShopUiData>>(UiState(loading = true))
     val uiStateFlow = _uiStateFlow.asStateFlow()
 
@@ -67,63 +79,165 @@ class ShopViewModel : BaseViewModel() {
                     data = currentData.data
                 )
             )
-            val gifts = coreManager.getGifts(
-                GetGiftListRequest(
-                    locale = MyApplication.localeSystem
-                )
-            ).getOrDefault(emptyList())
-            val topFeatureGifts = coreManager.getGifts(
-                GetGiftListRequest(
-                    isFeatured = true,
-                    locale = MyApplication.localeSystem
-                )
-            ).getOrDefault(emptyList())
-            val todayOfferGifts =
-                coreManager.getGifts(
-                    GetGiftListRequest(
-                        isTodayOffer = true,
-                        locale = MyApplication.localeSystem
+            val gifts = mutableListOf<Gift>()
+            val topFeatureGifts = mutableListOf<Gift>()
+            val todayOfferGifts = mutableListOf<Gift>()
+            val recommendsGift = mutableListOf<Gift>()
+            val myGifts = mutableListOf<Gift>()
+            var myBalance = ExchangeBalance()
+            val brands = mutableListOf<ItemChoose>()
+            val categories = mutableListOf<ItemChoose>()
+            val requests =
+                coreManager.run {
+                    listOf(
+                        BaseFunCallAPI(
+                            key = KEY_GIFTS,
+                            funCallAPI = {
+                                getGifts(
+                                    GetGiftListRequest(
+                                        locale = MyApplication.localeSystem
+                                    )
+                                )
+                            }
+                        ),
+                        BaseFunCallAPI(
+                            key = KEY_TODAY_FEATURE_GIFTS,
+                            funCallAPI = {
+                                getGifts(
+                                    GetGiftListRequest(
+                                        isFeatured = true,
+                                        locale = MyApplication.localeSystem
+                                    )
+                                )
+                            }
+                        ),
+                        BaseFunCallAPI(
+                            key = KEY_TODAY_OFFERS_GIFTS,
+                            funCallAPI = {
+                                getGifts(
+                                    GetGiftListRequest(
+                                        isTodayOffer = true,
+                                        locale = MyApplication.localeSystem
+                                    )
+                                )
+                            }
+                        ),
+                        BaseFunCallAPI(
+                            key = KEY_RECOMMENDS_GIFTS,
+                            funCallAPI = {
+                                getGifts(
+                                    GetGiftListRequest(
+                                        isRecommended = true,
+                                        locale = MyApplication.localeSystem
+                                    )
+                                )
+                            }
+                        ),
+                        BaseFunCallAPI(
+                            key = KEY_MY_GIFTS,
+                            funCallAPI = ::getMyGifts
+                        ),
+                        BaseFunCallAPI(
+                            key = KEY_MY_BALANCE,
+                            funCallAPI = ::getExchangeBalance
+                        ),
+                        BaseFunCallAPI(
+                            key = KEY_BRANDS,
+                            funCallAPI = {
+                                getBrands(
+                                    GetItemChooseRequest(
+                                        page = 1,
+                                        pageSize = 100,
+                                        query = null,
+                                        locale = MyApplication.localeSystem
+                                    )
+                                )
+                            }
+                        ),
+                        BaseFunCallAPI(
+                            key = KEY_CATEGORIES,
+                            funCallAPI = {
+                                getCategories(
+                                    GetItemChooseRequest(
+                                        page = 1,
+                                        pageSize = 100,
+                                        query = null,
+                                        locale = MyApplication.localeSystem
+                                    )
+                                )
+                            }
+                        ),
                     )
-                ).getOrDefault(emptyList())
-            val recommendsGift =
-                coreManager.getGifts(
-                    GetGiftListRequest(
-                        isRecommended = true,
-                        locale = MyApplication.localeSystem
-                    )
-                ).getOrDefault(emptyList())
-            val myGifts = coreManager.getMyGifts().getOrDefault(emptyList())
-            val myBalance = coreManager.getExchangeBalance().getOrDefault(ExchangeBalance())
-            val brands = coreManager.getBrands(
-                GetItemChooseRequest(
-                    page = 1,
-                    pageSize = 100,
-                    query = null,
-                    locale = MyApplication.localeSystem
-                )
-            ).getOrDefault(emptyList())
-            val categories = coreManager.getCategories(
-                GetItemChooseRequest(
-                    page = 1,
-                    pageSize = 100,
-                    query = null,
-                    locale = MyApplication.localeSystem
-                )
-            ).getOrDefault(emptyList())
+                }
+            callMultipleApisOnThread(
+                requests = requests,
+                onEachSuccess = { data, key ->
+                    when (key) {
+                        KEY_GIFTS -> {
+                            (data.castTo<MutableList<Gift>>())?.let {
+                                gifts.addAll(it)
+                            }
+                        }
 
-            _uiStateFlow.emit(
-                UiState(
-                    data = ShopUiData(
-                        gifts = gifts,
-                        topFeatureGifts = topFeatureGifts,
-                        myGifts = myGifts,
-                        todayOfferGift = todayOfferGifts,
-                        recommendsGift = recommendsGift,
-                        myBalance = myBalance,
-                        brands = brands ?: emptyList(),
-                        category = convertToCategoriesList(categories?.toMutableList())
+                        KEY_TODAY_FEATURE_GIFTS -> {
+                            (data.castTo<MutableList<Gift>>())?.let {
+                                topFeatureGifts.addAll(it)
+                            }
+                        }
+
+                        KEY_TODAY_OFFERS_GIFTS -> {
+                            (data.castTo<MutableList<Gift>>())?.let {
+                                todayOfferGifts.addAll(it)
+                            }
+                        }
+
+                        KEY_RECOMMENDS_GIFTS -> {
+                            (data.castTo<MutableList<Gift>>())?.let {
+                                recommendsGift.addAll(it)
+                            }
+                        }
+
+                        KEY_MY_GIFTS -> {
+                            (data.castTo<MutableList<Gift>>())?.let {
+                                myGifts.addAll(it)
+                            }
+                        }
+
+                        KEY_MY_BALANCE -> {
+                            (data.castTo<ExchangeBalance>())?.let {
+                                myBalance = it
+                            }
+                        }
+
+                        KEY_BRANDS -> {
+                            (data.castTo<MutableList<ItemChoose>>())?.let {
+                                brands.addAll(it)
+                            }
+                        }
+
+                        KEY_CATEGORIES -> {
+                            (data.castTo<MutableList<ItemChoose>>())?.let {
+                                categories.addAll(it)
+                            }
+                        }
+                    }
+                },
+                onFinish = {
+                    _uiStateFlow.emit(
+                        UiState(
+                            data = ShopUiData(
+                                gifts = gifts,
+                                topFeatureGifts = topFeatureGifts,
+                                myGifts = myGifts,
+                                todayOfferGift = todayOfferGifts,
+                                recommendsGift = recommendsGift,
+                                myBalance = myBalance,
+                                brands = brands,
+                                category = convertToCategoriesList(categories.toMutableList())
+                            )
+                        )
                     )
-                )
+                }
             )
         }
     }
