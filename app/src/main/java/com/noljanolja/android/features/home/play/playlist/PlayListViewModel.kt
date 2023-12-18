@@ -1,21 +1,26 @@
 package com.noljanolja.android.features.home.play.playlist
 
-import com.noljanolja.android.common.base.BaseViewModel
-import com.noljanolja.android.common.base.UiState
-import com.noljanolja.android.common.base.launch
-import com.noljanolja.android.common.navigation.NavigationDirections
-import com.noljanolja.core.video.domain.model.TrendingVideoDuration
-import com.noljanolja.core.video.domain.model.Video
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import androidx.lifecycle.*
+import com.noljanolja.android.common.base.*
+import com.noljanolja.android.common.navigation.*
+import com.noljanolja.core.user.domain.model.*
+import com.noljanolja.core.video.domain.model.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
 class PlayListViewModel : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow(UiState<PlayListUIData>())
     val uiStateFlow = _uiStateFlow.asStateFlow()
+    private val _userStateFlow = MutableStateFlow(User())
+    val userStateFlow = _userStateFlow.asStateFlow()
 
     init {
         refresh()
+        viewModelScope.launch {
+            coreManager.getCurrentUser(forceRefresh = true, onlyLocal = false).getOrNull()?.let {
+                _userStateFlow.emit(it)
+            }
+        }
     }
 
     fun handleEvent(event: PlayListEvent) {

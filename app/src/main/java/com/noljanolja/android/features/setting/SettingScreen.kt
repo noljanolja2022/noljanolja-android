@@ -1,64 +1,37 @@
 package com.noljanolja.android.features.setting
 
-import android.net.Uri
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import android.net.*
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.*
+import androidx.compose.material.icons.*
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.*
+import androidx.compose.ui.*
+import androidx.compose.ui.draw.*
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.platform.*
+import androidx.compose.ui.res.*
+import androidx.compose.ui.text.style.*
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.constraintlayout.compose.*
+import androidx.lifecycle.compose.*
 import com.noljanolja.android.BuildConfig
 import com.noljanolja.android.R
-import com.noljanolja.android.extensions.convertToString
-import com.noljanolja.android.features.auth.updateprofile.components.AvatarInput
-import com.noljanolja.android.ui.composable.ButtonRadius
-import com.noljanolja.android.ui.composable.ButtonTextWithToggle
-import com.noljanolja.android.ui.composable.CircleAvatar
-import com.noljanolja.android.ui.composable.CommonTopAppBar
-import com.noljanolja.android.ui.composable.ComposeToast
-import com.noljanolja.android.ui.composable.MarginVertical
-import com.noljanolja.android.ui.composable.RankingRow
-import com.noljanolja.android.ui.composable.WarningDialog
+import com.noljanolja.android.extensions.*
+import com.noljanolja.android.features.auth.updateprofile.components.*
+import com.noljanolja.android.ui.composable.*
 import com.noljanolja.android.ui.theme.PrimaryGreen
+import com.noljanolja.android.util.*
 import com.noljanolja.android.util.Constant.DefaultValue.PADDING_HORIZONTAL_SCREEN
 import com.noljanolja.android.util.Constant.DefaultValue.PADDING_VERTICAL_SCREEN
 import com.noljanolja.android.util.Constant.DefaultValue.PADDING_VIEW
 import com.noljanolja.android.util.Constant.DefaultValue.PADDING_VIEW_SCREEN
-import com.noljanolja.android.util.loadFileInfo
-import com.noljanolja.core.loyalty.domain.model.MemberInfo
-import com.noljanolja.core.user.domain.model.User
-import org.koin.androidx.compose.getViewModel
+import com.noljanolja.core.loyalty.domain.model.*
+import com.noljanolja.core.user.domain.model.*
+import org.koin.androidx.compose.*
 
 @Composable
 fun SettingScreen(
@@ -321,7 +294,7 @@ private fun SettingContent(
                         handleEvent(SettingEvent.FAQ)
                     }
                 )
-                MarginVertical(40)
+                MarginVertical(10)
                 Text(
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -334,7 +307,7 @@ private fun SettingContent(
                     ),
                     textAlign = TextAlign.Center
                 )
-                MarginVertical(20)
+                MarginVertical(30)
             }
             Box(
                 modifier = Modifier
