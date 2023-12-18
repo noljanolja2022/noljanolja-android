@@ -37,8 +37,8 @@ import com.noljanolja.android.common.Const.VIDEO_IMAGE_RATIO
 import com.noljanolja.android.common.base.*
 import com.noljanolja.android.features.home.play.optionsvideo.*
 import com.noljanolja.android.ui.composable.*
-import com.noljanolja.android.ui.theme.*
 import com.noljanolja.android.util.*
+import com.noljanolja.core.user.domain.model.*
 import com.noljanolja.core.video.domain.model.*
 import kotlinx.coroutines.*
 import org.koin.androidx.compose.*
@@ -48,8 +48,10 @@ fun PlayListScreen(
     viewModel: PlayListViewModel = getViewModel(),
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val userStateFlow by viewModel.userStateFlow.collectAsStateWithLifecycle()
     PlayListContent(
         uiState = uiState,
+        userStateFlow = userStateFlow,
         handleEvent = viewModel::handleEvent,
     )
 }
@@ -58,6 +60,7 @@ fun PlayListScreen(
 @Composable
 private fun PlayListContent(
     uiState: UiState<PlayListUIData>,
+    userStateFlow: User,
     handleEvent: (PlayListEvent) -> Unit,
 ) {
     val configuration = LocalConfiguration.current
@@ -85,52 +88,61 @@ private fun PlayListContent(
 //                }
 //            }
 //        )
+//        CommonAppBarLogoTitle(
+//            titleFirstLine = buildAnnotatedString {
+//                withStyle(
+//                    style = SpanStyle(
+//                        fontSize = 24.0.sp,
+//                        color = textColor()
+//                    )
+//                ) {
+//                    append(stringResource(id = R.string.video_title_part1))
+//                }
+//                append(" ")
+//                withStyle(
+//                    style = SpanStyle(
+//                        fontSize = 24.0.sp,
+//                        fontWeight = FontWeight(700),
+//                        color = Orange300
+//                    )
+//                ) {
+//                    append(stringResource(id = R.string.video_title_point))
+//                }
+//            },
+//            titleSecondLine = buildAnnotatedString {
+//                withStyle(
+//                    style = SpanStyle(
+//                        fontSize = 24.0.sp,
+//                        color = textColor()
+//                    )
+//                ) {
+//                    append(stringResource(id = R.string.video_title_by))
+//                }
+//                append(" ")
+//                withStyle(
+//                    style = SpanStyle(
+//                        fontSize = 24.0.sp,
+//                        fontWeight = FontWeight(700),
+//                        color = PrimaryGreen
+//                    )
+//                ) {
+//                    append(stringResource(id = R.string.video_title_watching))
+//                }
+//            },
+//            thirdIcon = Icons.Default.Search,
+//            thirdIconClickListener = {
+//                handleEvent(PlayListEvent.Search)
+//            }
+//        )
 
-        CommonAppBarLogoTitle(
-            titleFirstLine = buildAnnotatedString {
-                withStyle(
-                    style = SpanStyle(
-                        fontSize = 24.0.sp,
-                        color = textColor()
-                    )
-                ) {
-                    append(stringResource(id = R.string.video_title_part1))
-                }
-                append(" ")
-                withStyle(
-                    style = SpanStyle(
-                        fontSize = 24.0.sp,
-                        fontWeight = FontWeight(700),
-                        color = Orange300
-                    )
-                ) {
-                    append(stringResource(id = R.string.video_title_point))
-                }
-            },
-            titleSecondLine = buildAnnotatedString {
-                withStyle(
-                    style = SpanStyle(
-                        fontSize = 24.0.sp,
-                        color = textColor()
-                    )
-                ) {
-                    append(stringResource(id = R.string.video_title_by))
-                }
-                append(" ")
-                withStyle(
-                    style = SpanStyle(
-                        fontSize = 24.0.sp,
-                        fontWeight = FontWeight(700),
-                        color = PrimaryGreen
-                    )
-                ) {
-                    append(stringResource(id = R.string.video_title_watching))
-                }
-            },
-            thirdIcon = Icons.Default.Search,
-            thirdIconClickListener = {
+        CommonAppBarSearch(
+            modifier = Modifier,
+            onSearchFieldClick = {
                 handleEvent(PlayListEvent.Search)
-            }
+            },
+            icon = Icons.Filled.Notifications,
+            onIconClick = {},
+            avatar = userStateFlow.avatar
         )
     }) {
         val data = uiState.data ?: return@ScaffoldWithUiState

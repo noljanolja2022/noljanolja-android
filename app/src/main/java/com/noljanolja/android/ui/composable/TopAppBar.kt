@@ -9,7 +9,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.vector.*
-import androidx.compose.ui.layout.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.*
@@ -19,6 +18,7 @@ import androidx.constraintlayout.compose.*
 import com.noljanolja.android.R
 import com.noljanolja.android.extensions.*
 import com.noljanolja.android.ui.theme.*
+import com.noljanolja.android.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -192,5 +192,44 @@ fun CommonAppBarLogoTitle(
             enabled = thirdIcon != null,
             icon = thirdIcon
         )
+    }
+}
+
+@Composable
+fun CommonAppBarSearch(
+    modifier: Modifier = Modifier,
+    onSearchFieldClick: () -> Unit,
+    icon: ImageVector? = null,
+    onIconClick: () -> Unit = {},
+    avatar: String? = null,
+    onAvatarClick: () -> Unit = {}
+) {
+    Row(
+        modifier = modifier
+            .padding(vertical = 12.dp, horizontal = Constant.DefaultValue.PADDING_VIEW_SCREEN.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        SearchBarViewOnly(
+            modifier = Modifier
+                .weight(1f)
+                .clickable { onSearchFieldClick.invoke() },
+            hint = stringResource(id = R.string.search_videos),
+        )
+        icon?.let {
+            AppIconButton(
+                modifier = Modifier,
+                onClick = onIconClick,
+                tint = textColor(),
+                icon = it
+            )
+        }
+        avatar?.let {
+            OvalAvatar(
+                modifier = Modifier.clickable { onAvatarClick() },
+                avatar = it,
+                size = 24.dp,
+                radius = 24.dp
+            )
+        }
     }
 }

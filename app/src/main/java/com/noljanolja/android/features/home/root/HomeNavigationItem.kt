@@ -1,24 +1,16 @@
 package com.noljanolja.android.features.home.root
 
-import androidx.annotation.StringRes
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBalanceWallet
-import androidx.compose.material.icons.filled.ChatBubble
-import androidx.compose.material.icons.filled.Group
-import androidx.compose.material.icons.filled.OndemandVideo
-import androidx.compose.material.icons.filled.Store
-import androidx.compose.material.icons.outlined.AccountBalanceWallet
-import androidx.compose.material.icons.outlined.ChatBubble
-import androidx.compose.material.icons.outlined.Group
-import androidx.compose.material.icons.outlined.OndemandVideo
-import androidx.compose.material.icons.outlined.Store
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.annotation.*
+import androidx.compose.material.icons.*
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
+import androidx.compose.ui.graphics.vector.*
 import com.noljanolja.android.R
-import com.noljanolja.android.common.navigation.NavigationDirections
+import com.noljanolja.android.common.navigation.*
 
 sealed class HomeNavigationItem(
     val route: String,
-    val icon: ImageVector,
+    var icon: ImageVector,
     val selectedIcon: ImageVector,
     @StringRes val label: Int,
 ) {
@@ -31,7 +23,7 @@ sealed class HomeNavigationItem(
 
     object FriendsItem : HomeNavigationItem(
         NavigationDirections.FriendItem.destination,
-        Icons.Filled.Group,
+        Icons.Outlined.Group,
         Icons.Outlined.Group,
         R.string.home_friends,
     )

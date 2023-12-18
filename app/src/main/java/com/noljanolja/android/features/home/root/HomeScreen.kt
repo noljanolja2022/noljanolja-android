@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.*
+import androidx.compose.ui.graphics.vector.*
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.unit.*
@@ -228,11 +229,15 @@ fun HomeBottomBar(
 ) {
     //test
     val items = listOf(
-        HomeNavigationItem.FriendsItem,
-        HomeNavigationItem.ChatItem,
         HomeNavigationItem.WatchItem,
+        HomeNavigationItem.ChatItem.apply {
+            icon = ImageVector.vectorResource(R.drawable.ic_chat)
+        },
         HomeNavigationItem.WalletItem,
-        HomeNavigationItem.StoreItem,
+        HomeNavigationItem.StoreItem.apply {
+            icon = ImageVector.vectorResource(R.drawable.ic_shop_tab_bar)
+        },
+        HomeNavigationItem.FriendsItem,
     )
     NavigationBar(
         modifier = modifier,
