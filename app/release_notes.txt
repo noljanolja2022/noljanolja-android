@@ -1,3 +1,4 @@
+- 1.1.29: Update UI of dialog when enter referral code
 - 1.1.28: Update watch screen and change ui of setting, tab bar order
 - 1.1.27: Fix dark mode and scale mode, update add locale in Shop API
 - 1.1.26: Update dark mode and scale mode
