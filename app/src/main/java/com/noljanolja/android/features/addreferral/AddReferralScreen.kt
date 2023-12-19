@@ -1,50 +1,31 @@
 package com.noljanolja.android.features.addreferral
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.*
+import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
+import androidx.compose.ui.draw.*
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.vector.*
+import androidx.compose.ui.platform.*
+import androidx.compose.ui.res.*
+import androidx.compose.ui.text.*
+import androidx.compose.ui.text.font.*
+import androidx.compose.ui.unit.*
 import com.noljanolja.android.R
-import com.noljanolja.android.ui.composable.InfoDialog
-import com.noljanolja.android.ui.composable.PrimaryButton
-import com.noljanolja.android.ui.composable.SecondaryButton
-import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.util.getErrorDescription
-import com.noljanolja.android.util.orZero
-import kotlinx.coroutines.flow.collectLatest
-import org.koin.androidx.compose.getViewModel
+import com.noljanolja.android.ui.composable.*
+import com.noljanolja.android.ui.theme.*
+import com.noljanolja.android.util.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import org.koin.androidx.compose.*
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AddReferralScreen(
     viewModel: AddReferralViewModel = getViewModel(),
@@ -52,6 +33,8 @@ fun AddReferralScreen(
     val context = LocalContext.current
     var receivePoint by remember { mutableStateOf<Long?>(null) }
     var errorMessage by remember { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
+    val showBottomSheet = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     LaunchedEffect(viewModel.receivePointEvent) {
         viewModel.receivePointEvent.collectLatest {
             receivePoint = it
@@ -62,20 +45,30 @@ fun AddReferralScreen(
             errorMessage = context.getErrorDescription(it)
         }
     }
+    LaunchedEffect(receivePoint) {
+        scope.launch {
+            if (receivePoint != null) {
+                showBottomSheet.show()
+            } else {
+                showBottomSheet.hide()
+            }
+        }
+    }
     AddReferralContent(
         handleEvent = viewModel::handleEvent
     )
-    InfoDialog(
-        title = {
-            Text("+ $receivePoint")
-        },
-        content = stringResource(id = R.string.referral_receive_point, receivePoint.orZero()),
-        isShown = receivePoint != null,
-        dismissText = stringResource(id = R.string.common_ok)
-    ) {
-        viewModel.handleEvent(AddReferralEvent.GoToMain)
-        receivePoint = null
-    }
+    BottomSheetMessage(
+        sheetState = showBottomSheet,
+        iconMessage = ImageVector.vectorResource(id = R.drawable.ic_point),
+        iconTint = Orange300,
+        title = "+ $receivePoint",
+        message = stringResource(id = R.string.referral_receive_point, receivePoint.orZero()),
+        buttonTitle = stringResource(id = R.string.common_ok),
+        onConfirmClick = {
+            viewModel.handleEvent(AddReferralEvent.GoToMain)
+            receivePoint = null
+        }
+    )
     InfoDialog(
         title = {
             Text(stringResource(id = R.string.invalid_referral))
