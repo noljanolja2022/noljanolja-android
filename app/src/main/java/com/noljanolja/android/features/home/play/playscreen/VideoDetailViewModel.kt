@@ -1,28 +1,18 @@
 package com.noljanolja.android.features.home.play.playscreen
 
-import androidx.annotation.StringRes
-import com.noljanolja.android.R
-import com.noljanolja.android.common.base.BaseViewModel
-import com.noljanolja.android.common.base.UiState
-import com.noljanolja.android.common.base.launch
-import com.noljanolja.android.common.sharedpreference.SharedPreferenceHelper
-import com.noljanolja.android.extensions.convertToLong
-import com.noljanolja.android.ui.composable.youtube.YoutubeViewWithFullScreen
-import com.noljanolja.core.user.domain.model.User
-import com.noljanolja.core.video.data.model.request.VideoProgressEvent
-import com.noljanolja.core.video.domain.model.Comment
-import com.noljanolja.core.video.domain.model.Video
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
-import org.koin.core.component.inject
+import androidx.annotation.*
+import com.noljanolja.android.*
+import com.noljanolja.android.common.base.*
+import com.noljanolja.android.common.sharedpreference.*
+import com.noljanolja.android.extensions.*
+import com.noljanolja.android.ui.composable.youtube.*
+import com.noljanolja.core.user.domain.model.*
+import com.noljanolja.core.video.data.model.request.*
+import com.noljanolja.core.video.domain.model.*
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.*
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.*
+import kotlinx.coroutines.flow.*
+import org.koin.core.component.*
 
 class VideoDetailViewModel() : BaseViewModel() {
     private var videoId: String = ""
@@ -153,7 +143,7 @@ class VideoDetailViewModel() : BaseViewModel() {
     private suspend fun trackVideoProgress(state: PlayerConstants.PlayerState, durationMs: Long) {
         val event = when (state) {
             PlayerConstants.PlayerState.PAUSED -> VideoProgressEvent.PAUSE
-            PlayerConstants.PlayerState.ENDED -> VideoProgressEvent.FINISH
+            PlayerConstants.PlayerState.ENDED -> VideoProgressEvent.PLAY
             PlayerConstants.PlayerState.PLAYING -> VideoProgressEvent.PLAY
             else -> return
         }
