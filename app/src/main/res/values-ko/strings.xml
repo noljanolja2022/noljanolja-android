@@ -123,6 +123,7 @@
     <string name="tos_optional">선택</string>
     <string name="tos_optional_item_title_1">정보 수집 및 이용에 대한 동의</string>
     <string name="tos_optional_item_title_2">프로필 정보 수집 및 이용</string>
+    <string name="tos_optional_item_title_3">//TODO</string>
     <string name="tos_read_and_agree">모든 약관을 읽었으며 이에 동의합니다.</string>
     <string name="tos_agree_and_continue">동의하고 계속하기</string>
     <string name="update_profile_avatar">아바타 설정</string>

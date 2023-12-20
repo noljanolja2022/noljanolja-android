@@ -1,60 +1,42 @@
 package com.noljanolja.android.features.auth.login
 
-import android.app.Activity
-import android.content.Intent
-import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
+import android.app.*
+import android.content.*
+import androidx.activity.compose.*
+import androidx.activity.result.*
+import androidx.activity.result.contract.*
+import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.*
+import androidx.compose.foundation.text.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.touchlab.kermit.Logger
-import com.d2brothers.firebase_auth.AuthSdk
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import androidx.compose.runtime.saveable.*
+import androidx.compose.ui.*
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.layout.*
+import androidx.compose.ui.platform.*
+import androidx.compose.ui.res.*
+import androidx.compose.ui.text.input.*
+import androidx.compose.ui.text.style.*
+import androidx.compose.ui.unit.*
+import androidx.lifecycle.*
+import androidx.lifecycle.compose.*
+import co.touchlab.kermit.*
+import com.d2brothers.firebase_auth.*
+import com.google.firebase.remoteconfig.*
 import com.noljanolja.android.R
-import com.noljanolja.android.common.base.handleError
-import com.noljanolja.android.common.country.Countries
-import com.noljanolja.android.common.country.Country
-import com.noljanolja.android.common.country.DEFAULT_CODE
-import com.noljanolja.android.common.country.getFlagEmoji
-import com.noljanolja.android.common.error.UnexpectedFailure
-import com.noljanolja.android.features.auth.common.component.VerifyEmail
-import com.noljanolja.android.features.auth.login.component.LoginButton
-import com.noljanolja.android.ui.composable.PrimaryButton
-import com.noljanolja.android.ui.composable.SecondaryButton
-import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.ui.theme.withBold
-import com.noljanolja.android.util.showError
-import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import com.noljanolja.android.common.base.*
+import com.noljanolja.android.common.country.*
+import com.noljanolja.android.extensions.*
+import com.noljanolja.android.features.auth.common.component.*
+import com.noljanolja.android.features.auth.login.component.*
+import com.noljanolja.android.ui.composable.*
+import com.noljanolja.android.ui.theme.*
+import com.noljanolja.android.util.Constant.DefaultValue.PADDING_VERTICAL_SCREEN
+import com.noljanolja.android.util.Constant.DefaultValue.PADDING_VIEW_SCREEN
+import org.koin.androidx.compose.*
 
 @Composable
 fun LoginScreen(
@@ -105,85 +87,163 @@ private fun LoginContent(
     var phone by rememberSaveable { mutableStateOf("") }
     var showErrorPhoneNumber by remember { mutableStateOf(false) }
     var showConfirmPhoneNumber by remember { mutableStateOf(false) }
-
-    val googleLauncher = rememberAuthLauncher {
-        scope.launch {
-            val result = authSdk.getAccountFromGoogleIntent(it)
-            if (result.isSuccess) {
-                handleEvent(LoginEvent.HandleLoginResult(result.getOrDefault("")))
-            } else {
-                context.showError(result.exceptionOrNull() ?: UnexpectedFailure)
-            }
+    val formattedPhoneNumber by remember {
+        derivedStateOf {
+            phone.getPhoneNumberFormatE164(country.nameCode)
         }
     }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.primaryContainer)
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.logo),
-            contentDescription = null,
-            modifier = Modifier
-                .padding(horizontal = 90.dp, vertical = 50.dp)
-                .fillMaxWidth(),
-            contentScale = ContentScale.FillWidth
-        )
-        Text(
-            stringResource(id = R.string.common_login),
-            style = MaterialTheme.typography.displaySmall.withBold()
-        )
-        Text(
-            stringResource(R.string.login_google_description),
-            modifier = Modifier.fillMaxWidth(),
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center
-        )
-        SizeBox(height = 20.dp)
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding()
-                .clip(RoundedCornerShape(8.dp))
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(horizontal = 12.dp, vertical = 4.dp)
-                .clickable {
-                    AuthSdk.authenticateGoogle(context, googleLauncher)
-                },
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Image(
-                painter = painterResource(R.drawable.google),
-                contentDescription = null,
-                modifier = Modifier.size(30.dp)
-            )
-            SizeBox(width = 8.dp)
-            Text(
-                stringResource(R.string.login_google_button),
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
 
-        LoginUserNamePasswordContent(
-            onLogin = { user, password ->
-                scope.launch {
-                    val result =
-                        authSdk.signInWithEmailAndPassword(email = user, password = password)
-                    if (result.isSuccess) {
-                        handleEvent(LoginEvent.HandleLoginResult(result.getOrDefault("")))
+    ScaffoldWithCircleBgRoundedContent(
+        heading = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 30.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(115.dp),
+                    contentScale = ContentScale.FillWidth
+                )
+            }
+        },
+        roundedCornerShape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp),
+        backgroundBottomColor = MaterialTheme.shopBackground()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    horizontal = PADDING_VIEW_SCREEN.dp,
+                    vertical = PADDING_VERTICAL_SCREEN.dp
+                ),
+            horizontalAlignment = Alignment.Start,
+        ) {
+            LoginPhoneContent(
+                country = country,
+                phone = phone,
+                onChangePhone = {
+                    phone = it
+                },
+                openCountryList = {
+                    handleEvent(LoginEvent.OpenCountryList)
+                },
+                onSubmit = {
+                    if (formattedPhoneNumber == null) {
+                        showErrorPhoneNumber = true
                     } else {
-                        context.showError(result.exceptionOrNull() ?: UnexpectedFailure)
+                        showConfirmPhoneNumber = true
                     }
                 }
-            }
-        )
-
+            )
+        }
     }
+
+    ErrorDialog(
+        showError = showErrorPhoneNumber,
+        title = stringResource(R.string.login_invalid_phone_title),
+        description = stringResource(R.string.login_invalid_phone_description)
+    ) {
+        showErrorPhoneNumber = false
+    }
+
+    WarningDialog(
+        title = formattedPhoneNumber,
+        content = stringResource(R.string.login_confirm_phone_description),
+        dismissText = stringResource(R.string.common_cancel),
+        confirmText = stringResource(R.string.common_confirm),
+        isWarning = showConfirmPhoneNumber,
+        onDismiss = {
+            showConfirmPhoneNumber = false
+        },
+        onConfirm = {
+            showConfirmPhoneNumber = false
+            formattedPhoneNumber?.let { LoginEvent.SendOTP(it) }?.let { handleEvent(it) }
+        }
+    )
+
+
+//    val googleLauncher = rememberAuthLauncher {
+//        scope.launch {
+//            val result = authSdk.getAccountFromGoogleIntent(it)
+//            if (result.isSuccess) {
+//                handleEvent(LoginEvent.HandleLoginResult(result.getOrDefault("")))
+//            } else {
+//                context.showError(result.exceptionOrNull() ?: UnexpectedFailure)
+//            }
+//        }
+//    }
+//    Column(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .background(MaterialTheme.colorScheme.primaryContainer)
+//            .verticalScroll(rememberScrollState())
+//            .padding(horizontal = 16.dp),
+//        horizontalAlignment = Alignment.CenterHorizontally
+//    ) {
+//        Image(
+//            painter = painterResource(id = R.drawable.logo),
+//            contentDescription = null,
+//            modifier = Modifier
+//                .padding(horizontal = 90.dp, vertical = 50.dp)
+//                .fillMaxWidth(),
+//            contentScale = ContentScale.FillWidth
+//        )
+//        Text(
+//            stringResource(id = R.string.common_login),
+//            style = MaterialTheme.typography.displaySmall.withBold()
+//        )
+//        Text(
+//            stringResource(R.string.login_google_description),
+//            modifier = Modifier.fillMaxWidth(),
+//            style = MaterialTheme.typography.bodyMedium,
+//            textAlign = TextAlign.Center
+//        )
+//        SizeBox(height = 20.dp)
+//        Row(
+//            verticalAlignment = Alignment.CenterVertically,
+//            modifier = Modifier
+//                .padding()
+//                .clip(RoundedCornerShape(8.dp))
+//                .fillMaxWidth()
+//                .background(MaterialTheme.colorScheme.background)
+//                .padding(horizontal = 12.dp, vertical = 4.dp)
+//                .clickable {
+//                    AuthSdk.authenticateGoogle(context, googleLauncher)
+//                },
+//            horizontalArrangement = Arrangement.Center
+//        ) {
+//            Image(
+//                painter = painterResource(R.drawable.google),
+//                contentDescription = null,
+//                modifier = Modifier.size(30.dp)
+//            )
+//            SizeBox(width = 8.dp)
+//            Text(
+//                stringResource(R.string.login_google_button),
+//                color = MaterialTheme.colorScheme.onBackground,
+//                style = MaterialTheme.typography.bodySmall
+//            )
+//        }
+//
+//        LoginUserNamePasswordContent(
+//            onLogin = { user, password ->
+//                scope.launch {
+//                    val result =
+//                        authSdk.signInWithEmailAndPassword(email = user, password = password)
+//                    if (result.isSuccess) {
+//                        handleEvent(LoginEvent.HandleLoginResult(result.getOrDefault("")))
+//                    } else {
+//                        context.showError(result.exceptionOrNull() ?: UnexpectedFailure)
+//                    }
+//                }
+//            }
+//        )
+//
+//    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -251,7 +311,7 @@ private fun ColumnScope.LoginPhoneContent(
         isEnable = phone.isNotBlank(),
         onClick = onSubmit
     )
-    Spacer(modifier = Modifier.weight(1F))
+    MarginVertical(20)
 }
 
 @Composable
@@ -349,7 +409,7 @@ private fun LoginUserNamePasswordContent(onLogin: (user: String, password: Strin
                 textColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 unfocusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
 
-            )
+                )
         )
         SizeBox(height = 25.dp)
         PrimaryButton(

@@ -223,13 +223,11 @@ fun CommonAppBarSearch(
                 icon = it
             )
         }
-        avatar?.let {
-            OvalAvatar(
-                modifier = Modifier.clickable { onAvatarClick() },
-                avatar = it,
-                size = 24.dp,
-                radius = 24.dp
-            )
-        }
+        OvalAvatar(
+            modifier = Modifier.clickable { onAvatarClick() },
+            avatar = avatar,
+            size = 24.dp,
+            radius = 24.dp
+        )
     }
 }

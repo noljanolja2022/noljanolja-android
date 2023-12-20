@@ -1,8 +1,7 @@
 package com.noljanolja.android.features.auth.terms_of_service
 
-import com.noljanolja.android.common.base.BaseViewModel
-import com.noljanolja.android.common.base.launch
-import com.noljanolja.android.common.navigation.NavigationDirections
+import com.noljanolja.android.common.base.*
+import com.noljanolja.android.common.navigation.*
 
 class TermsOfServiceViewModel : BaseViewModel() {
 
@@ -10,7 +9,7 @@ class TermsOfServiceViewModel : BaseViewModel() {
         launch {
             when (event) {
                 is TermsOfServiceEvent.Continue -> {
-                    navigationManager.navigate(NavigationDirections.Auth)
+                    navigationManager.navigate(NavigationDirections.UpdateProfile)
                 }
 
                 is TermsOfServiceEvent.Detail -> {

@@ -154,6 +154,7 @@
     <string name="tos_optional">Optional</string>
     <string name="tos_optional_item_title_1">Consent to the collection and use of information</string>
     <string name="tos_optional_item_title_2">Collection and Use of Profile Information</string>
+    <string name="tos_optional_item_title_3">Consent to receive marketing information…</string>
     <string name="tos_read_and_agree">I have read and agreed to all terms and conditions</string>
     <string name="tos_agree_and_continue">Agree and Continue</string>
 

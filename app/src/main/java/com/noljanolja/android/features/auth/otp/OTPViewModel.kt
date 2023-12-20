@@ -1,13 +1,10 @@
 package com.noljanolja.android.features.auth.otp
 
-import com.d2brothers.firebase_auth.AuthSdk
-import com.noljanolja.android.common.base.BaseViewModel
-import com.noljanolja.android.common.base.launch
-import com.noljanolja.android.common.navigation.NavigationDirections
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import org.koin.core.component.inject
+import com.d2brothers.firebase_auth.*
+import com.noljanolja.android.common.base.*
+import com.noljanolja.android.common.navigation.*
+import kotlinx.coroutines.flow.*
+import org.koin.core.component.*
 
 class OTPViewModel : BaseViewModel() {
     private val authSdk: AuthSdk by inject()
@@ -41,8 +38,8 @@ class OTPViewModel : BaseViewModel() {
         launch {
             val result = coreManager.getCurrentUser(true)
             result.getOrNull()?.let { user ->
-                if (user.name.isNullOrBlank()) {
-                    navigationManager.navigate(NavigationDirections.UpdateProfile)
+                if (user.name.isBlank()) {
+                    navigationManager.navigate(NavigationDirections.TermsOfService)
                 } else {
                     navigationManager.navigate(NavigationDirections.Home)
                 }
