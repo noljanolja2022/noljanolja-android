@@ -1,12 +1,10 @@
 package com.noljanolja.android.features.splash
 
-import com.d2brothers.firebase_auth.AuthSdk
-import com.noljanolja.android.common.base.BaseViewModel
-import com.noljanolja.android.common.base.launch
-import com.noljanolja.android.common.navigation.NavigationDirections
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import org.koin.core.component.inject
+import com.d2brothers.firebase_auth.*
+import com.noljanolja.android.common.base.*
+import com.noljanolja.android.common.navigation.*
+import kotlinx.coroutines.flow.*
+import org.koin.core.component.*
 
 class SplashViewModel : BaseViewModel() {
     private val authSdk: AuthSdk by inject()
@@ -26,7 +24,7 @@ class SplashViewModel : BaseViewModel() {
                         reload()
                     } else {
                         navigationManager.navigate(
-                            NavigationDirections.TermsOfService
+                            NavigationDirections.Auth
                         )
                     }
                 }

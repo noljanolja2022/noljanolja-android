@@ -1,31 +1,29 @@
 package com.noljanolja.android.features.auth.otp
 
-import android.app.Activity
-import androidx.compose.foundation.clickable
+import android.app.*
+import android.util.*
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.d2brothers.firebase_auth.AuthSdk
+import androidx.compose.runtime.saveable.*
+import androidx.compose.ui.*
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.platform.*
+import androidx.compose.ui.res.*
+import androidx.compose.ui.text.*
+import androidx.compose.ui.unit.*
+import androidx.lifecycle.compose.*
+import com.d2brothers.firebase_auth.*
 import com.noljanolja.android.R
-import com.noljanolja.android.common.sharedpreference.SharedPreferenceHelper
-import com.noljanolja.android.features.auth.otp.composable.OTPRow
-import com.noljanolja.android.ui.composable.ErrorDialog
-import com.noljanolja.android.ui.composable.LoadingDialog
-import com.noljanolja.android.util.showToast
-import kotlinx.coroutines.delay
-import org.koin.androidx.compose.get
-import org.koin.androidx.compose.getViewModel
+import com.noljanolja.android.common.sharedpreference.*
+import com.noljanolja.android.features.auth.otp.composable.*
+import com.noljanolja.android.ui.composable.*
+import com.noljanolja.android.ui.theme.*
+import com.noljanolja.android.util.*
+import com.noljanolja.android.util.Constant.DefaultValue.PADDING_VIEW_SCREEN
+import kotlinx.coroutines.*
+import org.koin.androidx.compose.*
 
 private const val BLOCK_RESEND_TIME = 90_000L
 private const val ONE_MILLI_SECOND = 1_000L
@@ -88,6 +86,7 @@ fun OTPScreenContent(
                     sharedPreferenceHelper.loginOtpTime = 0L
                 },
                 onError = {
+                    Log.e("TTT", "OTPScreenContent: $it", )
                     context.showToast(it.message)
                 },
                 onCodeSent = {
@@ -101,18 +100,14 @@ fun OTPScreenContent(
         }
     }
 
-    LaunchedEffect(otp) {
-        if (otp.all { it.isDigit() }) {
-            handleEvent(OTPEvent.VerifyOTP(otpVerificationId, String(otp)))
-        }
-    }
-
     Surface(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
         ) {
             Column(
-                modifier = Modifier.fillMaxSize().padding(it),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -172,6 +167,26 @@ fun OTPScreenContent(
                         color = MaterialTheme.colorScheme.primary,
                     )
                 }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                ButtonRadius(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = PADDING_VIEW_SCREEN.dp)
+                        .height(48.dp),
+                    title = stringResource(id = R.string.common_continue),
+                    bgColor = PrimaryGreen,
+                    textColor = Color.Black,
+                    enabled = otp.all { it.isDigit() },
+                    onClick = {
+                        if (otp.all { it.isDigit() }) {
+                            handleEvent(OTPEvent.VerifyOTP(otpVerificationId, String(otp)))
+                        }
+                    }
+                )
+                
+                MarginVertical(30)
             }
         }
     }

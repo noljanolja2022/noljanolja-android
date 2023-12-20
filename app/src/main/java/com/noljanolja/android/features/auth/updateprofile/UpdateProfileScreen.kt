@@ -1,57 +1,40 @@
 package com.noljanolja.android.features.auth.updateprofile
 
-import android.annotation.SuppressLint
-import android.net.Uri
-import android.telephony.PhoneNumberUtils
+import android.annotation.*
+import android.net.*
 import androidx.compose.foundation.*
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.interaction.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.PhotoCamera
-import androidx.compose.material.icons.outlined.Cancel
+import androidx.compose.foundation.shape.*
+import androidx.compose.material.icons.*
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.SubcomposeAsyncImage
+import androidx.compose.runtime.saveable.*
+import androidx.compose.ui.*
+import androidx.compose.ui.draw.*
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.layout.*
+import androidx.compose.ui.platform.*
+import androidx.compose.ui.res.*
+import androidx.compose.ui.text.*
+import androidx.compose.ui.unit.*
+import androidx.lifecycle.*
+import androidx.lifecycle.compose.*
+import coil.compose.*
 import com.noljanolja.android.R
-import com.noljanolja.android.common.country.Countries
-import com.noljanolja.android.common.country.Country
-import com.noljanolja.android.common.country.DEFAULT_CODE
-import com.noljanolja.android.common.country.getFlagEmoji
-import com.noljanolja.android.features.auth.updateprofile.components.AvatarInput
-import com.noljanolja.android.features.auth.updateprofile.components.DoBInput
-import com.noljanolja.android.ui.composable.ErrorDialog
-import com.noljanolja.android.ui.composable.LoadingDialog
+import com.noljanolja.android.common.country.*
+import com.noljanolja.android.extensions.*
+import com.noljanolja.android.features.auth.updateprofile.components.*
+import com.noljanolja.android.ui.composable.*
 import com.noljanolja.android.ui.composable.OutlinedTextField
-import com.noljanolja.android.ui.composable.PrimaryButton
-import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.withBold
-import com.noljanolja.android.util.loadFileInfo
-import com.noljanolja.android.util.toUri
-import com.noljanolja.core.user.domain.model.Gender
-import com.noljanolja.core.user.domain.model.User
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.datetime.toJavaLocalDate
-import kotlinx.datetime.toKotlinLocalDate
-import org.koin.androidx.compose.getViewModel
+import com.noljanolja.android.util.*
+import com.noljanolja.core.user.domain.model.*
+import kotlinx.coroutines.flow.*
+import kotlinx.datetime.*
+import org.koin.androidx.compose.*
 import java.time.LocalDate
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -228,7 +211,8 @@ fun UpdateProfileContent(
                         ) {
                             Text(
                                 text = country.getFlagEmoji(),
-                                modifier = Modifier.padding(horizontal = 7.dp)
+                                modifier = Modifier
+                                    .padding(horizontal = 7.dp)
                                     .clip(RoundedCornerShape(3.dp))
                                     .background(MaterialTheme.colorScheme.surface)
                                     .padding(5.dp)
@@ -275,7 +259,8 @@ fun UpdateProfileContent(
                             SizeBox(width = 12.dp)
                         }
                         Box(
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier
+                                .weight(1f)
                                 .height(46.dp)
                                 .clip(RoundedCornerShape(6.dp))
                                 .border(
@@ -286,7 +271,8 @@ fun UpdateProfileContent(
                                         MaterialTheme.colorScheme.onBackground
                                     },
                                     shape = RoundedCornerShape(6.dp)
-                                ).background(
+                                )
+                                .background(
                                     if (gender == value) {
                                         MaterialTheme.colorScheme.primaryContainer
                                     } else {
@@ -306,11 +292,7 @@ fun UpdateProfileContent(
                 PrimaryButton(
                     onClick = {
                         val fileInfo = avatar?.let { context.loadFileInfo(it) }
-                        val formattedPhoneNumber =
-                            PhoneNumberUtils.formatNumberToE164(
-                                phone.trim(),
-                                country.nameCode.uppercase()
-                            )
+                        val formattedPhoneNumber = phone.getPhoneNumberFormatE164(country.nameCode)
                         if (formattedPhoneNumber == null) {
                             showErrorPhoneNumber = true
                         } else {

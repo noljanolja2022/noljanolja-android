@@ -1,50 +1,22 @@
 package com.noljanolja.android.features.auth.terms_of_service
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckBox
-import androidx.compose.material.icons.filled.CheckBoxOutlineBlank
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.*
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
+import androidx.compose.ui.res.*
+import androidx.compose.ui.text.*
+import androidx.compose.ui.text.font.*
+import androidx.compose.ui.text.style.*
+import androidx.compose.ui.unit.*
 import com.noljanolja.android.R
-import com.noljanolja.android.ui.composable.Expanded
-import com.noljanolja.android.ui.composable.InfoDialog
-import com.noljanolja.android.ui.composable.PrimaryButton
-import com.noljanolja.android.ui.composable.ScaffoldWithRoundedContent
-import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.util.secondaryTextColor
-import org.koin.androidx.compose.getViewModel
+import com.noljanolja.android.ui.composable.*
+import com.noljanolja.android.util.*
+import org.koin.androidx.compose.*
+import kotlin.collections.set
 
 @Composable
 fun TermsOfServiceScreen(
@@ -136,6 +108,31 @@ fun TermsOfServiceScreenContent(
                             handleEvent(TermsOfServiceEvent.Detail(3))
                         },
                     )
+
+                    Text(
+                        stringResource(R.string.tos_optional).uppercase(),
+                        modifier = Modifier.padding(
+                            start = 16.dp,
+                            end = 16.dp,
+                            bottom = 5.dp
+                        ),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onBackground,
+                    )
+
+                    TermRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        termTitle = stringResource(R.string.tos_optional_item_title_3),
+                        maxLines = 1,
+                        checked = optionalTerms.getOrDefault(1, false),
+                        onChecked = { optionalTerms[1] = it },
+                        onClicked = {
+                            handleEvent(TermsOfServiceEvent.Detail(4))
+                        },
+                    )
+
                     Expanded()
                 }
 
@@ -163,6 +160,7 @@ fun TermsOfServiceScreenContent(
 private fun TermRow(
     modifier: Modifier,
     termTitle: String,
+    maxLines: Int = 2,
     checked: Boolean,
     onChecked: (Boolean) -> Unit,
     onClicked: (() -> Unit)? = null,
@@ -183,11 +181,13 @@ private fun TermRow(
 
         Text(
             termTitle,
-            modifier = Modifier.weight(1f).clickable(enabled = onClicked != null) {
-                onClicked?.invoke()
-            },
+            modifier = Modifier
+                .weight(1f)
+                .clickable(enabled = onClicked != null) {
+                    onClicked?.invoke()
+                },
             style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.secondaryTextColor()),
-            maxLines = 2,
+            maxLines = maxLines,
             overflow = TextOverflow.Ellipsis,
         )
         if (onClicked != null) {
