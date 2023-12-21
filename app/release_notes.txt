@@ -1,3 +1,4 @@
+- 1.1.31: Fix authenticate UI and add share video to instagram
 - 1.1.30: Update Authenticate flow login by Phone number
 - 1.1.29: Update UI of dialog when enter referral code
 - 1.1.28: Update watch screen and change ui of setting, tab bar order
