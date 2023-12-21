@@ -1,6 +1,6 @@
 package com.noljanolja.android.extensions
 
-import android.telephony.*
+import com.google.i18n.phonenumbers.*
 
 /**
  * Created by tuyen.dang on 11/14/2023.
@@ -19,14 +19,15 @@ fun String?.addLine(textLine: Int, anotherLine: Int): String {
 }
 
 fun String?.getPhoneNumberFormatE164(countryCode: String) = try {
-    PhoneNumberUtils.formatNumberToE164(
-        this,
-        countryCode.uppercase()
-    )
-//    PhoneNumberUtil.getInstance().format(
-//        PhoneNumberUtil.getInstance().parse(this,countryCode.uppercase()),
-//        PhoneNumberUtil.PhoneNumberFormat.E164
+//    PhoneNumberUtils.formatNumberToE164(
+//        this,
+//        countryCode.uppercase()
 //    )
+    val result = PhoneNumberUtil.getInstance().format(
+        PhoneNumberUtil.getInstance().parse(this,countryCode.uppercase()),
+        PhoneNumberUtil.PhoneNumberFormat.E164
+    )
+    if(result.length in 12..13) result else null
 } catch (_: Exception) {
     null
 }

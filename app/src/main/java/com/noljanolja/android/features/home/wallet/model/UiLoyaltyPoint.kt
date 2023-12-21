@@ -1,11 +1,8 @@
 package com.noljanolja.android.features.home.wallet.model
 
-import com.noljanolja.core.loyalty.domain.model.LoyaltyPoint
-import com.noljanolja.core.loyalty.domain.model.LoyaltyStatus
-import com.noljanolja.core.loyalty.domain.model.LoyaltyType
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
-import kotlinx.serialization.Serializable
+import com.noljanolja.core.loyalty.domain.model.*
+import kotlinx.datetime.*
+import kotlinx.serialization.*
 
 @Serializable
 data class UiLoyaltyPoint(
@@ -13,6 +10,7 @@ data class UiLoyaltyPoint(
     val status: Status = Status.COMPLETE,
     val amount: Long = 0,
     val reason: String = "",
+    val unit: String = "",
     val createdAt: Instant = Clock.System.now(),
     val type: Type = Type.RECEIVE,
 ) : java.io.Serializable {
@@ -35,6 +33,7 @@ fun LoyaltyPoint.toUiModel() = UiLoyaltyPoint(
         LoyaltyStatus.COMPLETE -> Status.COMPLETE
     },
     reason = reason,
+    unit = unit,
     createdAt = createdAt,
     type = when (type) {
         LoyaltyType.RECEIVE -> Type.RECEIVE

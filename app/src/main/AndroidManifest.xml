@@ -40,7 +40,7 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Noljanolja"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="adjustResize|adjustPan"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

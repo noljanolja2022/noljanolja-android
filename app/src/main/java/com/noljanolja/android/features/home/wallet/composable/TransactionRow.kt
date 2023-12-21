@@ -1,24 +1,18 @@
 package com.noljanolja.android.features.home.wallet.composable
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
+import androidx.compose.ui.res.*
+import androidx.compose.ui.text.*
+import androidx.compose.ui.text.font.*
+import androidx.compose.ui.unit.*
 import com.noljanolja.android.R
-import com.noljanolja.android.features.home.wallet.model.Type
-import com.noljanolja.android.features.home.wallet.model.UiLoyaltyPoint
-import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.ui.theme.systemGreen
-import com.noljanolja.android.ui.theme.systemRed100
-import com.noljanolja.android.util.formatFullTime
+import com.noljanolja.android.features.home.wallet.model.*
+import com.noljanolja.android.ui.composable.*
+import com.noljanolja.android.ui.theme.*
+import com.noljanolja.android.util.*
 
 @Composable
 fun TransactionRow(
@@ -47,7 +41,7 @@ fun TransactionRow(
             )
             SizeBox(height = 5.dp)
             Text(
-                transaction.createdAt.formatFullTime(),
+                transaction.createdAt.formatFullTimeTransactionNew(),
                 style = TextStyle(
                     fontSize = 8.sp,
                     fontWeight = FontWeight.Medium,
@@ -56,10 +50,7 @@ fun TransactionRow(
             )
         }
         Text(
-            text = stringResource(
-                id = R.string.transaction_history_point,
-                transaction.getPoint()
-            ),
+            text = transaction.getPoint().plus(" ${transaction.unit}"),
             style = MaterialTheme.typography.labelLarge,
             color = if (value >= 0) {
                 MaterialTheme.systemGreen()

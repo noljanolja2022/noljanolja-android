@@ -128,7 +128,10 @@ private fun WalletTransactionContent(
                                 )
                             }
                         }
-                        it.value.withIndex().forEach { (index, value) ->
+                        it.value.withIndex().filter {
+                            it.value.type == uiData.filterType.convertToUiLoyaltyPointType()
+                                    || uiData.filterType == TransactionFilterType.All
+                        }.forEach { (index, value) ->
                             item {
                                 TransactionRow(
                                     transaction = value,

@@ -6,8 +6,7 @@ import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
-import com.noljanolja.android.features.home.wallet.model.UiLoyaltyPoint
-import com.noljanolja.android.features.home.wallet.model.toUiModel
+import com.noljanolja.android.features.home.wallet.model.*
 import com.noljanolja.core.loyalty.domain.model.LoyaltyType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,7 +36,8 @@ class TransactionHistoryViewModel() : BaseViewModel() {
                     _uiStateFlow.emit(
                         UiState(
                             data = value.data?.copy(
-                                transactions = result.getOrDefault(emptyList()).map { it.toUiModel() }
+                                transactions = result.getOrDefault(emptyList())
+                                    .map { it.toUiModel() }
                             )
                         )
                     )
@@ -95,6 +95,12 @@ data class TransactionHistoryUiData(
 enum class TransactionFilterType(@StringRes val titleId: Int) {
     All(R.string.common_all),
     Received(R.string.transaction_receive_type),
-    Spent(R.string.transaction_spent_type),
-//    BuyInShop(R.string.wallet_my_point),
+    Spent(R.string.transaction_spent_type);
+
+    //    BuyInShop(R.string.wallet_my_point),
+    fun convertToUiLoyaltyPointType() = when (this) {
+        Received -> Type.RECEIVE
+        Spent -> Type.SPENT
+        else -> null
+    }
 }
