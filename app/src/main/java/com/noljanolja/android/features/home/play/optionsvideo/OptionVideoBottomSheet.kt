@@ -524,6 +524,18 @@ private fun SelectConversation(
             )
             SizeBox(width = 30.dp)
         }
+        item {
+            Image(
+                ImageVector.vectorResource(R.drawable.ic_instagram),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(48.dp)
+                    .clickable {
+                        onShareClick(AppNameShareToApp.INSTAGRAM)
+                    }
+            )
+            SizeBox(width = 30.dp)
+        }
     }
     SizeBox(height = 30.dp)
 }

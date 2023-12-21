@@ -56,6 +56,11 @@ class OptionsVideoViewModel : BaseShareContactViewModel() {
                 packageName = PackageShareToApp.MESSENGER_PACKAGE
             )
 
+            AppNameShareToApp.INSTAGRAM -> ShareToAppData(
+                appName = AppNameShareToApp.INSTAGRAM,
+                packageName = PackageShareToApp.INSTAGRAM_PACKAGE
+            )
+
             else -> null
         }
         _showConfirmDialog.value = data

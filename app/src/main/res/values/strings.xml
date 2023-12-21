@@ -259,12 +259,12 @@
 
     <string name="transaction_history">Transaction History</string>
     <string name="transaction_history_search_hint">Search transaction</string>
-    <string name="transactions_history_receive_reason">Receive: %s</string>
-    <string name="transactions_history_spent_reason">Spent: %s</string>
+    <string name="transactions_history_receive_reason">Received: %s</string>
+    <string name="transactions_history_spent_reason">Pay: %s</string>
     <string name="transaction_history_point">%s point</string>
     <string name="wallet_history_dashboard">Dashboard</string>
-    <string name="transaction_receive_type">Receive</string>
-    <string name="transaction_spent_type">Spent</string>
+    <string name="transaction_receive_type">Received</string>
+    <string name="transaction_spent_type">Pay</string>
 
     <string name="wallet_dashboard_title">Dashboard</string>
     <string name="wallet_dashboard_receive">Receive</string>
@@ -280,6 +280,12 @@
     <string name="transaction_detail">Detail Transaction</string>
     <string name="transaction_detail_status">Status</string>
     <string name="transaction_detail_time">Time</string>
+    <string name="transaction_detail_type">Type</string>
+    <string name="transaction_detail_code">Transaction code</string>
+    <string name="transaction_detail_video_name">Video name</string>
+    <string name="transaction_detail_video_state">Complete state</string>
+    <string name="transaction_detail_video_complete">Complete now</string>
+    <string name="transaction_detail_video_send_report">Send report</string>
 
     <string name="my_ranking_title">My ranking</string>
 

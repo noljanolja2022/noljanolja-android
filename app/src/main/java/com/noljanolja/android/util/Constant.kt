@@ -16,13 +16,15 @@ class Constant {
         const val WHATS_APP_PACKAGE = "com.whatsapp"
         const val TELEGRAM_PACKAGE = "org.telegram.messenger"
         const val MESSENGER_PACKAGE = "com.facebook.orca"
+        const val INSTAGRAM_PACKAGE = "com.instagram.android"
     }
     object AppNameShareToApp {
         const val FACEBOOK = "Facebook"
         const val TWITTER = "Twitter"
-        const val WHATS_APP = "What App"
+        const val WHATS_APP = "WhatsApp"
         const val TELEGRAM = "Telegram"
         const val MESSENGER = "Messenger"
+        const val INSTAGRAM = "Instagram"
     }
 
     object DefaultValue {
