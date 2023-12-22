@@ -38,6 +38,7 @@ import com.noljanolja.core.video.domain.model.*
 import kotlinx.coroutines.flow.*
 import org.koin.androidx.compose.*
 
+
 const val KEY_IGNORE_VIDEO = "ignore_video"
 
 @Composable
@@ -532,6 +533,18 @@ private fun SelectConversation(
                     .size(48.dp)
                     .clickable {
                         onShareClick(AppNameShareToApp.INSTAGRAM)
+                    }
+            )
+            SizeBox(width = 30.dp)
+        }
+        item {
+            Image(
+                ImageVector.vectorResource(R.drawable.ic_sms),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(48.dp)
+                    .clickable {
+                        onShareClick(AppNameShareToApp.MESSAGE_APP)
                     }
             )
             SizeBox(width = 30.dp)

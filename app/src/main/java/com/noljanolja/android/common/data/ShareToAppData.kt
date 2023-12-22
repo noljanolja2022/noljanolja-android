@@ -6,5 +6,5 @@ package com.noljanolja.android.common.data
 
 data class ShareToAppData (
     val appName: String,
-    val packageName: String
+    var packageName: String?
 )

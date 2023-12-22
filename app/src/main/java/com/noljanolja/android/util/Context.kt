@@ -5,9 +5,9 @@ import android.content.*
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Environment
-import android.provider.OpenableColumns
+import android.provider.*
 import android.widget.Toast
-import androidx.core.content.FileProvider
+import androidx.core.content.*
 import co.touchlab.kermit.Logger
 import coil.Coil
 import coil.memory.MemoryCache
@@ -18,6 +18,7 @@ import com.noljanolja.android.common.error.PhoneNotAvailableFailure
 import com.noljanolja.android.common.error.QrNotValidFailure
 import com.noljanolja.android.common.error.ValidEmailFailure
 import com.noljanolja.android.common.error.ValidPhoneFailure
+import com.noljanolja.android.util.Constant.PackageShareToApp.MESSAGE_APP_PACKAGE
 import com.noljanolja.core.file.model.FileInfo
 import okio.Path.Companion.toPath
 import java.io.*
@@ -192,6 +193,9 @@ fun Context.shareToAnotherApp(videoUrl: String, shareToAppData: ShareToAppData) 
     val intent = Intent(Intent.ACTION_SEND).apply {
         type = "text/plain"
         putExtra(Intent.EXTRA_TEXT, videoUrl)
+        if(shareToAppData.packageName == MESSAGE_APP_PACKAGE) {
+            shareToAppData.packageName = Telephony.Sms.getDefaultSmsPackage(this@shareToAnotherApp)
+        }
         setPackage(shareToAppData.packageName)// Replace with the actual Facebook app package name
     }
     if (intent.resolveActivity(packageManager) == null) {
