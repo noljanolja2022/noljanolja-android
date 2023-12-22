@@ -11,6 +11,7 @@ import com.noljanolja.core.conversation.domain.model.MessageStatus
 import com.noljanolja.core.conversation.domain.repository.ConversationRepository
 import com.noljanolja.core.event.domain.repository.EventBannerRepository
 import com.noljanolja.core.exchange.domain.repository.ExchangeRepository
+import com.noljanolja.core.loyalty.data.model.request.*
 import com.noljanolja.core.loyalty.domain.model.LoyaltyType
 import com.noljanolja.core.loyalty.domain.repository.LoyaltyRepository
 import com.noljanolja.core.media.domain.repository.MediaRepository
@@ -373,6 +374,10 @@ class CoreManager : KoinComponent {
         month = month,
         year = year
     )
+
+    suspend fun getLoyaltyPointDetail(
+        request: GetLoyaltyPointDetailRequest
+    ) = loyaltyRepository.getLoyaltyPointDetail(request)
 
     suspend fun getEventBanners() = eventBannerRepository.getEventBanners()
 
