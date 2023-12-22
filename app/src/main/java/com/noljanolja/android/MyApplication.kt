@@ -299,7 +299,7 @@ class MyApplication : Application() {
                     MyRankingViewModel()
                 }
                 viewModel {
-                    TransactionDetailViewModel()
+                    (id: String, reason: String) -> TransactionDetailViewModel(id, reason)
                 }
                 viewModel {
                     AppInfoViewModel()

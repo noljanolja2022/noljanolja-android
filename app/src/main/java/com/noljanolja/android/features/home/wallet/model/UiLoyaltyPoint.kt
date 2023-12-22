@@ -10,6 +10,7 @@ data class UiLoyaltyPoint(
     val status: Status = Status.COMPLETE,
     val amount: Long = 0,
     val reason: String = "",
+    val reasonLocale: String = "",
     val unit: String = "",
     val createdAt: Instant = Clock.System.now(),
     val type: Type = Type.RECEIVE,
@@ -33,6 +34,7 @@ fun LoyaltyPoint.toUiModel() = UiLoyaltyPoint(
         LoyaltyStatus.COMPLETE -> Status.COMPLETE
     },
     reason = reason,
+    reasonLocale = reasonLocale,
     unit = unit,
     createdAt = createdAt,
     type = when (type) {

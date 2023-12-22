@@ -1,5 +1,6 @@
 package com.noljanolja.core.loyalty.domain.repository
 
+import com.noljanolja.core.loyalty.data.model.request.*
 import com.noljanolja.core.loyalty.domain.model.LoyaltyPoint
 import com.noljanolja.core.loyalty.domain.model.LoyaltyType
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
@@ -14,4 +15,8 @@ interface LoyaltyRepository {
         month: Int? = null,
         year: Int? = null,
     ): Result<List<LoyaltyPoint>>
+
+    suspend fun getLoyaltyPointDetail(
+        request: GetLoyaltyPointDetailRequest
+    ): Result<LoyaltyPoint>
 }

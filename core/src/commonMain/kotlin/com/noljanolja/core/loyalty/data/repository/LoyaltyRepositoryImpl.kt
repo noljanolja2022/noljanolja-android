@@ -1,7 +1,7 @@
 package com.noljanolja.core.loyalty.data.repository
 
 import com.noljanolja.core.loyalty.data.datasource.LoyaltyApi
-import com.noljanolja.core.loyalty.data.model.request.GetLoyaltyPointsRequest
+import com.noljanolja.core.loyalty.data.model.request.*
 import com.noljanolja.core.loyalty.domain.model.LoyaltyPoint
 import com.noljanolja.core.loyalty.domain.model.LoyaltyType
 import com.noljanolja.core.loyalty.domain.model.MemberInfo
@@ -54,6 +54,16 @@ internal class LoyaltyRepositoryImpl(
         } catch (e: Throwable) {
             Result.failure(e)
         }
+    }
+
+    override suspend fun getLoyaltyPointDetail(
+        request: GetLoyaltyPointDetailRequest
+    ): Result<LoyaltyPoint> = try {
+        loyaltyApi.getLoyaltyPointDetail(request).data.let {
+            Result.success(it)
+        }
+    } catch (e: Throwable) {
+        Result.failure(e)
     }
 }
 

@@ -1,6 +1,7 @@
 package com.noljanolja.core.loyalty.data.datasource
 
-import com.noljanolja.core.loyalty.data.model.request.GetLoyaltyPointsRequest
+import com.noljanolja.core.loyalty.data.model.request.*
+import com.noljanolja.core.loyalty.data.model.response.*
 import com.noljanolja.core.loyalty.data.model.response.GetLoyaltyPointsResponse
 import com.noljanolja.core.loyalty.data.model.response.GetMemberInfoResponse
 import com.noljanolja.core.utils.BASE_URL
@@ -25,5 +26,17 @@ internal class LoyaltyApi(
                 }
             }
         }.body()
+    }
+
+    suspend fun getLoyaltyPointDetail(request: GetLoyaltyPointDetailRequest): GetLoyaltyPointDetailResponse {
+        return request.run {
+            client.get("$BASE_URL/api/v1/loyalty/me/points/$id") {
+                url {
+                    with(request) {
+                        parameters.append("reason", reason)
+                    }
+                }
+            }.body()
+        }
     }
 }

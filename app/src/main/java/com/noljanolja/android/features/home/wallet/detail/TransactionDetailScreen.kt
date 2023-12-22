@@ -3,25 +3,37 @@ package com.noljanolja.android.features.home.wallet.detail
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.*
+import androidx.compose.material.icons.*
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.*
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.res.*
+import androidx.compose.ui.text.style.*
 import androidx.compose.ui.unit.*
+import androidx.lifecycle.compose.*
 import com.noljanolja.android.R
 import com.noljanolja.android.features.home.wallet.model.*
 import com.noljanolja.android.ui.composable.*
 import com.noljanolja.android.ui.theme.*
 import com.noljanolja.android.util.*
 import org.koin.androidx.compose.*
+import org.koin.core.parameter.*
 
 @Composable
 fun TransactionDetailScreen(
     loyaltyPoint: UiLoyaltyPoint,
-    viewModel: TransactionDetailViewModel = getViewModel(),
+    viewModel: TransactionDetailViewModel = getViewModel {
+        parametersOf(loyaltyPoint.id, "REASON_PURCHASE_GIFT")//loyaltyPoint.reason)
+    }
 ) {
-    TransactionDetailContent(loyaltyPoint = loyaltyPoint, handleEvent = viewModel::handleEvent)
+    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    TransactionDetailContent(
+        loyaltyPoint = loyaltyPoint,//uiState,
+        handleEvent = viewModel::handleEvent
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

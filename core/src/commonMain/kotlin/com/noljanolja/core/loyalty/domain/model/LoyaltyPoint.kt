@@ -8,9 +8,11 @@ data class LoyaltyPoint(
     val id: String = "",
     val status: LoyaltyStatus = LoyaltyStatus.COMPLETE,
     val amount: Long = 0,
+    val reasonLocale: String = "",
     val reason: String = "",
     val unit: String = "",
     val createdAt: Instant = Clock.System.now(),
+    val log: String = ""
 ) {
     val type: LoyaltyType = if (amount >= 0) LoyaltyType.RECEIVE else LoyaltyType.SPENT
 }

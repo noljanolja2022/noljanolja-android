@@ -37,8 +37,8 @@ open class BaseViewModel : ViewModel(), KoinComponent {
 
     open fun <Any> callMultipleApisOnThread(
         requests: List<BaseFunCallAPI<out Any>>,
-        onEachSuccess: (Any?, String) -> Unit = { _, _ -> },
-        onEachError: (String) -> Unit = { _ -> },
+        onEachSuccess: suspend (Any?, String) -> Unit = { _, _ -> },
+        onEachError: suspend (String) -> Unit = { _ -> },
         onFinish: suspend () -> Unit = {}
     ) {
         viewModelScope.launch(Dispatchers.IO) {
