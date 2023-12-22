@@ -17,6 +17,7 @@ class Constant {
         const val TELEGRAM_PACKAGE = "org.telegram.messenger"
         const val MESSENGER_PACKAGE = "com.facebook.orca"
         const val INSTAGRAM_PACKAGE = "com.instagram.android"
+        const val MESSAGE_APP_PACKAGE = "com.android.mms"
     }
     object AppNameShareToApp {
         const val FACEBOOK = "Facebook"
@@ -25,6 +26,7 @@ class Constant {
         const val TELEGRAM = "Telegram"
         const val MESSENGER = "Messenger"
         const val INSTAGRAM = "Instagram"
+        const val MESSAGE_APP = "Message"
     }
 
     object DefaultValue {
