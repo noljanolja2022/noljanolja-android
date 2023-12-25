@@ -81,7 +81,11 @@ fun Instant.formatFullTimeNew(): String {
 }
 
 fun Instant.formatFullTimeTransactionNew(): String {
-    return this.customFormatTime("HH:mm yyyy/MM/dd").capitalizeLetterAt(8)
+    return this.customFormatTime("HH:mm - dd/MM/yyy").capitalizeLetterAt(8)
+}
+
+fun Instant.formatFullTimeTransactionDetailNew(): String {
+    return this.customFormatTime("HH:mm - yyyy/MM/dd").capitalizeLetterAt(8)
 }
 
 fun Instant.formatTransactionShortTime(): String {

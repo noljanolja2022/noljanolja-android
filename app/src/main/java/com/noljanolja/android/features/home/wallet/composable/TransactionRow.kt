@@ -34,7 +34,7 @@ fun TransactionRow(
                     } else {
                         R.string.transactions_history_spent_reason
                     },
-                    transaction.reason
+                    transaction.reasonLocale
                 ),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onBackground

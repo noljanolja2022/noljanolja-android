@@ -97,6 +97,8 @@ android {
 dependencies {
     implementation(project(":core"))
 
+    implementation("com.google.code.gson:gson:2.10")
+
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.core:core-ktx:1.9.0")
