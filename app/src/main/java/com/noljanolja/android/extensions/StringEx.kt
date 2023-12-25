@@ -27,7 +27,7 @@ fun String?.getPhoneNumberFormatE164(countryCode: String) = try {
         PhoneNumberUtil.getInstance().parse(this,countryCode.uppercase()),
         PhoneNumberUtil.PhoneNumberFormat.E164
     )
-    if(result.length in 12..13) result else null
+    result.takeIf { result.length in 12..14 }
 } catch (_: Exception) {
     null
 }
