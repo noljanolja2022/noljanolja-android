@@ -229,15 +229,15 @@ fun HomeBottomBar(
 ) {
     //test
     val items = listOf(
-        HomeNavigationItem.WatchItem,
+        HomeNavigationItem.FriendsItem,
         HomeNavigationItem.ChatItem.apply {
             icon = ImageVector.vectorResource(R.drawable.ic_chat)
         },
+        HomeNavigationItem.WatchItem,
         HomeNavigationItem.WalletItem,
         HomeNavigationItem.StoreItem.apply {
             icon = ImageVector.vectorResource(R.drawable.ic_shop_tab_bar)
         },
-        HomeNavigationItem.FriendsItem,
     )
     NavigationBar(
         modifier = modifier,

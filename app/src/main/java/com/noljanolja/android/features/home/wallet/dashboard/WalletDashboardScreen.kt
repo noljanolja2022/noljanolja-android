@@ -107,7 +107,7 @@ private fun WalletDashboardContent(
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(vertical = 6.dp, horizontal = 16.dp)
         ) {
-            LazyColumn() {
+            LazyColumn {
                 item {
                     TransactionsChart(
                         month = data.currentMonth,

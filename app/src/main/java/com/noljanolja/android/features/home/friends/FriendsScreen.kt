@@ -35,7 +35,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -54,7 +53,7 @@ import com.noljanolja.android.ui.composable.LoadingDialog
 import com.noljanolja.android.ui.composable.OvalAvatar
 import com.noljanolja.android.ui.composable.Rationale
 import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.ui.theme.withBold
+import com.noljanolja.android.ui.theme.*
 import com.noljanolja.core.user.domain.model.User
 import org.koin.androidx.compose.getViewModel
 
@@ -89,19 +88,14 @@ private fun FriendsScreenContent(
                     )
                 },
                 text = { Text(text = stringResource(R.string.add_friend_title)) },
-                containerColor = MaterialTheme.colorScheme.secondary,
+                containerColor = YellowMain,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
     ) { padding ->
-        Image(
-            painter = painterResource(R.drawable.bg_with_circle),
-            modifier = Modifier.fillMaxSize(),
-            contentDescription = null,
-            contentScale = ContentScale.FillWidth
-        )
         Column(
             modifier = Modifier
+                .background(MaterialTheme.colorScheme.primary)
                 .fillMaxSize()
                 .padding(padding)
         ) {
@@ -229,13 +223,13 @@ private fun FriendHeading(onAddFriend: () -> Unit) {
         ) {
             Text(
                 stringResource(R.string.invite_friends_to_get_benefits),
-                color = MaterialTheme.colorScheme.secondary,
+                color = YellowMain,
                 style = MaterialTheme.typography.bodyLarge.withBold()
             )
             Icon(
                 Icons.Default.ChevronRight,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.secondary,
+                tint = YellowMain,
                 modifier = Modifier.size(24.dp)
             )
         }

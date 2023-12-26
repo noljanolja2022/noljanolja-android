@@ -3,6 +3,8 @@ package com.noljanolja.android.ui.composable
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.*
+import androidx.compose.material.icons.*
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
@@ -89,7 +91,6 @@ fun RoundedButton(
     isEnable: Boolean = true,
     colors: CardColors = CardDefaults.cardColors(),
     shape: Shape? = null,
-    contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
     style: TextStyle = MaterialTheme.typography.bodyMedium,
     onClick: () -> Unit,
 ) {
@@ -168,7 +169,6 @@ fun PrimaryButton(
         ),
         onClick = onClick,
         style = style,
-        contentPadding = contentPadding
     )
 }
 
@@ -301,6 +301,70 @@ internal fun ButtonTextWithToggle(
                     uncheckedTrackColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     checkedThumbColor = MaterialTheme.colorScheme.background
                 ),
+            )
+        }
+    }
+}
+
+@Composable
+internal fun ColorButton(
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    isSelected: Boolean = false,
+    color: Color,
+    radius: Int = 5,
+    title: String,
+    textSize: Int = 14,
+    textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
+    height: Int = BUTTON_TITLE,
+    bgColor: Color = MaterialTheme.colorScheme.background,
+    textColor: Color = MaterialTheme.colorScheme.onBackground,
+    bgDisableColor: Color = MaterialTheme.colorScheme.surface,
+    onClick: () -> Unit = {},
+) {
+    ElevatedButton(
+        enabled = enabled,
+        onClick = onClick,
+        modifier = Modifier
+            .height(height.dp)
+            .then(modifier),
+        shape = RoundedCornerShape(radius.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = bgColor,
+            disabledContainerColor = bgDisableColor
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .size((height / 2).dp)
+                .background(
+                    color = color,
+                    shape = CircleShape
+                )
+        )
+        MarginHorizontal(10)
+        Text(
+            modifier = Modifier
+                .weight(1f)
+                .padding(vertical = PADDING_ICON.dp),
+            text = title,
+            style = textStyle.copy(
+                color = textColor,
+                fontSize = textSize.sp,
+                platformStyle = PlatformTextStyle(
+                    includeFontPadding = false
+                )
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        MarginHorizontal(10)
+        if (isSelected) {
+            Icon(
+                Icons.Filled.Done,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+                tint = MaterialTheme.colorScheme.onBackground
             )
         }
     }

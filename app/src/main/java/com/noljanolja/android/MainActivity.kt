@@ -1,5 +1,6 @@
 package com.noljanolja.android
 
+import android.annotation.*
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -12,8 +13,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
@@ -27,11 +27,13 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
 import com.noljanolja.android.common.base.launchInMain
 import com.noljanolja.android.common.base.launchInMainIO
+import com.noljanolja.android.common.enums.*
 import com.noljanolja.android.common.mobiledata.data.ContactsLoader
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.navigation.NavigationManager
 import com.noljanolja.android.common.network.ConnectivityObserver
 import com.noljanolja.android.common.network.NetworkConnectivityObserver
+import com.noljanolja.android.common.sharedpreference.*
 import com.noljanolja.android.ui.theme.NoljanoljaTheme
 import com.noljanolja.core.CoreManager
 import kotlinx.coroutines.Dispatchers
@@ -40,35 +42,43 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
-import java.util.Arrays
 
 class MainActivity : ComponentActivity() {
     private val navigationManager: NavigationManager by inject()
 
     private val coreManager: CoreManager by inject()
     private val contactsLoader: ContactsLoader by inject()
+    private val sharedPreferenceHelper: SharedPreferenceHelper by inject()
     private val authSdk: AuthSdk by inject()
+    private var appColorId = mutableStateOf(EAppColorSetting.KEY_DEFAULT_COLOR)
     private lateinit var connectivityObserver: ConnectivityObserver
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         MobileAds.initialize(this) {}
         MobileAds.setRequestConfiguration(
             RequestConfiguration.Builder()
-                .setTestDeviceIds(Arrays.asList("5ECA40C7C6D7F5F65594DF7F55AC5E83")).build()
+                .setTestDeviceIds(listOf("5ECA40C7C6D7F5F65594DF7F55AC5E83")).build()
         )
         connectivityObserver = NetworkConnectivityObserver(this)
         syncContacts()
         Logger.d("DeviceId ${getDeviceId(this)}")
+        appColorId.value = sharedPreferenceHelper.appColor
         setContent {
-            RequestPermissions() {
+            val appColorSettingKey by remember {
+                appColorId
+            }
+
+            RequestPermissions {
                 if (it[android.Manifest.permission.READ_CONTACTS] == true) {
                     syncContacts()
                 }
             }
 
-            NoljanoljaTheme {
+            NoljanoljaTheme(
+                appColorSetting = EAppColorSetting.getColorByKey(appColorSettingKey)
+            ) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -136,7 +146,11 @@ class MainActivity : ComponentActivity() {
         super.attachBaseContext(newBase)
     }
 
-    fun launchIfLogin(block: suspend () -> Unit) = launchInMainIO {
+    internal fun setAppColorId(key: Int) {
+        appColorId.value = key
+    }
+
+    private fun launchIfLogin(block: suspend () -> Unit) = launchInMainIO {
         authSdk.getIdToken(false)?.takeIf { it.isNotBlank() } ?: return@launchInMainIO
         block.invoke()
     }
@@ -153,6 +167,7 @@ class MainActivity : ComponentActivity() {
             }
     }
 
+    @SuppressLint("HardwareIds")
     fun getDeviceId(context: Context): String {
         return Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
     }
@@ -160,6 +175,7 @@ class MainActivity : ComponentActivity() {
     companion object {
         private const val EXTRA_CONVERSATION_ID = "conversationId"
         private const val EXTRA_VIDEO_ID = "videoId"
+
         private fun getIntent(
             context: Context,
             conversationId: String,

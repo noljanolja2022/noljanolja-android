@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.*
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.*
@@ -37,6 +38,7 @@ import com.noljanolja.android.common.Const.VIDEO_IMAGE_RATIO
 import com.noljanolja.android.common.base.*
 import com.noljanolja.android.features.home.play.optionsvideo.*
 import com.noljanolja.android.ui.composable.*
+import com.noljanolja.android.ui.theme.*
 import com.noljanolja.android.util.*
 import com.noljanolja.core.user.domain.model.*
 import com.noljanolja.core.video.domain.model.*
@@ -123,7 +125,7 @@ private fun PlayListContent(
 //                    style = SpanStyle(
 //                        fontSize = 24.0.sp,
 //                        fontWeight = FontWeight(700),
-//                        color = PrimaryGreen
+//                        color = MaterialTheme.colorScheme.primary
 //                    )
 //                ) {
 //                    append(stringResource(id = R.string.video_title_watching))
@@ -431,12 +433,12 @@ fun TrendingVideo(
             text = stringResource(id = R.string.get_point_after_watching, video.totalPoints),
             style = MaterialTheme.typography.bodyMedium.copy(
                 fontWeight = FontWeight(700),
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                color = Color.Black,
                 textAlign = TextAlign.Center,
             ),
             modifier = thumbnailModifier
                 .fillMaxWidth()
-                .background(color = MaterialTheme.colorScheme.secondary)
+                .background(color = MaterialTheme.colorScheme.tertiary)
                 .padding(vertical = 3.dp)
         )
     }
@@ -466,7 +468,7 @@ fun TrendingVideo(
         modifier = Modifier.padding(horizontal = 16.dp),
         text = video.category.title,
         style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.tertiary
+        color = BlueMain
     )
     Text(
         modifier = Modifier.padding(horizontal = 16.dp),

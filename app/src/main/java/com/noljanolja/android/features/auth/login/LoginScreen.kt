@@ -48,6 +48,8 @@ fun LoginScreen(
     viewModel.handleError()
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
 
+
+
     when (uiState) {
         LoginUIState.VerifyEmail -> {
             LoginVerifyEmail(
@@ -271,9 +273,10 @@ private fun ColumnScope.LoginPhoneContent(
         modifier = Modifier.fillMaxWidth(),
         style = MaterialTheme.typography.bodyMedium
     )
-    Spacer(modifier = Modifier.height(15.dp))
 
-    Row(modifier = Modifier.fillMaxWidth()) {
+    Row(
+        modifier = Modifier.fillMaxWidth().height(150.dp)
+    ) {
         TextField(
             modifier = Modifier.widthIn(1.dp, 120.dp),
             value = "${country.getFlagEmoji()} +${country.phoneCode}",

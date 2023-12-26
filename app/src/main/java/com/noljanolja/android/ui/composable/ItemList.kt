@@ -96,7 +96,7 @@ internal fun ItemType(
     textColor: Color = textColor(),
     textColorSelected: Color = Color.Black,
     bgColor: Color = backgroundChoseItemColor(),
-    bgColorSelected: Color = PrimaryGreen,
+    bgColorSelected: Color = MaterialTheme.colorScheme.primary,
     onItemClick: (ItemChoose) -> Unit,
 ) {
     item.run {

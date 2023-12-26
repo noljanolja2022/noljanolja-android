@@ -337,6 +337,7 @@ private fun MyVouchers(
                 Image(
                     painter = painterResource(id = R.drawable.ic_wallet_sharp),
                     contentDescription = null,
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
                     modifier = Modifier.size(37.dp)
                 )
                 SizeBox(width = 10.dp)
@@ -389,7 +390,7 @@ private fun ProductsAndVouchers(
                 ProductSectionList(
                     gifts = topFeatureGifts,
                     title = stringResource(id = R.string.shop_section_top_feature),
-                    containerColor = PrimaryGreen,
+                    containerColor = MaterialTheme.colorScheme.primary,
                     titleColor = Color.Black,
                     paddingTop = DefaultValue.PADDING_VIEW_SCREEN,
                     paddingBottom = DefaultValue.PADDING_VIEW_SCREEN,

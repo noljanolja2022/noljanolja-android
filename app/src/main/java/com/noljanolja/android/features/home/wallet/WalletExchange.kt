@@ -52,7 +52,6 @@ fun WalletExchangeScreen(
     )
 }
 
-@OptIn(ExperimentalTextApi::class)
 @Composable
 private fun WalletExchangeContent(
     uiState: UiState<WalletUIData>,
@@ -61,7 +60,7 @@ private fun WalletExchangeContent(
     handleEvent: (WalletEvent) -> Unit,
     onWalletPointClick: () -> Unit
 ) {
-    var context = LocalContext.current
+    val context = LocalContext.current
     var showAdmob by remember { mutableStateOf(false) }
     var pointOfDayLineCount by remember {
         mutableStateOf(0)
@@ -158,7 +157,7 @@ private fun WalletExchangeContent(
                     .fillMaxWidth()
                     .height(48.dp),
                 title = stringResource(id = R.string.transaction_history).uppercase(),
-                bgColor = PrimaryGreen,
+                bgColor = MaterialTheme.colorScheme.primary,
                 textColor = Color.Black,
                 icon = painterResource(id = R.drawable.ic_history)
             ) {
@@ -373,8 +372,6 @@ fun AdmobDialog(
         onDismissRequest = { },
         properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
     ) {
-        val context = LocalContext.current
-
         Box {
             AdmobRectangle(
                 modifier = Modifier

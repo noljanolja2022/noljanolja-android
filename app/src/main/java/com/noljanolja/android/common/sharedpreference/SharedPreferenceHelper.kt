@@ -68,6 +68,14 @@ class SharedPreferenceHelper(private val context: Context) {
             }
         }
 
+    var appColor: Int
+        get() = sharePreference.getInt(KEY_APP_COLOR, 0)
+        set(value) {
+            sharePreference.run {
+                edit().putInt(KEY_APP_COLOR, value).apply()
+            }
+        }
+
     companion object {
         const val YOUTUBE_TOKEN = "youtube_token"
         const val SHOW_NEW_CHAT_DIALOG = "show_new_chat_dialog"
@@ -75,5 +83,6 @@ class SharedPreferenceHelper(private val context: Context) {
         const val KEY_LOGIN_OTP_TIME = "key_login_otp_time"
         const val KEY_SEEN_BANNERS = "key_seen_banners"
         const val KEY_CONVERT_POINT_TIME = "key_convert_point_time"
+        const val KEY_APP_COLOR = "key_app_color"
     }
 }

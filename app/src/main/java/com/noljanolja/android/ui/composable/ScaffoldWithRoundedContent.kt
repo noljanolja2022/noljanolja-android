@@ -52,7 +52,8 @@ fun ScaffoldWithRoundedContent(
                     modifier = Modifier.fillMaxSize(),
                     shape = roundedCornerShape,
                     colors = CardDefaults.cardColors(
-                        containerColor = backgroundBottomColor ?: MaterialTheme.colorScheme.background
+                        containerColor = backgroundBottomColor
+                            ?: MaterialTheme.colorScheme.background
                     )
                 ) {
                     content.invoke()
@@ -74,11 +75,16 @@ fun ScaffoldWithCircleBgRoundedContent(
 ) {
     ScaffoldWithRoundedContent(
         background = {
-            Image(
-                painter = painterResource(R.drawable.bg_with_circle),
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.FillWidth,
-                contentDescription = null
+//            Image(
+//                painter = painterResource(R.drawable.bg_with_circle),
+//                modifier = Modifier.fillMaxSize(),
+//                contentScale = ContentScale.FillWidth,
+//                contentDescription = null
+//            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.primary)
             )
         },
         backgroundBottomColor = backgroundBottomColor,
@@ -98,9 +104,11 @@ fun ScaffoldWithCircleBackground(
     ),
 ) {
     Scaffold() { paddingValues ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
             Image(
                 painter = painterResource(R.drawable.bg_with_circle),
                 modifier = Modifier.fillMaxSize(),
