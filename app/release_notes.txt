@@ -1,3 +1,4 @@
+- 1.1.33: Update transaction detail, add change color feature, change order of bottom tab and fix bug when mesage
 - 1.1.32: Update transaction list
 - 1.1.31: Fix authenticate UI and add share video to instagram
 - 1.1.30: Update Authenticate flow login by Phone number
