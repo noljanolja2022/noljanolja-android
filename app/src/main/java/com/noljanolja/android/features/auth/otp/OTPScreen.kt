@@ -19,7 +19,6 @@ import com.noljanolja.android.R
 import com.noljanolja.android.common.sharedpreference.*
 import com.noljanolja.android.features.auth.otp.composable.*
 import com.noljanolja.android.ui.composable.*
-import com.noljanolja.android.ui.theme.*
 import com.noljanolja.android.util.*
 import com.noljanolja.android.util.Constant.DefaultValue.PADDING_VIEW_SCREEN
 import kotlinx.coroutines.*
@@ -86,7 +85,7 @@ fun OTPScreenContent(
                     sharedPreferenceHelper.loginOtpTime = 0L
                 },
                 onError = {
-                    Log.e("TTT", "OTPScreenContent: $it", )
+                    Log.e("TTT", "OTPScreenContent: $it")
                     context.showToast(it.message)
                 },
                 onCodeSent = {
@@ -176,7 +175,7 @@ fun OTPScreenContent(
                         .padding(horizontal = PADDING_VIEW_SCREEN.dp)
                         .height(48.dp),
                     title = stringResource(id = R.string.common_continue),
-                    bgColor = PrimaryGreen,
+                    bgColor = MaterialTheme.colorScheme.primary,
                     textColor = Color.Black,
                     enabled = otp.all { it.isDigit() },
                     onClick = {
@@ -185,7 +184,7 @@ fun OTPScreenContent(
                         }
                     }
                 )
-                
+
                 MarginVertical(30)
             }
         }

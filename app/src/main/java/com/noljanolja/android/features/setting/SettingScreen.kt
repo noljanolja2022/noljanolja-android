@@ -18,12 +18,15 @@ import androidx.compose.ui.text.style.*
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.*
 import androidx.lifecycle.compose.*
+import com.noljanolja.android.*
 import com.noljanolja.android.BuildConfig
 import com.noljanolja.android.R
+import com.noljanolja.android.common.enums.*
+import com.noljanolja.android.common.sharedpreference.*
 import com.noljanolja.android.extensions.*
 import com.noljanolja.android.features.auth.updateprofile.components.*
 import com.noljanolja.android.ui.composable.*
-import com.noljanolja.android.ui.theme.PrimaryGreen
+import com.noljanolja.android.ui.theme.*
 import com.noljanolja.android.util.*
 import com.noljanolja.android.util.Constant.DefaultValue.PADDING_HORIZONTAL_SCREEN
 import com.noljanolja.android.util.Constant.DefaultValue.PADDING_VERTICAL_SCREEN
@@ -96,6 +99,7 @@ private fun SettingContent(
         mutableStateOf(false)
     }
     val context = LocalContext.current
+    val sharedPreferenceHelper: SharedPreferenceHelper = get()
     var avatar by rememberSaveable { mutableStateOf<Uri?>(null) }
     var showAvatarInputDialog by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(key1 = avatar, block = {
@@ -294,6 +298,57 @@ private fun SettingContent(
                         handleEvent(SettingEvent.FAQ)
                     }
                 )
+                MarginVertical(32)
+                Text(
+                    text = "App colors",
+                    textAlign = TextAlign.Start,
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                MarginVertical(PADDING_VIEW)
+                ColorButton(
+                    title = "Defaut",
+                    isSelected = sharedPreferenceHelper.appColor != EAppColorSetting.KEY_ELEGANT_BLUE_COLOR
+                            && sharedPreferenceHelper.appColor != EAppColorSetting.KEY_WARM_GOLD_COLOR,
+                    color = Green200Main,
+                    onClick = {
+                        if (sharedPreferenceHelper.appColor != EAppColorSetting.KEY_DEFAULT_COLOR) {
+                            sharedPreferenceHelper.appColor = EAppColorSetting.KEY_DEFAULT_COLOR
+                            context.castTo<MainActivity>()?.setAppColorId(
+                                EAppColorSetting.KEY_DEFAULT_COLOR
+                            )
+                        }
+                    }
+                )
+                MarginVertical(PADDING_VIEW)
+                ColorButton(
+                    title = "Elegent blue",
+                    isSelected = sharedPreferenceHelper.appColor == EAppColorSetting.KEY_ELEGANT_BLUE_COLOR,
+                    color = Blue200Main,
+                    onClick = {
+                        if (sharedPreferenceHelper.appColor != EAppColorSetting.KEY_ELEGANT_BLUE_COLOR) {
+                            sharedPreferenceHelper.appColor =
+                                EAppColorSetting.KEY_ELEGANT_BLUE_COLOR
+                            context.castTo<MainActivity>()?.setAppColorId(
+                                EAppColorSetting.KEY_ELEGANT_BLUE_COLOR
+                            )
+                        }
+                    }
+                )
+                MarginVertical(PADDING_VIEW)
+                ColorButton(
+                    title = "Warm gold",
+                    isSelected = sharedPreferenceHelper.appColor == EAppColorSetting.KEY_WARM_GOLD_COLOR,
+                    color = Gold200Main,
+                    onClick = {
+                        if (sharedPreferenceHelper.appColor != EAppColorSetting.KEY_WARM_GOLD_COLOR) {
+                            sharedPreferenceHelper.appColor = EAppColorSetting.KEY_WARM_GOLD_COLOR
+                            context.castTo<MainActivity>()?.setAppColorId(
+                                EAppColorSetting.KEY_WARM_GOLD_COLOR
+                            )
+                        }
+                    }
+                )
                 MarginVertical(10)
                 Text(
                     modifier = Modifier
@@ -321,7 +376,7 @@ private fun SettingContent(
                 ButtonRadius(
                     modifier = Modifier.fillMaxWidth(),
                     title = stringResource(id = R.string.common_log_out).uppercase(),
-                    bgColor = PrimaryGreen,
+                    bgColor = MaterialTheme.colorScheme.primary,
                     textColor = Color.Black
                 ) {
                     isShowLogoutDialog = true

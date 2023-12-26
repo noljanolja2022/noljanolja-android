@@ -2,7 +2,6 @@ package com.noljanolja.android.features.home.friendoption
 
 import android.app.*
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.*
 import androidx.compose.material3.*
@@ -10,25 +9,21 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.*
 import androidx.compose.ui.unit.*
-import androidx.constraintlayout.compose.*
 import androidx.lifecycle.compose.*
 import com.noljanolja.android.R
 import com.noljanolja.android.common.ads.nativeads.*
 import com.noljanolja.android.ui.composable.*
 import com.noljanolja.android.ui.theme.*
 import com.noljanolja.android.util.*
-import com.noljanolja.core.exchange.domain.domain.*
 import com.noljanolja.core.loyalty.domain.model.*
 import org.koin.androidx.compose.*
 import org.koin.core.parameter.*
-import kotlin.math.*
 
 /**
  * Created by tuyen.dang on 11/14/2023.
@@ -140,7 +135,7 @@ private fun FriendOptionContent(
                         .weight(1f)
                         .height(48.dp),
                     title = stringResource(id = R.string.add_friend_send_point).uppercase(),
-                    bgColor = PrimaryGreen,
+                    bgColor = MaterialTheme.colorScheme.primary,
                     textColor = Color.Black
                 ) {
 

@@ -29,7 +29,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.ui.theme.Green100
 import com.noljanolja.android.ui.theme.NeutralLight
 import com.noljanolja.android.ui.theme.darkContent
 import org.koin.androidx.compose.getViewModel
@@ -43,7 +42,7 @@ fun SplashScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Green100)
+                .background(MaterialTheme.colorScheme.secondaryContainer)
                 .padding(paddingValues)
                 .padding(bottom = 50.dp),
             verticalArrangement = Arrangement.Center,

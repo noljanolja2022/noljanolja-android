@@ -6,19 +6,20 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import com.noljanolja.android.common.enums.*
 
-private val LightColorScheme = lightColorScheme(
-    primary = PrimaryGreen,
+private fun lightColorScheme(appColorSetting: EAppColorSetting) = lightColorScheme(
+    primary = appColorSetting.primary,
     onPrimary = NeutralDarkGrey,
-    primaryContainer = LightGreen,
+    primaryContainer = appColorSetting.primaryContainer,
     onPrimaryContainer = NeutralDarkGrey,
 
-    secondary = YellowMain,
-    secondaryContainer = Yellow00,
+    secondary = appColorSetting.secondary,
+    secondaryContainer = appColorSetting.secondaryContainer,
     onSecondary = Color.White,
     onSecondaryContainer = NeutralDarkGrey,
 
-    tertiary = BlueMain,
+    tertiary = appColorSetting.tertiary,
     tertiaryContainer = Blue00,
     onTertiary = Color.White,
     onTertiaryContainer = Color.White,
@@ -34,18 +35,18 @@ private val LightColorScheme = lightColorScheme(
     onSurfaceVariant = NeutralDeepGrey,
 )
 
-private val DarkColorScheme = darkColorScheme(
-    primary = PrimaryGreen,
+private fun darkColorScheme(appColorSetting: EAppColorSetting) = darkColorScheme(
+    primary = appColorSetting.primary,
     onPrimary = Color(0xFF263500),
-    primaryContainer = LightGreen,
+    primaryContainer = appColorSetting.primaryContainer,
     onPrimaryContainer = NeutralDarkGrey,
 
-    secondary = YellowMain,
-    secondaryContainer = Yellow00,
+    secondary = appColorSetting.secondary,
+    secondaryContainer = appColorSetting.secondaryContainer,
     onSecondary = Color.White,
     onSecondaryContainer = NeutralDarkGrey,
 
-    tertiary = BlueMain,
+    tertiary = appColorSetting.tertiary,
     tertiaryContainer = Blue00,
     onTertiary = Color(0xFF263500),
     onTertiaryContainer = Color(0xFFC0F44A),
@@ -64,15 +65,14 @@ private val DarkColorScheme = darkColorScheme(
 @Composable
 fun NoljanoljaTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = false,
+    appColorSetting: EAppColorSetting,
     content: @Composable () -> Unit,
 ) {
     MaterialTheme(
         colorScheme = if (darkTheme) {
-            DarkColorScheme
+            darkColorScheme(appColorSetting)
         } else {
-            LightColorScheme
+            lightColorScheme(appColorSetting)
         },
         typography = Typography,
         content = content,
@@ -109,22 +109,11 @@ fun MaterialTheme.colorBackgroundTransaction(darkTheme: Boolean = isSystemInDark
     }
 
 @Composable
-fun MaterialTheme.primaryColor() = colorScheme.primary
-
-@Composable
 fun MaterialTheme.systemGreen(darkTheme: Boolean = isSystemInDarkTheme()) =
     if (darkTheme) {
         Color(0xFF34C759)
     } else {
         Color(0xFF34C759)
-    }
-
-@Composable
-fun MaterialTheme.systemRed50(darkTheme: Boolean = isSystemInDarkTheme()) =
-    if (darkTheme) {
-        Color(0xFFFB5141)
-    } else {
-        Color(0xFFFB5141)
     }
 
 @Composable
@@ -144,25 +133,10 @@ fun MaterialTheme.systemBlue(darkTheme: Boolean = isSystemInDarkTheme()) =
     }
 
 @Composable
-fun MaterialTheme.colorMyChatText(darkTheme: Boolean = isSystemInDarkTheme()) =
-    NeutralDarkGrey
-
-@Composable
-fun MaterialTheme.colorMyChatTime(darkTheme: Boolean = isSystemInDarkTheme()) =
-    if (darkTheme) {
-        Color(0xFF007AFF)
-    } else {
-        Color(0xFF007AFF)
-    }
-
-@Composable
-fun MaterialTheme.green300() = Color(0xFF4F6D00)
+fun MaterialTheme.colorMyChatText() = NeutralDarkGrey
 
 @Composable
 fun MaterialTheme.darkContent() = NeutralDarkGrey
-
-@Composable
-fun MaterialTheme.lightContent() = Color.LightGray
 
 @Composable
 fun MaterialTheme.disableBackgroundColor(darkTheme: Boolean = isSystemInDarkTheme()) =
@@ -171,20 +145,6 @@ fun MaterialTheme.disableBackgroundColor(darkTheme: Boolean = isSystemInDarkThem
     } else {
         NeutralLightGrey
     }
-
-@Composable
-fun MaterialTheme.helpIconColor(darkTheme: Boolean = isSystemInDarkTheme()) = if (darkTheme) {
-    colorScheme.primary
-} else {
-    NeutralDarkGrey
-}
-
-@Composable
-fun MaterialTheme.green300(darkTheme: Boolean = isSystemInDarkTheme()) = if (darkTheme) {
-    LightGreen
-} else {
-    Green300
-}
 
 @Composable
 fun MaterialTheme.backgroundInPopup(darkTheme: Boolean = isSystemInDarkTheme()) = if (darkTheme) {

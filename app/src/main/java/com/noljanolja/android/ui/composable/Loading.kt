@@ -2,12 +2,11 @@ package com.noljanolja.android.ui.composable
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.tooling.preview.*
-import com.noljanolja.android.ui.theme.*
 
 /**
  * Created by tuyen.dang on 5/7/2023.
@@ -25,7 +24,7 @@ fun LoadingScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CircularProgressIndicator(
-            color = PrimaryGreen
+            color = MaterialTheme.colorScheme.primary
         )
     }
 }

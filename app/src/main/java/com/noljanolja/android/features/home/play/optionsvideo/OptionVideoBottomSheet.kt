@@ -310,7 +310,7 @@ private fun ContactListContent(
                     .fillMaxWidth()
                     .height(48.dp),
                 title = stringResource(id = R.string.common_send).uppercase(),
-                bgColor = PrimaryGreen
+                bgColor = MaterialTheme.colorScheme.primary
             ) {
                 onSendToUser()
             }
@@ -440,7 +440,7 @@ private fun SelectConversation(
                             modifier = Modifier
                                 .size(40.dp)
                                 .clip(RoundedCornerShape((40 / 3).dp))
-                                .background(PrimaryGreen)
+                                .background(MaterialTheme.colorScheme.primary)
                                 .padding(5.dp)
                         )
                         SizeBox(height = 10.dp)
@@ -636,7 +636,7 @@ private fun ConfirmDialog(
                         .clickable {
                             onNegativeClick()
                         },
-                    color = MaterialTheme.primaryColor(),
+                    color = MaterialTheme.colorScheme.primary,
                     textAlign = TextAlign.Center
                 )
                 MarginHorizontal(DefaultValue.PADDING_HORIZONTAL_SCREEN)
@@ -649,7 +649,7 @@ private fun ConfirmDialog(
                         .clickable {
                             onConfirmClick()
                         },
-                    color = MaterialTheme.primaryColor(),
+                    color = MaterialTheme.colorScheme.primary,
                     textAlign = TextAlign.Center
                 )
             }

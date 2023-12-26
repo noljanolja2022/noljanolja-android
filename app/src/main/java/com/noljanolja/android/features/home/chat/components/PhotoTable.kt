@@ -156,7 +156,7 @@ fun GridContent(
                     .padding(horizontal = 16.dp, vertical = 10.dp)
                     .height(48.dp),
                 title = stringResource(id = R.string.common_send),
-                bgColor = PrimaryGreen,
+                bgColor = MaterialTheme.colorScheme.primary,
                 onClick = onSendButtonClick
             )
         }

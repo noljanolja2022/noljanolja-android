@@ -77,7 +77,7 @@ internal fun BottomSheetMessage(
                             .fillMaxWidth()
                             .height(48.dp),
                         title = it,
-                        bgColor = PrimaryGreen,
+                        bgColor = MaterialTheme.colorScheme.primary,
                         textColor = Color.Black,
                         onClick = onConfirmClick
                     )

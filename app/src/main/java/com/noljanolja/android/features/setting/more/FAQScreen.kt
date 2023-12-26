@@ -33,7 +33,6 @@ import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.darkContent
-import com.noljanolja.android.ui.theme.green300
 import com.noljanolja.android.ui.theme.withBold
 import org.koin.androidx.compose.getViewModel
 
@@ -134,7 +133,7 @@ private fun QAItem(qa: QA, onClick: () -> Unit) {
                     .typography
                     .bodyLarge
                     .withBold()
-                    .copy(color = MaterialTheme.green300())
+                    .copy(color = MaterialTheme.colorScheme.secondary)
             )
             IconButton(onClick = onClick, modifier = Modifier.size(24.dp)) {
                 Icon(Icons.Default.ChevronRight, contentDescription = null)
@@ -165,7 +164,7 @@ private fun SelectedQAItem(qa: QA, onClick: () -> Unit) {
                     .typography
                     .bodyLarge
                     .withBold()
-                    .copy(color = MaterialTheme.green300())
+                    .copy(color = MaterialTheme.colorScheme.secondary)
             )
             IconButton(onClick = onClick, modifier = Modifier.size(24.dp)) {
                 Icon(Icons.Default.KeyboardArrowDown, contentDescription = null)

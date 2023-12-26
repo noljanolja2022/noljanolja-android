@@ -21,17 +21,21 @@ import androidx.lifecycle.lifecycleScope
 import com.noljanolja.VideoBroadcastReceiver
 import com.noljanolja.android.MyApplication
 import com.noljanolja.android.R
+import com.noljanolja.android.common.enums.*
+import com.noljanolja.android.common.sharedpreference.*
 import com.noljanolja.android.ui.composable.youtube.YoutubeViewWithFullScreen
 import com.noljanolja.android.ui.theme.NoljanoljaTheme
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.*
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.core.parameter.parametersOf
 
 class PlayVideoActivity : ComponentActivity() {
 
     private val isInPipMode = mutableStateOf(false)
+    private val sharedPreferenceHelper: SharedPreferenceHelper by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +45,11 @@ class PlayVideoActivity : ComponentActivity() {
         YoutubeViewWithFullScreen.release()
         MyApplication.backStackActivities.add(this)
         setContent {
-            NoljanoljaTheme {
+            NoljanoljaTheme(
+                appColorSetting = EAppColorSetting.getColorByKey(
+                    sharedPreferenceHelper.appColor
+                )
+            ) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),

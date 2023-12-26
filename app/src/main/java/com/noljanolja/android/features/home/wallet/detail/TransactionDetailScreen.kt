@@ -155,7 +155,7 @@ private fun TransactionDetailContent(
                 modifier = Modifier.fillMaxWidth(),
                 title = stringResource(id = R.string.transaction_detail_video_send_report).uppercase(),
                 textColor = Color.Black,
-                bgColor = Green100,
+                bgColor = MaterialTheme.colorScheme.secondaryContainer,
                 onClick = {}
             )
         }
@@ -295,7 +295,7 @@ private fun VideoDetailView(
         LinearProgressIndicator(
             progress = 1f,
             modifier = Modifier.fillMaxWidth(),
-            trackColor = Green100
+            trackColor = MaterialTheme.colorScheme.secondaryContainer
         )
         MarginVertical(10)
         Row(
@@ -323,7 +323,7 @@ private fun VideoDetailView(
             modifier = Modifier.fillMaxWidth(),
             enabled = false,
             title = stringResource(id = R.string.transaction_detail_video_complete).uppercase(),
-            bgColor = Green100,
+            bgColor = MaterialTheme.colorScheme.secondaryContainer,
             bgDisableColor = NeutralGrey,
             onClick = {}
         )
