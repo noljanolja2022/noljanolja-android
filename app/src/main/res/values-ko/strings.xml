@@ -231,6 +231,7 @@
     <string name="transaction_detail_video_state">완전한 상태</string>
     <string name="transaction_detail_video_complete">지금 완료하세요</string>
     <string name="transaction_detail_video_send_report">보고서 보내기</string>
+    <string name="transaction_detail_video_e_voucher">전자바우처</string>
     <string name="my_ranking_title">내 순위</string>
     <string name="video_title">동영상 보고 포인트 적립하기</string>
     <string name="video_title_part1">매일매일</string>

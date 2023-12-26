@@ -14,6 +14,7 @@ data class UiLoyaltyPoint(
     val unit: String = "",
     val createdAt: Instant = Clock.System.now(),
     val type: Type = Type.RECEIVE,
+    val log: String = ""
 ) : java.io.Serializable {
     fun getPoint() = "+".takeIf { amount > 0 }.orEmpty() + amount
 }
@@ -37,6 +38,7 @@ fun LoyaltyPoint.toUiModel() = UiLoyaltyPoint(
     reasonLocale = reasonLocale,
     unit = unit,
     createdAt = createdAt,
+    log = log,
     type = when (type) {
         LoyaltyType.RECEIVE -> Type.RECEIVE
         LoyaltyType.SPENT -> Type.SPENT
