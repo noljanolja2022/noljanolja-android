@@ -10,6 +10,17 @@ class Constant {
         const val INDIAN = "IN"
     }
 
+    object Timer {
+        const val MILLISECOND_OF_ONE_MINUTE = 60 * 1000L
+//        const val TEN_DAY = 10 * 24 * 60 * 60 * 1000L
+//        const val ONE_SECOND = 1000L
+//        const val ONE_MINUTE = 60
+//        const val ONE_DAY = 24 * 60 * 60 * 1000L
+//        const val ONE_YEAR = 365 * 24 * 60 * 60 * 1000L
+//        const val ONE_MONTH = 30 * 24 * 60 * 60 * 1000L
+        const val ONE_HOUR = 60 * 60 * 1000L
+    }
+
     object PackageShareToApp {
         const val FACEBOOK_PACKAGE = "com.facebook.katana"
         const val TWITTER_PACKAGE = "com.twitter.android"
