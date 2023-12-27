@@ -285,7 +285,7 @@ private fun SearchVideosResult(
                                 .fillMaxHeight()
                         ) {
                             TrendingVideo(
-                                thumbnailModifier = Modifier.padding(start = 16.dp),
+                                modifier = Modifier.padding(start = 16.dp),
                                 video = it,
                                 onClick = { onClick(it) },
                                 onMore = onMoreVideo
@@ -299,7 +299,7 @@ private fun SearchVideosResult(
                                 .fillMaxHeight()
                         ) {
                             TrendingVideo(
-                                thumbnailModifier = Modifier.padding(start = 16.dp),
+                                modifier = Modifier.padding(start = 16.dp),
                                 video = it,
                                 onClick = { onClick(it) },
                                 onMore = onMoreVideo

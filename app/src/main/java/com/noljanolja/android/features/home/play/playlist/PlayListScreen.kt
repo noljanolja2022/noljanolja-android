@@ -144,7 +144,10 @@ private fun PlayListContent(
             },
             icon = Icons.Filled.Notifications,
             onIconClick = {},
-            avatar = userStateFlow.avatar
+            avatar = userStateFlow.avatar,
+            onAvatarClick = {
+                handleEvent(PlayListEvent.Setting)
+            }
         )
     }) {
         val data = uiState.data ?: return@ScaffoldWithUiState
@@ -300,7 +303,7 @@ private fun LazyListScope.trendingVideos(
                             .fillMaxHeight()
                     ) {
                         TrendingVideo(
-                            thumbnailModifier = Modifier.padding(start = 16.dp),
+                            modifier = Modifier.padding(start = 16.dp),
                             video = it,
                             onClick = { onClick(it) },
                             onMore = onMoreVideo
@@ -314,7 +317,7 @@ private fun LazyListScope.trendingVideos(
                             .fillMaxHeight()
                     ) {
                         TrendingVideo(
-                            thumbnailModifier = Modifier.padding(start = 16.dp),
+                            modifier = Modifier.padding(start = 16.dp),
                             video = it,
                             onClick = { onClick(it) },
                             onMore = onMoreVideo
@@ -410,7 +413,7 @@ private fun LazyListScope.watchingVideos(
 
 @Composable
 fun TrendingVideo(
-    thumbnailModifier: Modifier = Modifier,
+    modifier: Modifier = Modifier,
     video: Video,
     onClick: (Video) -> Unit,
     onMore: (Video) -> Unit,
@@ -421,7 +424,7 @@ fun TrendingVideo(
             .memoryCacheKey("video${video.id}").diskCacheKey("video${video.id}").build(),
         contentDescription = null,
         contentScale = ContentScale.Crop,
-        modifier = thumbnailModifier
+        modifier = modifier
             .fillMaxWidth()
             .aspectRatio(VIDEO_IMAGE_RATIO)
             .clickable {
@@ -436,7 +439,7 @@ fun TrendingVideo(
                 color = Color.Black,
                 textAlign = TextAlign.Center,
             ),
-            modifier = thumbnailModifier
+            modifier = modifier
                 .fillMaxWidth()
                 .background(color = MaterialTheme.colorScheme.tertiary)
                 .padding(vertical = 3.dp)

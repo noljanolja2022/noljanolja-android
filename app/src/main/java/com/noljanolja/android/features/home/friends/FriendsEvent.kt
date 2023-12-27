@@ -13,6 +13,8 @@ sealed interface FriendsEvent {
 
     object InviteFriend : FriendsEvent
 
+    object Setting : FriendsEvent
+
     data class OpenFriendOption(
         val friendId: String,
         val friendName: String,

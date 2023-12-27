@@ -107,13 +107,17 @@ fun ExchangePointContent(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val sharedPreferenceHelper: SharedPreferenceHelper = get()
-    Box {
-        Image(
-            painterResource(R.drawable.bg_with_circle),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.primary)
+    ) {
+//        Image(
+//            painterResource(R.drawable.bg_with_circle),
+//            contentDescription = null,
+//            modifier = Modifier.fillMaxSize(),
+//            contentScale = ContentScale.Crop
+//        )
     }
     Scaffold(
         topBar = {

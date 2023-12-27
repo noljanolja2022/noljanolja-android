@@ -21,6 +21,7 @@ import androidx.compose.ui.window.*
 import androidx.lifecycle.compose.*
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.*
+import com.noljanolja.android.common.sharedpreference.*
 import com.noljanolja.android.extensions.*
 import com.noljanolja.android.features.home.wallet.composable.*
 import com.noljanolja.android.ui.composable.*
@@ -62,6 +63,7 @@ private fun WalletExchangeContent(
 ) {
     val context = LocalContext.current
     var showAdmob by remember { mutableStateOf(false) }
+    val sharedPreferenceHelper: SharedPreferenceHelper = get()
     var pointOfDayLineCount by remember {
         mutableStateOf(0)
     }
@@ -74,7 +76,13 @@ private fun WalletExchangeContent(
     var titlePoint by remember {
         mutableStateOf(context.getString(R.string.wallet_point_can_exchange))
     }
-    ScaffoldWithCircleBgRoundedContent(
+    ScaffoldWithCircleAboveBgContent(
+        backgroundColor = MaterialTheme.colorBackgroundWallet(
+            key = sharedPreferenceHelper.appColor
+        ),
+        backgroundAboveColor = MaterialTheme.colorBackgroundWalletAbove(
+            key = sharedPreferenceHelper.appColor
+        ),
         heading = {
             Column {
                 WalletUserInformation(
@@ -100,9 +108,7 @@ private fun WalletExchangeContent(
                 )
                 SizeBox(height = 10.dp)
             }
-        },
-        roundedCornerShape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp),
-        backgroundBottomColor = MaterialTheme.shopBackground()
+        }
     ) {
         Column(
             modifier = Modifier
@@ -155,7 +161,14 @@ private fun WalletExchangeContent(
             ButtonRadius(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp),
+                    .height(48.dp)
+                    .border(
+                        width = 0.1.dp,
+                        shape = RoundedCornerShape(5.dp),
+                        color = MaterialTheme.colorBackgroundWallet(
+                            key = sharedPreferenceHelper.appColor
+                        )
+                    ),
                 title = stringResource(id = R.string.transaction_history).uppercase(),
                 bgColor = MaterialTheme.colorScheme.primary,
                 textColor = Color.Black,
@@ -168,8 +181,13 @@ private fun WalletExchangeContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 150.dp)
-                    .clip(RoundedCornerShape(20.dp)),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+                    .clip(RoundedCornerShape(20.dp))
+                    .border(
+                        width = 1.dp,
+                        shape = RoundedCornerShape(20.dp),
+                        color = Orange300
+                    ),
+                colors = CardDefaults.cardColors(containerColor = Yellow00),
                 elevation = CardDefaults.cardElevation(4.dp),
             ) {
                 Column(modifier = Modifier.padding(10.dp)) {
@@ -177,12 +195,14 @@ private fun WalletExchangeContent(
                         Text(
                             stringResource(R.string.convert_points_to_cash),
                             modifier = Modifier.align(Alignment.TopCenter),
-                            style = MaterialTheme.typography.titleSmall.withMedium()
+                            style = MaterialTheme.typography.titleSmall.withMedium(),
+                            color = Color.Black
                         )
                         Icon(
                             Icons.Default.Help,
                             contentDescription = null,
-                            modifier = Modifier.align(Alignment.TopEnd)
+                            modifier = Modifier.align(Alignment.TopEnd),
+                            tint = Color.Black
                         )
                     }
                     SizeBox(height = 10.dp)
@@ -198,6 +218,7 @@ private fun WalletExchangeContent(
                         Icon(
                             Icons.Default.ArrowForward,
                             contentDescription = null,
+                            tint = Color.Black,
                             modifier = Modifier
                                 .padding(horizontal = 27.dp)
                                 .size(37.dp)
