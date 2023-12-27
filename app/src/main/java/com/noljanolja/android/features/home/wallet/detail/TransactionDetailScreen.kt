@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.text.style.*
 import androidx.compose.ui.unit.*
@@ -24,13 +25,14 @@ import com.noljanolja.android.ui.composable.*
 import com.noljanolja.android.ui.theme.*
 import com.noljanolja.android.util.*
 import com.noljanolja.core.shop.domain.model.*
+import com.noljanolja.core.video.domain.model.*
 import org.koin.androidx.compose.*
 import org.koin.core.parameter.*
 
-private const val REASON_SEND_MESSAGES = "REASON_SEND_MESSAGES"
+//private const val REASON_SEND_MESSAGES = "REASON_SEND_MESSAGES"
 private const val REASON_PURCHASE_GIFT = "REASON_PURCHASE_GIFT"
-private const val REASON_EXCHANGE_POINT = "REASON_EXCHANGE_POINT"
-private const val REASON_WATCH_VIDEO = "REASON_EXCHANGE_POINT"
+//private const val REASON_EXCHANGE_POINT = "REASON_EXCHANGE_POINT"
+private const val REASON_WATCH_VIDEO = "REASON_WATCH_VIDEO"
 
 @Composable
 fun TransactionDetailScreen(
@@ -143,6 +145,12 @@ private fun TransactionDetailContent(
                             GiftDetailView(
                                 type = stringResource(id = R.string.transaction_detail_video_e_voucher),
                                 gift = Gson().fromJson(loyaltyPoint.log, Gift::class.java)
+                            )
+                        }
+
+                        REASON_WATCH_VIDEO -> {
+                            VideoDetailView(
+                                video = Gson().fromJson(loyaltyPoint.log, Video::class.java)
                             )
                         }
 
@@ -261,72 +269,77 @@ private fun GiftDetailView(
 
 @Composable
 private fun VideoDetailView(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    video: Video
 ) {
-    Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(10.dp))
-            .fillMaxWidth()
-            .background(MaterialTheme.colorBackground())
-            .padding(15.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        MarginVertical(5)
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = stringResource(R.string.transaction_detail_video_name),
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Start
-        )
-        MarginVertical(5)
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = "개그맨 박준형 “내가 내 아내 김지혜씨와 안싸우는 이유...?” (feat.갈갈이 패밀리)",
-            style = MaterialTheme.typography.bodyMedium.withBold(),
-            textAlign = TextAlign.Start
-        )
-        MarginVertical(10)
-        TextViewTitle(
-            title = stringResource(id = R.string.transaction_detail_video_state),
-            value = "10 min/ 10 min",
-            valueStyle = MaterialTheme.typography.bodyMedium
-        )
-        MarginVertical(10)
-        LinearProgressIndicator(
-            progress = 1f,
-            modifier = Modifier.fillMaxWidth(),
-            trackColor = MaterialTheme.colorScheme.secondaryContainer
-        )
-        MarginVertical(10)
-        Row(
-            modifier = Modifier.fillMaxWidth()
+    val context = LocalContext.current
+    video.run {
+        Column(
+            modifier = modifier
+                .clip(RoundedCornerShape(10.dp))
+                .fillMaxWidth()
+                .background(MaterialTheme.colorBackground())
+                .padding(15.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            MarginVertical(5)
             Text(
-                modifier = Modifier.weight(1f),
-                text = "100%",
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.transaction_detail_video_name),
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Start
             )
-            Icon(
-                Icons.Default.Help,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier
-                    .size(16.dp)
-                    .clickable {
+            MarginVertical(5)
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = video.title,
+                style = MaterialTheme.typography.bodyMedium.withBold(),
+                textAlign = TextAlign.Start
+            )
+            MarginVertical(10)
+            TextViewTitle(
+                title = stringResource(id = R.string.transaction_detail_video_state),
+                value = context.getDistanceTimeDisplay((durationMs * progressPercentage).toLong()) +
+                        "/ " + context.getDistanceTimeDisplay(durationMs),
+                valueStyle = MaterialTheme.typography.bodyMedium
+            )
+            MarginVertical(10)
+            LinearProgressIndicator(
+                progress = progressPercentage,
+                modifier = Modifier.fillMaxWidth(),
+                trackColor = MaterialTheme.colorScheme.secondaryContainer
+            )
+            MarginVertical(10)
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = "${(progressPercentage * 100).convertToIntString()}%",
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Start
+                )
+                Icon(
+                    Icons.Default.Help,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier
+                        .size(16.dp)
+                        .clickable {
 
-                    }
+                        }
+                )
+            }
+            MarginVertical(24)
+            ButtonRadius(
+                modifier = Modifier.fillMaxWidth(),
+                enabled = progressPercentage < 1F,
+                title = stringResource(id = R.string.transaction_detail_video_complete).uppercase(),
+                bgColor = MaterialTheme.colorScheme.secondaryContainer,
+                bgDisableColor = NeutralGrey,
+                onClick = {}
             )
         }
-        MarginVertical(24)
-        ButtonRadius(
-            modifier = Modifier.fillMaxWidth(),
-            enabled = false,
-            title = stringResource(id = R.string.transaction_detail_video_complete).uppercase(),
-            bgColor = MaterialTheme.colorScheme.secondaryContainer,
-            bgDisableColor = NeutralGrey,
-            onClick = {}
-        )
     }
 }
 

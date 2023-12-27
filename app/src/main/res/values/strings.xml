@@ -440,4 +440,9 @@
     <string name="message_referral">www.nolgubulgu.com\nJoin now to get benefits\nUp to 1000 points!!!</string>
     <string name="confirm_clear_cache_title">Are you sure to clear cache data?</string>
     <string name="confirm_clear_cache_message">All your cache will be deleted after you do this action.</string>
+
+    <string name="labelMinute">%d min</string>
+    <string name="labelMinutes">%d mins</string>
+    <string name="labelHours">%d hours</string>
+    <string name="labelHour">%d hour</string>
 </resources>

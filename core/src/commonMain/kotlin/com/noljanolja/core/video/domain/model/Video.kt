@@ -12,6 +12,7 @@ data class Video(
     val duration: String = "",
     val durationMs: Long = 0,
     val currentProgressMs: Long = 0,
+    val progressPercentage: Float = 0F,
     val favoriteCount: Long = 0,
     val id: String = "", //
     val isHighlighted: Boolean = false,
