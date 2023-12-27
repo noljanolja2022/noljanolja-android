@@ -99,9 +99,7 @@ private fun FriendsScreenContent(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            FriendHeading(onAddFriend = {
-                handleEvent(FriendsEvent.InviteFriend)
-            })
+            FriendHeading(handleEvent = handleEvent)
             Card(
                 modifier = Modifier.fillMaxSize(),
                 shape = RoundedCornerShape(
@@ -180,7 +178,9 @@ private fun FriendsScreenContent(
 }
 
 @Composable
-private fun FriendHeading(onAddFriend: () -> Unit) {
+private fun FriendHeading(
+    handleEvent: (FriendsEvent) -> Unit,
+) {
     Column(modifier = Modifier.padding(16.dp)) {
         Row {
             Image(
@@ -198,7 +198,11 @@ private fun FriendHeading(onAddFriend: () -> Unit) {
             Icon(
                 Icons.Default.Settings,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = Modifier
+                    .clickable {
+                        handleEvent(FriendsEvent.Setting)
+                    }
             )
         }
         SizeBox(height = 5.dp)
@@ -217,7 +221,9 @@ private fun FriendHeading(onAddFriend: () -> Unit) {
                 .height(52.dp)
                 .clip(RoundedCornerShape(11.dp))
                 .background(MaterialTheme.colorScheme.onPrimaryContainer)
-                .clickable { onAddFriend() },
+                .clickable {
+                    handleEvent(FriendsEvent.InviteFriend)
+                },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {

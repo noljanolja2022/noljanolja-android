@@ -54,6 +54,10 @@ class PlayListViewModel : BaseViewModel() {
                 PlayListEvent.Uncompleted -> {
                     navigationManager.navigate(NavigationDirections.UncompletedVideos)
                 }
+
+                PlayListEvent.Setting -> {
+                    navigationManager.navigate(NavigationDirections.Setting)
+                }
             }
         }
     }

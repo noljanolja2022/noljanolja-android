@@ -6,4 +6,5 @@ sealed interface PlayListEvent {
     object Refresh : PlayListEvent
     object Search : PlayListEvent
     object Uncompleted : PlayListEvent
+    object Setting : PlayListEvent
 }
