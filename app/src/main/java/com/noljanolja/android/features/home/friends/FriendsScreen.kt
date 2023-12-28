@@ -1,69 +1,43 @@
 package com.noljanolja.android.features.home.friends
 
 import android.Manifest
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.*
+import androidx.compose.material.icons.*
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.*
+import androidx.compose.ui.draw.*
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.platform.*
+import androidx.compose.ui.res.*
+import androidx.compose.ui.text.*
+import androidx.compose.ui.text.font.*
+import androidx.compose.ui.text.style.*
+import androidx.compose.ui.unit.*
+import androidx.lifecycle.compose.*
 import com.noljanolja.android.R
-import com.noljanolja.android.common.base.UiState
-import com.noljanolja.android.services.PermissionChecker
-import com.noljanolja.android.ui.composable.EmptyPage
-import com.noljanolja.android.ui.composable.Expanded
-import com.noljanolja.android.ui.composable.InfiniteListHandler
-import com.noljanolja.android.ui.composable.LoadingDialog
-import com.noljanolja.android.ui.composable.OvalAvatar
-import com.noljanolja.android.ui.composable.Rationale
-import com.noljanolja.android.ui.composable.SizeBox
+import com.noljanolja.android.common.base.*
+import com.noljanolja.android.services.*
+import com.noljanolja.android.ui.composable.*
 import com.noljanolja.android.ui.theme.*
-import com.noljanolja.core.user.domain.model.User
-import org.koin.androidx.compose.getViewModel
+import com.noljanolja.android.util.Constant.DefaultValue.PADDING_VIEW_SCREEN
+import com.noljanolja.core.user.domain.model.*
+import org.koin.androidx.compose.*
 
 @Composable
 fun FriendsScreen(
     viewModel: FriendsViewModel = getViewModel(),
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val userStateFlow by viewModel.userStateFlow.collectAsStateWithLifecycle()
     FriendsScreenContent(
         uiState = uiState,
+        userStateFlow = userStateFlow,
         handleEvent = viewModel::handleEvent
     )
 }
@@ -72,6 +46,7 @@ fun FriendsScreen(
 @Composable
 private fun FriendsScreenContent(
     uiState: UiState<List<User>>,
+    userStateFlow: User,
     handleEvent: (FriendsEvent) -> Unit,
 ) {
     val scrollState = rememberLazyListState()
@@ -95,151 +70,140 @@ private fun FriendsScreenContent(
     ) { padding ->
         Column(
             modifier = Modifier
-                .background(MaterialTheme.colorScheme.primary)
+                .background(Yellow01)
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            FriendHeading(handleEvent = handleEvent)
-            Card(
-                modifier = Modifier.fillMaxSize(),
-                shape = RoundedCornerShape(
-                    topStart = 40.dp,
-                    topEnd = 40.dp,
-                ),
+            CommonAppBarSearch(
+                modifier = Modifier
+                    .clip(
+                        RoundedCornerShape(
+                            bottomStart = 13.dp,
+                            bottomEnd = 13.dp
+                        )
+                    )
+                    .background(MaterialTheme.colorScheme.primary)
+                    .padding(top = 16.dp, bottom = 6.dp),
+                searchFieldBackground = NeutralLight.copy(0.7f),
+                onSearchFieldClick = {
+//                    handleEvent(FriendsEvent.Search)
+                },
+                icon = Icons.Filled.Notifications,
+                iconTint = Color.Black,
+                textColor = NeutralDarkGrey.copy(alpha = 0.38f),
+                onIconClick = {},
+                avatar = userStateFlow.avatar,
+                onAvatarClick = {
+                    handleEvent(FriendsEvent.Setting)
+                }
+            )
+            MarginVertical(8)
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.earn_point_title),
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center
+                )
+            )
+            MarginVertical(8)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = PADDING_VIEW_SCREEN.dp)
+                    .height(52.dp)
+                    .clip(RoundedCornerShape(11.dp))
+                    .background(MaterialTheme.colorScheme.onPrimaryContainer)
+                    .clickable {
+                        handleEvent(FriendsEvent.InviteFriend)
+                    },
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
             ) {
-                Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
-                    LoadingDialog(isLoading = uiState.loading)
-                    when {
-                        !PermissionChecker(LocalContext.current).canReadContacts() -> {
-                            Rationale(
-                                modifier = Modifier.fillMaxSize(),
-                                permissions = mapOf(
-                                    Manifest.permission.READ_CONTACTS to stringResource(
-                                        id = R.string.permission_contacts_description
-                                    )
-                                ),
-                                onSuccess = {
-                                    handleEvent(FriendsEvent.SyncContacts)
-                                },
-                                openPhoneSettings = {
-                                    handleEvent(FriendsEvent.OpenPhoneSettings)
-                                }
-                            )
-                        }
+                Text(
+                    stringResource(R.string.invite_friends_to_get_benefits),
+                    color = YellowMain,
+                    style = MaterialTheme.typography.bodyLarge.withBold()
+                )
+                Icon(
+                    Icons.Default.ChevronRight,
+                    contentDescription = null,
+                    tint = YellowMain,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+            MarginVertical(20)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
+                LoadingDialog(isLoading = uiState.loading)
+                when {
+                    !PermissionChecker(LocalContext.current).canReadContacts() -> {
+                        Rationale(
+                            modifier = Modifier.fillMaxSize(),
+                            permissions = mapOf(
+                                Manifest.permission.READ_CONTACTS to stringResource(
+                                    id = R.string.permission_contacts_description
+                                )
+                            ),
+                            onSuccess = {
+                                handleEvent(FriendsEvent.SyncContacts)
+                            },
+                            openPhoneSettings = {
+                                handleEvent(FriendsEvent.OpenPhoneSettings)
+                            }
+                        )
+                    }
 
-                        !uiState.loading -> {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(horizontal = 16.dp),
-                            ) {
-                                val visibleContacts = uiState.data.orEmpty()
-                                SizeBox(height = 22.dp)
-                                Row {
-                                    Text(
-                                        stringResource(R.string.common_friends),
-                                        style = MaterialTheme.typography.bodyLarge.withBold()
-                                    )
-                                    Expanded()
-                                    Icon(
-                                        Icons.Default.Search,
-                                        contentDescription = null,
-                                        modifier = Modifier.clickable {
-                                        }
-                                    )
-                                }
-                                if (visibleContacts.isEmpty()) {
-                                    EmptyPage(message = stringResource(id = R.string.contacts_not_found))
-                                } else {
-                                    ContactList(
-                                        scrollState = scrollState,
-                                        contacts = visibleContacts,
-                                        onItemClick = {
-                                            handleEvent(
-                                                FriendsEvent.OpenFriendOption(
-                                                    friendId = it.id,
-                                                    friendName = it.name,
-                                                    friendAvatar = it.avatar ?: ""
-                                                )
+                    !uiState.loading -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 16.dp),
+                        ) {
+                            val visibleContacts = uiState.data.orEmpty()
+                            SizeBox(height = 22.dp)
+                            Row {
+                                Text(
+                                    stringResource(R.string.common_friends),
+                                    style = MaterialTheme.typography.bodyLarge.withBold()
+                                )
+                                Expanded()
+                                Icon(
+                                    Icons.Default.Search,
+                                    contentDescription = null,
+                                    modifier = Modifier.clickable {
+                                    }
+                                )
+                            }
+                            if (visibleContacts.isEmpty()) {
+                                EmptyPage(message = stringResource(id = R.string.contacts_not_found))
+                            } else {
+                                ContactList(
+                                    scrollState = scrollState,
+                                    contacts = visibleContacts,
+                                    onItemClick = {
+                                        handleEvent(
+                                            FriendsEvent.OpenFriendOption(
+                                                friendId = it.id,
+                                                friendName = it.name,
+                                                friendAvatar = it.avatar ?: ""
                                             )
-                                        },
-                                        loadMoreContacts = {
-                                            handleEvent(FriendsEvent.LoadMore)
-                                        }
-                                    )
-                                }
+                                        )
+                                    },
+                                    loadMoreContacts = {
+                                        handleEvent(FriendsEvent.LoadMore)
+                                    }
+                                )
                             }
                         }
                     }
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun FriendHeading(
-    handleEvent: (FriendsEvent) -> Unit,
-) {
-    Column(modifier = Modifier.padding(16.dp)) {
-        Row {
-            Image(
-                painter = painterResource(R.drawable.logo),
-                contentDescription = null,
-                modifier = Modifier.size(64.dp)
-            )
-            Expanded()
-            Icon(
-                Icons.Default.Notifications,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-            SizeBox(width = 20.dp)
-            Icon(
-                Icons.Default.Settings,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier
-                    .clickable {
-                        handleEvent(FriendsEvent.Setting)
-                    }
-            )
-        }
-        SizeBox(height = 5.dp)
-        Text(
-            stringResource(R.string.earn_point_title),
-            style = TextStyle(
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-        )
-        SizeBox(height = 10.dp)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp)
-                .clip(RoundedCornerShape(11.dp))
-                .background(MaterialTheme.colorScheme.onPrimaryContainer)
-                .clickable {
-                    handleEvent(FriendsEvent.InviteFriend)
-                },
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(
-                stringResource(R.string.invite_friends_to_get_benefits),
-                color = YellowMain,
-                style = MaterialTheme.typography.bodyLarge.withBold()
-            )
-            Icon(
-                Icons.Default.ChevronRight,
-                contentDescription = null,
-                tint = YellowMain,
-                modifier = Modifier.size(24.dp)
-            )
-        }
-        SizeBox(height = 10.dp)
     }
 }
 

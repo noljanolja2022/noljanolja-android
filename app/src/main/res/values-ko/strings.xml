@@ -370,7 +370,7 @@
     <string name="friend_reference">친구 추천</string>
     <string name="common_phone">휴대폰</string>
     <string name="my_point">내 포인트</string>
-    <string name="earn_point_title">친구 추천하고\n포인트 받기</string>
+    <string name="earn_point_title">친구 추천하고 포인트 받기</string>
     <string name="convert_success">교환 성공</string>
     <string name="convert_error">교환 실패</string>
     <string name="invite_friends_to_get_benefits">친구 초대하고 혜택을 받으세요.</string>

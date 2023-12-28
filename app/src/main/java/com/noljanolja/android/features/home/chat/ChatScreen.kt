@@ -450,11 +450,6 @@ private fun MessageList(
                 }
 
                 item(key = message.localId) {
-                    val showReaction by remember {
-                        derivedStateOf {
-                            message.reactions.isNotEmpty()
-                        }
-                    }
                     MessageRow(
                         conversationId = conversationId,
                         message = message,
@@ -463,7 +458,6 @@ private fun MessageList(
                         isLastMessageByAuthorSameDay = isLastMessageByAuthorSameDay,
                         handleEvent = handleEvent,
                         reactIcons = reactIcons,
-                        showReaction = showReaction,
                         onMessageReply = onMessageReply
                     )
                 }
@@ -520,7 +514,6 @@ fun MessageRow(
     onMessageReply: (Message) -> Unit = {},
     handleEvent: (ChatEvent) -> Unit,
 ) {
-    val context = LocalContext.current
     val spaceBetweenAuthors =
         if (isLastMessageByAuthorSameDay) Modifier.padding(top = 8.dp) else Modifier
     when (message.type) {
@@ -1104,7 +1097,9 @@ private fun BoxScope.DefaultMessageReaction(
     val reactTextSize = with(LocalDensity.current) {
         12.dp.toSp()
     }
-    message.getDefaultReaction(reactIcons).takeIf { showReaction }?.let {
+    message.getDefaultReaction(reactIcons).takeIf {
+        showReaction && message.reactions.isNotEmpty()
+    }?.let {
         Box(
             modifier = Modifier
                 .padding(horizontal = 12.dp)

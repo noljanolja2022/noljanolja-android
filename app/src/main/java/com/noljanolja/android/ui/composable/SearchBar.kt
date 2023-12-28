@@ -89,7 +89,9 @@ fun SearchBar(
 internal fun SearchBarViewOnly(
     modifier: Modifier,
     hint: String,
-    background: Color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.04f),
+    iconTint: Color?,
+    textColor: Color,
+    background: Color,
 ) {
     Row(
         modifier = modifier
@@ -108,13 +110,13 @@ internal fun SearchBarViewOnly(
             Text(
                 hint,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.38f)
+                color = textColor
             )
         }
         Icon(
             Icons.Default.Search,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onBackground,
+            tint = iconTint ?: MaterialTheme.colorScheme.onBackground,
         )
     }
 }
