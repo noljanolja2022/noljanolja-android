@@ -198,8 +198,11 @@ fun CommonAppBarLogoTitle(
 @Composable
 fun CommonAppBarSearch(
     modifier: Modifier = Modifier,
+    searchFieldBackground: Color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.04f),
     onSearchFieldClick: () -> Unit,
     icon: ImageVector? = null,
+    iconTint: Color? = null,
+    textColor: Color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.38f),
     onIconClick: () -> Unit = {},
     avatar: String? = null,
     onAvatarClick: () -> Unit = {}
@@ -213,13 +216,16 @@ fun CommonAppBarSearch(
             modifier = Modifier
                 .weight(1f)
                 .clickable { onSearchFieldClick.invoke() },
+            iconTint = iconTint,
+            textColor = textColor,
             hint = stringResource(id = R.string.search_videos),
+            background = searchFieldBackground
         )
         icon?.let {
             AppIconButton(
                 modifier = Modifier,
                 onClick = onIconClick,
-                tint = textColor(),
+                tint = iconTint ?: textColor(),
                 icon = it
             )
         }

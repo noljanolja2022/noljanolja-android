@@ -1,7 +1,6 @@
 package com.noljanolja.android.features.auth.otp
 
 import android.app.*
-import android.util.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -85,7 +84,6 @@ fun OTPScreenContent(
                     sharedPreferenceHelper.loginOtpTime = 0L
                 },
                 onError = {
-                    Log.e("TTT", "OTPScreenContent: $it")
                     context.showToast(it.message)
                 },
                 onCodeSent = {
