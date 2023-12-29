@@ -194,12 +194,12 @@ fun ConversationsScreenContent(
         onNewSingleChat = { handleEvent(ConversationsEvent.OpenContactPicker(it)) },
         onNewGroupChat = { handleEvent(ConversationsEvent.OpenContactPicker(it)) },
     )
-    if (showNewChatTooltip) {
-        NewChatTooltip(
-            iconPosition = newChatIconPositions,
-            onDismissRequest = { showNewChatTooltip = false }
-        )
-    }
+//    if (showNewChatTooltip) {
+//        NewChatTooltip(
+//            iconPosition = newChatIconPositions,
+//            onDismissRequest = { showNewChatTooltip = false }
+//        )
+//    }
 }
 
 @Composable
