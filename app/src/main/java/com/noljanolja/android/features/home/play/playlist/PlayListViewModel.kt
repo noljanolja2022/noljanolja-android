@@ -1,9 +1,7 @@
 package com.noljanolja.android.features.home.play.playlist
 
-import androidx.lifecycle.*
 import com.noljanolja.android.common.base.*
 import com.noljanolja.android.common.navigation.*
-import com.noljanolja.core.user.domain.model.*
 import com.noljanolja.core.video.domain.model.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -11,16 +9,9 @@ import kotlinx.coroutines.flow.*
 class PlayListViewModel : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow(UiState<PlayListUIData>())
     val uiStateFlow = _uiStateFlow.asStateFlow()
-    private val _userStateFlow = MutableStateFlow(User())
-    val userStateFlow = _userStateFlow.asStateFlow()
 
     init {
         refresh()
-        viewModelScope.launch {
-            coreManager.getCurrentUser(forceRefresh = true, onlyLocal = false).getOrNull()?.let {
-                _userStateFlow.emit(it)
-            }
-        }
     }
 
     fun handleEvent(event: PlayListEvent) {

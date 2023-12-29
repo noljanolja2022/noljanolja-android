@@ -139,6 +139,7 @@ private fun PlayListContent(
 
         CommonAppBarSearch(
             modifier = Modifier,
+            hintSearch = stringResource(id = R.string.search_videos),
             onSearchFieldClick = {
                 handleEvent(PlayListEvent.Search)
             },

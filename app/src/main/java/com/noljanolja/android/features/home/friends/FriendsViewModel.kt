@@ -1,6 +1,5 @@
 package com.noljanolja.android.features.home.friends
 
-import androidx.lifecycle.*
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.base.launch
@@ -8,7 +7,6 @@ import com.noljanolja.android.common.mobiledata.data.ContactsLoader
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.services.PermissionChecker
 import com.noljanolja.core.user.domain.model.User
-import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.toList
@@ -19,19 +17,12 @@ class FriendsViewModel : BaseViewModel() {
     private val permissionChecker: PermissionChecker by inject()
     private val _uiStateFlow = MutableStateFlow(UiState<List<User>>())
     val uiStateFlow = _uiStateFlow.asStateFlow()
-    private val _userStateFlow = MutableStateFlow(User())
-    val userStateFlow = _userStateFlow.asStateFlow()
 
     private var page: Int = 1
     private var noMoreContact: Boolean = false
 
     init {
         if (permissionChecker.canReadContacts()) handleEvent(FriendsEvent.GetContacts)
-        viewModelScope.launch {
-            coreManager.getCurrentUser(forceRefresh = true, onlyLocal = false).getOrNull()?.let {
-                _userStateFlow.emit(it)
-            }
-        }
     }
 
     fun handleEvent(event: FriendsEvent) {

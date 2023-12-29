@@ -84,6 +84,7 @@ private fun FriendsScreenContent(
                     )
                     .background(MaterialTheme.colorScheme.primary)
                     .padding(top = 16.dp, bottom = 6.dp),
+                hintSearch = stringResource(id = R.string.friends_search_friends),
                 searchFieldBackground = NeutralLight.copy(0.7f),
                 onSearchFieldClick = {
 //                    handleEvent(FriendsEvent.Search)
