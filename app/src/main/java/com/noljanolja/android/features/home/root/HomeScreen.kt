@@ -249,7 +249,7 @@ fun HomeBottomBar(
             val label = stringResource(item.label)
             NavigationBarItem(
                 icon = {
-                    if (index != 0 || isReadAllConversations) {
+                    if (item != HomeNavigationItem.ChatItem || isReadAllConversations) {
                         Icon(
                             item.icon,
                             label,
@@ -259,7 +259,13 @@ fun HomeBottomBar(
                         )
                     } else {
                         Box {
-                            Icon(item.icon, label)
+                            Icon(
+                                item.icon,
+                                label,
+                                modifier = Modifier
+                                    .padding(2.dp)
+                                    .size(24.dp)
+                            )
                             Box(
                                 modifier = Modifier
                                     .align(Alignment.TopEnd)

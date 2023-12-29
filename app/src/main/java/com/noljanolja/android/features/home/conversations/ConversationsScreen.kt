@@ -10,23 +10,17 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Group
-import androidx.compose.material.icons.filled.PersonAdd
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Error
-import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -43,10 +37,9 @@ import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.common.sharedpreference.SharedPreferenceHelper
 import com.noljanolja.android.features.home.conversations.components.NewChatDialog
-import com.noljanolja.android.ui.composable.CommonTopAppBar
-import com.noljanolja.android.ui.composable.EmptyPage
-import com.noljanolja.android.ui.composable.ScaffoldWithUiState
-import com.noljanolja.android.ui.theme.darkContent
+import com.noljanolja.android.features.home.friends.*
+import com.noljanolja.android.ui.composable.*
+import com.noljanolja.android.ui.theme.*
 import com.noljanolja.android.util.findActivity
 import com.noljanolja.android.util.humanReadableDate
 import com.noljanolja.android.util.isSeen
@@ -54,6 +47,7 @@ import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.ConversationType
 import com.noljanolja.core.conversation.domain.model.Message
 import com.noljanolja.core.conversation.domain.model.MessageType
+import com.noljanolja.core.user.domain.model.*
 import org.koin.androidx.compose.get
 import org.koin.androidx.compose.getViewModel
 
@@ -71,8 +65,10 @@ fun ConversationsScreen(
         }
     }
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val userStateFlow by viewModel.userStateFlow.collectAsStateWithLifecycle()
     ConversationsScreenContent(
         uiState = uiState,
+        userStateFlow = userStateFlow,
         handleEvent = viewModel::handleEvent,
     )
 }
@@ -80,6 +76,7 @@ fun ConversationsScreen(
 @Composable
 fun ConversationsScreenContent(
     uiState: UiState<List<Conversation>>,
+    userStateFlow: User,
     handleEvent: (ConversationsEvent) -> Unit,
 ) {
     val sharedPreferenceHelper: SharedPreferenceHelper = get()
@@ -97,58 +94,70 @@ fun ConversationsScreenContent(
     ScaffoldWithUiState(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            CommonTopAppBar(
-                title = stringResource(R.string.chats_title),
-                actions = {
-                    IconButton(onClick = { handleEvent(ConversationsEvent.AddFriend) }) {
-                        Icon(
-                            Icons.Filled.PersonAdd,
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp),
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                    IconButton(onClick = { }) {
-                        Icon(
-                            Icons.Outlined.Search,
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp),
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                    IconButton(onClick = {
-                        showNewChatDialog = true
-                        showNewChatTooltip = false
-                        sharedPreferenceHelper.showNewChatDialog = false
-                    }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.chat_add),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .padding(bottom = 2.dp)
-                                .size(21.dp)
-                                .onGloballyPositioned { coordinates ->
-                                    val x = coordinates.positionInRoot().x
-
-                                    val y = coordinates.positionInRoot().y
-                                    newChatIconPositions = Pair(x, y)
-                                },
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-
-                    IconButton(onClick = {
-                        handleEvent(ConversationsEvent.ChatSettings)
-                    }) {
-                        Icon(
-                            Icons.Outlined.Settings,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .padding(bottom = 2.dp)
-                                .size(21.dp),
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
+//            CommonTopAppBar(
+//                title = stringResource(R.string.chats_title),
+//                actions = {
+//                    IconButton(onClick = { handleEvent(ConversationsEvent.AddFriend) }) {
+//                        Icon(
+//                            Icons.Filled.PersonAdd,
+//                            contentDescription = null,
+//                            modifier = Modifier.size(24.dp),
+//                            tint = MaterialTheme.colorScheme.onBackground
+//                        )
+//                    }
+//                    IconButton(onClick = { }) {
+//                        Icon(
+//                            Icons.Outlined.Search,
+//                            contentDescription = null,
+//                            modifier = Modifier.size(24.dp),
+//                            tint = MaterialTheme.colorScheme.onBackground
+//                        )
+//                    }
+//                    IconButton(onClick = {
+//                        showNewChatDialog = true
+//                        showNewChatTooltip = false
+//                        sharedPreferenceHelper.showNewChatDialog = false
+//                    }) {
+//                        Icon(
+//                            painter = painterResource(id = R.drawable.chat_add),
+//                            contentDescription = null,
+//                            modifier = Modifier
+//                                .padding(bottom = 2.dp)
+//                                .size(21.dp)
+//                                .onGloballyPositioned { coordinates ->
+//                                    val x = coordinates.positionInRoot().x
+//
+//                                    val y = coordinates.positionInRoot().y
+//                                    newChatIconPositions = Pair(x, y)
+//                                },
+//                            tint = MaterialTheme.colorScheme.onBackground
+//                        )
+//                    }
+//
+//                    IconButton(onClick = {
+//                        handleEvent(ConversationsEvent.ChatSettings)
+//                    }) {
+//                        Icon(
+//                            Icons.Outlined.Settings,
+//                            contentDescription = null,
+//                            modifier = Modifier
+//                                .padding(bottom = 2.dp)
+//                                .size(21.dp),
+//                            tint = MaterialTheme.colorScheme.onBackground
+//                        )
+//                    }
+//                }
+//            )
+            CommonAppBarSearch(
+                modifier = Modifier,
+                hintSearch = stringResource(id = R.string.friends_search_friends),
+                onSearchFieldClick = {
+//                    handleEvent(FriendsEvent.Search)
+                },
+                leadingIcon = Icons.Filled.Menu,
+                avatar = userStateFlow.avatar,
+                onAvatarClick = {
+                    handleEvent(ConversationsEvent.ChatSettings)
                 }
             )
         },
