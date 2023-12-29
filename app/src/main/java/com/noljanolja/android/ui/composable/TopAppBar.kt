@@ -216,10 +216,13 @@ fun CommonAppBarSearch(
     hintSearch: String,
     searchFieldBackground: Color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.04f),
     onSearchFieldClick: () -> Unit,
+    leadingIcon: ImageVector? = null,
+    leadingIconTint: Color? = null,
+    onLeadingIconClick: () -> Unit = {},
     icon: ImageVector? = null,
     iconTint: Color? = null,
-    textColor: Color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.38f),
     onIconClick: () -> Unit = {},
+    textColor: Color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.38f),
     avatar: String? = null,
     onAvatarClick: () -> Unit = {}
 ) {
@@ -228,6 +231,14 @@ fun CommonAppBarSearch(
             .padding(vertical = 12.dp, horizontal = Constant.DefaultValue.PADDING_VIEW_SCREEN.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        leadingIcon?.let {
+            AppIconButton(
+                modifier = Modifier,
+                onClick = onLeadingIconClick,
+                tint = leadingIconTint ?: textColor(),
+                icon = it
+            )
+        }
         SearchBarViewOnly(
             modifier = Modifier
                 .weight(1f)
@@ -245,7 +256,7 @@ fun CommonAppBarSearch(
                 icon = it
             )
         } ?: run {
-            MarginHorizontal(20)
+            MarginHorizontal(13)
         }
         OvalAvatar(
             modifier = Modifier.clickable { onAvatarClick() },
