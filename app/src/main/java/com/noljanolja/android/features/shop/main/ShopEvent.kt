@@ -3,6 +3,8 @@ package com.noljanolja.android.features.shop.main
 sealed interface ShopEvent {
     object Search : ShopEvent
 
+    object Setting : ShopEvent
+
     data class GiftDetail(val giftId: String, val code: String) : ShopEvent
 
     data class ViewGiftType(

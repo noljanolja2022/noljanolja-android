@@ -445,4 +445,6 @@
     <string name="labelMinutes">%d mins</string>
     <string name="labelHours">%d hours</string>
     <string name="labelHour">%d hour</string>
+
+    <string name="friends_search_friends">Search Friends</string>
 </resources>

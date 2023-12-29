@@ -1,24 +1,39 @@
 package com.noljanolja.android.ui.composable
 
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.*
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.*
-import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.vector.*
-import androidx.compose.ui.res.*
-import androidx.compose.ui.text.*
-import androidx.compose.ui.text.font.*
-import androidx.compose.ui.text.style.*
-import androidx.compose.ui.unit.*
-import androidx.constraintlayout.compose.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
 import com.noljanolja.android.R
-import com.noljanolja.android.extensions.*
-import com.noljanolja.android.ui.theme.*
-import com.noljanolja.android.util.*
+import com.noljanolja.android.extensions.setVisibility
+import com.noljanolja.android.ui.theme.textColor
+import com.noljanolja.android.util.Constant
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -198,6 +213,7 @@ fun CommonAppBarLogoTitle(
 @Composable
 fun CommonAppBarSearch(
     modifier: Modifier = Modifier,
+    hintSearch: String,
     searchFieldBackground: Color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.04f),
     onSearchFieldClick: () -> Unit,
     icon: ImageVector? = null,
@@ -218,7 +234,7 @@ fun CommonAppBarSearch(
                 .clickable { onSearchFieldClick.invoke() },
             iconTint = iconTint,
             textColor = textColor,
-            hint = stringResource(id = R.string.search_videos),
+            hint = hintSearch,
             background = searchFieldBackground
         )
         icon?.let {
@@ -228,6 +244,8 @@ fun CommonAppBarSearch(
                 tint = iconTint ?: textColor(),
                 icon = it
             )
+        } ?: run {
+            MarginHorizontal(20)
         }
         OvalAvatar(
             modifier = Modifier.clickable { onAvatarClick() },

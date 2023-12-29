@@ -8,12 +8,17 @@ import co.touchlab.kermit.*
 import com.noljanolja.android.common.navigation.*
 import com.noljanolja.android.util.*
 import com.noljanolja.core.*
+import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import org.koin.core.component.*
 
 open class BaseViewModel : ViewModel(), KoinComponent {
+    companion object {
+        private val _userStateFlow = MutableStateFlow(User())
+    }
+
     protected val navigationManager: NavigationManager by inject()
     protected val coreManager: CoreManager by inject()
     protected val json = defaultJson()
@@ -21,6 +26,15 @@ open class BaseViewModel : ViewModel(), KoinComponent {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
     val errorFlow = _errorFlow.asSharedFlow()
+    val userStateFlow = _userStateFlow.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            coreManager.getCurrentUser(forceRefresh = true, onlyLocal = false).getOrNull()?.let {
+                _userStateFlow.emit(it)
+            }
+        }
+    }
 
     fun sendError(e: Throwable) {
         launch {

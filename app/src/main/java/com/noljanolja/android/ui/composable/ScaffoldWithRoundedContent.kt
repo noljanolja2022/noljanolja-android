@@ -96,26 +96,27 @@ fun ScaffoldWithCircleAboveBgContent(
     content: @Composable () -> Unit = {},
 ) {
     Scaffold { padding ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(backgroundColor)
+                .padding(padding)
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.7f)
-                    .background(
-                        color = backgroundAboveColor,
-                        shape = RoundedCornerShape(bottomStart = 40.dp, bottomEnd = 40.dp),
-                    )
-            ) {}
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
+                modifier = Modifier.background(backgroundAboveColor)
             ) {
                 heading.invoke()
+            }
+            Box {
+                Box(
+                    modifier = Modifier
+                        .height(85.dp)
+                        .fillMaxWidth()
+                        .background(
+                            color = backgroundAboveColor,
+                            shape = RoundedCornerShape(bottomStart = 40.dp, bottomEnd = 40.dp),
+                        )
+                ) {}
                 content.invoke()
             }
         }
