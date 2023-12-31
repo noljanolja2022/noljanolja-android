@@ -22,7 +22,6 @@ import androidx.navigation.compose.*
 import com.google.android.gms.auth.api.signin.*
 import com.google.android.gms.common.api.*
 import com.noljanolja.android.*
-import com.noljanolja.android.BuildConfig
 import com.noljanolja.android.R
 import com.noljanolja.android.features.home.*
 import com.noljanolja.android.features.home.conversations.*
@@ -131,11 +130,11 @@ fun HomeScreen(
                     isInPictureInPictureMode = true
                 )
             )
-            if (it.autoComment || it.autoLike || it.autoSubscribe) {
-                // TODO : Remove when login google
-                delay(200)
-                requestYoutubeScope.invoke()
-            }
+//            if (it.autoComment || it.autoLike || it.autoSubscribe) {
+//                // TODO : Remove when login google
+//                delay(200)
+//                requestYoutubeScope.invoke()
+//            }
         }
     }
 
@@ -161,7 +160,7 @@ fun HomeScreen(
 
     InfoDialog(
         content = stringResource(R.string.coming_soon),
-        isShown = !BuildConfig.DEBUG,
+        isShown = false,//!BuildConfig.DEBUG,
         dismissText = stringResource(R.string.common_exit),
         contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
         containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -291,9 +290,9 @@ fun HomeBottomBar(
                 label = { Text(label, maxLines = 1) },
                 selected = isSelected,
                 onClick = {
-                    if (BuildConfig.DEBUG) {
-                        item.click(navController)
-                    }
+//                    if (BuildConfig.DEBUG) {
+                    item.click(navController)
+//                    }
                 },
                 colors = with(MaterialTheme.colorScheme) {
                     NavigationBarItemDefaults.colors(
