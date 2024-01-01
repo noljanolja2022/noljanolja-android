@@ -73,7 +73,7 @@ android {
             }
             proguardFiles("proguard-rules.pro")
             signingConfig = signingConfigs.getByName("release")
-//            isDebuggable = true
+            isDebuggable = true
         }
         debug {
             firebaseAppDistribution {
