@@ -17,7 +17,7 @@ android {
             buildConfigField("String", "BASE_URL", "\"ws://34.64.110.104\"")
         }
         release {
-            buildConfigField("String", "BASE_URL", "\"ws://consumer-service.ppnyy.com\"")
+            buildConfigField("String", "BASE_URL", "\"ws://34.64.110.104\"")
         }
     }
 }

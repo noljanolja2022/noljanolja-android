@@ -63,6 +63,7 @@
 -keep class com.kakao.sdk.**.model.* { <fields>; }
 -keep class * extends com.google.gson.TypeAdapter
 -keep class kotlin.Metadata { *; }
+-keepclassmembers class com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayerBridge { public *; }
 
 # Keep kotlin-reflect internals.
 -keep class kotlin.reflect.jvm.** { *; }

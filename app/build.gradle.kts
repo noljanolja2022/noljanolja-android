@@ -18,8 +18,8 @@ android {
         applicationId = "com.ppnyy.nolgobulja"
         minSdk = 21
         targetSdk = 33
-        versionCode = 70
-        versionName = "1.1.36"
+        versionCode = 54
+        versionName = "1.1.10"
         testInstrumentationRunner = "com.noljanolja.android.InstrumentationTestRunner"
         multiDexEnabled = true
     }
@@ -73,7 +73,7 @@ android {
             }
             proguardFiles("proguard-rules.pro")
             signingConfig = signingConfigs.getByName("release")
-//            isDebuggable = true
+            isDebuggable = true
         }
         debug {
             firebaseAppDistribution {
@@ -154,7 +154,7 @@ dependencies {
     implementation("io.insert-koin:koin-androidx-compose:3.4.1")
 
     // Youtube
-    implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.0.0")
+    implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0")
     // chart
     implementation("com.patrykandpatrick.vico:core:1.6.5")
     implementation("com.patrykandpatrick.vico:compose-m3:1.6.5")
