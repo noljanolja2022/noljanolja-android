@@ -1,15 +1,8 @@
 package com.noljanolja.core.user.data.datasource
 
 import co.touchlab.kermit.Logger
-import com.noljanolja.core.contacts.domain.model.Contact
-import com.noljanolja.core.user.data.model.request.AddReferralCodeRequest
-import com.noljanolja.core.user.data.model.request.DeviceType
-import com.noljanolja.core.user.data.model.request.FindContactRequest
-import com.noljanolja.core.user.data.model.request.InviteFriendRequest
-import com.noljanolja.core.user.data.model.request.PushTokensRequest
-import com.noljanolja.core.user.data.model.request.SyncUserContactsRequest
-import com.noljanolja.core.user.data.model.request.UpdateAvatarRequest
-import com.noljanolja.core.user.data.model.request.UpdateUserRequest
+import com.noljanolja.core.contacts.domain.model.*
+import com.noljanolja.core.user.data.model.request.*
 import com.noljanolja.core.user.domain.model.CheckinProgress
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.utils.toDomainUser
@@ -30,6 +23,8 @@ interface UserRemoteDataSource {
     suspend fun findContacts(phoneNumber: String?, friendId: String?): Result<List<User>>
 
     suspend fun inviteFriend(friendId: String): Result<Boolean>
+
+    suspend fun sendPoint(request: SendPointRequest): Result<UserSendPoint>
 
     suspend fun checkin(): Result<String>
 
@@ -162,6 +157,19 @@ class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSou
             val response = userApi.inviteFriend(InviteFriendRequest(friendId))
             if (response.isSuccessful()) {
                 Result.success(true)
+            } else {
+                Result.failure(Throwable(response.message))
+            }
+        } catch (e: Throwable) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun sendPoint(request: SendPointRequest): Result<UserSendPoint> {
+        return try {
+            val response = userApi.sendPoint(request)
+            if (response.isSuccessful()) {
+                Result.success(response.data)
             } else {
                 Result.failure(Throwable(response.message))
             }

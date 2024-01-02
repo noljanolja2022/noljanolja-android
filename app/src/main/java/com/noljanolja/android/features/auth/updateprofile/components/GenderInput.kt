@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.noljanolja.android.R
-import com.noljanolja.android.ui.composable.TextField
+import com.noljanolja.android.ui.composable.CustomTextField
 import com.noljanolja.core.user.domain.model.Gender
 
 @OptIn(
@@ -53,7 +53,7 @@ fun GenderInput(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded },
     ) {
-        TextField(
+        CustomTextField(
             modifier = Modifier.fillMaxWidth().wrapContentHeight(),
             value = displayGenders[gender].orEmpty(),
             onValueChange = { },

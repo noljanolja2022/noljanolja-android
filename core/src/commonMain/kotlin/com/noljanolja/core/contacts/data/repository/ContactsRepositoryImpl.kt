@@ -1,8 +1,9 @@
 package com.noljanolja.core.contacts.data.repository
 
-import com.noljanolja.core.contacts.domain.model.Contact
+import com.noljanolja.core.contacts.domain.model.*
 import com.noljanolja.core.contacts.domain.repository.ContactsRepository
 import com.noljanolja.core.user.data.datasource.UserRemoteDataSource
+import com.noljanolja.core.user.data.model.request.*
 import com.noljanolja.core.user.domain.model.User
 
 internal class ContactsRepositoryImpl(
@@ -22,5 +23,9 @@ internal class ContactsRepositoryImpl(
 
     override suspend fun inviteFriend(friendId: String): Result<Boolean> {
         return userRemoteDataSource.inviteFriend(friendId)
+    }
+
+    override suspend fun sendPoint(request: SendPointRequest): Result<UserSendPoint> {
+        return userRemoteDataSource.sendPoint(request)
     }
 }

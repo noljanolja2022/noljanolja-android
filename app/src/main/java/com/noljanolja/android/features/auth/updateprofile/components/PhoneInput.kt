@@ -15,7 +15,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.Expanded
-import com.noljanolja.android.ui.composable.TextField
+import com.noljanolja.android.ui.composable.CustomTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,7 +27,7 @@ fun PhoneInput(
     onPhoneChange: (String) -> Unit,
 ) {
     Column(modifier = modifier) {
-        TextField(
+        CustomTextField(
             modifier = Modifier.fillMaxWidth(),
             value = phone,
             onValueChange = onPhoneChange,

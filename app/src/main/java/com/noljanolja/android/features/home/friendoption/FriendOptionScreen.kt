@@ -12,15 +12,12 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.*
-import androidx.compose.ui.text.*
-import androidx.compose.ui.text.font.*
 import androidx.compose.ui.unit.*
 import androidx.lifecycle.compose.*
 import com.noljanolja.android.R
 import com.noljanolja.android.common.ads.nativeads.*
 import com.noljanolja.android.ui.composable.*
 import com.noljanolja.android.ui.theme.*
-import com.noljanolja.android.util.*
 import com.noljanolja.core.loyalty.domain.model.*
 import org.koin.androidx.compose.*
 import org.koin.core.parameter.*
@@ -83,9 +80,9 @@ private fun FriendOptionContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             MyPoint(
+                point = memberInfo.point,
                 modifier = Modifier
-                    .clip(RoundedCornerShape(16.dp)),
-                memberInfo = memberInfo,
+                    .clip(RoundedCornerShape(16.dp))
             )
             MarginVertical(20)
             OvalAvatar(
@@ -127,7 +124,12 @@ private fun FriendOptionContent(
                     bgColor = Orange00,
                     textColor = Color.Black
                 ) {
-
+                    handleEvent(
+                        FriendOptionEvent.GoToSendPointScreen(
+                            friendAvatar = avatar,
+                            isRequestPoint = true
+                        )
+                    )
                 }
                 MarginHorizontal(12)
                 ButtonRadius(
@@ -138,7 +140,12 @@ private fun FriendOptionContent(
                     bgColor = MaterialTheme.colorScheme.primary,
                     textColor = Color.Black
                 ) {
-
+                    handleEvent(
+                        FriendOptionEvent.GoToSendPointScreen(
+                            friendAvatar = avatar,
+                            isRequestPoint = false
+                        )
+                    )
                 }
             }
             Expanded()
@@ -149,68 +156,6 @@ private fun FriendOptionContent(
                         .fillMaxWidth()
                         .wrapContentHeight()
                 )
-            }
-        }
-    }
-}
-
-@Composable
-private fun MyPoint(
-    memberInfo: MemberInfo,
-    modifier: Modifier = Modifier,
-) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
-            .height(IntrinsicSize.Min),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.Transparent
-        ),
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp),
-            contentAlignment = Alignment.CenterStart
-        ) {
-            Image(
-                painterResource(R.drawable.wallet_point_card),
-                contentDescription = null,
-                modifier = Modifier.fillMaxWidth(),
-                contentScale = ContentScale.FillBounds
-            )
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp)
-            ) {
-                Expanded()
-                Text(
-                    stringResource(R.string.my_point),
-                    style = MaterialTheme.typography.bodyLarge.withBold(),
-                    color = MaterialTheme.colorScheme.primaryContainer
-                )
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.wallet_ic_point),
-                        contentDescription = null,
-                        modifier = Modifier.size(37.dp)
-                    )
-                    SizeBox(width = 10.dp)
-                    Text(
-                        text = memberInfo.point.formatDigitsNumber(),
-                        style = TextStyle(
-                            fontSize = 28.sp,
-                            lineHeight = 36.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Orange300
-                        )
-                    )
-                }
-                Expanded()
             }
         }
     }

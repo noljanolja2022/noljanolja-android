@@ -2,7 +2,7 @@ package com.noljanolja.core
 
 import co.touchlab.kermit.Logger
 import com.noljanolja.core.auth.domain.repository.AuthRepository
-import com.noljanolja.core.contacts.domain.model.Contact
+import com.noljanolja.core.contacts.domain.model.*
 import com.noljanolja.core.contacts.domain.repository.ContactsRepository
 import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.ConversationMedia
@@ -17,6 +17,7 @@ import com.noljanolja.core.loyalty.domain.repository.LoyaltyRepository
 import com.noljanolja.core.media.domain.repository.MediaRepository
 import com.noljanolja.core.shop.data.model.request.*
 import com.noljanolja.core.shop.domain.repository.ShopRepository
+import com.noljanolja.core.user.data.model.request.*
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.user.domain.repository.UserRepository
 import com.noljanolja.core.video.data.model.request.VideoProgressEvent
@@ -57,6 +58,10 @@ class CoreManager : KoinComponent {
 
     suspend fun getContacts(page: Int): Result<List<User>> {
         return contactsRepository.getContacts(page)
+    }
+
+    suspend fun sendPoint(request: SendPointRequest): Result<UserSendPoint> {
+        return contactsRepository.sendPoint(request)
     }
 
     suspend fun findContacts(

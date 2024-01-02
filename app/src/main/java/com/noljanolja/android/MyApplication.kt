@@ -48,6 +48,7 @@ import com.noljanolja.android.features.home.play.search.*
 import com.noljanolja.android.features.home.play.uncompleted.*
 import com.noljanolja.android.features.home.require_login.*
 import com.noljanolja.android.features.home.root.*
+import com.noljanolja.android.features.home.sendpoint.*
 import com.noljanolja.android.features.home.wallet.*
 import com.noljanolja.android.features.home.wallet.dashboard.*
 import com.noljanolja.android.features.home.wallet.detail.*
@@ -355,7 +356,10 @@ class MyApplication : Application() {
                     FriendsViewModel()
                 }
                 viewModel {
-                    FriendOptionViewModel(get(), get())
+                    (friendId: String) -> SendPointViewModel(friendId)
+                }
+                viewModel {
+                    (friendId: String, friendName: String) -> FriendOptionViewModel(friendId, friendName)
                 }
                 viewModel {
                     ExchangePointViewModel()

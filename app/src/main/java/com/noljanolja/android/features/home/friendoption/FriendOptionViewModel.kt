@@ -38,6 +38,19 @@ class FriendOptionViewModel(
                         )
                     )
                 }
+
+                is FriendOptionEvent.GoToSendPointScreen -> {
+                    event.run {
+                        navigationManager.navigate(
+                            NavigationDirections.SendPointScreen(
+                                friendId = friendId,
+                                friendName = friendName,
+                                friendAvatar = friendAvatar,
+                                isRequestPoint = isRequestPoint
+                            )
+                        )
+                    }
+                }
             }
         }
     }

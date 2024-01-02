@@ -1,6 +1,8 @@
 package com.noljanolja.android.ui.composable
 
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.*
 import androidx.compose.material.icons.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -135,5 +137,58 @@ fun WarningDialog(
             textContentColor = MaterialTheme.colorScheme.onBackground,
             shape = MaterialTheme.shapes.extraSmall
         )
+    }
+}
+
+@Composable
+internal fun DialogWarningWithContent(
+    dismissText: String,
+    confirmText: String,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+    content: @Composable () -> Unit,
+) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colorScheme.background,
+                    shape = RoundedCornerShape(18.dp)
+                )
+                .padding(
+                    horizontal = 13.dp
+                )
+                .padding(
+                    top = 16.dp,
+                    bottom = 35.dp
+                )
+        ) {
+            content()
+            MarginVertical(18)
+            Row {
+                OutlineButtonBorderRadius(
+                    title = dismissText,
+                    borderColor = MaterialTheme.colorScheme.primary,
+                    bgColor = Color.Transparent,
+                    textColor = MaterialTheme.colorScheme.onBackground,
+                    onClick = onDismiss,
+                    modifier = Modifier.weight(1f)
+                )
+                MarginHorizontal(12)
+                ButtonRadius(
+                    title = confirmText,
+                    bgColor = MaterialTheme.colorScheme.primary,
+                    textColor = Color.Black,
+                    onClick = onConfirm,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
     }
 }

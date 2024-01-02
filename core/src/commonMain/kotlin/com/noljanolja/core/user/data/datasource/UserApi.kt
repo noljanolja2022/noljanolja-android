@@ -1,28 +1,15 @@
 package com.noljanolja.core.user.data.datasource
 
 import com.noljanolja.core.base.ResponseWithoutData
-import com.noljanolja.core.user.data.model.request.AddReferralCodeRequest
-import com.noljanolja.core.user.data.model.request.FindContactRequest
-import com.noljanolja.core.user.data.model.request.InviteFriendRequest
-import com.noljanolja.core.user.data.model.request.PushTokensRequest
-import com.noljanolja.core.user.data.model.request.SyncUserContactsRequest
-import com.noljanolja.core.user.data.model.request.UpdateAvatarRequest
-import com.noljanolja.core.user.data.model.request.UpdateUserRequest
-import com.noljanolja.core.user.data.model.response.AddReferralResponse
-import com.noljanolja.core.user.data.model.response.GetCheckinProgressesResponse
-import com.noljanolja.core.user.data.model.response.GetMeResponse
-import com.noljanolja.core.user.data.model.response.GetUsersResponse
-import com.noljanolja.core.user.data.model.response.UpdateAvatarResponse
-import com.noljanolja.core.user.data.model.response.UpdateUserResponse
+import com.noljanolja.core.user.data.model.request.*
+import com.noljanolja.core.user.data.model.response.*
 import com.noljanolja.core.utils.BASE_URL
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
-import io.ktor.http.ContentType
-import io.ktor.http.Headers
-import io.ktor.http.HttpHeaders
+import io.ktor.http.*
 
 class UserApi(private val client: HttpClient) {
 
@@ -94,6 +81,14 @@ class UserApi(private val client: HttpClient) {
         return client.post("$BASE_URL/api/v1/users/me/contacts/invite") {
             setBody(request)
         }.body()
+    }
+
+    suspend fun sendPoint(request: SendPointRequest): SendPointResponse {
+        request.run {
+            return client.post("$BASE_URL/api/v1/transfer-point/${if (isRequestPoint) "request" else "send"}") {
+                setBody(request)
+            }.body()
+        }
     }
 
     suspend fun checkin(): ResponseWithoutData {

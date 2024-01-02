@@ -541,6 +541,38 @@ object NavigationDirections {
         override val destination: String = "phone_settings"
     }
 
+    data class SendPointScreen(
+        val friendId: String = "",
+        val friendName: String = "",
+        val friendAvatar: String = "",
+        val isRequestPoint: Boolean = true
+    ) : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf(
+            navArgument("friendId") {
+                defaultValue = ""
+                type = NavType.StringType
+            },
+            navArgument("friendName") {
+                defaultValue = ""
+                type = NavType.StringType
+            },
+            navArgument("friendAvatar") {
+                defaultValue = ""
+                type = NavType.StringType
+            },
+            navArgument("isRequestPoint") {
+                defaultValue = true
+                type = NavType.BoolType
+            },
+        )
+        override val options: NavOptions? = null
+        override val destination: String =
+            "send_point?friendId={friendId}&friendName={friendName}&friendAvatar={friendAvatar}&isRequestPoint={isRequestPoint}"
+
+        override fun createDestination() =
+            "send_point?friendId=$friendId&friendName=$friendName&friendAvatar=$friendAvatar&isRequestPoint=$isRequestPoint"
+    }
+
     data class FriendOption(
         val friendId: String = "",
         val friendName: String = "",
