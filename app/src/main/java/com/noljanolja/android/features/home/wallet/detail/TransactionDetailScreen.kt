@@ -144,13 +144,21 @@ private fun TransactionDetailContent(
                         REASON_PURCHASE_GIFT -> {
                             GiftDetailView(
                                 type = stringResource(id = R.string.transaction_detail_video_e_voucher),
-                                gift = Gson().fromJson(loyaltyPoint.log, Gift::class.java)
+                                gift = try {
+                                    Gson().fromJson(loyaltyPoint.log, Gift::class.java)
+                                } catch (_: Exception) {
+                                    null
+                                }
                             )
                         }
 
                         REASON_WATCH_VIDEO -> {
                             VideoDetailView(
-                                video = Gson().fromJson(loyaltyPoint.log, Video::class.java)
+                                video = try {
+                                    Gson().fromJson(loyaltyPoint.log, Video::class.java)
+                                } catch (_: Exception) {
+                                    null
+                                }
                             )
                         }
 
@@ -174,7 +182,7 @@ private fun TransactionDetailContent(
 private fun GiftDetailView(
     modifier: Modifier = Modifier,
     type: String,
-    gift: Gift
+    gift: Gift?
 ) {
     ConstraintLayout(
         modifier = modifier
@@ -195,7 +203,7 @@ private fun GiftDetailView(
             fontSize = 14.sp,
         )
         AsyncImage(
-            model = gift.image,
+            model = gift?.image.convertToString(),
             contentDescription = null,
             modifier = Modifier
                 .size((55 * getScaleSize()).dp)
@@ -225,7 +233,7 @@ private fun GiftDetailView(
                 }
         )
         Text(
-            text = gift.name,
+            text = gift?.name.convertToString(),
             style = MaterialTheme.typography.labelSmall.withBold(),
             textAlign = TextAlign.Start,
             color = MaterialTheme.colorScheme.onBackground,
@@ -245,7 +253,7 @@ private fun GiftDetailView(
                 },
         )
         Text(
-            text = gift.brand.name,
+            text = gift?.brand?.name.convertToString(),
             style = MaterialTheme.typography.bodySmall,
             textAlign = TextAlign.Start,
             color = MaterialTheme.colorScheme.onBackground,
@@ -270,10 +278,10 @@ private fun GiftDetailView(
 @Composable
 private fun VideoDetailView(
     modifier: Modifier = Modifier,
-    video: Video
+    video: Video?
 ) {
     val context = LocalContext.current
-    video.run {
+    video?.run {
         Column(
             modifier = modifier
                 .clip(RoundedCornerShape(10.dp))
@@ -331,14 +339,14 @@ private fun VideoDetailView(
                 )
             }
             MarginVertical(24)
-            ButtonRadius(
-                modifier = Modifier.fillMaxWidth(),
-                enabled = progressPercentage < 1F,
-                title = stringResource(id = R.string.transaction_detail_video_complete).uppercase(),
-                bgColor = MaterialTheme.colorScheme.secondaryContainer,
-                bgDisableColor = NeutralGrey,
-                onClick = {}
-            )
+//            ButtonRadius(
+//                modifier = Modifier.fillMaxWidth(),
+//                enabled = progressPercentage < 1F,
+//                title = stringResource(id = R.string.transaction_detail_video_complete).uppercase(),
+//                bgColor = MaterialTheme.colorScheme.secondaryContainer,
+//                bgDisableColor = NeutralGrey,
+//                onClick = {}
+//            )
         }
     }
 }
