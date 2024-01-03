@@ -47,8 +47,7 @@ import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.ui.theme.withBold
-import com.noljanolja.android.ui.theme.withMedium
+import com.noljanolja.android.ui.theme.*
 import com.noljanolja.android.util.secondaryTextColor
 import com.noljanolja.android.util.showToast
 import com.noljanolja.core.user.domain.model.User
@@ -59,7 +58,7 @@ import org.koin.androidx.compose.getViewModel
 fun ReferralScreen(
     viewModel: ReferralViewModel = getViewModel(),
 ) {
-    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val uiState by viewModel.userStateFlow.collectAsStateWithLifecycle()
     ReferralContent(
         uiState = uiState,
         handleEvent = viewModel::handleEvent
@@ -68,17 +67,17 @@ fun ReferralScreen(
 
 @Composable
 private fun ReferralContent(
-    uiState: UiState<User>,
+    uiState: User,
     handleEvent: (ReferralEvent) -> Unit,
 ) {
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
-    val code = uiState.data?.referralCode.orEmpty()
+    val code = uiState.referralCode
     var isShowShareDialog by remember {
         mutableStateOf(false)
     }
     ScaffoldWithUiState(
-        uiState = uiState,
+        uiState = UiState<User>(),
         topBar = {
             CommonTopAppBar(
                 title = stringResource(id = R.string.join_play),
@@ -93,7 +92,7 @@ private fun ReferralContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.secondaryContainer)
+                .background(Yellow00)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

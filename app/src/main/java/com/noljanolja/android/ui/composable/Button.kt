@@ -314,7 +314,6 @@ internal fun ColorButton(
     color: Color,
     radius: Int = 5,
     title: String,
-    textSize: Int = 14,
     textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
     height: Int = BUTTON_TITLE,
     bgColor: Color = MaterialTheme.colorScheme.background,
@@ -350,7 +349,7 @@ internal fun ColorButton(
             text = title,
             style = textStyle.copy(
                 color = textColor,
-                fontSize = textSize.sp,
+                fontSize = 14.sp,
                 platformStyle = PlatformTextStyle(
                     includeFontPadding = false
                 )
@@ -367,6 +366,52 @@ internal fun ColorButton(
                 tint = MaterialTheme.colorScheme.onBackground
             )
         }
+    }
+}
+
+@Composable
+internal fun OutlineButtonBorderRadius(
+    modifier: Modifier = Modifier,
+    title: String,
+    borderWidth: Int = 2,
+    radius: Int = 5,
+    height: Int = BUTTON_TITLE,
+    textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
+    bgColor: Color = MaterialTheme.colorScheme.background,
+    borderColor: Color = bgColor,
+    textColor: Color = MaterialTheme.colorScheme.onBackground,
+    bgDisableColor: Color = MaterialTheme.colorScheme.surface,
+    onClick: () -> Unit
+) {
+    OutlinedButton(
+        modifier = Modifier
+            .height((height - 3 * borderWidth).dp)
+            .border(
+                width = borderWidth.dp,
+                color = borderColor,
+                shape = RoundedCornerShape(radius.dp)
+            )
+            .then(modifier),
+        onClick = onClick,
+        shape = RoundedCornerShape(radius.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = bgColor,
+            disabledContainerColor = bgDisableColor
+        )
+    ) {
+        Text(
+            modifier = Modifier,
+            text = title,
+            style = textStyle.copy(
+                color = textColor,
+                fontSize = 14.sp,
+                platformStyle = PlatformTextStyle(
+                    includeFontPadding = false
+                )
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 

@@ -8,4 +8,9 @@ sealed interface FriendOptionEvent {
     object GoBack : FriendOptionEvent
 
     object GoToChatScreen : FriendOptionEvent
+
+    data class GoToSendPointScreen(
+        val friendAvatar: String,
+        val isRequestPoint: Boolean
+    ) : FriendOptionEvent
 }

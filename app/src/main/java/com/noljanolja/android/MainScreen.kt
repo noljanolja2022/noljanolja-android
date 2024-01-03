@@ -32,6 +32,7 @@ import com.noljanolja.android.features.home.play.playscreen.*
 import com.noljanolja.android.features.home.play.search.*
 import com.noljanolja.android.features.home.play.uncompleted.*
 import com.noljanolja.android.features.home.root.*
+import com.noljanolja.android.features.home.sendpoint.SendPointScreen
 import com.noljanolja.android.features.home.wallet.checkin.*
 import com.noljanolja.android.features.home.wallet.dashboard.*
 import com.noljanolja.android.features.home.wallet.detail.*
@@ -168,6 +169,23 @@ private fun NavGraphBuilder.addContactsGraph() {
 
 private fun NavGraphBuilder.addChatGraph() {
     val chatDirection = NavigationDirections.Chat()
+    with(NavigationDirections.SendPointScreen()) {
+        composable(
+            destination,
+            arguments
+        ) {
+            val friendId = it.arguments?.getString("friendId")
+            val friendName = it.arguments?.getString("friendName")
+            val friendAvatar = it.arguments?.getString("friendAvatar")
+            val isRequestPoint = it.arguments?.getBoolean("isRequestPoint")
+            SendPointScreen(
+                friendId = friendId.convertToString(),
+                friendName = friendName.convertToString(),
+                friendAvatar = friendAvatar.convertToString(),
+                isRequestPoint = isRequestPoint ?: true
+            )
+        }
+    }
     with(NavigationDirections.FriendOption()) {
         composable(
             destination,

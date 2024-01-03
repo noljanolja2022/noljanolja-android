@@ -26,14 +26,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.ui.theme.darkContent
-import com.noljanolja.android.ui.theme.withBold
+import com.noljanolja.android.ui.theme.*
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -150,7 +148,7 @@ private fun SelectedQAItem(qa: QA, onClick: () -> Unit) {
             .clickable {
                 onClick.invoke()
             }
-            .background(Color(0xFFFFFAD0))
+            .background(Yellow00)
             .padding(vertical = 30.dp, horizontal = 16.dp)
     ) {
         Row(
