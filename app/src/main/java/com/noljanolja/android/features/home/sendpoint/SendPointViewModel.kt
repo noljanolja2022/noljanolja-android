@@ -70,6 +70,7 @@ class SendPointViewModel(
                     points = it
                 )
             )
+            updateUserState()
             _isLoading.emit(false)
             if (result.isSuccess) {
                 _sendSuccessEvent.emit(isRequestPoint)

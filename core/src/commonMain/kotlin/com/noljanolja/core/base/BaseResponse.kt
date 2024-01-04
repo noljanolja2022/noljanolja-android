@@ -5,5 +5,5 @@ abstract class BaseResponse<D> {
     abstract val message: String
     open val data: D? = null
 
-    fun isSuccessful(): Boolean = code == 0
+    fun isSuccessful(): Boolean = code == 0 || (code in 200..210)
 }

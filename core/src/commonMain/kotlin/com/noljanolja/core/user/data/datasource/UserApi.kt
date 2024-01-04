@@ -86,9 +86,18 @@ class UserApi(private val client: HttpClient) {
     suspend fun sendPoint(request: SendPointRequest): SendPointResponse {
         request.run {
             return client.post("$BASE_URL/api/v1/transfer-point/${if (isRequestPoint) "request" else "send"}") {
-                setBody(request)
+                url {
+                    if (toUserId.isNotBlank()) {
+                        parameters.append("toUserId", toUserId)
+                    }
+                    parameters.append("points", points.toString())
+                }
             }.body()
         }
+    }
+
+    suspend fun getPointConfig(): GetPointConfigResponse {
+        return client.get("$BASE_URL/api/v1/reward/referral/configs").body()
     }
 
     suspend fun checkin(): ResponseWithoutData {

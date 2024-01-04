@@ -32,7 +32,7 @@ class ShopApi(private val client: HttpClient) {
                     query?.let {
                         parameters.append("query", it)
                     }
-                    parameters.append("locale", locale)
+//                    parameters.append("locale", locale)
                 }
             }
         }.body()

@@ -26,6 +26,8 @@ interface UserRemoteDataSource {
 
     suspend fun sendPoint(request: SendPointRequest): Result<UserSendPoint>
 
+    suspend fun getPointConfig(): Result<PointConfig>
+
     suspend fun checkin(): Result<String>
 
     suspend fun getCheckinProgress(): Result<List<CheckinProgress>>
@@ -168,6 +170,19 @@ class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSou
     override suspend fun sendPoint(request: SendPointRequest): Result<UserSendPoint> {
         return try {
             val response = userApi.sendPoint(request)
+            if (response.isSuccessful()) {
+                Result.success(response.data)
+            } else {
+                Result.failure(Throwable(response.message))
+            }
+        } catch (e: Throwable) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getPointConfig(): Result<PointConfig> {
+        return try {
+            val response = userApi.getPointConfig()
             if (response.isSuccessful()) {
                 Result.success(response.data)
             } else {

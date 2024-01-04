@@ -30,9 +30,13 @@ open class BaseViewModel : ViewModel(), KoinComponent {
 
     init {
         viewModelScope.launch {
-            coreManager.getCurrentUser(forceRefresh = true, onlyLocal = false).getOrNull()?.let {
-                _userStateFlow.emit(it)
-            }
+            updateUserState()
+        }
+    }
+
+    protected suspend fun updateUserState() {
+        coreManager.getCurrentUser(forceRefresh = true, onlyLocal = false).getOrNull()?.let {
+            _userStateFlow.emit(it)
         }
     }
 

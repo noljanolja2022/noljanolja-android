@@ -28,4 +28,8 @@ internal class ContactsRepositoryImpl(
     override suspend fun sendPoint(request: SendPointRequest): Result<UserSendPoint> {
         return userRemoteDataSource.sendPoint(request)
     }
+
+    override suspend fun getPointConfig(): Result<PointConfig> {
+        return userRemoteDataSource.getPointConfig()
+    }
 }

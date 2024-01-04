@@ -64,6 +64,10 @@ class CoreManager : KoinComponent {
         return contactsRepository.sendPoint(request)
     }
 
+    suspend fun getPointConfig(): Result<PointConfig> {
+        return contactsRepository.getPointConfig()
+    }
+
     suspend fun findContacts(
         phoneNumber: String? = null,
         friendId: String? = null,

@@ -9,7 +9,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.unit.*
@@ -57,7 +56,7 @@ private fun FriendOptionContent(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             CommonTopAppBar(
-                containerColor = Color.Transparent,
+                containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 onBack = {
                     handleEvent(FriendOptionEvent.GoBack)
@@ -65,12 +64,6 @@ private fun FriendOptionContent(
             )
         },
     ) { padding ->
-        Image(
-            painter = painterResource(R.drawable.bg_with_circle),
-            modifier = Modifier.fillMaxSize(),
-            contentDescription = null,
-            contentScale = ContentScale.FillWidth
-        )
         Column(
             modifier = Modifier
                 .padding(padding)

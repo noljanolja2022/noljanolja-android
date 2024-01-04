@@ -36,6 +36,7 @@ import com.noljanolja.android.R
 import com.noljanolja.android.common.base.*
 import com.noljanolja.android.features.home.chat.components.*
 import com.noljanolja.android.features.home.chat_options.*
+import com.noljanolja.android.features.home.sendpoint.*
 import com.noljanolja.android.ui.composable.*
 import com.noljanolja.android.ui.theme.*
 import com.noljanolja.android.util.*
@@ -112,6 +113,12 @@ fun ChatScreenContent(
     val isShowSendButton by remember {
         derivedStateOf {
             selectedMedia.isNotEmpty() && bottomSheetState.bottomSheetState.isExpanded
+        }
+    }
+
+    LaunchedEffect(conversation) {
+        if (firstItemVisible.value != 0) {
+            scrollState.scrollToItem(0)
         }
     }
 

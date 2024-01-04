@@ -342,7 +342,7 @@
     <string name="referral_step_1">초대 링크를 보냅니다. 버튼을 눌러주세요.</string>
     <string name="referral_step_2">초대 링크가 전송됩니다.</string>
     <string name="referral_step_3">전송된 링크를 통해 회원가입을 진행해주세요.</string>
-    <string name="referral_step_4">모든 과정이 완료되면, 나와 친구 모두 1,000 포인트 적립</string>
+    <string name="referral_step_4">모든 과정이 완료되면, 나와 친구 모두 %d 포인트 적립</string>
     <string name="referral_description">* 복사해서 보낸 추천코드를 친구가 직접 입력하는 경우에도 동일합니다. 친구추천 이벤트에 참여할 수 있습니다.</string>
     <string name="open_link">링크 열기</string>
     <string name="checkout_and_play">출첵하고 놀기</string>

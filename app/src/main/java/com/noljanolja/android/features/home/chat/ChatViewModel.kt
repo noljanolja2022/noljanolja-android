@@ -120,11 +120,10 @@ class ChatViewModel(
                     userIds = userIds,
                     message = message,
                     replyToMessageId = replyToMessageId,
-                )
-                    .takeIf { it > 0L && conversationId == 0L }?.let {
-                        conversationId = it
-                        fetchConversation(onlyLocalData = true)
-                    }
+                ).takeIf { it > 0L && conversationId == 0L }?.let {
+                    conversationId = it
+                    fetchConversation(onlyLocalData = true)
+                }
             }
         }
     }

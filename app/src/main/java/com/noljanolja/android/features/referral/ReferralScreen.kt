@@ -28,13 +28,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
+import com.noljanolja.android.extensions.*
 import com.noljanolja.android.features.home.play.optionsvideo.*
 import com.noljanolja.android.ui.composable.CommonTopAppBar
 import com.noljanolja.android.ui.composable.PrimaryButton
@@ -50,6 +51,7 @@ import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.*
 import com.noljanolja.android.util.secondaryTextColor
 import com.noljanolja.android.util.showToast
+import com.noljanolja.core.contacts.domain.model.*
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.video.domain.model.*
 import org.koin.androidx.compose.getViewModel
@@ -59,20 +61,23 @@ fun ReferralScreen(
     viewModel: ReferralViewModel = getViewModel(),
 ) {
     val uiState by viewModel.userStateFlow.collectAsStateWithLifecycle()
+    val pointConfig by viewModel.referralUiState.collectAsStateWithLifecycle()
     ReferralContent(
-        uiState = uiState,
+        pointConfig = pointConfig.data,
+        user = uiState,
         handleEvent = viewModel::handleEvent
     )
 }
 
 @Composable
 private fun ReferralContent(
-    uiState: User,
+    pointConfig: PointConfig?,
+    user: User,
     handleEvent: (ReferralEvent) -> Unit,
 ) {
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
-    val code = uiState.referralCode
+    val code = user.referralCode
     var isShowShareDialog by remember {
         mutableStateOf(false)
     }
@@ -81,6 +86,7 @@ private fun ReferralContent(
         topBar = {
             CommonTopAppBar(
                 title = stringResource(id = R.string.join_play),
+                centeredTitle = true,
                 onBack = {
                     handleEvent(ReferralEvent.Back)
                 },
@@ -107,6 +113,48 @@ private fun ReferralContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 36.dp)
+                )
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(
+                            style = MaterialTheme.typography.bodyMedium.run {
+                                SpanStyle(
+                                    fontSize = fontSize,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                            }
+                        ) {
+                            append(stringResource(id = R.string.referral_point_title_part1))
+                        }
+                        withStyle(
+                            style = MaterialTheme.typography.bodyMedium.run {
+                                SpanStyle(
+                                    fontSize = fontSize,
+                                    color = Orange01,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                            }
+                        ) {
+                            append(" ${pointConfig?.refererPoints.convertToLong()} 포인트 ")
+                        }
+                        withStyle(
+                            style = MaterialTheme.typography.bodyMedium.run {
+                                SpanStyle(
+                                    fontSize = fontSize,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                            }
+                        ) {
+                            append(stringResource(id = R.string.referral_point_title_part2))
+                        }
+                    },
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 30.dp)
+                        .padding(bottom = (36 + 18).dp)
                 )
                 Row(
                     modifier = Modifier
@@ -183,7 +231,10 @@ private fun ReferralContent(
                 ReferralDirectionItem(
                     image = R.drawable.referral4,
                     step = "04",
-                    description = stringResource(id = R.string.referral_step_4)
+                    description = stringResource(
+                        id = R.string.referral_step_4,
+                        pointConfig?.refererPoints.convertToLong()
+                    )
                 )
             }
             Text(
