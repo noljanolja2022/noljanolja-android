@@ -397,7 +397,7 @@
     <string name="referral_step_1">Send invitation link. Just tap the button!</string>
     <string name="referral_step_2">Invite link to friend will be sent</string>
     <string name="referral_step_3">Via the link sent to you. Proceed to membership registration</string>
-    <string name="referral_step_4">When all courses are completed. Friends and I also earn 1,000P!</string>
+    <string name="referral_step_4">When all courses are completed. Friends and I also earn %dP!</string>
     <string name="referral_description">* Even if a friend manually enters the referral code after copying and sending it. You can participate in the friend referral event.</string>
     <string name="open_link">Open link</string>
     <string name="checkout_and_play">Checkout and play</string>
@@ -458,4 +458,7 @@
     <string name="request_point_dialog_title">Do you wan to Request %d Points from %s?</string>
     <string name="request_point_dialog_message">%s will feedback you soon!</string>
     <string name="request_point_success_message">Request Complete ✅</string>
+
+    <string name="referral_point_title_part1" translatable="false">추천인 및 신규\n가입자 전원에게</string>
+    <string name="referral_point_title_part2" translatable="false">지급!</string>
 </resources>

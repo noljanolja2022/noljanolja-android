@@ -12,4 +12,6 @@ internal interface ContactsRepository {
     suspend fun inviteFriend(friendId: String): Result<Boolean>
 
     suspend fun sendPoint(request: SendPointRequest): Result<UserSendPoint>
+
+    suspend fun getPointConfig(): Result<PointConfig>
 }
