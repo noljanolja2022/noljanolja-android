@@ -1,3 +1,4 @@
+- 1.1.40: Update chat option UI
 - 1.1.39: Update flow send and request Point, update referral screen and fix message UI
 - 1.1.38: Update flow send and request Point, wait for API
 - 1.1.37: Update remove require gmail, and submit app to release
