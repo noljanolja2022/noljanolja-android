@@ -92,18 +92,17 @@ private fun FriendOptionContent(
                 style = Typography.titleLarge,
                 color = Color.Black
             )
-            MarginVertical(20)
-            ButtonRadius(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                title = stringResource(id = R.string.add_friend_chat_now).uppercase(),
-                bgColor = PictonBlue,
-                icon = painterResource(id = R.drawable.ic_chat)
-            ) {
-                handleEvent(FriendOptionEvent.GoToChatScreen)
-            }
-            MarginVertical(16)
+            MarginVertical(50)
+//            ButtonRadius(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(48.dp),
+//                title = stringResource(id = R.string.add_friend_chat_now).uppercase(),
+//                bgColor = PictonBlue,
+//                icon = painterResource(id = R.drawable.ic_chat)
+//            ) {
+//                handleEvent(FriendOptionEvent.GoToChatScreen)
+//            }
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
