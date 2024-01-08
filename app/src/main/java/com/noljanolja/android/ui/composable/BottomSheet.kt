@@ -11,8 +11,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.vector.*
+import androidx.compose.ui.platform.*
 import androidx.compose.ui.text.style.*
 import androidx.compose.ui.unit.*
+import com.noljanolja.android.extensions.*
 import com.noljanolja.android.ui.theme.*
 
 /**
@@ -83,6 +85,40 @@ internal fun BottomSheetMessage(
                     )
                 }
             }
+        },
+        sheetState = sheetState,
+        sheetShape = RoundedCornerShape(
+            topStart = 24.dp,
+            topEnd = 24.dp
+        )
+    ) {
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+internal fun BottomSheetRadius(
+    sheetState: ModalBottomSheetState,
+    height: Int? = null,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    val screenHeight = LocalConfiguration.current.screenHeightDp
+    ModalBottomSheetLayout(
+        sheetContent = {
+            Column(
+                modifier = Modifier
+                    .background(
+                        color = MaterialTheme.colorScheme.background,
+                        shape = RoundedCornerShape(
+                            topStart = 24.dp,
+                            topEnd = 24.dp
+                        )
+                    )
+                    .height((height.convertToInt(screenHeight * 1 / 2)).dp)
+                    .padding(horizontal = 16.dp, vertical = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                content = content
+            )
         },
         sheetState = sheetState,
         sheetShape = RoundedCornerShape(
