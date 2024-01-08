@@ -461,4 +461,6 @@
 
     <string name="referral_point_title_part1" translatable="false">추천인 및 신규\n가입자 전원에게</string>
     <string name="referral_point_title_part2" translatable="false">지급!</string>
+    <string name="ask_to_change_avatar">Do you want to change avatar?</string>
+    <string name="ask_to_change_avatar_massage">This picture will be set as your default avatar.</string>
 </resources>
