@@ -4,9 +4,12 @@ import android.net.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.*
+import androidx.compose.material.*
 import androidx.compose.material.icons.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.*
 import androidx.compose.ui.*
@@ -34,6 +37,7 @@ import com.noljanolja.android.util.Constant.DefaultValue.PADDING_VIEW
 import com.noljanolja.android.util.Constant.DefaultValue.PADDING_VIEW_SCREEN
 import com.noljanolja.core.loyalty.domain.model.*
 import com.noljanolja.core.user.domain.model.*
+import kotlinx.coroutines.*
 import org.koin.androidx.compose.*
 
 @Composable
@@ -84,7 +88,7 @@ fun SettingScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 private fun SettingContent(
     uiState: SettingUIState,
@@ -99,9 +103,23 @@ private fun SettingContent(
         mutableStateOf(false)
     }
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val sharedPreferenceHelper: SharedPreferenceHelper = get()
+    val showChangeAvatarBottomSheet =
+        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     var avatar by rememberSaveable { mutableStateOf<Uri?>(null) }
-    var showAvatarInputDialog by rememberSaveable { mutableStateOf(false) }
+    var tempAvatar by rememberSaveable { mutableStateOf<Uri?>(null) }
+
+    BackPressHandler() {
+        if (showChangeAvatarBottomSheet.currentValue == ModalBottomSheetValue.HalfExpanded) {
+            scope.launch {
+                showChangeAvatarBottomSheet.hide()
+            }
+        } else {
+            handleEvent(SettingEvent.Back)
+        }
+    }
+
     LaunchedEffect(key1 = avatar, block = {
         context.loadFileInfo(avatar)?.let {
             handleEvent(
@@ -180,7 +198,10 @@ private fun SettingContent(
                             .clip(RoundedCornerShape(5.dp))
                             .background(MaterialTheme.colorScheme.primaryContainer)
                             .clickable {
-                                showAvatarInputDialog = true
+//                                showAvatarInputDialog = true
+                                scope.launch {
+                                    showChangeAvatarBottomSheet.show()
+                                }
                             }
                             .padding(vertical = 3.dp, horizontal = 13.dp)
                             .constrainAs(btnChange) {
@@ -384,11 +405,20 @@ private fun SettingContent(
             }
         }
     }
-    AvatarInput(
-        isShown = showAvatarInputDialog,
+//    AvatarInput(
+//        isShown = showAvatarInputDialog,
+//        onAvatarInput = { uri ->
+//            uri?.let { avatar = it }
+//            showAvatarInputDialog = false
+//        },
+//    )
+    BottomSheetAvatarInput(
+        sheetState = showChangeAvatarBottomSheet,
         onAvatarInput = { uri ->
-            uri?.let { avatar = it }
-            showAvatarInputDialog = false
+            uri?.let { tempAvatar = it }
+            scope.launch {
+                showChangeAvatarBottomSheet.hide()
+            }
         },
     )
     WarningDialog(
@@ -403,6 +433,22 @@ private fun SettingContent(
         onConfirm = {
             isShowClearCatchDialog = false
             handleEvent(SettingEvent.ClearCacheData)
+        }
+    )
+
+    WarningDialog(
+        title = stringResource(id = R.string.ask_to_change_avatar),
+        content = stringResource(R.string.ask_to_change_avatar_massage),
+        dismissText = stringResource(R.string.common_no),
+        confirmText = stringResource(R.string.common_yes),
+        isWarning = tempAvatar != null,
+        onDismiss = {
+            avatar = null
+            tempAvatar = null
+        },
+        onConfirm = {
+            avatar = tempAvatar
+            tempAvatar = null
         }
     )
     if (isShowLogoutDialog) {
