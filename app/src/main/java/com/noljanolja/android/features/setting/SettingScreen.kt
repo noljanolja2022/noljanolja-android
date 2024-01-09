@@ -305,13 +305,13 @@ private fun SettingContent(
                         isShowClearCatchDialog = true
                     }
                 )
-                MarginVertical(PADDING_VIEW)
-                ButtonTextWithToggle(
-                    title = stringResource(id = R.string.setting_open_source_licence),
-                    onClick = {
-                        handleEvent(SettingEvent.Licence)
-                    }
-                )
+//                MarginVertical(PADDING_VIEW)
+//                ButtonTextWithToggle(
+//                    title = stringResource(id = R.string.setting_open_source_licence),
+//                    onClick = {
+//                        handleEvent(SettingEvent.Licence)
+//                    }
+//                )
                 MarginVertical(PADDING_VIEW)
                 ButtonTextWithToggle(
                     title = stringResource(id = R.string.setting_faq),

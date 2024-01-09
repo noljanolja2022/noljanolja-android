@@ -448,8 +448,8 @@
 
     <string name="friends_search_friends">Search Friends</string>
 
-    <string name="send_point_title">Sending to %s</string>
-    <string name="request_point_title">Requesting to %s</string>
+    <string name="send_point_title">Points to send %s</string>
+    <string name="request_point_title">Points to request %s</string>
     <string name="request_point_error">Sorry, you don’t have enough Points!</string>
     <string name="send_point_dialog_title">Do you wan to send %s Points to %s?</string>
     <string name="send_point_dialog_message_part_1">This action will subtract</string>
