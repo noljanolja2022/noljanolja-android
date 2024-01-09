@@ -158,9 +158,18 @@ private fun SendPointScreenContent(
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Next,
+                        imeAction = ImeAction.Done,
                     ),
-                    keyboardActions = KeyboardActions.Default,
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            handleEvent(
+                                SendPointEvent.CheckValidPoint(
+                                    point = point.toLongOrNull(),
+                                    isRequestPoint = isRequestPoint
+                                )
+                            )
+                        }
+                    ),
                     colors = TextFieldDefaults.textFieldColors(
                         containerColor = Orange00,
                         focusedIndicatorColor = Color.Transparent,

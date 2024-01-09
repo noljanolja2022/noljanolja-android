@@ -41,11 +41,13 @@ class SendPointViewModel(
                 SendPointEvent.HideDialog -> _checkPointValid.emit(null)
 
                 is SendPointEvent.CheckValidPoint -> {
-                    _checkPointValid.emit(
-                        event.point?.let {
-                            it <= memberInfoFlow.value.point || event.isRequestPoint
+                    event.point?.let {
+                        if (it > 0) {
+                            _checkPointValid.emit(
+                                it <= memberInfoFlow.value.point || event.isRequestPoint
+                            )
                         }
-                    )
+                    }
                 }
 
                 is SendPointEvent.SendPoint -> {

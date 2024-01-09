@@ -394,8 +394,8 @@
 
     <string name="friends_search_friends">친구 검색</string>
 
-    <string name="send_point_title">%s 에게 보내는 중</string>
-    <string name="request_point_title">%s 에 요청 중</string>
+    <string name="send_point_title">%s 보낼 포인트</string>
+    <string name="request_point_title">%s 요청 포인트</string>
     <string name="request_point_error">죄송합니다. 포인트가 부족합니다!</string>
     <string name="send_point_dialog_title">%s 포인트를 %s 에게 보내시겠습니까?</string>
     <string name="send_point_dialog_message_part_1">이 작업을 수행하면 지갑에서</string>
