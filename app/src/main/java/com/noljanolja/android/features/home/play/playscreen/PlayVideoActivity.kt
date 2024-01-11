@@ -1,36 +1,31 @@
 package com.noljanolja.android.features.home.play.playscreen
 
-import android.app.PendingIntent
-import android.app.PictureInPictureParams
-import android.app.RemoteAction
-import android.content.Context
-import android.content.Intent
-import android.content.res.Configuration
-import android.graphics.drawable.Icon
-import android.os.Build
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.Modifier
-import androidx.lifecycle.lifecycleScope
-import com.noljanolja.VideoBroadcastReceiver
-import com.noljanolja.android.MyApplication
+import android.app.*
+import android.content.*
+import android.content.res.*
+import android.graphics.drawable.*
+import android.os.*
+import androidx.activity.*
+import androidx.activity.compose.*
+import androidx.annotation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
+import androidx.lifecycle.*
+import com.noljanolja.*
+import com.noljanolja.android.*
 import com.noljanolja.android.R
 import com.noljanolja.android.common.enums.*
 import com.noljanolja.android.common.sharedpreference.*
-import com.noljanolja.android.ui.composable.youtube.YoutubeViewWithFullScreen
-import com.noljanolja.android.ui.theme.NoljanoljaTheme
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import com.noljanolja.android.ui.composable.youtube.*
+import com.noljanolja.android.ui.theme.*
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import org.koin.android.ext.android.*
-import org.koin.androidx.viewmodel.ext.android.getViewModel
-import org.koin.core.parameter.parametersOf
+import org.koin.androidx.viewmodel.ext.android.*
+import org.koin.core.parameter.*
 
 class PlayVideoActivity : ComponentActivity() {
 
@@ -91,6 +86,10 @@ class PlayVideoActivity : ComponentActivity() {
     ) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
         isInPipMode.value = isInPictureInPictureMode
+    }
+
+    override fun onUserLeaveHint() {
+        if (!isInPipMode.value) enterPip()
     }
 
     private fun enterPip() {
