@@ -1,3 +1,4 @@
+- 1.1.44: Update show QR of India Gift
 - 1.1.43: Update pip when click home in activity detail
 - 1.1.42: Update next action in request point
 - 1.1.41: Update change avatar flow
