@@ -137,7 +137,7 @@ private fun SendPointScreenContent(
                         id = if (isRequestPoint) R.string.request_point_title else R.string.send_point_title,
                         friendName
                     ),
-                    style = Typography.titleLarge,
+                    style = Typography.titleLarge.copy(textAlign = TextAlign.Center),
                     fontSize = 16.sp,
                     color = Color.Black
                 )

@@ -1,47 +1,40 @@
 package com.noljanolja.android
 
 import android.annotation.*
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
-import android.content.res.Configuration
-import android.os.Build
-import android.os.Bundle
-import android.provider.Settings
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import android.app.*
+import android.content.*
+import android.content.res.*
+import android.os.*
+import android.provider.*
+import android.util.*
+import androidx.activity.*
+import androidx.activity.compose.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.*
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.lifecycleScope
-import co.touchlab.kermit.Logger
-import com.d2brothers.firebase_auth.AuthSdk
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.RequestConfiguration
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.ktx.messaging
-import com.noljanolja.android.common.base.launchInMain
-import com.noljanolja.android.common.base.launchInMainIO
+import androidx.lifecycle.*
+import co.touchlab.kermit.*
+import com.d2brothers.firebase_auth.*
+import com.google.accompanist.permissions.*
+import com.google.android.gms.ads.*
+import com.google.android.gms.tasks.*
+import com.google.firebase.ktx.*
+import com.google.firebase.messaging.*
+import com.google.firebase.messaging.ktx.*
+import com.noljanolja.android.common.base.*
 import com.noljanolja.android.common.enums.*
-import com.noljanolja.android.common.mobiledata.data.ContactsLoader
-import com.noljanolja.android.common.navigation.NavigationDirections
-import com.noljanolja.android.common.navigation.NavigationManager
-import com.noljanolja.android.common.network.ConnectivityObserver
-import com.noljanolja.android.common.network.NetworkConnectivityObserver
+import com.noljanolja.android.common.mobiledata.data.*
+import com.noljanolja.android.common.navigation.*
+import com.noljanolja.android.common.network.*
 import com.noljanolja.android.common.sharedpreference.*
-import com.noljanolja.android.ui.theme.NoljanoljaTheme
-import com.noljanolja.core.CoreManager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.koin.android.ext.android.inject
+import com.noljanolja.android.ui.theme.*
+import com.noljanolja.core.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import org.koin.android.ext.android.*
+
 
 class MainActivity : ComponentActivity() {
     private val navigationManager: NavigationManager by inject()
@@ -65,6 +58,7 @@ class MainActivity : ComponentActivity() {
         syncContacts()
         Logger.d("DeviceId ${getDeviceId(this)}")
         appColorId.value = sharedPreferenceHelper.appColor
+        getFirebaseToken()
         setContent {
             val appColorSettingKey by remember {
                 appColorId
@@ -101,6 +95,21 @@ class MainActivity : ComponentActivity() {
         }
         onNewIntent(intent)
         subscribeVideoTopic()
+    }
+
+    private fun getFirebaseToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("TTT", "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            val token = task.result
+
+            launchInMain {
+                coreManager.pushTokens(token)
+            }
+        })
     }
 
     private fun syncContacts() {

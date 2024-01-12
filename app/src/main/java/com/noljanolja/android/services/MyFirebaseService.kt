@@ -8,10 +8,10 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
 import android.media.RingtoneManager
+import android.net.*
 import android.os.Build
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.app.NotificationCompat
-import androidx.core.app.Person
+import androidx.core.app.*
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.graphics.drawable.toBitmap
 import co.touchlab.kermit.Logger
@@ -31,6 +31,7 @@ import com.noljanolja.core.conversation.domain.model.MessageType
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import java.util.*
 
 class MyFirebaseService : FirebaseMessagingService() {
 
@@ -44,6 +45,18 @@ class MyFirebaseService : FirebaseMessagingService() {
         scope.launch {
             val data = message.data
             when {
+                data["points"]?.toLongOrNull().orZero() > 0L -> {
+                    if (MyApplication.isAppInForeground) {
+                        showPointMessage(
+                            title = message.notification?.title.orEmpty(),
+                            content = message.notification?.title.orEmpty(),
+                            senderAvatar = message.notification?.imageUrl
+                        )
+                    } else {
+                        displayMessageNotification(message.data)
+                    }
+                }
+
                 data["conversationId"]?.toLongOrNull().orZero() > 0L -> {
                     displayMessageNotification(message.data)
                 }
@@ -72,7 +85,7 @@ class MyFirebaseService : FirebaseMessagingService() {
 
         val channelId = getString(R.string.app_channel_id)
         val notificationManager =
-            (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).apply {
+            (getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager)?.apply {
                 createMessageNotificationChannel(channelId)
             }
         val notification = createMessageNotification(
@@ -85,7 +98,57 @@ class MyFirebaseService : FirebaseMessagingService() {
             message = data["message"].orEmpty(),
             messageTime = data["messageTime"]?.toLong() ?: 0,
         )
-        notificationManager.notify(conversationId.toInt(), notification)
+        notificationManager?.notify(conversationId.toInt(), notification)
+    }
+
+    private suspend fun showPointMessage(
+        title: String,
+        content: String,
+        senderAvatar: Uri?
+    ) {
+        val channelId = getString(R.string.app_channel_id)
+        val notificationManager =
+            (getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager)?.apply {
+                createMessageNotificationChannel(channelId)
+            }
+
+        val intent = Intent(
+            this,
+            MainActivity::class.java
+        )
+
+        val senderIconRequest = ImageRequest.Builder(this)
+            .data(senderAvatar)
+            .allowHardware(false)
+            .build()
+        val senderIcon = Coil.imageLoader(this)
+            .execute(senderIconRequest)
+            .drawable
+            ?.let { (it as BitmapDrawable).bitmap }
+            ?: AppCompatResources.getDrawable(this, R.drawable.placeholder_account)?.toBitmap()
+
+        val notification = NotificationCompat.Builder(this, channelId)
+
+        intent.action = Intent.ACTION_MAIN
+        intent.addCategory(Intent.CATEGORY_LAUNCHER)
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val pendingIntent = PendingIntent.getActivity(
+            this, 1,
+            intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        notification.run {
+            setSmallIcon(R.drawable.ic_launcher_foreground)
+            setContentTitle(title)
+            setLargeIcon(senderIcon)
+            setAutoCancel(true)
+            setContentText(content)
+            setContentIntent(pendingIntent)
+        }
+        notificationManager?.notify(
+            Calendar.getInstance().timeInMillis.toInt(),
+            notification.build()
+        )
     }
 
     private suspend fun createMessageNotification(
@@ -106,11 +169,15 @@ class MyFirebaseService : FirebaseMessagingService() {
             .execute(senderIconRequest)
             .drawable
             ?.let { (it as BitmapDrawable).bitmap }
-            ?: AppCompatResources.getDrawable(this, R.drawable.placeholder_account)!!.toBitmap()
+            ?: AppCompatResources.getDrawable(this, R.drawable.placeholder_account)?.toBitmap()
 
         val sender = Person.Builder()
-            .setIcon(IconCompat.createWithBitmap(senderIcon))
-            .setName(senderName)
+            .apply {
+                senderIcon?.let {
+                    setIcon(IconCompat.createWithBitmap(it))
+                }
+            }
+            .setName(senderName.ifBlank { "Test" })
             .build()
 
         val messageContent = when (messageType) {
