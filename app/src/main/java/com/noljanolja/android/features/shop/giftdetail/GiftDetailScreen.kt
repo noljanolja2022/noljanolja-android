@@ -268,7 +268,9 @@ private fun GiftImage(
                 .wrapContentHeight()
         ) {
             if (qrCode.isBlank()) {
-                if (log.isNullOrBlank()) {
+                val voucherRef = gift.log?.dropLast(1)?.drop(1)
+                    .parseFromJsonTo<IndiaVoucher>()?.voucher_ref
+                if (voucherRef.isNullOrBlank()) {
                     SubcomposeAsyncImageContent(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -277,17 +279,15 @@ private fun GiftImage(
                         contentScale = ContentScale.FillWidth
                     )
                 } else {
-                    gift.log?.dropLast(1)?.drop(1).parseFromJsonTo<IndiaVoucher>()?.voucher_ref?.let {
-                        Image(
-                            painter = rememberQrBitmapPainter(it),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .aspectRatio(1f)
-                                .background(MaterialTheme.colorScheme.background),
-                            contentScale = ContentScale.FillWidth
-                        )
-                    }
+                    Image(
+                        painter = rememberQrBitmapPainter(voucherRef),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f)
+                            .background(MaterialTheme.colorScheme.background),
+                        contentScale = ContentScale.FillWidth
+                    )
                 }
             } else {
                 when (painter.state) {
