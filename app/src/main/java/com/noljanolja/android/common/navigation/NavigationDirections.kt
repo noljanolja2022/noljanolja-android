@@ -6,6 +6,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import androidx.navigation.navOptions
+import com.noljanolja.android.extensions.*
 import com.noljanolja.android.features.home.wallet.model.UiLoyaltyPoint
 import com.noljanolja.android.util.toNavString
 import com.noljanolja.core.utils.defaultJson
@@ -476,7 +477,11 @@ object NavigationDirections {
             "product_by_category?brandId=$brandId&categoryId=$categoryId&categoryName=$categoryName"
     }
 
-    data class GiftDetail(val giftId: String = "", val code: String = "") : NavigationCommand {
+    data class GiftDetail(
+        val giftId: String = "",
+        val code: String = "",
+        val log: String? = null
+    ) : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf(
             navArgument("giftId") {
                 defaultValue = ""
@@ -486,10 +491,14 @@ object NavigationDirections {
                 defaultValue = ""
                 type = NavType.StringType
             },
+            navArgument("log") {
+                defaultValue = ""
+                type = NavType.StringType
+            },
         )
         override val options = null
-        override val destination: String = "gift_detail?giftId={giftId}&code={code}"
-        override fun createDestination() = "gift_detail?giftId=$giftId&code=$code"
+        override val destination: String = "gift_detail?giftId={giftId}&code={code}&log={log}"
+        override fun createDestination() = "gift_detail?giftId=$giftId&code=$code&log=${log.convertToString()}"
     }
 
     object Coupons : NavigationCommand {

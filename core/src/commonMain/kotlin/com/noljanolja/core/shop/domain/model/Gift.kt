@@ -15,7 +15,11 @@ data class Gift(
     val name: String = "",
     val price: Double = 0.0,
     val qrCode: String = "",
-    val category: ItemChoose = ItemChoose()
+    val category: ItemChoose = ItemChoose(),
+    val log: String? = ""
 ) {
     fun giftId() = giftId.takeIf { it.isNotBlank() } ?: id
+
+    fun isPurchased(isCheckInDetail: Boolean = false) =
+        qrCode.isNotBlank() || (price == 0.0 || isCheckInDetail && !log.isNullOrBlank())
 }

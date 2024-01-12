@@ -1,5 +1,6 @@
 package com.noljanolja.android.extensions
 
+import com.google.gson.*
 import com.google.i18n.phonenumbers.*
 
 /**
@@ -7,6 +8,12 @@ import com.google.i18n.phonenumbers.*
  */
 
 fun String?.convertToString(defaultValue: String = "") = this ?: defaultValue
+
+internal inline fun <reified T> String?.parseFromJsonTo(): T? = try {
+    Gson().fromJson(this, T::class.java)
+} catch (e: Exception) {
+    null
+}
 
 fun String?.addLine(textLine: Int, anotherLine: Int): String {
     val result = StringBuilder(this.convertToString())

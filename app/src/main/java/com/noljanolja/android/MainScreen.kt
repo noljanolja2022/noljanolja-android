@@ -377,7 +377,8 @@ private fun NavGraphBuilder.addShopGraph() {
         ) {
             val giftId = (it.arguments?.getString("giftId")).orEmpty()
             val code = (it.arguments?.getString("code").orEmpty())
-            GiftDetailScreen(giftId, code)
+            val log = (it.arguments?.getString("log").orEmpty())
+            GiftDetailScreen(giftId, code, log)
         }
     }
     with(NavigationDirections.Coupons) {

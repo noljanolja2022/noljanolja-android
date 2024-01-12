@@ -60,7 +60,8 @@ class SearchProductViewModel : BaseViewModel() {
                     navigationManager.navigate(
                         NavigationDirections.GiftDetail(
                             event.gift.giftId(),
-                            event.gift.qrCode
+                            event.gift.qrCode,
+                            event.gift.log
                         )
                     )
                 }

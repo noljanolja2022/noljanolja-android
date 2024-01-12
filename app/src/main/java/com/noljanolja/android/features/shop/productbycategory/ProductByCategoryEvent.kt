@@ -5,7 +5,11 @@ package com.noljanolja.android.features.shop.productbycategory
  */
 
 interface ProductByCategoryEvent {
-    data class GiftDetail(val giftId: String, val code: String) : ProductByCategoryEvent
+    data class GiftDetail(
+        val giftId: String,
+        val code: String,
+        val log: String?
+    ) : ProductByCategoryEvent
 
     object GoBack : ProductByCategoryEvent
 }

@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.*
 import androidx.constraintlayout.compose.*
 import androidx.lifecycle.compose.*
 import coil.compose.*
-import com.google.gson.*
 import com.noljanolja.android.R
 import com.noljanolja.android.extensions.*
 import com.noljanolja.android.features.home.wallet.model.*
@@ -144,21 +143,13 @@ private fun TransactionDetailContent(
                         REASON_PURCHASE_GIFT -> {
                             GiftDetailView(
                                 type = stringResource(id = R.string.transaction_detail_video_e_voucher),
-                                gift = try {
-                                    Gson().fromJson(loyaltyPoint.log, Gift::class.java)
-                                } catch (_: Exception) {
-                                    null
-                                }
+                                gift = loyaltyPoint.log.parseFromJsonTo()
                             )
                         }
 
                         REASON_WATCH_VIDEO -> {
                             VideoDetailView(
-                                video = try {
-                                    Gson().fromJson(loyaltyPoint.log, Video::class.java)
-                                } catch (_: Exception) {
-                                    null
-                                }
+                                video = loyaltyPoint.log.parseFromJsonTo()
                             )
                         }
 

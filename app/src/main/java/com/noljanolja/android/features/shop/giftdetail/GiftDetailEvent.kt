@@ -5,5 +5,9 @@ sealed interface GiftDetailEvent {
 
     object Purchase : GiftDetailEvent
 
-    data class GiftDetail(val giftId: String, val code: String) : GiftDetailEvent
+    data class GiftDetail(
+        val giftId: String,
+        val code: String,
+        val log: String?
+    ) : GiftDetailEvent
 }

@@ -91,7 +91,13 @@ private fun ProductByCategoryContent(
                         GiftItem(
                             gift = it,
                             onClick = { gift ->
-                                handleEvent(ProductByCategoryEvent.GiftDetail(gift.id, gift.qrCode))
+                                handleEvent(
+                                    ProductByCategoryEvent.GiftDetail(
+                                        gift.id,
+                                        gift.qrCode,
+                                        gift.log
+                                    )
+                                )
                             },
                         )
                     }
@@ -114,7 +120,8 @@ private fun ProductByCategoryContent(
                                     handleEvent(
                                         ProductByCategoryEvent.GiftDetail(
                                             gift.id,
-                                            gift.qrCode
+                                            gift.qrCode,
+                                            gift.log
                                         )
                                     )
                                 },

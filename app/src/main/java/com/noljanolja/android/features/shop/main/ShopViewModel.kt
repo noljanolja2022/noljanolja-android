@@ -46,7 +46,7 @@ class ShopViewModel : BaseViewModel() {
                 ShopEvent.Setting -> navigationManager.navigate(NavigationDirections.Setting)
 
                 is ShopEvent.GiftDetail -> navigationManager.navigate(
-                    NavigationDirections.GiftDetail(event.giftId, event.code)
+                    NavigationDirections.GiftDetail(event.giftId, event.code, event.log)
                 )
 
                 is ShopEvent.ViewGiftType -> {

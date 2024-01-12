@@ -42,9 +42,9 @@ fun GiftItem(
     onClick: (Gift) -> Unit,
     containerColor: Color = MaterialTheme.colorScheme.background,
 ) {
-    val isPurchased = gift.qrCode.isNotBlank()
     Surface(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .padding(bottom = 12.dp),
         shape = RoundedCornerShape(15.dp),
@@ -52,21 +52,25 @@ fun GiftItem(
         color = containerColor
     ) {
         Row(
-            modifier = Modifier.height(IntrinsicSize.Min)
+            modifier = Modifier
+                .height(IntrinsicSize.Min)
                 .padding(6.dp)
                 .clickable { onClick.invoke(gift) }
         ) {
             AsyncImage(
                 model = gift.image,
                 contentDescription = null,
-                modifier = Modifier.size(100.dp)
+                modifier = Modifier
+                    .size(100.dp)
                     .clip(RoundedCornerShape(5.dp))
                     .background(MaterialTheme.colorScheme.surface),
                 contentScale = ContentScale.FillBounds,
             )
             SizeBox(width = 20.dp)
             Column(
-                modifier = Modifier.weight(1f).fillMaxHeight(),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
@@ -79,7 +83,7 @@ fun GiftItem(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onBackground
                 )
-                if (!isPurchased) {
+                if (!gift.isPurchased()) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
@@ -103,14 +107,17 @@ fun GiftItem(
                     }
                 }
             }
-            if (isPurchased) {
+            if (gift.isPurchased()) {
                 Box(
-                    modifier = Modifier.fillMaxHeight().width(IntrinsicSize.Min),
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(IntrinsicSize.Min),
                     contentAlignment = Alignment.BottomEnd
                 ) {
                     Text(
                         stringResource(id = R.string.common_use_now),
-                        modifier = Modifier.width(90.dp)
+                        modifier = Modifier
+                            .width(90.dp)
                             .padding(vertical = 10.dp)
                             .clip(RoundedCornerShape(5.dp))
                             .background(MaterialTheme.colorScheme.primaryContainer),

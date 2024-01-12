@@ -323,7 +323,7 @@ class MyApplication : Application() {
                 viewModel {
                     ProductByCategoryViewModel()
                 }
-                viewModel { (giftId: String, code: String) -> GiftDetailViewModel(giftId, code) }
+                viewModel { (giftId: String, code: String, log: String) -> GiftDetailViewModel(giftId, code, log) }
                 viewModel {
                     CouponsViewModel()
                 }

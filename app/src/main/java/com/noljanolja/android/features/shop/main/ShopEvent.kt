@@ -5,7 +5,11 @@ sealed interface ShopEvent {
 
     object Setting : ShopEvent
 
-    data class GiftDetail(val giftId: String, val code: String) : ShopEvent
+    data class GiftDetail(
+        val giftId: String,
+        val code: String,
+        val log: String?
+    ) : ShopEvent
 
     data class ViewGiftType(
         val brandId: String = "",

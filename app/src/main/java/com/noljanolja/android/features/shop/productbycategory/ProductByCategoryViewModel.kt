@@ -26,7 +26,7 @@ class ProductByCategoryViewModel() : BaseViewModel() {
                 ProductByCategoryEvent.GoBack -> navigationManager.navigate(NavigationDirections.Back)
 
                 is ProductByCategoryEvent.GiftDetail -> navigationManager.navigate(
-                    NavigationDirections.GiftDetail(event.giftId, event.code)
+                    NavigationDirections.GiftDetail(event.giftId, event.code, event.log)
                 )
             }
         }

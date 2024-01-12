@@ -169,13 +169,14 @@ private fun ShopContent(
                         )
                     },
                     onGiftItemClick = {
-                        handleEvent(ShopEvent.GiftDetail(it.id, it.qrCode))
+                        handleEvent(ShopEvent.GiftDetail(it.id, it.qrCode, it.log))
                     },
                     onUse = {
                         handleEvent(
                             ShopEvent.GiftDetail(
                                 it.giftId(),
-                                it.qrCode
+                                it.qrCode,
+                                it.log
                             )
                         )
                     }

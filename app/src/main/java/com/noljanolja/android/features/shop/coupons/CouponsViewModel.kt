@@ -31,7 +31,8 @@ class CouponsViewModel : BaseViewModel() {
                 is CouponsEvent.GiftDetail -> navigationManager.navigate(
                     NavigationDirections.GiftDetail(
                         event.giftId,
-                        event.code
+                        event.code,
+                        event.log
                     )
                 )
             }

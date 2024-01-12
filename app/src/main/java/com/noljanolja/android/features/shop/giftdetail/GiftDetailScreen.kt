@@ -19,6 +19,7 @@ import coil.request.*
 import com.airbnb.lottie.compose.*
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.*
+import com.noljanolja.android.extensions.*
 import com.noljanolja.android.features.shop.composable.*
 import com.noljanolja.android.ui.composable.*
 import com.noljanolja.android.ui.theme.*
@@ -32,7 +33,8 @@ import org.koin.core.parameter.*
 fun GiftDetailScreen(
     giftId: String,
     code: String,
-    viewModel: GiftDetailViewModel = getViewModel { parametersOf(giftId, code) },
+    log: String,
+    viewModel: GiftDetailViewModel = getViewModel { parametersOf(giftId, code, log) },
 ) {
     val context = LocalContext.current
     var showPurchaseDialog by remember { mutableStateOf(false) }
@@ -89,7 +91,7 @@ private fun GiftDetailContent(
     ) {
         val data = uiState.data ?: return@ScaffoldWithUiState
         val gift = data.gift
-        val isPurchased = gift.qrCode.isNotBlank()
+        val indiaVoucher = gift.log?.dropLast(1)?.drop(1).parseFromJsonTo<IndiaVoucher>()
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -124,7 +126,7 @@ private fun GiftDetailContent(
                 }
                 Divider(thickness = 1.dp)
 
-                if (!isPurchased) {
+                if (!gift.isPurchased() && indiaVoucher == null) {
                     Column(
                         modifier = Modifier
                             .background(MaterialTheme.colorScheme.background)
@@ -149,7 +151,8 @@ private fun GiftDetailContent(
                                     handleEvent(
                                         GiftDetailEvent.GiftDetail(
                                             it.id,
-                                            it.qrCode
+                                            it.qrCode,
+                                            it.log
                                         )
                                     )
                                 },
@@ -158,7 +161,7 @@ private fun GiftDetailContent(
                     }
                 }
             }
-            if (!isPurchased) {
+            if (!gift.isPurchased() && indiaVoucher == null) {
                 DividerElevation()
                 Surface(
                     modifier = Modifier
@@ -253,41 +256,57 @@ private fun GiftImage(
     gift: Gift,
     modifier: Modifier = Modifier,
 ) {
-    val image = gift.qrCode.takeIf { it.isNotBlank() } ?: gift.image
-    SubcomposeAsyncImage(
-        ImageRequest.Builder(context = LocalContext.current)
-            .data(image)
-            .build(),
-        contentDescription = null,
-        modifier = modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-    ) {
-        if (gift.qrCode.isBlank()) {
-            SubcomposeAsyncImageContent(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .background(MaterialTheme.colorScheme.background),
-                contentScale = ContentScale.FillWidth
-            )
-        } else {
-            when (painter.state) {
-                is AsyncImagePainter.State.Loading -> {
-                    LoadingImage()
+    gift.run {
+        val image = qrCode.takeIf { it.isNotBlank() } ?: image
+        SubcomposeAsyncImage(
+            ImageRequest.Builder(context = LocalContext.current)
+                .data(image)
+                .build(),
+            contentDescription = null,
+            modifier = modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+        ) {
+            if (qrCode.isBlank()) {
+                if (log.isNullOrBlank()) {
+                    SubcomposeAsyncImageContent(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f)
+                            .background(MaterialTheme.colorScheme.background),
+                        contentScale = ContentScale.FillWidth
+                    )
+                } else {
+                    gift.log?.dropLast(1)?.drop(1).parseFromJsonTo<IndiaVoucher>()?.voucher_ref?.let {
+                        Image(
+                            painter = rememberQrBitmapPainter(it),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(1f)
+                                .background(MaterialTheme.colorScheme.background),
+                            contentScale = ContentScale.FillWidth
+                        )
+                    }
                 }
+            } else {
+                when (painter.state) {
+                    is AsyncImagePainter.State.Loading -> {
+                        LoadingImage()
+                    }
 
-                is AsyncImagePainter.State.Error -> {
-                    ImageError()
+                    is AsyncImagePainter.State.Error -> {
+                        ImageError()
+                    }
+
+                    else -> SubcomposeAsyncImageContent(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .background(MaterialTheme.colorScheme.background),
+                        contentScale = ContentScale.FillWidth
+                    )
                 }
-
-                else -> SubcomposeAsyncImageContent(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .background(MaterialTheme.colorScheme.background),
-                    contentScale = ContentScale.FillWidth
-                )
             }
         }
     }

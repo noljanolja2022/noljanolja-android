@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.*
 class GiftDetailViewModel(
     private val giftId: String,
     private val code: String,
+    private val log: String
 ) : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow<UiState<GiftDetailUiData>>(
         UiState(
@@ -43,7 +44,7 @@ class GiftDetailViewModel(
             _uiStateFlow.emit(
                 UiState(
                     data = GiftDetailUiData(
-                        gift = gift.copy(qrCode = code),
+                        gift = gift.copy(qrCode = code, log = log),
                         giftsByCategory = giftsByCategory
                     )
                 )
@@ -64,7 +65,7 @@ class GiftDetailViewModel(
                 GiftDetailEvent.Purchase -> purchase()
 
                 is GiftDetailEvent.GiftDetail -> navigationManager.navigate(
-                    NavigationDirections.GiftDetail(event.giftId, event.code)
+                    NavigationDirections.GiftDetail(event.giftId, event.code, event.log)
                 )
             }
         }
