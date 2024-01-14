@@ -336,6 +336,8 @@ internal fun NotificationItem(
                 style = MaterialTheme.typography.titleSmall.withBold(),
                 textAlign = TextAlign.Start,
                 color = MaterialTheme.colorScheme.onBackground,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .constrainAs(tvTitle) {
                         linkTo(
@@ -371,6 +373,8 @@ internal fun NotificationItem(
                 } ?: createdAt.formatTransactionShortTime(),
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Start,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
                     .constrainAs(tvTime) {

@@ -33,13 +33,17 @@ import org.koin.androidx.compose.*
 fun FriendsScreen(
     viewModel: FriendsViewModel = getViewModel(),
 ) {
-    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    val userStateFlow by viewModel.userStateFlow.collectAsStateWithLifecycle()
-    FriendsScreenContent(
-        uiState = uiState,
-        userStateFlow = userStateFlow,
-        handleEvent = viewModel::handleEvent
-    )
+    viewModel.run {
+        val uiState by uiStateFlow.collectAsStateWithLifecycle()
+        val userStateFlow by userStateFlow.collectAsStateWithLifecycle()
+        val needReadStateFlow by needReadStateFlow.collectAsStateWithLifecycle()
+        FriendsScreenContent(
+            uiState = uiState,
+            userStateFlow = userStateFlow,
+            needReadNotification = needReadStateFlow,
+            handleEvent = ::handleEvent
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,6 +51,7 @@ fun FriendsScreen(
 private fun FriendsScreenContent(
     uiState: UiState<List<User>>,
     userStateFlow: User,
+    needReadNotification: Boolean,
     handleEvent: (FriendsEvent) -> Unit,
 ) {
     val scrollState = rememberLazyListState()
@@ -89,7 +94,7 @@ private fun FriendsScreenContent(
                 onSearchFieldClick = {
 //                    handleEvent(FriendsEvent.Search)
                 },
-                icon = Icons.Filled.Notifications,
+                icon = if(needReadNotification) Icons.Filled.NotificationsActive else Icons.Filled.Notifications,
                 iconTint = Color.Black,
                 onIconClick = {
                     handleEvent(FriendsEvent.OpenNotificationScreen)

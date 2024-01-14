@@ -56,7 +56,8 @@ private fun FriendNotificationContent(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(Color.White),
+                .background(Color.White)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             MarginVertical(5)

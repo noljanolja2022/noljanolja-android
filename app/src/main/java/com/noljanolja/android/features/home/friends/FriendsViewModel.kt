@@ -1,28 +1,28 @@
 package com.noljanolja.android.features.home.friends
 
-import com.noljanolja.android.common.base.BaseViewModel
-import com.noljanolja.android.common.base.UiState
-import com.noljanolja.android.common.base.launch
-import com.noljanolja.android.common.mobiledata.data.ContactsLoader
-import com.noljanolja.android.common.navigation.NavigationDirections
-import com.noljanolja.android.services.PermissionChecker
-import com.noljanolja.core.user.domain.model.User
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.toList
-import org.koin.core.component.inject
+import com.noljanolja.android.common.base.*
+import com.noljanolja.android.common.mobiledata.data.*
+import com.noljanolja.android.common.navigation.*
+import com.noljanolja.android.services.*
+import com.noljanolja.core.user.data.model.request.*
+import com.noljanolja.core.user.domain.model.*
+import kotlinx.coroutines.flow.*
+import org.koin.core.component.*
 
 class FriendsViewModel : BaseViewModel() {
     private val contactsLoader: ContactsLoader by inject()
     private val permissionChecker: PermissionChecker by inject()
     private val _uiStateFlow = MutableStateFlow(UiState<List<User>>())
     val uiStateFlow = _uiStateFlow.asStateFlow()
+    private val _needReadStateFlow = MutableStateFlow(false)
+    val needReadStateFlow = _needReadStateFlow.asStateFlow()
 
     private var page: Int = 1
     private var noMoreContact: Boolean = false
 
     init {
         if (permissionChecker.canReadContacts()) handleEvent(FriendsEvent.GetContacts)
+        getNotifications()
     }
 
     fun handleEvent(event: FriendsEvent) {
@@ -67,6 +67,22 @@ class FriendsViewModel : BaseViewModel() {
                 FriendsEvent.OpenNotificationScreen -> {
                     navigationManager.navigate(NavigationDirections.FriendNotifications)
                 }
+            }
+        }
+    }
+
+    private fun getNotifications() {
+        launch {
+            _isLoading.emit(true)
+            val result = coreManager.getNotifications(
+                GetNotificationsRequest()
+            )
+            _isLoading.emit(false)
+
+            if (result.isSuccess) {
+                _needReadStateFlow.emit(
+                    result.getOrDefault(emptyList()).any { !it.isRead }
+                )
             }
         }
     }
