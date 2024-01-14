@@ -20,12 +20,15 @@ import androidx.constraintlayout.compose.*
 import coil.compose.*
 import coil.request.*
 import com.noljanolja.android.R
+import com.noljanolja.android.common.enums.*
 import com.noljanolja.android.extensions.*
 import com.noljanolja.android.features.common.*
 import com.noljanolja.android.ui.theme.*
 import com.noljanolja.android.util.*
+import com.noljanolja.android.util.Constant.DefaultValue.PADDING_VIEW_SCREEN
 import com.noljanolja.android.util.Constant.DefaultValue.ROUND_RECTANGLE
 import com.noljanolja.core.commons.*
+import com.noljanolja.core.contacts.domain.model.*
 import com.noljanolja.core.shop.domain.model.*
 
 /**
@@ -68,12 +71,11 @@ internal fun ContactRow(
             color = MaterialTheme.colorScheme.onBackground
         )
 
-        val modifier = Modifier.size(20.dp)
         if (selected) {
             Icon(
                 Icons.Filled.CheckCircle,
                 contentDescription = null,
-                modifier = modifier,
+                modifier = Modifier.size(20.dp),
                 tint = MaterialTheme.colorScheme.primary
             )
         } else {
@@ -297,6 +299,108 @@ internal fun BrandItem(
     }
 }
 
+@Composable
+internal fun NotificationItem(
+    modifier: Modifier = Modifier,
+    item: NotificationData
+) {
+    val context = LocalContext.current
+    item.run {
+        ConstraintLayout(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 5.dp)
+                .background(if (PointTransactionType.isRequestPoint(item.type)) Yellow00 else LightBlue)
+                .padding(horizontal = PADDING_VIEW_SCREEN.dp, vertical = 10.dp)
+                .then(modifier)
+        ) {
+            val (avatar, tvTitle, line, tvTime, icon) = createRefs()
+
+            AsyncImage(
+                model = image,
+                contentDescription = null,
+                modifier = Modifier
+                    .size((40 * getScaleSize()).dp)
+                    .clip(
+                        RoundedCornerShape(14.dp)
+                    )
+                    .background(Color.White)
+                    .constrainAs(avatar) {
+                        start.linkTo(parent.start)
+                        linkTo(top = parent.top, bottom = parent.bottom)
+                    }
+            )
+
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleSmall.withBold(),
+                textAlign = TextAlign.Start,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier
+                    .constrainAs(tvTitle) {
+                        linkTo(
+                            top = avatar.top,
+                            bottom = line.top,
+                            bias = 1F
+                        )
+                        linkTo(
+                            start = avatar.end,
+                            startMargin = 10.dp,
+                            end = icon.start,
+                            endGoneMargin = 5.dp
+                        )
+                        width = Dimension.fillToConstraints
+                    },
+            )
+
+            Spacer(
+                modifier = Modifier
+                    .height(1.dp)
+                    .constrainAs(line) {
+                        linkTo(
+                            top = avatar.top,
+                            bottom = avatar.bottom
+                        )
+                        start.linkTo(parent.start)
+                    }
+            )
+
+            Text(
+                text = timeDisplay?.let {
+                    context.getDistanceTimeDisplay(it)
+                } ?: createdAt.formatTransactionShortTime(),
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Start,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier
+                    .constrainAs(tvTime) {
+                        linkTo(
+                            top = line.bottom,
+                            bottom = avatar.top,
+                            bias = 0F
+                        )
+                        linkTo(
+                            start = tvTitle.start,
+                            end = tvTitle.end,
+                        )
+                        width = Dimension.fillToConstraints
+                    },
+            )
+
+            Icon(
+                imageVector = Icons.Filled.MoreVert,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(24.dp)
+                    .constrainAs(icon) {
+                        end.linkTo(parent.end)
+                        top.linkTo(parent.top)
+                    }
+            )
+        }
+    }
+}
+
 @Preview
 @Composable
 private fun PreviewProductSection() {
@@ -312,5 +416,16 @@ private fun PreviewProductSection() {
         onItemClick = {
 
         }
+    )
+}
+
+@Preview
+@Composable
+private fun PreviewItemNotification() {
+    NotificationItem(
+        item = NotificationData(
+            title = "123123",
+            type = "REQUEST_POINT"
+        )
     )
 }

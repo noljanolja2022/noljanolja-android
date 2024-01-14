@@ -13,7 +13,9 @@ sealed interface FriendsEvent {
 
     object InviteFriend : FriendsEvent
 
-    object Setting : FriendsEvent
+    object OpenSettingScreen : FriendsEvent
+
+    object OpenNotificationScreen : FriendsEvent
 
     data class OpenFriendOption(
         val friendId: String,

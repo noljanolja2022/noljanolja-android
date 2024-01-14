@@ -12,6 +12,7 @@ class Constant {
 
     object Timer {
         const val MILLISECOND_OF_ONE_MINUTE = 60 * 1000L
+        const val MILLISECOND_OF_ONE_DAY = 24 * 60 * 60 * 1000L
 //        const val TEN_DAY = 10 * 24 * 60 * 60 * 1000L
 //        const val ONE_SECOND = 1000L
 //        const val ONE_MINUTE = 60

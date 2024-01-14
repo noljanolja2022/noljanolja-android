@@ -19,9 +19,6 @@ class SendPointViewModel(
     private val _checkPointValid: MutableStateFlow<Boolean?> = MutableStateFlow(null)
     internal val checkPointValid = _checkPointValid.asStateFlow()
 
-    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    internal val isLoading = _isLoading.asStateFlow()
-
     private val _sendSuccessEvent: MutableSharedFlow<Boolean?> = MutableStateFlow(null)
     val sendSuccessEvent = _sendSuccessEvent.asSharedFlow()
 
@@ -34,9 +31,7 @@ class SendPointViewModel(
     fun handleEvent(event: SendPointEvent) {
         viewModelScope.launch {
             when (event) {
-                SendPointEvent.Back -> if (!isLoading.value) {
-                    navigationManager.navigate(NavigationDirections.Back)
-                }
+                SendPointEvent.Back -> navigationManager.navigate(NavigationDirections.Back)
 
                 SendPointEvent.HideDialog -> _checkPointValid.emit(null)
 

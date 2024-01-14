@@ -68,6 +68,10 @@ class CoreManager : KoinComponent {
         return contactsRepository.getPointConfig()
     }
 
+    suspend fun getNotifications(request: GetNotificationsRequest): Result<List<NotificationData>> {
+        return contactsRepository.getNotifications(request)
+    }
+
     suspend fun findContacts(
         phoneNumber: String? = null,
         friendId: String? = null,

@@ -100,6 +100,17 @@ class UserApi(private val client: HttpClient) {
         return client.get("$BASE_URL/api/v1/reward/referral/configs").body()
     }
 
+    suspend fun getNotifications(request: GetNotificationsRequest): GetNotificationsResponse {
+        return client.get("$BASE_URL/api/v1/notification"){
+            url {
+                request.run {
+                    parameters.append("page", page.toString())
+                    parameters.append("pageSize", pageSize.toString())
+                }
+            }
+        }.body()
+    }
+
     suspend fun checkin(): ResponseWithoutData {
         return client.post("$BASE_URL/api/v1/users/me/checkin").body()
     }

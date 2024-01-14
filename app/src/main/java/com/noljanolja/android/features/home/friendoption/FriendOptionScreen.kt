@@ -113,6 +113,8 @@ private fun FriendOptionContent(
                         .weight(1f)
                         .height(48.dp),
                     title = stringResource(id = R.string.add_friend_request_point).uppercase(),
+                    textSize = 11,
+                    isBoldTitle = true,
                     bgColor = Orange00,
                     textColor = Color.Black
                 ) {
@@ -129,6 +131,8 @@ private fun FriendOptionContent(
                         .weight(1f)
                         .height(48.dp),
                     title = stringResource(id = R.string.add_friend_send_point).uppercase(),
+                    textSize = 11,
+                    isBoldTitle = true,
                     bgColor = MaterialTheme.colorScheme.primary,
                     textColor = Color.Black
                 ) {

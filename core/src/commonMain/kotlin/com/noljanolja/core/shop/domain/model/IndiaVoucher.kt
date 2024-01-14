@@ -22,7 +22,7 @@ data class IndiaVoucher(
     @SerialName("view_code")
     var viewCode: String = "",
     @SerialName("pin_code")
-    var pinCode: String = "",
+    var pin_code: String = "",
     @SerialName("display_codes")
     var displayCodes: List<String> = emptyList(),
 )

@@ -91,11 +91,13 @@ private fun FriendsScreenContent(
                 },
                 icon = Icons.Filled.Notifications,
                 iconTint = Color.Black,
+                onIconClick = {
+                    handleEvent(FriendsEvent.OpenNotificationScreen)
+                },
                 textColor = NeutralDarkGrey.copy(alpha = 0.38f),
-                onIconClick = {},
                 avatar = userStateFlow.avatar,
                 onAvatarClick = {
-                    handleEvent(FriendsEvent.Setting)
+                    handleEvent(FriendsEvent.OpenSettingScreen)
                 }
             )
             MarginVertical(8)

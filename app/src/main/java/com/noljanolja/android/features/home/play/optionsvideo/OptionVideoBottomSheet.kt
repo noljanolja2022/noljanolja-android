@@ -79,9 +79,7 @@ fun OptionVideoBottomBottomSheet(
     var isSelectConversation by remember {
         mutableStateOf(isFromReferral)
     }
-    var isLoading by remember {
-        optionsVideoViewModel.isLoading
-    }
+    val isLoading by videoViewModel.isLoading.collectAsStateWithLifecycle()
     if (visible) {
         Dialog(
             onDismissRequest = onDismissRequest,
@@ -154,7 +152,6 @@ fun OptionVideoBottomBottomSheet(
                                         onDismissRequest()
                                     },
                                     onSendToUser = {
-                                        isLoading = true
                                         videoViewModel.handleEvent(
                                             selectContactInList?.let { content ->
                                                 OptionsVideoEvent.ShareReferralCode(
@@ -175,7 +172,6 @@ fun OptionVideoBottomBottomSheet(
                                     onSelectContact = {
                                         selectContact = it
                                         if (isFromReferral && it != ShareContact()) {
-                                            isLoading = true
                                             videoViewModel.handleEvent(
                                                 selectContact?.let { content ->
                                                     OptionsVideoEvent.ShareReferralCode(
@@ -210,7 +206,11 @@ fun OptionVideoBottomBottomSheet(
                                             }
 
                                             R.string.ignore_video -> {
-                                                optionsVideoViewModel.handleEvent(OptionsVideoEvent.IgnoreVideo(video.id))
+                                                optionsVideoViewModel.handleEvent(
+                                                    OptionsVideoEvent.IgnoreVideo(
+                                                        video.id
+                                                    )
+                                                )
                                             }
                                         }
                                     }

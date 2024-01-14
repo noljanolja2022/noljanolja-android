@@ -60,8 +60,12 @@ class FriendsViewModel : BaseViewModel() {
                     navigationManager.navigate(NavigationDirections.Referral)
                 }
 
-                FriendsEvent.Setting -> {
+                FriendsEvent.OpenSettingScreen -> {
                     navigationManager.navigate(NavigationDirections.Setting)
+                }
+
+                FriendsEvent.OpenNotificationScreen -> {
+                    navigationManager.navigate(NavigationDirections.FriendNotifications)
                 }
             }
         }

@@ -10,6 +10,7 @@ import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import java.time.*
 import java.time.format.*
+import java.time.temporal.*
 import java.util.*
 
 fun Instant.humanReadableDate(): String {
@@ -90,6 +91,14 @@ fun Instant.formatFullTimeTransactionDetailNew(): String {
 
 fun Instant.formatTransactionShortTime(): String {
     return this.customFormatTime("MMMM dd, yyyy").capitalizeFirstLetter()
+}
+
+fun Instant.getDistanceMillisecond(): Long {
+    val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+    return ChronoUnit.MILLIS.between(
+        this.toLocalDateTime(TimeZone.currentSystemDefault()).toJavaLocalDateTime(),
+        now.toJavaLocalDateTime()
+    )
 }
 
 fun Instant.getMonth() = this.toLocalDateTime(TimeZone.currentSystemDefault()).month.value

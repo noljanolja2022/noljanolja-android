@@ -18,10 +18,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.vector.*
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.*
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -154,7 +155,12 @@ fun ConversationsScreenContent(
                 onSearchFieldClick = {
 //                    handleEvent(FriendsEvent.Search)
                 },
-                leadingIcon = Icons.Filled.Menu,
+                icon = ImageVector.vectorResource(R.drawable.chat_add),
+                onIconClick = {
+                    showNewChatDialog = true
+                    showNewChatTooltip = false
+                    sharedPreferenceHelper.showNewChatDialog = false
+                },
                 avatar = userStateFlow.avatar,
                 onAvatarClick = {
                     handleEvent(ConversationsEvent.ChatSettings)
@@ -234,7 +240,7 @@ fun ConversationRow(
             ),
             type = MessageType.PLAINTEXT
         ).apply { isSeenByMe = true }.takeIf { conversation.type == ConversationType.GROUP }
-            ?: return
+        ?: return
         Box(
             modifier = Modifier
                 .padding(top = 6.dp)

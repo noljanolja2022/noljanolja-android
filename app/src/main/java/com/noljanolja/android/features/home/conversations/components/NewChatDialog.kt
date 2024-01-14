@@ -26,7 +26,7 @@ import androidx.compose.ui.window.DialogWindowProvider
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.CommonAppBarTitle
 import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.ui.theme.darkContent
+import com.noljanolja.android.ui.theme.*
 import com.noljanolja.core.conversation.domain.model.ConversationType
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -88,7 +88,7 @@ fun NewChatDialog(
                         title = stringResource(id = R.string.contacts_title_group),
                         icon = ImageVector.vectorResource(id = R.drawable.ic_chat_bubble),
                         size = 21.dp,
-                        background = MaterialTheme.colorScheme.secondary,
+                        background = Orange00,
                     ) {
                         onDismissRequest()
                         onNewGroupChat.invoke(ConversationType.GROUP.name)

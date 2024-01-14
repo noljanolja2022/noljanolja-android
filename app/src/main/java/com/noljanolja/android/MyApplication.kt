@@ -36,6 +36,7 @@ import com.noljanolja.android.features.home.chat.*
 import com.noljanolja.android.features.home.chat_options.*
 import com.noljanolja.android.features.home.contacts.*
 import com.noljanolja.android.features.home.conversations.*
+import com.noljanolja.android.features.home.friend_notification.*
 import com.noljanolja.android.features.home.friendoption.*
 import com.noljanolja.android.features.home.friends.*
 import com.noljanolja.android.features.home.info.*
@@ -354,6 +355,9 @@ class MyApplication : Application() {
                 }
                 viewModel {
                     FriendsViewModel()
+                }
+                viewModel {
+                    FriendNotificationViewModel()
                 }
                 viewModel {
                     (friendId: String) -> SendPointViewModel(friendId)

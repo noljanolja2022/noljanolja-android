@@ -1,6 +1,5 @@
 package com.noljanolja.android.features.home.play.optionsvideo
 
-import androidx.compose.runtime.*
 import androidx.lifecycle.*
 import com.noljanolja.android.common.base.BaseShareContactViewModel
 import com.noljanolja.android.common.base.launch
@@ -18,7 +17,6 @@ import kotlinx.coroutines.flow.*
 class OptionsVideoViewModel : BaseShareContactViewModel() {
     private val _showConfirmDialog = MutableStateFlow<ShareToAppData?>(null)
     internal val showConfirmDialog = _showConfirmDialog.asStateFlow()
-    internal val isLoading = mutableStateOf(false)
 
     protected val _shareSuccessEvent = MutableSharedFlow<String?>()
     val shareSuccessEvent = _shareSuccessEvent.asSharedFlow()
@@ -111,6 +109,7 @@ class OptionsVideoViewModel : BaseShareContactViewModel() {
         referralCode: String,
         shareContact: ShareContact?
     ) {
+        _isLoading.emit(true)
         val sendMessage = Message(
             message = message,
             type = MessageType.PLAINTEXT
@@ -130,7 +129,7 @@ class OptionsVideoViewModel : BaseShareContactViewModel() {
                 message = referralMessage,
                 userIds = emptyList(),
             )
-            isLoading.value = false
+            _isLoading.emit(false)
             if (result.isSuccess && resultReferral.isSuccess) {
                 _shareSuccessEvent.emit(null)
                 navigationManager.navigate(NavigationDirections.Chat(it))
@@ -153,7 +152,7 @@ class OptionsVideoViewModel : BaseShareContactViewModel() {
                 message = referralMessage,
                 title = shareContact.title
             )
-            isLoading.value = false
+            _isLoading.emit(false)
             if (result.isSuccess && resultReferral.isSuccess) {
                 _shareSuccessEvent.emit(null)
             } else {

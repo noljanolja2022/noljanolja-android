@@ -28,6 +28,9 @@ open class BaseViewModel : ViewModel(), KoinComponent {
     val errorFlow = _errorFlow.asSharedFlow()
     val userStateFlow = _userStateFlow.asStateFlow()
 
+    protected val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    internal val isLoading = _isLoading.asStateFlow()
+
     init {
         viewModelScope.launch {
             updateUserState()

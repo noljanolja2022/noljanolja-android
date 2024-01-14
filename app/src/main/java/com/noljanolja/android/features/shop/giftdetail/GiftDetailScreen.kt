@@ -2,6 +2,7 @@ package com.noljanolja.android.features.shop.giftdetail
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.*
 import androidx.compose.material.icons.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -270,6 +271,8 @@ private fun GiftImage(
             if (qrCode.isBlank()) {
                 val voucherRef = gift.log?.dropLast(1)?.drop(1)
                     .parseFromJsonTo<IndiaVoucher>()?.voucher_ref
+                val pinCode = gift.log?.dropLast(1)?.drop(1)
+                    .parseFromJsonTo<IndiaVoucher>()?.pin_code
                 if (voucherRef.isNullOrBlank()) {
                     SubcomposeAsyncImageContent(
                         modifier = Modifier
@@ -279,15 +282,36 @@ private fun GiftImage(
                         contentScale = ContentScale.FillWidth
                     )
                 } else {
-                    Image(
-                        painter = rememberQrBitmapPainter(voucherRef),
-                        contentDescription = null,
+//                    Image(
+//                        painter = rememberQrBitmapPainter(voucherRef),
+//                        contentDescription = null,
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .aspectRatio(1f)
+//                            .background(MaterialTheme.colorScheme.background),
+//                        contentScale = ContentScale.FillWidth
+//                    )
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(1f)
-                            .background(MaterialTheme.colorScheme.background),
-                        contentScale = ContentScale.FillWidth
-                    )
+                            .background(
+                                color = MaterialTheme.colorScheme.background,
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(vertical = 10.dp, horizontal = 20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = voucherRef,
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                        if (pinCode != null) {
+                            Text(
+                                text = "(Pin Code: $pinCode)",
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                        }
+                    }
                 }
             } else {
                 when (painter.state) {

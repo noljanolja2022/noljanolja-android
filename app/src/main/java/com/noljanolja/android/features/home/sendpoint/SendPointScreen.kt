@@ -95,7 +95,7 @@ private fun SendPointScreenContent(
                     id = if (isRequestPoint) R.string.add_friend_request_point else R.string.add_friend_send_point
                 ),
                 onBack = {
-                    handleEvent(SendPointEvent.Back)
+                    if(!isLoading) handleEvent(SendPointEvent.Back)
                 },
                 centeredTitle = true
             )

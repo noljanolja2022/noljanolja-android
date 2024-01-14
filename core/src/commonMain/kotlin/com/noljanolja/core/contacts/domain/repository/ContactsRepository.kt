@@ -14,4 +14,6 @@ internal interface ContactsRepository {
     suspend fun sendPoint(request: SendPointRequest): Result<UserSendPoint>
 
     suspend fun getPointConfig(): Result<PointConfig>
+
+    suspend fun getNotifications(request: GetNotificationsRequest): Result<List<NotificationData>>
 }

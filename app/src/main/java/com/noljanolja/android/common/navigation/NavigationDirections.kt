@@ -609,6 +609,12 @@ object NavigationDirections {
             "friend_option?friendId=$friendId&friendName=$friendName&friendAvatar=$friendAvatar"
     }
 
+    object FriendNotifications : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "friend_notifications"
+    }
+
     data class SelectShareMessage(
         val selectMessageId: Long,
         val fromConversationId: Long,

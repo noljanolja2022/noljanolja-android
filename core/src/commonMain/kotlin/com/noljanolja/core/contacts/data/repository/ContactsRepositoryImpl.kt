@@ -32,4 +32,8 @@ internal class ContactsRepositoryImpl(
     override suspend fun getPointConfig(): Result<PointConfig> {
         return userRemoteDataSource.getPointConfig()
     }
+
+    override suspend fun getNotifications(request: GetNotificationsRequest): Result<List<NotificationData>> {
+        return userRemoteDataSource.getNotifications(request)
+    }
 }

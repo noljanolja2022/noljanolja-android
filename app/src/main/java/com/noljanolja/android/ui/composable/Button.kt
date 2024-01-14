@@ -205,6 +205,7 @@ internal fun ButtonRadius(
     title: String,
     textSize: Int = 14,
     height: Int = BUTTON_HEIGHT,
+    isBoldTitle: Boolean = false,
     bgColor: Color,
     icon: Painter? = null,
     textColor: Color = Color.White,
@@ -237,8 +238,10 @@ internal fun ButtonRadius(
             text = title,
             style = Typography.bodyMedium.copy(
                 color = textColor,
-                fontSize = textSize.sp
-            ),
+                fontSize = textSize.sp,
+            ).run {
+                if (isBoldTitle) withBold() else this
+            },
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )

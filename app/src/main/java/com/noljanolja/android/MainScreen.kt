@@ -26,6 +26,7 @@ import com.noljanolja.android.features.home.*
 import com.noljanolja.android.features.home.chat.*
 import com.noljanolja.android.features.home.chat_options.*
 import com.noljanolja.android.features.home.contacts.*
+import com.noljanolja.android.features.home.friend_notification.*
 import com.noljanolja.android.features.home.friendoption.*
 import com.noljanolja.android.features.home.info.*
 import com.noljanolja.android.features.home.play.playscreen.*
@@ -200,6 +201,9 @@ private fun NavGraphBuilder.addChatGraph() {
                 friendAvatar = friendAvatar.convertToString()
             )
         }
+    }
+    composable(NavigationDirections.FriendNotifications.destination) {
+        FriendNotificationScreen()
     }
     composable(
         chatDirection.destination,
