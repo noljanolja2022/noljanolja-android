@@ -219,13 +219,8 @@ fun OptionVideoBottomBottomSheet(
                         }
                     }
                 }
-                if (isLoading) {
-                    LoadingScreen(
-                        modifier = Modifier
-                            .fillMaxSize()
-                    )
-                }
             }
+            LoadingDialog(isLoading = isLoading)
         }
     } else {
         selectContact = null

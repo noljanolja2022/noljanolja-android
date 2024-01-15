@@ -95,7 +95,7 @@ private fun SendPointScreenContent(
                     id = if (isRequestPoint) R.string.add_friend_request_point else R.string.add_friend_send_point
                 ),
                 onBack = {
-                    if(!isLoading) handleEvent(SendPointEvent.Back)
+                    if (!isLoading) handleEvent(SendPointEvent.Back)
                 },
                 centeredTitle = true
             )
@@ -330,12 +330,7 @@ private fun SendPointScreenContent(
                 }
             )
         }
-        if (isLoading) {
-            LoadingScreen(
-                modifier = Modifier
-                    .fillMaxSize()
-            )
-        }
     }
+    LoadingDialog(isLoading = isLoading)
 }
  

@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.vector.*
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.text.*
@@ -94,7 +95,13 @@ private fun FriendsScreenContent(
                 onSearchFieldClick = {
 //                    handleEvent(FriendsEvent.Search)
                 },
-                icon = if(needReadNotification) Icons.Filled.NotificationsActive else Icons.Filled.Notifications,
+                icon = if(needReadNotification) {
+                    ImageVector.vectorResource(
+                        id = R.drawable.ic_unread
+                    )
+                } else  {
+                    Icons.Filled.Notifications
+                },
                 iconTint = Color.Black,
                 onIconClick = {
                     handleEvent(FriendsEvent.OpenNotificationScreen)

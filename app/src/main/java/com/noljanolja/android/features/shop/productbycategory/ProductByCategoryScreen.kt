@@ -73,9 +73,8 @@ private fun ProductByCategoryContent(
                         color = textColor()
                     )
                 } else {
-                    LoadingScreen(
-                        modifier = Modifier
-                            .fillMaxSize()
+                    LoadingDialog(
+                        isLoading = true
                     )
                 }
             }

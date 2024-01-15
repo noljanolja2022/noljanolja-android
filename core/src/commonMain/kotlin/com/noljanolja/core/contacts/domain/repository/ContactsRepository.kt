@@ -16,4 +16,8 @@ internal interface ContactsRepository {
     suspend fun getPointConfig(): Result<PointConfig>
 
     suspend fun getNotifications(request: GetNotificationsRequest): Result<List<NotificationData>>
+
+    suspend fun readNotification(request: ReadNotificationRequest): Result<String>
+
+    suspend fun maskAllNotificationsIsRead(): Result<String>
 }

@@ -31,7 +31,6 @@ import com.noljanolja.android.features.auth.updateprofile.components.*
 import com.noljanolja.android.ui.composable.*
 import com.noljanolja.android.ui.theme.*
 import com.noljanolja.android.util.*
-import com.noljanolja.android.util.Constant.DefaultValue.PADDING_HORIZONTAL_SCREEN
 import com.noljanolja.android.util.Constant.DefaultValue.PADDING_VERTICAL_SCREEN
 import com.noljanolja.android.util.Constant.DefaultValue.PADDING_VIEW
 import com.noljanolja.android.util.Constant.DefaultValue.PADDING_VIEW_SCREEN
@@ -110,7 +109,7 @@ private fun SettingContent(
     var avatar by rememberSaveable { mutableStateOf<Uri?>(null) }
     var tempAvatar by rememberSaveable { mutableStateOf<Uri?>(null) }
 
-    BackPressHandler() {
+    BackPressHandler {
         if (showChangeAvatarBottomSheet.currentValue == ModalBottomSheetValue.HalfExpanded) {
             scope.launch {
                 showChangeAvatarBottomSheet.hide()
@@ -174,8 +173,8 @@ private fun SettingContent(
                     val (
                         imgAvar,
                         btnChange,
-                        tvTitleRanking,
-                        tvMemberRank,
+//                        tvTitleRanking,
+//                        tvMemberRank,
                         tvTitleName,
                         tvName,
                         tvTitlePhone,
@@ -219,28 +218,28 @@ private fun SettingContent(
                             color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
-                    Text(
-                        text = stringResource(id = R.string.my_ranking_title),
-                        style = MaterialTheme.typography.titleSmall,
-                        modifier = Modifier.constrainAs(tvTitleRanking) {
-                            start.linkTo(parent.start)
-                            top.linkTo(btnChange.bottom, PADDING_HORIZONTAL_SCREEN.dp)
-                        },
-                    )
-                    RankingRow(
-                        tier = memberInfo.currentTier,
-                        onClick = {},
-                        modifier = Modifier.constrainAs(tvMemberRank) {
-                            linkTo(horizontalChain.end, parent.end)
-                            linkTo(tvTitleRanking.top, tvTitleRanking.bottom)
-                        }
-                    )
+//                    Text(
+//                        text = stringResource(id = R.string.my_ranking_title),
+//                        style = MaterialTheme.typography.titleSmall,
+//                        modifier = Modifier.constrainAs(tvTitleRanking) {
+//                            start.linkTo(parent.start)
+//                            top.linkTo(btnChange.bottom, PADDING_HORIZONTAL_SCREEN.dp)
+//                        },
+//                    )
+//                    RankingRow(
+//                        tier = memberInfo.currentTier,
+//                        onClick = {},
+//                        modifier = Modifier.constrainAs(tvMemberRank) {
+//                            linkTo(horizontalChain.end, parent.end)
+//                            linkTo(tvTitleRanking.top, tvTitleRanking.bottom)
+//                        }
+//                    )
                     Text(
                         text = stringResource(id = R.string.setting_name),
                         style = MaterialTheme.typography.titleSmall,
                         modifier = Modifier.constrainAs(tvTitleName) {
                             start.linkTo(parent.start)
-                            top.linkTo(tvMemberRank.bottom, 15.dp)
+                            top.linkTo(btnChange.bottom, 15.dp)
                         },
                     )
                     Text(
@@ -266,7 +265,7 @@ private fun SettingContent(
                         }
                     )
                     Text(
-                        text = user?.phone?.hidePhoneNumber().convertToString(),
+                        text = user?.phone.convertToString(),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.constrainAs(tvPhone) {
                             start.linkTo(horizontalChain.end, 20.dp)

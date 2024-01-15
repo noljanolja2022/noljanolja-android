@@ -464,5 +464,6 @@
     <string name="ask_to_change_avatar">Do you want to change avatar?</string>
     <string name="ask_to_change_avatar_massage">This picture will be set as your default avatar.</string>
     <string name="notifications_title">Notifications</string>
+    <string name="notifications_title_empty">You don’t have any notifications!</string>
     <string name="common_new">New</string>
 </resources>

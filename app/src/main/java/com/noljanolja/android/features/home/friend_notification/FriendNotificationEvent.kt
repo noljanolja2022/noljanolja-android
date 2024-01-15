@@ -6,4 +6,6 @@ package com.noljanolja.android.features.home.friend_notification
 
 sealed interface FriendNotificationEvent {
     object GoBack : FriendNotificationEvent
+
+    data class ReadNotification(val id: String) : FriendNotificationEvent
 }

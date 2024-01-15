@@ -407,5 +407,6 @@
     <string name="ask_to_change_avatar">아바타를 변경하시겠습니까?</string>
     <string name="ask_to_change_avatar_massage">이 사진이 기본 아바타로 설정됩니다.</string>
     <string name="notifications_title">알림</string>
+    <string name="notifications_title_empty">알림이 없습니다!</string>
     <string name="common_new">새로운</string>
 </resources>

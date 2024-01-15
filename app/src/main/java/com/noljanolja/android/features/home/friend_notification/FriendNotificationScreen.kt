@@ -5,13 +5,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.text.style.*
 import androidx.compose.ui.unit.*
 import androidx.lifecycle.compose.*
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.*
+import com.noljanolja.android.ui.theme.*
 import org.koin.androidx.compose.*
 
 /**
@@ -56,44 +57,67 @@ private fun FriendNotificationContent(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(Color.White)
+                .background(MaterialTheme.shopBackground())
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             MarginVertical(5)
-            if (uiState.notificationsUnRead.isNotEmpty()) {
-                Text(
-                    text = stringResource(id = R.string.common_new),
-                    style = MaterialTheme.typography.titleSmall,
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                )
-                uiState.notificationsUnRead.forEach {
-                    NotificationItem(item = it)
+            uiState.run {
+                if (notificationsUnRead.isNotEmpty()) {
+                    Text(
+                        text = stringResource(id = R.string.common_new),
+                        style = MaterialTheme.typography.titleSmall,
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    )
+                    notificationsUnRead.forEach {
+                        NotificationItem(
+                            item = it,
+                            onItemClick = { item ->
+                                if(!item.isRead) {
+                                    handleEvent(FriendNotificationEvent.ReadNotification(item.id))
+                                }
+                            }
+                        )
+                    }
+                    MarginVertical(20)
                 }
-                MarginVertical(20)
-            }
-            if (uiState.notificationsRead.isNotEmpty()) {
-                Text(
-                    text = stringResource(id = R.string.common_previous),
-                    style = MaterialTheme.typography.titleSmall,
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                )
-                uiState.notificationsRead.forEach {
-                    NotificationItem(item = it)
+                if (notificationsRead.isNotEmpty()) {
+                    Text(
+                        text = stringResource(id = R.string.common_previous),
+                        style = MaterialTheme.typography.titleSmall,
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    )
+                    notificationsRead.forEach {
+                        NotificationItem(
+                            item = it,
+                            onItemClick = { item ->
+                                if(!item.isRead) {
+                                    handleEvent(FriendNotificationEvent.ReadNotification(item.id))
+                                }
+                            }
+                        )
+                    }
+                }
+                if (notificationsRead.isEmpty() && notificationsUnRead.isEmpty() && !isLoading) {
+                    Text(
+                        modifier = Modifier
+                            .height(LocalConfiguration.current.screenHeightDp.dp)
+                            .wrapContentSize(),
+                        text = stringResource(id = R.string.notifications_title_empty),
+                        color = textColor()
+                    )
                 }
             }
-        }
-        if (isLoading) {
-            LoadingScreen(
-                modifier = Modifier
-                    .fillMaxSize()
-            )
         }
     }
+
+    LoadingDialog(
+        isLoading = isLoading
+    )
 }

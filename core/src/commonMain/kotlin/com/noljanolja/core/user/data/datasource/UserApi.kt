@@ -111,6 +111,14 @@ class UserApi(private val client: HttpClient) {
         }.body()
     }
 
+    suspend fun readNotification(request: ReadNotificationRequest): ResponseWithoutData {
+        return client.post("$BASE_URL/api/v1/notification/${request.notificationID}/read").body()
+    }
+
+    suspend fun maskAllNotificationsIsRead(): ResponseWithoutData {
+        return client.post("$BASE_URL/api/v1/notification/readAll").body()
+    }
+
     suspend fun checkin(): ResponseWithoutData {
         return client.post("$BASE_URL/api/v1/users/me/checkin").body()
     }

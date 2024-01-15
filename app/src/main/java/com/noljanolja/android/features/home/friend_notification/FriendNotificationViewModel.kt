@@ -27,7 +27,6 @@ class FriendNotificationViewModel : BaseViewModel() {
             val result = coreManager.getNotifications(
                 GetNotificationsRequest()
             )
-            _isLoading.emit(false)
 
             if (result.isSuccess) {
                 val data = result.getOrDefault(emptyList()).map {
@@ -45,6 +44,20 @@ class FriendNotificationViewModel : BaseViewModel() {
             } else {
                 sendError(result.exceptionOrUnDefined())
             }
+            _isLoading.emit(false)
+        }
+    }
+
+    private suspend fun readNotification(notificationID: String) {
+        _isLoading.emit(true)
+        val result = coreManager.readNotification(
+            request = ReadNotificationRequest(
+                notificationID = notificationID
+            )
+        )
+        _isLoading.emit(false)
+        if (result.isSuccess) {
+            initData()
         }
     }
 
@@ -52,6 +65,8 @@ class FriendNotificationViewModel : BaseViewModel() {
         launch {
             when (event) {
                 FriendNotificationEvent.GoBack -> navigationManager.navigate(NavigationDirections.Back)
+
+                is FriendNotificationEvent.ReadNotification -> readNotification(event.id)
             }
         }
     }

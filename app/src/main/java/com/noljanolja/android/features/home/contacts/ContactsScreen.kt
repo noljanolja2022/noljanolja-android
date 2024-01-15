@@ -85,7 +85,7 @@ fun ContactsScreenContent(
                             TextButton(
                                 onClick = { handleEvent(ContactsEvent.ConfirmContacts) },
                                 enabled = selectedContacts.isNotEmpty(),
-                                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onPrimary)
+                                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.primary)
                             ) {
                                 Text(stringResource(id = R.string.common_agree))
                             }

@@ -30,6 +30,10 @@ interface UserRemoteDataSource {
 
     suspend fun getNotifications(request: GetNotificationsRequest): Result<List<NotificationData>>
 
+    suspend fun maskAllNotificationsIsRead(): Result<String>
+
+    suspend fun readNotification(request: ReadNotificationRequest): Result<String>
+
     suspend fun checkin(): Result<String>
 
     suspend fun getCheckinProgress(): Result<List<CheckinProgress>>
@@ -200,6 +204,32 @@ class UserRemoteDataSourceImpl(private val userApi: UserApi) : UserRemoteDataSou
             val response = userApi.getNotifications(request)
             if (response.isSuccessful()) {
                 Result.success(response.data)
+            } else {
+                Result.failure(Throwable(response.message))
+            }
+        } catch (e: Throwable) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun readNotification(request: ReadNotificationRequest): Result<String> {
+        return try {
+            val response = userApi.readNotification(request)
+            if (response.isSuccessful()) {
+                Result.success(response.message)
+            } else {
+                Result.failure(Throwable(response.message))
+            }
+        } catch (e: Throwable) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun maskAllNotificationsIsRead(): Result<String> {
+        return try {
+            val response = userApi.maskAllNotificationsIsRead()
+            if (response.isSuccessful()) {
+                Result.success(response.message)
             } else {
                 Result.failure(Throwable(response.message))
             }

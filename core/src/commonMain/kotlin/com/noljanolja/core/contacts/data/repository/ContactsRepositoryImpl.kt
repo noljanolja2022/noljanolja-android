@@ -36,4 +36,12 @@ internal class ContactsRepositoryImpl(
     override suspend fun getNotifications(request: GetNotificationsRequest): Result<List<NotificationData>> {
         return userRemoteDataSource.getNotifications(request)
     }
+
+    override suspend fun readNotification(request: ReadNotificationRequest): Result<String> {
+        return userRemoteDataSource.readNotification(request)
+    }
+
+    override suspend fun maskAllNotificationsIsRead(): Result<String> {
+        return userRemoteDataSource.maskAllNotificationsIsRead()
+    }
 }

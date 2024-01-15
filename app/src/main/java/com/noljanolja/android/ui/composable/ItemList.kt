@@ -302,7 +302,8 @@ internal fun BrandItem(
 @Composable
 internal fun NotificationItem(
     modifier: Modifier = Modifier,
-    item: NotificationData
+    item: NotificationData,
+    onItemClick: (NotificationData) -> Unit
 ) {
     val context = LocalContext.current
     item.run {
@@ -313,6 +314,9 @@ internal fun NotificationItem(
                 .background(if (PointTransactionType.isRequestPoint(item.type)) Yellow00 else LightBlue)
                 .padding(horizontal = PADDING_VIEW_SCREEN.dp, vertical = 10.dp)
                 .then(modifier)
+                .clickable {
+                    onItemClick(item)
+                }
         ) {
             val (avatar, tvTitle, line, tvTime, icon) = createRefs()
 
@@ -335,7 +339,7 @@ internal fun NotificationItem(
                 text = title,
                 style = MaterialTheme.typography.titleSmall.withBold(),
                 textAlign = TextAlign.Start,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = Color.Black,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
@@ -375,7 +379,7 @@ internal fun NotificationItem(
                 textAlign = TextAlign.Start,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = Color.Black,
                 modifier = Modifier
                     .constrainAs(tvTime) {
                         linkTo(
@@ -394,6 +398,7 @@ internal fun NotificationItem(
             Icon(
                 imageVector = Icons.Filled.MoreVert,
                 contentDescription = null,
+                tint = Color.Black,
                 modifier = Modifier
                     .size(24.dp)
                     .constrainAs(icon) {
@@ -430,6 +435,7 @@ private fun PreviewItemNotification() {
         item = NotificationData(
             title = "123123",
             type = "REQUEST_POINT"
-        )
+        ),
+        onItemClick = {}
     )
 }
