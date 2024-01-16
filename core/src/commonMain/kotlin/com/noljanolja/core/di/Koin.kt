@@ -123,7 +123,7 @@ private val coreModule = module {
         UserRemoteDataSourceImpl(get())
     }
     single<ContactsRepository> {
-        ContactsRepositoryImpl(get())
+        ContactsRepositoryImpl(get(), get())
     }
     single {
         ConversationApi(

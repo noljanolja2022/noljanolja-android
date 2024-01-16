@@ -140,7 +140,7 @@ private fun SearchProductHeader(
     val focusRequester = remember { FocusRequester() }
 
     val background = if (isSearchFocus) {
-        MaterialTheme.colorScheme.primaryContainer
+        MaterialTheme.colorScheme.primary
     } else {
         MaterialTheme.shopBackground()
     }

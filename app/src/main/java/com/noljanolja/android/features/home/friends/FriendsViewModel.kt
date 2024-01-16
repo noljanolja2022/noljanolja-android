@@ -67,6 +67,10 @@ class FriendsViewModel : BaseViewModel() {
                 FriendsEvent.OpenNotificationScreen -> {
                     navigationManager.navigate(NavigationDirections.FriendNotifications)
                 }
+
+                FriendsEvent.OpenSearchScreen -> {
+                    navigationManager.navigate(NavigationDirections.SearchFriendByName)
+                }
             }
         }
     }

@@ -56,6 +56,14 @@ class CoreManager : KoinComponent {
         return contactsRepository.syncUserContacts(contacts)
     }
 
+    fun getContactSearchHistories() = contactsRepository.getSearchHistories()
+
+    fun insertContactSearchKey(text: String) = contactsRepository.insertKey(text)
+
+    suspend fun clearContactTextSearch(text: String) = contactsRepository.clearText(text)
+
+    suspend fun clearAllContactSearch() = contactsRepository.clearAll()
+
     suspend fun getContacts(page: Int): Result<List<User>> {
         return contactsRepository.getContacts(page)
     }

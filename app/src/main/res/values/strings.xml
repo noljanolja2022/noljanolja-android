@@ -466,4 +466,6 @@
     <string name="notifications_title">Notifications</string>
     <string name="notifications_title_empty">You don’t have any notifications!</string>
     <string name="common_new">New</string>
+
+    <string name="contacts_not_found_search">Sorry, this user is not in your contacts</string>
 </resources>

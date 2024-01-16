@@ -12,6 +12,7 @@ import androidx.navigation.compose.*
 import com.noljanolja.android.common.navigation.*
 import com.noljanolja.android.extensions.*
 import com.noljanolja.android.features.addfriend.*
+import com.noljanolja.android.features.addfriend.SearchFriendScreen
 import com.noljanolja.android.features.addreferral.*
 import com.noljanolja.android.features.auth.countries.*
 import com.noljanolja.android.features.auth.login.*
@@ -33,6 +34,7 @@ import com.noljanolja.android.features.home.play.playscreen.*
 import com.noljanolja.android.features.home.play.search.*
 import com.noljanolja.android.features.home.play.uncompleted.*
 import com.noljanolja.android.features.home.root.*
+import com.noljanolja.android.features.home.searchfriends.*
 import com.noljanolja.android.features.home.sendpoint.SendPointScreen
 import com.noljanolja.android.features.home.wallet.checkin.*
 import com.noljanolja.android.features.home.wallet.dashboard.*
@@ -406,6 +408,11 @@ private fun NavGraphBuilder.addAddFriendGraph(navController: NavHostController) 
         route = NavigationDirections.AddFriend.destination,
         startDestination = NavigationDirections.SearchFriend.destination,
     ) {
+        with(NavigationDirections.SearchFriendByName) {
+            composable(destination, arguments) {
+                SearchFriendsScreen()
+            }
+        }
         with(NavigationDirections.SearchFriend) {
             composable(destination, arguments) { entry ->
                 val addFriendViewModel = entry.sharedViewModel<AddFriendViewModel>(

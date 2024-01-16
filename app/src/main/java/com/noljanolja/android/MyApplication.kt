@@ -49,6 +49,7 @@ import com.noljanolja.android.features.home.play.search.*
 import com.noljanolja.android.features.home.play.uncompleted.*
 import com.noljanolja.android.features.home.require_login.*
 import com.noljanolja.android.features.home.root.*
+import com.noljanolja.android.features.home.searchfriends.*
 import com.noljanolja.android.features.home.sendpoint.*
 import com.noljanolja.android.features.home.wallet.*
 import com.noljanolja.android.features.home.wallet.dashboard.*
@@ -355,6 +356,9 @@ class MyApplication : Application() {
                 }
                 viewModel {
                     FriendsViewModel()
+                }
+                viewModel {
+                    SearchFriendsViewModel()
                 }
                 viewModel {
                     FriendNotificationViewModel()

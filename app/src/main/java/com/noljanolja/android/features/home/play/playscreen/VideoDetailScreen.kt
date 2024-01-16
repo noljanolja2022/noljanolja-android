@@ -117,7 +117,7 @@ private fun VideoDetailContent(
     Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
         if (!showOnlyVideo) {
             CommonTopAppBar(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 title = stringResource(id = R.string.video_title),
                 centeredTitle = true,

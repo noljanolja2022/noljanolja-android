@@ -127,6 +127,7 @@ private fun ShopContent(
                 onSearchFieldClick = {
                     handleEvent(ShopEvent.Search)
                 },
+                iconTint = Color.Black,
                 textColor = NeutralDarkGrey.copy(alpha = 0.38f),
                 avatar = userStateFlow.avatar,
                 onAvatarClick = {

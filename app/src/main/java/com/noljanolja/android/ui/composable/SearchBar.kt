@@ -59,14 +59,14 @@ fun SearchBar(
                 keyboardActions = KeyboardActions(onSearch = { onSearchButton() }),
                 cursorBrush = SolidColor(LocalContentColor.current),
                 enabled = enabled,
-                textStyle = MaterialTheme.typography.bodyLarge.copy(
+                textStyle = MaterialTheme.typography.bodyMedium.copy(
                     color = MaterialTheme.colorScheme.onSurface
                 )
             )
             if (searchText.isEmpty()) {
                 Text(
                     hint,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
                 )
             }
@@ -109,7 +109,7 @@ internal fun SearchBarViewOnly(
         ) {
             Text(
                 hint,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 color = textColor
             )
         }

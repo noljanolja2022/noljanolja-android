@@ -93,7 +93,7 @@ private fun FriendsScreenContent(
                 hintSearch = stringResource(id = R.string.friends_search_friends),
                 searchFieldBackground = NeutralLight.copy(0.7f),
                 onSearchFieldClick = {
-//                    handleEvent(FriendsEvent.Search)
+                    handleEvent(FriendsEvent.OpenSearchScreen)
                 },
                 icon = if(needReadNotification) {
                     ImageVector.vectorResource(
@@ -185,13 +185,6 @@ private fun FriendsScreenContent(
                                 Text(
                                     stringResource(R.string.common_friends),
                                     style = MaterialTheme.typography.bodyLarge.withBold()
-                                )
-                                Expanded()
-                                Icon(
-                                    Icons.Default.Search,
-                                    contentDescription = null,
-                                    modifier = Modifier.clickable {
-                                    }
                                 )
                             }
                             if (visibleContacts.isEmpty()) {

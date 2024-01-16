@@ -1,13 +1,17 @@
 package com.noljanolja.core.contacts.data.repository
 
 import com.noljanolja.core.contacts.domain.model.*
-import com.noljanolja.core.contacts.domain.repository.ContactsRepository
-import com.noljanolja.core.user.data.datasource.UserRemoteDataSource
+import com.noljanolja.core.contacts.domain.repository.*
+import com.noljanolja.core.shop.data.datasource.*
+import com.noljanolja.core.shop.domain.model.*
+import com.noljanolja.core.user.data.datasource.*
 import com.noljanolja.core.user.data.model.request.*
-import com.noljanolja.core.user.domain.model.User
+import com.noljanolja.core.user.domain.model.*
+import kotlinx.coroutines.flow.*
 
 internal class ContactsRepositoryImpl(
     private val userRemoteDataSource: UserRemoteDataSource,
+    private val searchLocalDatasource: SearchLocalDatasource,
 ) : ContactsRepository {
     override suspend fun syncUserContacts(contacts: List<Contact>): Result<List<User>> {
         return userRemoteDataSource.syncUserContacts(contacts)
@@ -43,5 +47,25 @@ internal class ContactsRepositoryImpl(
 
     override suspend fun maskAllNotificationsIsRead(): Result<String> {
         return userRemoteDataSource.maskAllNotificationsIsRead()
+    }
+
+    override fun getSearchHistories(): Flow<List<SearchKey>> {
+        return searchLocalDatasource.findAllByScreen(screen = SCREEN)
+    }
+
+    override fun insertKey(text: String) {
+        searchLocalDatasource.insertKey(text, screen = SCREEN)
+    }
+
+    override suspend fun clearText(text: String) {
+        searchLocalDatasource.deleteByText(text, screen = SCREEN)
+    }
+
+    override suspend fun clearAll() {
+        searchLocalDatasource.deleteByScreen(SCREEN)
+    }
+
+    companion object {
+        private const val SCREEN = "CONTACT"
     }
 }

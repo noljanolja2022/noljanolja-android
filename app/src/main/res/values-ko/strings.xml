@@ -409,4 +409,6 @@
     <string name="notifications_title">알림</string>
     <string name="notifications_title_empty">알림이 없습니다!</string>
     <string name="common_new">새로운</string>
+
+    <string name="contacts_not_found_search">죄송합니다. 이 사용자는 귀하의 연락처에 없습니다.</string>
 </resources>
