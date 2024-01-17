@@ -49,6 +49,10 @@ class PlayListViewModel : BaseViewModel() {
                 PlayListEvent.Setting -> {
                     navigationManager.navigate(NavigationDirections.Setting)
                 }
+
+                PlayListEvent.OpenNotificationScreen -> {
+                    navigationManager.navigate(NavigationDirections.FriendNotifications)
+                }
             }
         }
     }

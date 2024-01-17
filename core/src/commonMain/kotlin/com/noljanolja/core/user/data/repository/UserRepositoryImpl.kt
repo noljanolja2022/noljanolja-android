@@ -5,13 +5,11 @@ import com.noljanolja.core.conversation.data.datasource.LocalConversationDataSou
 import com.noljanolja.core.user.data.datasource.AuthDataSource
 import com.noljanolja.core.user.data.datasource.LocalUserDataSource
 import com.noljanolja.core.user.data.datasource.UserRemoteDataSource
+import com.noljanolja.core.user.data.model.request.*
 import com.noljanolja.core.user.domain.model.CheckinProgress
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.user.domain.repository.UserRepository
 import io.ktor.client.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.auth.*
-import io.ktor.client.plugins.auth.providers.*
 
 internal class UserRepositoryImpl(
     private val userRemoteDataSource: UserRemoteDataSource,
@@ -91,12 +89,8 @@ internal class UserRepositoryImpl(
 //    }
 
     // Update user
-    override suspend fun updateUser(
-        name: String,
-        email: String?,
-        phone: String?,
-    ): Result<User> {
-        val result = userRemoteDataSource.updateUser(name, email, phone)
+    override suspend fun updateUser(request: UpdateUserRequest): Result<User> {
+        val result = userRemoteDataSource.updateUser(request)
         return handleResult(result)
     }
 

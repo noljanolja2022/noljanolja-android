@@ -4,6 +4,7 @@ import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.util.formatTime
+import com.noljanolja.core.user.data.model.request.*
 import com.noljanolja.core.user.domain.model.Gender
 import com.noljanolja.core.user.domain.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,15 +32,18 @@ class UpdateProfileViewModel : BaseViewModel() {
                     _uiStateFlow.emit(UpdateProfileUiState())
                 }
 
-                is UpdateProfileEvent.Update -> update(
-                    event.name,
-                    event.gender,
-                    event.dob?.formatTime("MMMM yyyy"),
-                    phone = event.phone,
-                    event.fileName,
-                    event.fileType,
-                    event.files,
-                )
+                is UpdateProfileEvent.Update -> event.run {
+                    update(
+                        name = name,
+                        gender = gender,
+                        dob = dob?.formatTime("MMMM yyyy"),
+                        phone = phone,
+                        email = email,
+                        fileName = fileName,
+                        fileType = fileType,
+                        files = files,
+                    )
+                }
 
                 UpdateProfileEvent.OpenCountryList -> {
                     navigationManager.navigate(NavigationDirections.CountryPicker)
@@ -53,6 +57,7 @@ class UpdateProfileViewModel : BaseViewModel() {
         gender: Gender?,
         dob: String?,
         phone: String?,
+        email: String?,
         fileName: String?,
         fileType: String = "",
         files: ByteArray?,
@@ -62,7 +67,15 @@ class UpdateProfileViewModel : BaseViewModel() {
             val updateAvatarResult =
                 coreManager.updateAvatar(name = fileName, type = fileType, files = files)
         }
-        val result = coreManager.updateUser(name = name, email = null, phone)
+        val result = coreManager.updateUser(
+            UpdateUserRequest(
+                name = name,
+                email = email,
+                phone = phone,
+                gender = gender,
+                dob = dob,
+            )
+        )
         if (result.isSuccess) {
             _uiStateFlow.emit(UpdateProfileUiState())
             navigationManager.navigate(NavigationDirections.AddReferral)

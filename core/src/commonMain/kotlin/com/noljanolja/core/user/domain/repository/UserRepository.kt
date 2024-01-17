@@ -1,5 +1,6 @@
 package com.noljanolja.core.user.domain.repository
 
+import com.noljanolja.core.user.data.model.request.*
 import com.noljanolja.core.user.domain.model.CheckinProgress
 import com.noljanolja.core.user.domain.model.User
 
@@ -26,11 +27,7 @@ internal interface UserRepository {
 //    // Email
 //    suspend fun signInWithEmailAndPassword(email: String, password: String): Result<User>
 
-    suspend fun updateUser(
-        name: String,
-        email: String?,
-        phone: String?,
-    ): Result<User>
+    suspend fun updateUser(request: UpdateUserRequest): Result<User>
 
     suspend fun updateAvatar(
         name: String,

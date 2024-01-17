@@ -16,9 +16,6 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.vector.*
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.*
-import androidx.compose.ui.text.*
-import androidx.compose.ui.text.font.*
-import androidx.compose.ui.text.style.*
 import androidx.compose.ui.unit.*
 import androidx.lifecycle.compose.*
 import com.noljanolja.android.R
@@ -76,7 +73,7 @@ private fun FriendsScreenContent(
     ) { padding ->
         Column(
             modifier = Modifier
-                .background(Yellow01)
+                .background(MaterialTheme.colorScheme.background)
                 .fillMaxSize()
                 .padding(padding)
         ) {
@@ -112,24 +109,14 @@ private fun FriendsScreenContent(
                     handleEvent(FriendsEvent.OpenSettingScreen)
                 }
             )
-            MarginVertical(8)
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(R.string.earn_point_title),
-                style = TextStyle(
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black,
-                    textAlign = TextAlign.Center
-                )
-            )
-            MarginVertical(8)
+            MarginVertical(15)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = PADDING_VIEW_SCREEN.dp)
                     .height(52.dp)
                     .clip(RoundedCornerShape(11.dp))
-                    .background(MaterialTheme.colorScheme.onPrimaryContainer)
+                    .background(MaterialTheme.colorScheme.primary)
                     .clickable {
                         handleEvent(FriendsEvent.InviteFriend)
                     },
@@ -138,17 +125,17 @@ private fun FriendsScreenContent(
             ) {
                 Text(
                     stringResource(R.string.invite_friends_to_get_benefits),
-                    color = YellowMain,
-                    style = MaterialTheme.typography.bodyLarge.withBold()
+                    color = Color.Black,
+                    style = MaterialTheme.typography.bodyMedium.withBold()
                 )
                 Icon(
-                    Icons.Default.ChevronRight,
+                    imageVector = Icons.Default.ChevronRight,
                     contentDescription = null,
-                    tint = YellowMain,
+                    tint = Color.Black,
                     modifier = Modifier.size(24.dp)
                 )
             }
-            MarginVertical(20)
+            MarginVertical(10)
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -180,7 +167,7 @@ private fun FriendsScreenContent(
                                 .padding(horizontal = 16.dp),
                         ) {
                             val visibleContacts = uiState.data.orEmpty()
-                            SizeBox(height = 22.dp)
+                            SizeBox(height = 12.dp)
                             Row {
                                 Text(
                                     stringResource(R.string.common_friends),

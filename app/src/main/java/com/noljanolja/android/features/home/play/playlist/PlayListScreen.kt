@@ -144,7 +144,9 @@ private fun PlayListContent(
                 handleEvent(PlayListEvent.Search)
             },
             icon = Icons.Filled.Notifications,
-            onIconClick = {},
+            onIconClick = {
+                handleEvent(PlayListEvent.OpenNotificationScreen)
+            },
             avatar = userStateFlow.avatar,
             onAvatarClick = {
                 handleEvent(PlayListEvent.Setting)

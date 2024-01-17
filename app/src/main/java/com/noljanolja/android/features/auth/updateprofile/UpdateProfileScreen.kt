@@ -67,12 +67,11 @@ fun UpdateProfileContent(
         remember { mutableStateListOf(Gender.MALE.name, Gender.FEMALE.name, Gender.OTHER.name) }
     var showAvatarInputDialog by rememberSaveable { mutableStateOf(false) }
     var avatar by rememberSaveable { mutableStateOf<Uri?>(null) }
-    val maxNameLength = rememberSaveable { 20 }
     var name by rememberSaveable { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("") }
     var phone by rememberSaveable { mutableStateOf("") }
     var gender by rememberSaveable { mutableStateOf<String?>(null) }
     var dob by rememberSaveable { mutableStateOf<LocalDate?>(null) }
-    val isRegisterEnable = name.isNotBlank()
     val selectCountry by remember {
         mutableStateOf(
             Countries.find {
@@ -95,6 +94,7 @@ fun UpdateProfileContent(
                 avatar = user.avatar?.toUri()
                 name = user.name
                 phone = phoneAndCode.second
+                email = user.email.convertToString()
                 gender = user.gender?.name
                 dob = user.dob?.toJavaLocalDate()
                 country = phoneAndCode.first
@@ -118,13 +118,13 @@ fun UpdateProfileContent(
                     interactionSource = remember { MutableInteractionSource() },
                     onClick = { focusManager.clearFocus(true) }
                 ),
-        ) {
+        ) { padding ->
             Column(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(it)
+                    .padding(padding)
                     .padding(horizontal = 16.dp)
                     .verticalScroll(rememberScrollState())
             ) {
@@ -137,9 +137,9 @@ fun UpdateProfileContent(
                         .fillMaxSize()
                         .clip(CircleShape)
                         .clickable { showAvatarInputDialog = true }
-                    avatar?.let {
+                    avatar?.let { avar ->
                         SubcomposeAsyncImage(
-                            avatar,
+                            avar,
                             contentDescription = null,
                             modifier = imageModifier,
                             contentScale = ContentScale.Crop,
@@ -186,56 +186,77 @@ fun UpdateProfileContent(
                             }
                         }
                     },
+                    maxLines = 1,
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         textColor = MaterialTheme.colorScheme.onBackground
                     ),
                     textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
                 )
                 SizeBox(height = 8.dp)
-
                 OutlinedTextField(
-                    value = phone,
-                    onValueChange = { phone = it },
-                    label = {
-                        if (phone.isNotBlank()) {
-                            Text("Phone")
-                        }
-                    },
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { Text("Email") },
+                    maxLines = 1,
                     modifier = Modifier.fillMaxWidth(),
-                    leadingIcon = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable {
-                                handleEvent(UpdateProfileEvent.OpenCountryList)
-                            }
-                        ) {
-                            Text(
-                                text = country.getFlagEmoji(),
-                                modifier = Modifier
-                                    .padding(horizontal = 7.dp)
-                                    .clip(RoundedCornerShape(3.dp))
-                                    .background(MaterialTheme.colorScheme.surface)
-                                    .padding(5.dp)
-                            )
-                            Text(text = "+${country.phoneCode}")
-                            Icon(Icons.Default.KeyboardArrowDown, contentDescription = null)
-                        }
-
-                    },
                     trailingIcon = {
-                        if (phone.isNotBlank()) {
+                        if (name.isNotBlank()) {
                             IconButton(onClick = {
-                                phone = ""
+                                email = ""
                             }) {
                                 Icon(Icons.Outlined.Cancel, contentDescription = null)
                             }
                         }
                     },
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        textColor = MaterialTheme.colorScheme.onBackground,
+                        textColor = MaterialTheme.colorScheme.onBackground
                     ),
                     textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
                 )
+
+//                OutlinedTextField(
+//                    value = phone,
+//                    onValueChange = { phone = it },
+//                    label = {
+//                        if (phone.isNotBlank()) {
+//                            Text("Phone")
+//                        }
+//                    },
+//                    modifier = Modifier.fillMaxWidth(),
+//                    leadingIcon = {
+//                        Row(
+//                            verticalAlignment = Alignment.CenterVertically,
+//                            modifier = Modifier.clickable {
+//                                handleEvent(UpdateProfileEvent.OpenCountryList)
+//                            }
+//                        ) {
+//                            Text(
+//                                text = country.getFlagEmoji(),
+//                                modifier = Modifier
+//                                    .padding(horizontal = 7.dp)
+//                                    .clip(RoundedCornerShape(3.dp))
+//                                    .background(MaterialTheme.colorScheme.surface)
+//                                    .padding(5.dp)
+//                            )
+//                            Text(text = "+${country.phoneCode}")
+//                            Icon(Icons.Default.KeyboardArrowDown, contentDescription = null)
+//                        }
+//
+//                    },
+//                    trailingIcon = {
+//                        if (phone.isNotBlank()) {
+//                            IconButton(onClick = {
+//                                phone = ""
+//                            }) {
+//                                Icon(Icons.Outlined.Cancel, contentDescription = null)
+//                            }
+//                        }
+//                    },
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
+//                        textColor = MaterialTheme.colorScheme.onBackground,
+//                    ),
+//                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground)
+//                )
 
                 SizeBox(height = 8.dp)
                 DoBInput(
@@ -292,16 +313,17 @@ fun UpdateProfileContent(
                 PrimaryButton(
                     onClick = {
                         val fileInfo = avatar?.let { context.loadFileInfo(it) }
-                        val formattedPhoneNumber = phone.getPhoneNumberFormatE164(country.nameCode)
-                        if (formattedPhoneNumber == null) {
+                        val formattedPhoneNumber = RegexExt.isEmailValid(email)
+                        if (!formattedPhoneNumber) {
                             showErrorPhoneNumber = true
                         } else {
                             handleEvent(
                                 UpdateProfileEvent.Update(
-                                    name.trim(),
-                                    formattedPhoneNumber,
-                                    dob?.toKotlinLocalDate(),
-                                    gender?.let { Gender.valueOf(it) },
+                                    name = name.trim(),
+                                    phone = phone.getPhoneNumberFormatE164(country.nameCode),
+                                    email = email,
+                                    dob = dob?.toKotlinLocalDate(),
+                                    gender = gender?.let { Gender.valueOf(it) },
                                     files = fileInfo?.contents,
                                     fileName = fileInfo?.name,
                                     fileType = fileInfo?.contentType.orEmpty()
@@ -312,7 +334,7 @@ fun UpdateProfileContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
-                    isEnable = name.isNotBlank() && phone.isNotBlank(),
+                    isEnable = name.isNotBlank() && phone.isNotBlank() && email.isNotBlank(),
                     text = stringResource(id = R.string.common_ok).uppercase()
                 )
             }
@@ -343,8 +365,8 @@ fun UpdateProfileContent(
 
     ErrorDialog(
         showError = showErrorPhoneNumber,
-        title = stringResource(R.string.login_invalid_phone_title),
-        description = stringResource(R.string.login_invalid_phone_description)
+        title = stringResource(R.string.login_invalid_email_title),
+        description = stringResource(R.string.login_invalid_title_description)
     ) {
         showErrorPhoneNumber = false
     }
