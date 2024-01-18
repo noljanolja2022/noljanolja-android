@@ -458,6 +458,7 @@
     <string name="request_point_dialog_title">Do you wan to Request %d Points from %s?</string>
     <string name="request_point_dialog_message">%s will feedback you soon!</string>
     <string name="request_point_success_message">Request Complete ✅</string>
+    <string name="search_friend_hint">Search by name/Phone number</string>
 
     <string name="referral_point_title_part1" translatable="false">추천인 및 신규\n가입자 전원에게</string>
     <string name="referral_point_title_part2" translatable="false">지급!</string>

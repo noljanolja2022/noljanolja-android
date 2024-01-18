@@ -110,11 +110,7 @@ fun MaterialTheme.shopBackground(darkTheme: Boolean = isSystemInDarkTheme()) = i
 
 @Composable
 fun MaterialTheme.colorBackgroundTransaction(darkTheme: Boolean = isSystemInDarkTheme()) =
-    if (darkTheme) {
-        Green300
-    } else {
-        colorScheme.secondaryContainer
-    }
+    Yellow00
 
 @Composable
 fun MaterialTheme.systemGreen(darkTheme: Boolean = isSystemInDarkTheme()) =

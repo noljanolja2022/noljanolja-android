@@ -111,7 +111,7 @@ private fun WalletTransactionContent(
             }
             SizeBox(height = 16.dp)
             if (uiData.transactions.isNotEmpty()) {
-                LazyColumn() {
+                LazyColumn {
                     val transactionsByMonth =
                         uiData.transactions.sortedByDescending { it.createdAt }.groupBy {
                             it.createdAt.formatMonthAndYear()
@@ -128,13 +128,15 @@ private fun WalletTransactionContent(
                                 )
                             }
                         }
-                        it.value.withIndex().filter {
-                            it.value.type == uiData.filterType.convertToUiLoyaltyPointType()
+                        it.value.withIndex().filter { item ->
+                            item.value.type == uiData.filterType.convertToUiLoyaltyPointType()
                                     || uiData.filterType == TransactionFilterType.All
                         }.forEach { (index, value) ->
                             item {
                                 TransactionRow(
                                     transaction = value,
+                                    textColor = if (index % 2 == 0) Color.Black else MaterialTheme.colorScheme.onBackground,
+                                    timeColor = if (index % 2 == 0) NeutralDeepGrey else MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .heightIn(min = 54.dp)

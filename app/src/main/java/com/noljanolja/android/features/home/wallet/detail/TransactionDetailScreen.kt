@@ -158,13 +158,15 @@ private fun TransactionDetailContent(
                 }
             }
             MarginVertical(5)
-            ButtonRadius(
-                modifier = Modifier.fillMaxWidth(),
-                title = stringResource(id = R.string.transaction_detail_video_send_report).uppercase(),
-                textColor = Color.Black,
-                bgColor = MaterialTheme.colorScheme.secondaryContainer,
-                onClick = {}
-            )
+            if (loyaltyPoint.status == Status.FAILLED) {
+                ButtonRadius(
+                    modifier = Modifier.fillMaxWidth(),
+                    title = stringResource(id = R.string.transaction_detail_video_send_report).uppercase(),
+                    textColor = Color.Black,
+                    bgColor = MaterialTheme.colorScheme.secondaryContainer,
+                    onClick = {}
+                )
+            }
         }
     }
 }

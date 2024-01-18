@@ -21,6 +21,9 @@ class OTPViewModel : BaseViewModel() {
                 }
 
                 is OTPEvent.VerifyOTP -> {
+                    _uiStateFlow.run {
+                        emit(value.copy(loading = true))
+                    }
                     coreManager.verifyOTPCode(event.verificationId, event.otp).exceptionOrNull()
                         ?.let {
                             sendError(it)
@@ -28,6 +31,8 @@ class OTPViewModel : BaseViewModel() {
                     authSdk.getIdToken(true)?.let {
                         coreManager.saveAuthToken(it)
                         handleAuthResult()
+                    } ?: _uiStateFlow.run {
+                        emit(value.copy(loading = false))
                     }
                 }
             }
@@ -37,6 +42,9 @@ class OTPViewModel : BaseViewModel() {
     private fun handleAuthResult() {
         launch {
             val result = coreManager.getCurrentUser(true)
+            _uiStateFlow.run {
+                emit(value.copy(loading = false))
+            }
             result.getOrNull()?.let { user ->
                 if (user.name.isBlank()) {
                     navigationManager.navigate(NavigationDirections.TermsOfService)

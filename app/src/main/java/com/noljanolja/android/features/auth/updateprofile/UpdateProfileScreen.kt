@@ -187,6 +187,7 @@ fun UpdateProfileContent(
                         }
                     },
                     maxLines = 1,
+                    singleLine = true,
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         textColor = MaterialTheme.colorScheme.onBackground
                     ),
@@ -198,6 +199,7 @@ fun UpdateProfileContent(
                     onValueChange = { email = it },
                     label = { Text("Email") },
                     maxLines = 1,
+                    singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                     trailingIcon = {
                         if (name.isNotBlank()) {

@@ -5,6 +5,9 @@ package com.noljanolja.android.util
  */
 
 class Constant {
+    object LocaleDateTime {
+        const val FROM_SERVER = "yyyy-MM-dd"
+    }
     object LocaleDefine {
         const val KOREAN = "KR"
         const val INDIAN = "IN"

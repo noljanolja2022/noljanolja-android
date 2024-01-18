@@ -6,7 +6,7 @@ import kotlinx.serialization.*
 @Serializable
 data class LoyaltyPoint(
     val id: String = "",
-    val status: LoyaltyStatus = LoyaltyStatus.COMPLETE,
+    val status: LoyaltyStatus = LoyaltyStatus.COMPLETED,
     val amount: Long = 0,
     val reasonLocale: String = "",
     val reason: String = "",
@@ -23,5 +23,6 @@ enum class LoyaltyType {
 }
 
 enum class LoyaltyStatus {
-    COMPLETE,
+    COMPLETED,
+    FAILLED
 }

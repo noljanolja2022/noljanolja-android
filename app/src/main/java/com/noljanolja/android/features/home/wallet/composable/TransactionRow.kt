@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.*
@@ -17,7 +18,9 @@ import com.noljanolja.android.util.*
 @Composable
 fun TransactionRow(
     modifier: Modifier = Modifier,
-    transaction: UiLoyaltyPoint,
+    textColor: Color,
+    timeColor: Color,
+    transaction: UiLoyaltyPoint
 ) {
     val value = transaction.amount
     Row(
@@ -37,7 +40,7 @@ fun TransactionRow(
                     transaction.reasonLocale
                 ),
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onBackground
+                color = textColor
             )
             SizeBox(height = 5.dp)
             Text(
@@ -45,7 +48,7 @@ fun TransactionRow(
                 style = TextStyle(
                     fontSize = 8.sp,
                     fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = timeColor
                 )
             )
         }

@@ -155,7 +155,7 @@ private fun SearchFriendsHeader(
                 modifier = Modifier
                     .fillMaxWidth(),
                 searchText = searchText,
-                hint = stringResource(id = R.string.search_videos),
+                hint = stringResource(id = R.string.search_friend_hint),
                 onSearch = onSearchChange,
                 background = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.04f),
                 onFocusChange = {

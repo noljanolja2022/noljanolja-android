@@ -7,7 +7,7 @@ import kotlinx.serialization.*
 @Serializable
 data class UiLoyaltyPoint(
     val id: String = "",
-    val status: Status = Status.COMPLETE,
+    val status: Status = Status.COMPLETED,
     val amount: Long = 0,
     val reason: String = "",
     val reasonLocale: String = "",
@@ -20,7 +20,8 @@ data class UiLoyaltyPoint(
 }
 
 enum class Status {
-    COMPLETE,
+    COMPLETED,
+    FAILLED
 }
 
 enum class Type {
@@ -32,7 +33,8 @@ fun LoyaltyPoint.toUiModel() = UiLoyaltyPoint(
     id = id,
     amount = amount,
     status = when (status) {
-        LoyaltyStatus.COMPLETE -> Status.COMPLETE
+        LoyaltyStatus.COMPLETED -> Status.COMPLETED
+        LoyaltyStatus.FAILLED -> Status.FAILLED
     },
     reason = reason,
     reasonLocale = reasonLocale,

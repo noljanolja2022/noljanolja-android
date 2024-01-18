@@ -421,6 +421,7 @@ private fun SettingContent(
         },
     )
     WarningDialog(
+        modifier = Modifier.padding(horizontal = 20.dp),
         title = stringResource(R.string.confirm_clear_cache_title),
         content = stringResource(R.string.confirm_clear_cache_message),
         isWarning = isShowClearCatchDialog,

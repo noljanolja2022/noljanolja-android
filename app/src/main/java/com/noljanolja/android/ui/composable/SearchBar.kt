@@ -13,6 +13,7 @@ import androidx.compose.ui.draw.*
 import androidx.compose.ui.focus.*
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.text.input.*
+import androidx.compose.ui.text.style.*
 import androidx.compose.ui.unit.*
 
 @Composable
@@ -55,6 +56,7 @@ fun SearchBar(
                 value = searchText,
                 onValueChange = onSearch,
                 maxLines = 1,
+                singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 keyboardActions = KeyboardActions(onSearch = { onSearchButton() }),
                 cursorBrush = SolidColor(LocalContentColor.current),
@@ -67,7 +69,9 @@ fun SearchBar(
                 Text(
                     hint,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }

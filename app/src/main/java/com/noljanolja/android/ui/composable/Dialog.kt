@@ -103,6 +103,7 @@ fun ErrorDialog(
 
 @Composable
 fun WarningDialog(
+    modifier: Modifier = Modifier,
     title: String?,
     content: String,
     isWarning: Boolean = false,
@@ -113,18 +114,37 @@ fun WarningDialog(
 ) {
     if (isWarning) {
         AlertDialog(
+            modifier = modifier,
             title = title?.let {
-                { Text(text = title) }
+                {
+                    Text(
+                        text = title,
+                        fontSize = 20.sp
+                    )
+                }
             },
-            text = { Text(text = content) },
+            text = {
+                Text(
+                    text = content,
+                    fontSize = 16.sp
+                )
+            },
             dismissButton = {
                 TextButton(onClick = onDismiss) {
-                    Text(dismissText, color = MaterialTheme.colorScheme.primary)
+                    Text(
+                        text = dismissText,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 14.sp
+                    )
                 }
             },
             confirmButton = {
                 TextButton(onClick = onConfirm) {
-                    Text(confirmText, color = MaterialTheme.colorScheme.primary)
+                    Text(
+                        text = confirmText,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 14.sp
+                    )
                 }
             },
             onDismissRequest = {},

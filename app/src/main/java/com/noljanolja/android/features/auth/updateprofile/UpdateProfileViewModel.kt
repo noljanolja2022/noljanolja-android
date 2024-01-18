@@ -3,6 +3,7 @@ package com.noljanolja.android.features.auth.updateprofile
 import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.navigation.NavigationDirections
+import com.noljanolja.android.util.Constant.LocaleDateTime.FROM_SERVER
 import com.noljanolja.android.util.formatTime
 import com.noljanolja.core.user.data.model.request.*
 import com.noljanolja.core.user.domain.model.Gender
@@ -36,7 +37,7 @@ class UpdateProfileViewModel : BaseViewModel() {
                     update(
                         name = name,
                         gender = gender,
-                        dob = dob?.formatTime("MMMM yyyy"),
+                        dob = dob?.formatTime(FROM_SERVER),
                         phone = phone,
                         email = email,
                         fileName = fileName,
