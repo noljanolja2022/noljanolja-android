@@ -1,3 +1,4 @@
+- 1.1.47: Update UI in Transaction flow, Search Screen, Update user information Screen and apply search in Friends
 - 1.1.46: Update show agree button and
 - 1.1.45: Update show list notification and add new chat button
 - 1.1.44: Update show QR of India Gift
