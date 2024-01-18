@@ -1,27 +1,20 @@
 package com.noljanolja.android.features.home.wallet.composable
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.noljanolja.android.ui.composable.CircleAvatar
-import com.noljanolja.android.ui.composable.Expanded
-import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.core.loyalty.domain.model.MemberInfo
-import com.noljanolja.core.user.domain.model.User
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.res.*
+import androidx.compose.ui.text.*
+import androidx.compose.ui.text.font.*
+import androidx.compose.ui.unit.*
+import com.noljanolja.android.R
+import com.noljanolja.android.ui.composable.*
+import com.noljanolja.android.util.*
+import com.noljanolja.core.loyalty.domain.model.*
+import com.noljanolja.core.user.domain.model.*
 
 @Composable
 fun WalletUserInformation(
@@ -36,12 +29,21 @@ fun WalletUserInformation(
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        CircleAvatar(user = user, size = 64.dp)
+        CircleAvatar(
+            modifier = Modifier.clickable {
+                goToSetting()
+            },
+            user = user,
+            size = 64.dp
+        )
         SizeBox(width = 16.dp)
         Column(
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
+                modifier = Modifier.clickable {
+                    goToSetting()
+                },
                 text = user.name,
                 style = TextStyle(
                     fontSize = 16.sp,
@@ -51,18 +53,25 @@ fun WalletUserInformation(
                 ),
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
-//            memberInfo?.currentTier?.let { RankingRow(tier = it, onClick = goToRanking) }
+            memberInfo?.run {
+                RankingRow(tier = currentTier, onClick = goToRanking)
+                Text(
+                    text = stringResource(id = R.string.overall_point_ranking, point.formatDigitsNumber()),
+                    color = Color.Black,
+                    fontSize = 10.sp
+                )
+            }
         }
-        Expanded()
-        IconButton(
-            onClick = goToSetting,
-            modifier = Modifier.align(Alignment.CenterVertically)
-        ) {
-            Icon(
-                Icons.Filled.Settings,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-        }
+//        Expanded()
+//        IconButton(
+//            onClick = goToSetting,
+//            modifier = Modifier.align(Alignment.CenterVertically)
+//        ) {
+//            Icon(
+//                Icons.Filled.Settings,
+//                contentDescription = null,
+//                tint = MaterialTheme.colorScheme.onPrimaryContainer
+//            )
+//        }
     }
 }

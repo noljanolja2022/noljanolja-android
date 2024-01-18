@@ -470,4 +470,6 @@
     <string name="contacts_not_found_search">Sorry, this user is not in your contacts</string>
     <string name="login_invalid_email_title">Incorrect Email</string>
     <string name="login_invalid_title_description">Please input the correct email since this email be used to verify your account.</string>
+    <string name="overall_point_ranking">Overall Point Ranking: %s</string>
+    <string name="overall_point_growth_in_day">%s%% Today</string>
 </resources>

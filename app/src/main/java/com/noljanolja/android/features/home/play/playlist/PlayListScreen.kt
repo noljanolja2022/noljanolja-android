@@ -351,11 +351,13 @@ private fun LazyListScope.watchingVideos(
             Text(
                 stringResource(id = R.string.video_list_watching_to_get_point),
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.weight(1f)
             )
             Icon(
                 Icons.Default.ChevronRight,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onBackground
+                tint = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.size(24.dp)
             )
         }
         SizeBox(height = 8.dp)

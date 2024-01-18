@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.*
 import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.*
@@ -61,20 +62,10 @@ private fun WalletExchangeContent(
     handleEvent: (WalletEvent) -> Unit,
     onWalletPointClick: () -> Unit
 ) {
-    val context = LocalContext.current
     var showAdmob by remember { mutableStateOf(false) }
     val sharedPreferenceHelper: SharedPreferenceHelper = get()
-    var pointOfDayLineCount by remember {
+    var heightOfPointDay by remember {
         mutableStateOf(0)
-    }
-    var pointLineCount by remember {
-        mutableStateOf(0)
-    }
-    var titlePointOfDay by remember {
-        mutableStateOf(context.getString(R.string.wallet_accumulated_point))
-    }
-    var titlePoint by remember {
-        mutableStateOf(context.getString(R.string.wallet_point_can_exchange))
     }
     ScaffoldWithCircleAboveBgContent(
         backgroundColor = MaterialTheme.colorBackgroundWallet(
@@ -101,11 +92,11 @@ private fun WalletExchangeContent(
                         end = 16.dp
                     )
                 )
-                MyCashAndPoint(
-                    memberInfo = memberInfo,
-                    myBalance = myBalance,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
+//                MyCashAndPoint(
+//                    memberInfo = memberInfo,
+//                    myBalance = myBalance,
+//                    modifier = Modifier.padding(horizontal = 16.dp)
+//                )
                 SizeBox(height = 10.dp)
             }
         }
@@ -117,65 +108,62 @@ private fun WalletExchangeContent(
                 .padding(16.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
             ) {
                 WalletInfoDailyInfoItem(
-                    modifier = Modifier.weight(1f),
-                    contentColor = Orange00,
-                    title = titlePointOfDay,
-                    point = memberInfo.accumulatedPointsToday,
-                    pointColor = MaterialTheme.colorScheme.onBackground,
-                    onTextLayout = {
-                        if (pointOfDayLineCount != it) {
-                            pointOfDayLineCount = it
-                            titlePointOfDay = titlePointOfDay.addLine(
-                                textLine = pointOfDayLineCount,
-                                anotherLine = pointLineCount
-                            )
-                        }
-                    }
+                    modifier = Modifier
+                        .weight(1f)
+                        .onGloballyPositioned { coordinates ->
+                            heightOfPointDay = coordinates.size.height
+                        },
+                    title = stringResource(id = R.string.wallet_accumulated_point),
+                    titleColor = MaterialTheme.colorScheme.onBackground,
+                    pointIcon = ImageVector.vectorResource(id = R.drawable.wallet_ic_point),
+                    point =memberInfo.accumulatedPointsToday,
+                    pointColor = MaterialTheme.systemGreen()
                 )
                 SizeBox(width = 12.dp)
                 WalletInfoDailyInfoItem(
                     modifier = Modifier
                         .weight(1f)
+                        .height(
+                            with(LocalDensity.current) {
+                                heightOfPointDay.toDp()
+                            }
+                        )
                         .clickable {
                             onWalletPointClick()
                         },
-                    contentColor = BlueMain,
-                    title = titlePoint,
-                    point = memberInfo.exchangeablePoints,
+                    title = stringResource(id = R.string.my_point),
+                    titleColor = MaterialTheme.colorScheme.onBackground,
+                    point = memberInfo.point,
+                    pointIcon = ImageVector.vectorResource(id = R.drawable.wallet_ic_point),
                     pointColor = MaterialTheme.colorScheme.onBackground,
-                    onTextLayout = {
-                        if (pointLineCount != it) {
-                            pointLineCount = it
-                            titlePoint = titlePoint.addLine(
-                                textLine = pointLineCount,
-                                anotherLine = pointOfDayLineCount
-                            )
-                        }
+                    subContent = {
+//                        GrowthInTheDay(
+//                            value = "0.0",
+//                            textColor = PictonBlue
+//                        )
                     }
                 )
             }
-            SizeBox(height = 20.dp)
-            ButtonRadius(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .border(
-                        width = 0.1.dp,
-                        shape = RoundedCornerShape(5.dp),
-                        color = MaterialTheme.colorBackgroundWallet(
-                            key = sharedPreferenceHelper.appColor
-                        )
-                    ),
-                title = stringResource(id = R.string.transaction_history).uppercase(),
-                bgColor = MaterialTheme.colorScheme.primary,
-                textColor = Color.Black,
-                icon = painterResource(id = R.drawable.ic_history)
-            ) {
-                handleEvent(WalletEvent.TransactionHistory)
-            }
+            SizeBox(height = 15.dp)
+            WalletInfoDailyInfoItem(
+                modifier = Modifier.fillMaxWidth(),
+                paddingVertical = 8,
+                title = stringResource(id = R.string.my_cash),
+                titleColor = MaterialTheme.colorScheme.onBackground,
+                pointIcon = ImageVector.vectorResource(id = R.drawable.wallet_ic_coin),
+                point = myBalance.balance.toLong(),
+                pointColor = MaterialTheme.colorScheme.onBackground,
+                subContent = {
+//                    GrowthInTheDay(
+//                        value = "0",
+//                        textColor = MaterialTheme.systemGreen()
+//                    )
+                }
+            )
             SizeBox(height = 20.dp)
             Card(
                 modifier = Modifier
@@ -239,6 +227,25 @@ private fun WalletExchangeContent(
                         handleEvent(WalletEvent.Exchange)
                     }
                 }
+            }
+            SizeBox(height = 15.dp)
+            ButtonRadius(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .border(
+                        width = 0.1.dp,
+                        shape = RoundedCornerShape(5.dp),
+                        color = MaterialTheme.colorBackgroundWallet(
+                            key = sharedPreferenceHelper.appColor
+                        )
+                    ),
+                title = stringResource(id = R.string.transaction_history).uppercase(),
+                bgColor = MaterialTheme.colorScheme.primary,
+                textColor = Color.Black,
+                icon = painterResource(id = R.drawable.ic_history)
+            ) {
+                handleEvent(WalletEvent.TransactionHistory)
             }
         }
     }
@@ -328,13 +335,40 @@ private fun MyPoint(
 }
 
 @Composable
-fun WalletInfoDailyInfoItem(
+private fun GrowthInTheDay(
+    value: String,
+    textColor: Color
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_growth),
+            contentDescription = null,
+            tint = Orange00,
+            modifier = Modifier.size((14 * getScaleSize()).dp)
+        )
+        MarginHorizontal(5)
+        Text(
+            text = stringResource(id = R.string.overall_point_growth_in_day, value),
+            style = MaterialTheme.typography.bodySmall.copy(
+                color = textColor,
+                fontSize = 10.sp
+            )
+        )
+    }
+}
+
+@Composable
+private fun WalletInfoDailyInfoItem(
     modifier: Modifier = Modifier,
+    paddingVertical: Int = 24,
     title: String,
+    titleColor: Color,
+    pointIcon: ImageVector,
     point: Long,
-    contentColor: Color,
     pointColor: Color,
-    onTextLayout: (Int) -> Unit
+    subContent: @Composable (() -> Unit)? = null
 ) {
     Surface(
         modifier = modifier,
@@ -348,37 +382,40 @@ fun WalletInfoDailyInfoItem(
             modifier = Modifier
                 .fillMaxSize()
                 .clip(RoundedCornerShape(20.dp))
-                .padding(horizontal = 10.dp, vertical = 24.dp)
+                .padding(horizontal = 10.dp, vertical = paddingVertical.dp)
         ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleSmall,
-                color = pointColor,
-                textAlign = TextAlign.Center,
-                maxLines = 4,
-                onTextLayout = { textLayoutResult: TextLayoutResult ->
-                    onTextLayout(textLayoutResult.lineCount)
-                }
-            )
-            SizeBox(height = 10.dp)
-            Row {
+            Column(
+                horizontalAlignment = Alignment.Start,
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = titleColor,
+                    textAlign = TextAlign.Start,
+                    maxLines = 4
+                )
+                subContent?.invoke()
+            }
+            SizeBox(height = 5.dp)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Image(
+                    imageVector = pointIcon,
+                    contentDescription = null,
+                    modifier = Modifier.size(25.dp)
+                )
+                MarginHorizontal(5)
                 Text(
                     text = point.formatDigitsNumber(),
                     style = TextStyle(
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        lineHeight = 35.sp,
-                        color = contentColor
-                    )
-                )
-                Text(
-                    " P",
-                    style = TextStyle(
-                        fontSize = 24.sp,
+                        fontSize = (23 / getScaleSize()).sp,
                         fontWeight = FontWeight.Bold,
                         lineHeight = 35.sp,
                         color = pointColor
-                    )
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }

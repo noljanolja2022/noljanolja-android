@@ -4,8 +4,6 @@ import android.content.Context
 import android.util.TypedValue
 import com.noljanolja.android.R
 import java.text.DecimalFormat
-import java.text.NumberFormat
-import kotlin.time.Duration.Companion.seconds
 
 fun Int?.orZero() = this ?: 0
 fun Long?.orZero() = this ?: 0L
@@ -16,12 +14,13 @@ fun Double.formatDouble(): String {
 }
 
 fun Number.formatDigitsNumber(): String {
-    val formatter = NumberFormat.getInstance()
-    formatter.minimumFractionDigits = 0
-    formatter.maximumFractionDigits = 0
-    return formatter.format(this)
+    return try {
+        val decimalFormat = DecimalFormat("#,###")
+        decimalFormat.format(this)
+    } catch (_: Exception) {
+        ""
+    }
 }
-
 fun Long.formatNumber(): String {
     val number = this.toDouble()
     return when {
