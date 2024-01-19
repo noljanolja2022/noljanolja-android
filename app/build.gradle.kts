@@ -19,7 +19,7 @@ android {
         minSdk = 21
         targetSdk = 33
         versionCode = 64
-        versionName = "1.1.11"//"1.1.47"
+        versionName = "1.1.12"//"1.1.47"
         testInstrumentationRunner = "com.noljanolja.android.InstrumentationTestRunner"
         multiDexEnabled = true
     }
