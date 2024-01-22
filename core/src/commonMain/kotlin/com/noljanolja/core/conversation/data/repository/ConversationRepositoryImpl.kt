@@ -1,27 +1,24 @@
 package com.noljanolja.core.conversation.data.repository
 
-import co.touchlab.kermit.Logger
-import com.noljanolja.core.conversation.data.datasource.ConversationApi
-import com.noljanolja.core.conversation.data.datasource.LocalConversationDataSource
-import com.noljanolja.core.conversation.data.datasource.LocalReactDataSource
+import co.touchlab.kermit.*
+import com.noljanolja.core.conversation.data.datasource.*
 import com.noljanolja.core.conversation.data.model.request.*
 import com.noljanolja.core.conversation.domain.model.*
-import com.noljanolja.core.conversation.domain.repository.ConversationRepository
-import com.noljanolja.core.user.data.datasource.LocalUserDataSource
-import com.noljanolja.core.user.domain.model.User
-import com.noljanolja.core.user.domain.repository.UserRepository
-import com.noljanolja.core.utils.default
-import com.noljanolja.core.utils.isRemoveFromConversation
-import com.noljanolja.core.video.data.model.request.VideoProgressEvent
-import com.noljanolja.core.video.data.model.request.VideoProgressRequest
+import com.noljanolja.core.conversation.domain.repository.*
+import com.noljanolja.core.shop.data.datasource.*
+import com.noljanolja.core.shop.domain.model.*
+import com.noljanolja.core.user.data.datasource.*
+import com.noljanolja.core.user.domain.model.*
+import com.noljanolja.core.utils.*
+import com.noljanolja.core.video.data.model.request.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
 
 internal class ConversationRepositoryImpl(
     private val conversationApi: ConversationApi,
-    private val userRepository: UserRepository,
+    private val searchLocalDatasource: SearchLocalDatasource,
     private val localConversationDataSource: LocalConversationDataSource,
     private val localUserDataSource: LocalUserDataSource,
     private val reactDataSource: LocalReactDataSource,
@@ -628,9 +625,29 @@ internal class ConversationRepositoryImpl(
         scope.coroutineContext.cancel()
     }
 
+    override fun getSearchHistories(): Flow<List<SearchKey>> {
+        return searchLocalDatasource.findAllByScreen(screen = SCREEN)
+    }
+
+    override fun insertKey(text: String) {
+        searchLocalDatasource.insertKey(text, screen = SCREEN)
+    }
+
+    override suspend fun clearText(text: String) {
+        searchLocalDatasource.deleteByText(text, screen = SCREEN)
+    }
+
+    override suspend fun clearAll() {
+        searchLocalDatasource.deleteByScreen(SCREEN)
+    }
+
     private fun String.convertIdsToNames(participants: List<User>): String {
         return this.split(",").mapNotNull { id ->
             participants.find { it.id == id }?.name
         }.joinToString(", ")
+    }
+
+    companion object {
+        private const val SCREEN = "CONVERSATION"
     }
 }

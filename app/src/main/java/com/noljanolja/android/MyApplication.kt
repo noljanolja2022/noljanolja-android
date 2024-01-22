@@ -49,6 +49,7 @@ import com.noljanolja.android.features.home.play.search.*
 import com.noljanolja.android.features.home.play.uncompleted.*
 import com.noljanolja.android.features.home.require_login.*
 import com.noljanolja.android.features.home.root.*
+import com.noljanolja.android.features.home.searchchat.*
 import com.noljanolja.android.features.home.searchfriends.*
 import com.noljanolja.android.features.home.sendpoint.*
 import com.noljanolja.android.features.home.wallet.*
@@ -231,6 +232,9 @@ class MyApplication : Application() {
                 }
                 viewModel {
                     ConversationsViewModel()
+                }
+                viewModel {
+                    SearchChatViewModel()
                 }
                 viewModel {
                     CountriesViewModel()

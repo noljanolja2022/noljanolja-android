@@ -38,6 +38,10 @@ class ConversationsViewModel : BaseViewModel() {
                 ConversationsEvent.AddFriend -> {
                     navigationManager.navigate(NavigationDirections.AddFriend)
                 }
+
+                ConversationsEvent.OpenSearchScreen -> {
+                    navigationManager.navigate(NavigationDirections.SearchChatByName)
+                }
             }
         }
     }

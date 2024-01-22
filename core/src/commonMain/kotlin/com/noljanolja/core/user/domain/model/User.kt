@@ -21,6 +21,10 @@ data class User(
 ) {
     fun getAvatarUrl() = avatar?.replace("storage", "storage-download")
     fun getQrUrl() = "NolgoBulja:id:$id"
+    fun compareUser(anotherUser: User) =
+        (name.contains(anotherUser.name) || id == anotherUser.id
+                || email?.contains(anotherUser.email.toString()) == true
+                || phone?.contains(anotherUser.phone.toString()) == true)
 }
 
 @Serializable

@@ -4,6 +4,7 @@ import com.noljanolja.core.conversation.domain.model.Conversation
 import com.noljanolja.core.conversation.domain.model.ConversationMedia
 import com.noljanolja.core.conversation.domain.model.Message
 import com.noljanolja.core.conversation.domain.model.ReactIcon
+import com.noljanolja.core.shop.domain.model.*
 import com.noljanolja.core.video.data.model.request.VideoProgressEvent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
@@ -100,4 +101,12 @@ internal interface ConversationRepository {
     ): Result<List<ConversationMedia>>
 
     fun onDestroy()
+
+    fun getSearchHistories(): Flow<List<SearchKey>>
+
+    fun insertKey(text: String)
+
+    suspend fun clearText(text: String)
+
+    suspend fun clearAll()
 }

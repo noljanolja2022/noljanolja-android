@@ -99,6 +99,14 @@ class CoreManager : KoinComponent {
         return contactsRepository.inviteFriend(friendId)
     }
 
+    fun getConversationSearchHistories() = conversationRepository.getSearchHistories()
+
+    fun insertConversationSearchKey(text: String) = conversationRepository.insertKey(text)
+
+    suspend fun clearConversationTextSearch(text: String) = conversationRepository.clearText(text)
+
+    suspend fun clearAllConversationSearch() = conversationRepository.clearAll()
+
     suspend fun findConversationWithUsers(userIds: List<String>): Conversation? {
         return userIds.let {
             conversationRepository.findConversationWithUsers(it)

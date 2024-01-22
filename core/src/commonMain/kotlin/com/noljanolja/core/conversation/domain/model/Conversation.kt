@@ -34,7 +34,13 @@ data class Conversation(
         }
     }
 
-    fun getSingleReceiver(): User? = participants.find { !it.isMe }.takeIf { type == ConversationType.SINGLE }
+    fun getSingleReceiver(): User? =
+        participants.find { !it.isMe }.takeIf { type == ConversationType.SINGLE }
+
+    fun compareConversation(anotherConversation: Conversation) =
+        (id == anotherConversation.id || title.contains(anotherConversation.title)
+                || creator.compareUser(anotherConversation.creator)
+                || admin.compareUser(anotherConversation.admin))
 }
 
 @Serializable

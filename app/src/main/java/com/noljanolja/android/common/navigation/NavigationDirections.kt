@@ -346,6 +346,12 @@ object NavigationDirections {
         override val destination: String = "add_friend"
     }
 
+    object SearchChatByName : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options = null
+        override val destination: String = "search_chat_by_name"
+    }
+
     object SearchFriendByName : NavigationCommand {
         override val arguments: List<NamedNavArgument> = listOf()
         override val options = null

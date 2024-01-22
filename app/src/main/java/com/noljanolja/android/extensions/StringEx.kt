@@ -15,14 +15,10 @@ internal inline fun <reified T> String?.parseFromJsonTo(): T? = try {
     null
 }
 
-fun String?.addLine(textLine: Int, anotherLine: Int): String {
-    val result = StringBuilder(this.convertToString())
-    var numberOffLine = anotherLine - textLine
-    while (numberOffLine > 0) {
-        numberOffLine -= 1
-        result.append("\n   ")
-    }
-    return result.toString()
+fun String?.convertToLong(defaultValue: Long = -1L) = try {
+    this?.toLong() ?: defaultValue
+} catch (_: Exception) {
+    defaultValue
 }
 
 fun String?.getPhoneNumberFormatE164(countryCode: String) = try {

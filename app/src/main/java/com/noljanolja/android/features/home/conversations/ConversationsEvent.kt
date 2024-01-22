@@ -11,4 +11,5 @@ sealed interface ConversationsEvent {
 
     object ChatSettings : ConversationsEvent
     object AddFriend : ConversationsEvent
+    object OpenSearchScreen : ConversationsEvent
 }

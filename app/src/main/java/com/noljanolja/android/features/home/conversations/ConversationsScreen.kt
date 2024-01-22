@@ -153,7 +153,7 @@ fun ConversationsScreenContent(
                 modifier = Modifier,
                 hintSearch = stringResource(id = R.string.friends_search_friends),
                 onSearchFieldClick = {
-//                    handleEvent(FriendsEvent.Search)
+                    handleEvent(ConversationsEvent.OpenSearchScreen)
                 },
                 icon = ImageVector.vectorResource(R.drawable.chat_add),
                 onIconClick = {

@@ -34,6 +34,7 @@ import com.noljanolja.android.features.home.play.playscreen.*
 import com.noljanolja.android.features.home.play.search.*
 import com.noljanolja.android.features.home.play.uncompleted.*
 import com.noljanolja.android.features.home.root.*
+import com.noljanolja.android.features.home.searchchat.*
 import com.noljanolja.android.features.home.searchfriends.*
 import com.noljanolja.android.features.home.sendpoint.SendPointScreen
 import com.noljanolja.android.features.home.wallet.checkin.*
@@ -172,6 +173,11 @@ private fun NavGraphBuilder.addContactsGraph() {
 
 private fun NavGraphBuilder.addChatGraph() {
     val chatDirection = NavigationDirections.Chat()
+    with(NavigationDirections.SearchChatByName) {
+        composable(destination, arguments) {
+            SearchChatScreen()
+        }
+    }
     with(NavigationDirections.SendPointScreen()) {
         composable(
             destination,
