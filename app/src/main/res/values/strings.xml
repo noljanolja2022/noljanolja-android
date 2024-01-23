@@ -422,8 +422,8 @@
     <string name="common_exit">Exit</string>
     <string name="convert_points_to_cash">Convert points to cash</string>
     <string name="convert_now">Convert now</string>
-    <string name="my_point">My points</string>
-    <string name="my_cash">My cash</string>
+    <string name="my_point">My Points</string>
+    <string name="my_cash">My Cash</string>
     <string name="tab_convert_coin_to_cash">Tap to convert Points to Cash</string>
     <string name="tab_conver_coin_description">Easy to convert. You can use Cash to\nGet more products in shop. Tap now!</string>
     <string name="convert">Convert</string>
@@ -473,4 +473,5 @@
     <string name="login_invalid_title_description">Please input the correct email since this email be used to verify your account.</string>
     <string name="overall_point_ranking">Overall Point Ranking: %s</string>
     <string name="overall_point_growth_in_day">%s%% Today</string>
+    <string name="setting_email">Email</string>
 </resources>

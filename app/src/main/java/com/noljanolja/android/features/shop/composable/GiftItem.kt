@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.*
 import coil.compose.AsyncImage
 import com.noljanolja.android.R
 import com.noljanolja.android.ui.composable.SizeBox
@@ -118,9 +118,9 @@ fun GiftItem(
                         stringResource(id = R.string.common_use_now),
                         modifier = Modifier
                             .width(90.dp)
-                            .padding(vertical = 10.dp)
                             .clip(RoundedCornerShape(5.dp))
-                            .background(MaterialTheme.colorScheme.primaryContainer),
+                            .background(MaterialTheme.colorScheme.primary)
+                            .padding(vertical = 5.dp),
                         textAlign = TextAlign.Center,
                         maxLines = 1,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,

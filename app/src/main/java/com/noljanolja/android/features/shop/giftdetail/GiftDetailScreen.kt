@@ -85,7 +85,7 @@ private fun GiftDetailContent(
         topBar = {
             CommonTopAppBar(
                 onBack = { handleEvent(GiftDetailEvent.Back) },
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }

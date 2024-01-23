@@ -9,7 +9,6 @@ import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.util.showToast
 import com.noljanolja.core.file.model.*
 import com.noljanolja.core.loyalty.domain.model.*
-import com.noljanolja.core.user.domain.model.User
 import kotlinx.coroutines.flow.*
 
 class SettingViewModel : BaseViewModel() {
@@ -24,18 +23,6 @@ class SettingViewModel : BaseViewModel() {
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = MemberInfo()
     )
-
-    init {
-        launch {
-            coreManager.getCurrentUser(forceRefresh = false, onlyLocal = true).getOrNull()?.let {
-                _uiStateFlow.emit(
-                    SettingUIState(
-                        user = it
-                    )
-                )
-            }
-        }
-    }
 
     fun handleEvent(event: SettingEvent) {
         launch {
@@ -84,13 +71,7 @@ class SettingViewModel : BaseViewModel() {
                 files = file.contents
             )
             if (result.isSuccess) {
-                coreManager.getCurrentUser(forceRefresh = true, onlyLocal = false).getOrNull()?.let {
-                    _uiStateFlow.emit(
-                        SettingUIState(
-                            user = it
-                        )
-                    )
-                }
+                updateUserState()
                 _updateUserEvent.emit(true)
             } else {
                 result.exceptionOrNull()?.let {
@@ -104,6 +85,5 @@ class SettingViewModel : BaseViewModel() {
 data class SettingUIState(
     val versionName: String = BuildConfig.VERSION_NAME,
     val allowPushNotification: Boolean = false,
-    val user: User? = null,
     val memberInfo: MemberInfo? = null
 )

@@ -416,4 +416,5 @@
     <string name="login_invalid_title_description">해당 이메일은 계정 확인에 사용되므로 정확한 이메일을 입력해 주세요.</string>
     <string name="overall_point_ranking">종합 포인트 순위: %s</string>
     <string name="overall_point_growth_in_day">%s%% 오늘</string>
+    <string name="setting_email">이메일</string>
 </resources>

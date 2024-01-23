@@ -45,7 +45,7 @@ private fun CouponsContent(
                     handleEvent(CouponsEvent.Back)
                 },
                 centeredTitle = true,
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }

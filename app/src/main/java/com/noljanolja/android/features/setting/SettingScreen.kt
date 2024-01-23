@@ -31,6 +31,7 @@ import com.noljanolja.android.features.auth.updateprofile.components.*
 import com.noljanolja.android.ui.composable.*
 import com.noljanolja.android.ui.theme.*
 import com.noljanolja.android.util.*
+import com.noljanolja.android.util.Constant.DefaultValue.PADDING_HORIZONTAL_SCREEN
 import com.noljanolja.android.util.Constant.DefaultValue.PADDING_VERTICAL_SCREEN
 import com.noljanolja.android.util.Constant.DefaultValue.PADDING_VIEW
 import com.noljanolja.android.util.Constant.DefaultValue.PADDING_VIEW_SCREEN
@@ -45,6 +46,7 @@ fun SettingScreen(
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     val memberInfo by viewModel.memberInfoFlow.collectAsStateWithLifecycle()
+    val user by viewModel.userStateFlow.collectAsStateWithLifecycle()
     var isShowSuccessToast by remember {
         mutableStateOf(false)
     }
@@ -58,6 +60,7 @@ fun SettingScreen(
     )
     SettingContent(
         uiState = uiState,
+        user = user,
         memberInfo = memberInfo,
         handleEvent = viewModel::handleEvent,
     )
@@ -91,10 +94,10 @@ fun SettingScreen(
 @Composable
 private fun SettingContent(
     uiState: SettingUIState,
+    user: User,
     memberInfo: MemberInfo,
     handleEvent: (SettingEvent) -> Unit,
 ) {
-    val user = uiState.user
     var isShowLogoutDialog by remember {
         mutableStateOf(false)
     }
@@ -173,10 +176,12 @@ private fun SettingContent(
                     val (
                         imgAvar,
                         btnChange,
-//                        tvTitleRanking,
-//                        tvMemberRank,
+                        tvTitleRanking,
+                        tvMemberRank,
                         tvTitleName,
                         tvName,
+                        tvTitleMail,
+                        tvMail,
                         tvTitlePhone,
                         tvPhone,
                         tvTileGender,
@@ -188,7 +193,7 @@ private fun SettingContent(
                             top.linkTo(parent.top, PADDING_VIEW_SCREEN.dp)
                             linkTo(start = parent.start, end = parent.end)
                         },
-                        user = user ?: User(),
+                        user = user,
                         size = 52.dp
                     )
                     Box(
@@ -214,40 +219,60 @@ private fun SettingContent(
                                 .align(
                                     Alignment.Center,
                                 ),
-                            style = MaterialTheme.typography.bodySmall,
+                            style = MaterialTheme.typography.bodySmall.withBold(),
                             color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
-//                    Text(
-//                        text = stringResource(id = R.string.my_ranking_title),
-//                        style = MaterialTheme.typography.titleSmall,
-//                        modifier = Modifier.constrainAs(tvTitleRanking) {
-//                            start.linkTo(parent.start)
-//                            top.linkTo(btnChange.bottom, PADDING_HORIZONTAL_SCREEN.dp)
-//                        },
-//                    )
-//                    RankingRow(
-//                        tier = memberInfo.currentTier,
-//                        onClick = {},
-//                        modifier = Modifier.constrainAs(tvMemberRank) {
-//                            linkTo(horizontalChain.end, parent.end)
-//                            linkTo(tvTitleRanking.top, tvTitleRanking.bottom)
-//                        }
-//                    )
+                    Text(
+                        text = stringResource(id = R.string.my_ranking_title),
+                        style = MaterialTheme.typography.titleSmall,
+                        modifier = Modifier.constrainAs(tvTitleRanking) {
+                            start.linkTo(parent.start)
+                            top.linkTo(btnChange.bottom, PADDING_HORIZONTAL_SCREEN.dp)
+                        },
+                    )
+                    RankingRow(
+                        tier = memberInfo.currentTier,
+                        onClick = {},
+                        modifier = Modifier.constrainAs(tvMemberRank) {
+                            linkTo(horizontalChain.end, parent.end)
+                            linkTo(tvTitleRanking.top, tvTitleRanking.bottom)
+                        }
+                    )
                     Text(
                         text = stringResource(id = R.string.setting_name),
                         style = MaterialTheme.typography.titleSmall,
                         modifier = Modifier.constrainAs(tvTitleName) {
                             start.linkTo(parent.start)
-                            top.linkTo(btnChange.bottom, 15.dp)
+                            top.linkTo(tvTitleRanking.bottom, 15.dp)
                         },
                     )
                     Text(
-                        text = user?.name.convertToString(),
+                        text = user.name.convertToString(),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.constrainAs(tvName) {
-                            start.linkTo(horizontalChain.end, 20.dp)
+                            linkTo(start = horizontalChain.end, startMargin = 10.dp, end = parent.end)
                             linkTo(tvTitleName.top, tvTitleName.bottom)
+                            baseline.linkTo(tvTitleName.baseline)
+                            width = Dimension.fillToConstraints
+                        }
+                    )
+                    Text(
+                        text = stringResource(id = R.string.setting_email),
+                        style = MaterialTheme.typography.titleSmall,
+                        modifier = Modifier.constrainAs(tvTitleMail) {
+                            start.linkTo(parent.start)
+                            top.linkTo(tvName.bottom, 15.dp)
+                        },
+                    )
+                    Text(
+                        text = user.email.convertToString(),
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.constrainAs(tvMail) {
+                            linkTo(start = horizontalChain.end, startMargin = 10.dp, end = parent.end)
+                            linkTo(tvTitleMail.top, tvTitleMail.bottom)
+                            baseline.linkTo(tvTitleMail.baseline)
+                            width = Dimension.fillToConstraints
                         }
                     )
                     Text(
@@ -255,7 +280,7 @@ private fun SettingContent(
                         style = MaterialTheme.typography.titleSmall,
                         modifier = Modifier.constrainAs(tvTitlePhone) {
                             start.linkTo(parent.start)
-                            top.linkTo(tvName.bottom, 15.dp)
+                            top.linkTo(tvMail.bottom, 15.dp)
                         },
                     )
                     Spacer(
@@ -265,11 +290,13 @@ private fun SettingContent(
                         }
                     )
                     Text(
-                        text = user?.phone.convertToString(),
+                        text = user.phone.convertToString(),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.constrainAs(tvPhone) {
-                            start.linkTo(horizontalChain.end, 20.dp)
+                            linkTo(start = horizontalChain.end, startMargin = 10.dp, end = parent.end)
                             linkTo(tvTitlePhone.top, tvTitlePhone.bottom)
+                            baseline.linkTo(tvTitlePhone.baseline)
+                            width = Dimension.fillToConstraints
                         }
                     )
                     Text(
@@ -281,11 +308,13 @@ private fun SettingContent(
                         },
                     )
                     Text(
-                        text = user?.gender?.name.convertToString(),
+                        text = user.gender?.name.convertToString().lowercase().capitalizeLetterAt(0),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.constrainAs(tvGender) {
-                            start.linkTo(horizontalChain.end, 20.dp)
+                            linkTo(start = horizontalChain.end, startMargin = 10.dp, end = parent.end)
                             linkTo(tvTileGender.top, tvTileGender.bottom)
+                            baseline.linkTo(tvTileGender.baseline)
+                            width = Dimension.fillToConstraints
                         }
                     )
                 }
@@ -327,7 +356,7 @@ private fun SettingContent(
                 )
                 MarginVertical(PADDING_VIEW)
                 ColorButton(
-                    title = "Defaut",
+                    title = "Default",
                     isSelected = sharedPreferenceHelper.appColor != EAppColorSetting.KEY_ELEGANT_BLUE_COLOR
                             && sharedPreferenceHelper.appColor != EAppColorSetting.KEY_WARM_GOLD_COLOR,
                     color = Green200Main,
@@ -342,7 +371,7 @@ private fun SettingContent(
                 )
                 MarginVertical(PADDING_VIEW)
                 ColorButton(
-                    title = "Elegent blue",
+                    title = "Elegant blue",
                     isSelected = sharedPreferenceHelper.appColor == EAppColorSetting.KEY_ELEGANT_BLUE_COLOR,
                     color = Blue200Main,
                     onClick = {

@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -134,7 +135,8 @@ private fun MyVouchers(
                 Image(
                     painter = painterResource(id = R.drawable.ic_wallet_sharp),
                     contentDescription = null,
-                    modifier = Modifier.size(37.dp)
+                    modifier = Modifier.size(37.dp),
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
                 )
                 SizeBox(width = 10.dp)
                 Text(
