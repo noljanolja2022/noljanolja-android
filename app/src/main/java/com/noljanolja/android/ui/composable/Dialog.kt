@@ -1,5 +1,6 @@
 package com.noljanolja.android.ui.composable
 
+import androidx.annotation.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.*
@@ -9,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.layout.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.*
@@ -157,6 +159,90 @@ fun WarningDialog(
             textContentColor = MaterialTheme.colorScheme.onBackground,
             shape = MaterialTheme.shapes.extraSmall
         )
+    }
+}
+
+@Composable
+internal fun DialogWarningWithPicture(
+    @DrawableRes image: Int,
+    title: String? = null,
+    message: String? = null,
+    dismissText: String? = null,
+    confirmText: String,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(
+                    horizontal = 13.dp
+                )
+                .background(
+                    color = MaterialTheme.colorScheme.background,
+                )
+        ) {
+            Image(
+                painter = painterResource(id = image),
+                contentDescription = null,
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(140.dp)
+            )
+            MarginVertical(24)
+            title?.let {
+                Text(
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    text = it,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                )
+                MarginVertical(5)
+            }
+            message?.let {
+                Text(
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    text = it,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                )
+                MarginVertical(22)
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp)
+                    .padding(horizontal = 24.dp)
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
+                dismissText?.let {
+                    Text(
+                        text = it,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable {
+                            onDismiss()
+                        }
+                    )
+                }
+                MarginHorizontal(12)
+                Text(
+                    text = confirmText,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable {
+                        onConfirm()
+                    }
+                )
+            }
+        }
     }
 }
 

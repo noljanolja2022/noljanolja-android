@@ -31,8 +31,10 @@ class SettingViewModel : BaseViewModel() {
                     navigationManager.navigate(NavigationDirections.Back)
                 }
 
-                SettingEvent.ClearCacheData -> {}
-                SettingEvent.ShowLicense -> {}
+                SettingEvent.ShowLicense -> {
+
+                }
+
                 SettingEvent.TogglePushNotification -> {
                     with(_uiStateFlow) {
                         emit(value.copy(allowPushNotification = !value.allowPushNotification))

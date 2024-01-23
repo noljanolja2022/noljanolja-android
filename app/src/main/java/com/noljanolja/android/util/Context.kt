@@ -1,25 +1,22 @@
 package com.noljanolja.android.util
 
-import android.app.Activity
+import android.app.*
 import android.content.*
-import android.graphics.Bitmap
-import android.net.Uri
-import android.os.Environment
+import android.graphics.*
+import android.net.*
+import android.os.*
 import android.provider.*
-import android.widget.Toast
+import android.widget.*
 import androidx.core.content.*
-import co.touchlab.kermit.Logger
-import coil.Coil
-import coil.memory.MemoryCache
+import co.touchlab.kermit.*
+import coil.*
+import coil.memory.*
 import com.noljanolja.android.BuildConfig
 import com.noljanolja.android.R
 import com.noljanolja.android.common.data.*
-import com.noljanolja.android.common.error.PhoneNotAvailableFailure
-import com.noljanolja.android.common.error.QrNotValidFailure
-import com.noljanolja.android.common.error.ValidEmailFailure
-import com.noljanolja.android.common.error.ValidPhoneFailure
+import com.noljanolja.android.common.error.*
 import com.noljanolja.android.util.Constant.PackageShareToApp.MESSAGE_APP_PACKAGE
-import com.noljanolja.core.file.model.FileInfo
+import com.noljanolja.core.file.model.*
 import okio.Path.Companion.toPath
 import java.io.*
 import java.util.*
@@ -207,6 +204,8 @@ fun Context.shareToAnotherApp(videoUrl: String, shareToAppData: ShareToAppData) 
         }
     }
 }
+
+fun Context.clearAppCache() = cacheDir.deleteRecursively()
 
 fun Context.getClientId() = if (BuildConfig.DEBUG) {
     "954965503519-4indv4tab6cr141999er2dd8nj43mtcr.apps.googleusercontent.com"

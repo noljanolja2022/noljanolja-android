@@ -417,4 +417,6 @@
     <string name="overall_point_ranking">종합 포인트 순위: %s</string>
     <string name="overall_point_growth_in_day">%s%% 오늘</string>
     <string name="setting_email">이메일</string>
+    <string name="clear_cache_success_title">성공!</string>
+    <string name="clear_cache_success_message">캐시 데이터 삭제 완료.</string>
 </resources>

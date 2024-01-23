@@ -474,4 +474,6 @@
     <string name="overall_point_ranking">Overall Point Ranking: %s</string>
     <string name="overall_point_growth_in_day">%s%% Today</string>
     <string name="setting_email">Email</string>
+    <string name="clear_cache_success_title">Success!</string>
+    <string name="clear_cache_success_message">Clear cache data completed.</string>
 </resources>

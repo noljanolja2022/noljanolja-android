@@ -104,6 +104,9 @@ private fun SettingContent(
     var isShowClearCatchDialog by remember {
         mutableStateOf(false)
     }
+    var isShowClearCatchDialogSuccess by remember {
+        mutableStateOf(false)
+    }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val sharedPreferenceHelper: SharedPreferenceHelper = get()
@@ -251,7 +254,11 @@ private fun SettingContent(
                         text = user.name.convertToString(),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.constrainAs(tvName) {
-                            linkTo(start = horizontalChain.end, startMargin = 10.dp, end = parent.end)
+                            linkTo(
+                                start = horizontalChain.end,
+                                startMargin = 10.dp,
+                                end = parent.end
+                            )
                             linkTo(tvTitleName.top, tvTitleName.bottom)
                             baseline.linkTo(tvTitleName.baseline)
                             width = Dimension.fillToConstraints
@@ -269,7 +276,11 @@ private fun SettingContent(
                         text = user.email.convertToString(),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.constrainAs(tvMail) {
-                            linkTo(start = horizontalChain.end, startMargin = 10.dp, end = parent.end)
+                            linkTo(
+                                start = horizontalChain.end,
+                                startMargin = 10.dp,
+                                end = parent.end
+                            )
                             linkTo(tvTitleMail.top, tvTitleMail.bottom)
                             baseline.linkTo(tvTitleMail.baseline)
                             width = Dimension.fillToConstraints
@@ -293,7 +304,11 @@ private fun SettingContent(
                         text = user.phone.convertToString(),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.constrainAs(tvPhone) {
-                            linkTo(start = horizontalChain.end, startMargin = 10.dp, end = parent.end)
+                            linkTo(
+                                start = horizontalChain.end,
+                                startMargin = 10.dp,
+                                end = parent.end
+                            )
                             linkTo(tvTitlePhone.top, tvTitlePhone.bottom)
                             baseline.linkTo(tvTitlePhone.baseline)
                             width = Dimension.fillToConstraints
@@ -308,10 +323,15 @@ private fun SettingContent(
                         },
                     )
                     Text(
-                        text = user.gender?.name.convertToString().lowercase().capitalizeLetterAt(0),
+                        text = user.gender?.name.convertToString().lowercase()
+                            .capitalizeLetterAt(0),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.constrainAs(tvGender) {
-                            linkTo(start = horizontalChain.end, startMargin = 10.dp, end = parent.end)
+                            linkTo(
+                                start = horizontalChain.end,
+                                startMargin = 10.dp,
+                                end = parent.end
+                            )
                             linkTo(tvTileGender.top, tvTileGender.bottom)
                             baseline.linkTo(tvTileGender.baseline)
                             width = Dimension.fillToConstraints
@@ -461,7 +481,7 @@ private fun SettingContent(
         },
         onConfirm = {
             isShowClearCatchDialog = false
-            handleEvent(SettingEvent.ClearCacheData)
+            isShowClearCatchDialogSuccess = context.clearAppCache()
         }
     )
 
@@ -480,19 +500,31 @@ private fun SettingContent(
             tempAvatar = null
         }
     )
-    if (isShowLogoutDialog) {
-        WarningDialog(
-            title = null,
-            content = stringResource(id = R.string.ask_to_logout),
-            dismissText = stringResource(R.string.common_cancel),
-            confirmText = stringResource(R.string.common_yes),
-            isWarning = isShowLogoutDialog,
+    WarningDialog(
+        title = null,
+        content = stringResource(id = R.string.ask_to_logout),
+        dismissText = stringResource(R.string.common_cancel),
+        confirmText = stringResource(R.string.common_yes),
+        isWarning = isShowLogoutDialog,
+        onDismiss = {
+            isShowLogoutDialog = false
+        },
+        onConfirm = {
+            isShowLogoutDialog = false
+            handleEvent(SettingEvent.Logout)
+        }
+    )
+    if (isShowClearCatchDialogSuccess) {
+        DialogWarningWithPicture(
+            image = R.drawable.earth,
+            title = stringResource(id = R.string.clear_cache_success_title),
+            message = stringResource(id = R.string.clear_cache_success_message),
+            confirmText = stringResource(R.string.common_ok),
             onDismiss = {
-                isShowLogoutDialog = false
+                isShowClearCatchDialogSuccess = false
             },
             onConfirm = {
-                isShowLogoutDialog = false
-                handleEvent(SettingEvent.Logout)
+                isShowClearCatchDialogSuccess = false
             }
         )
     }
