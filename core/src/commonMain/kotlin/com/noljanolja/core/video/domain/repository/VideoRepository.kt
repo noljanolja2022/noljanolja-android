@@ -1,6 +1,7 @@
 package com.noljanolja.core.video.domain.repository
 
 import com.noljanolja.core.shop.domain.model.SearchKey
+import com.noljanolja.core.video.data.model.request.*
 import com.noljanolja.core.video.domain.model.Comment
 import com.noljanolja.core.video.domain.model.PromotedVideo
 import com.noljanolja.core.video.domain.model.TrendingVideoDuration
@@ -26,7 +27,7 @@ interface VideoRepository {
 
     suspend fun likeVideo(
         videoId: String,
-        youtubeToken: String,
+        likeVideoRequest: LikeVideoRequest
     ): Result<Boolean>
 
     suspend fun subscribeChannel(

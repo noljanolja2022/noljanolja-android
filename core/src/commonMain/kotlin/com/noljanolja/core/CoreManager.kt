@@ -20,7 +20,7 @@ import com.noljanolja.core.shop.domain.repository.ShopRepository
 import com.noljanolja.core.user.data.model.request.*
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.user.domain.repository.UserRepository
-import com.noljanolja.core.video.data.model.request.VideoProgressEvent
+import com.noljanolja.core.video.data.model.request.*
 import com.noljanolja.core.video.domain.model.TrendingVideoDuration
 import com.noljanolja.core.video.domain.repository.VideoRepository
 import com.noljanolja.socket.SocketManager
@@ -375,10 +375,10 @@ class CoreManager : KoinComponent {
 
     suspend fun likeVideo(
         id: String,
-        youtubeToken: String,
+        likeVideoRequest: LikeVideoRequest
     ) = videoRepository.likeVideo(
         videoId = id,
-        youtubeToken = youtubeToken
+        likeVideoRequest = likeVideoRequest
     )
 
     suspend fun reactVideo(

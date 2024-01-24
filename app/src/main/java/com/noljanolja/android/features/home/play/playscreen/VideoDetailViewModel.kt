@@ -3,6 +3,7 @@ package com.noljanolja.android.features.home.play.playscreen
 import androidx.annotation.*
 import com.noljanolja.android.*
 import com.noljanolja.android.common.base.*
+import com.noljanolja.android.common.enums.*
 import com.noljanolja.android.common.sharedpreference.*
 import com.noljanolja.android.extensions.*
 import com.noljanolja.android.ui.composable.youtube.*
@@ -22,13 +23,13 @@ class VideoDetailViewModel() : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow(UiState<VideoDetailUiData>())
     val uiStateFlow = _uiStateFlow.asStateFlow()
     private val videoStateFlow =
-        MutableStateFlow<PlayerConstants.PlayerState>(PlayerConstants.PlayerState.UNKNOWN)
+        MutableStateFlow(PlayerConstants.PlayerState.UNKNOWN)
     private val videoDurationSecondFlow = MutableStateFlow<Float>(0F)
     private var lastTrackEvent: Pair<VideoProgressEvent, Long>? = null
     private val _eventForceLoginGoogle = MutableSharedFlow<String>()
     val eventForceLoginGoogle = _eventForceLoginGoogle.asSharedFlow()
     private val _playerStateFlow =
-        MutableStateFlow<PlayerConstants.PlayerState>(PlayerConstants.PlayerState.UNKNOWN)
+        MutableStateFlow(PlayerConstants.PlayerState.UNKNOWN)
     val playerStateFlow = _playerStateFlow.asStateFlow()
 
     fun updateVideo(videoId: String?) {
@@ -71,6 +72,7 @@ class VideoDetailViewModel() : BaseViewModel() {
                 VideoDetailEvent.ToggleFullScreen -> youTubePlayer?.toggleFullscreen()
                 is VideoDetailEvent.ReadyVideo -> onReady(event.player)
                 is VideoDetailEvent.Comment -> commentVideo(event.comment, event.token)
+                is VideoDetailEvent.LikeVideo -> likedVideo(event.isLiked, event.token)
                 is VideoDetailEvent.SendError -> sendError(event.error)
                 is VideoDetailEvent.TogglePlayPause -> togglePlayPause()
             }
@@ -105,12 +107,39 @@ class VideoDetailViewModel() : BaseViewModel() {
         )
     }
 
+    private fun likedVideo(isLiked: Boolean, token: String) {
+        launch {
+            val result = coreManager.likeVideo(
+                id = videoId,
+                likeVideoRequest = LikeVideoRequest(
+                    action = if (isLiked) RateVideoAction.dislike.name else RateVideoAction.like.name,
+                    youtubeToken = token
+                )
+            )
+            if (result.isSuccess) {
+                coreManager.getVideoDetail(videoId)
+                    .catch { e ->
+                        e.printStackTrace()
+                    }
+                    .collect {
+                        _uiStateFlow.emit(
+                            UiState(
+                                data = _uiStateFlow.value.data?.copy(
+                                    video = it
+                                )
+                            )
+                        )
+                    }
+            }
+        }
+    }
+
     private fun commentVideo(comment: String, token: String) {
         launch {
             val data = _uiStateFlow.value.data ?: return@launch
             val result = coreManager.commentVideo(videoId, comment, token)
             if (result.isFailure) {
-                sendError(result.exceptionOrNull()!!)
+                sendError(result.exceptionOrNull() ?: Exception())
             } else {
                 _uiStateFlow.emit(
                     UiState(

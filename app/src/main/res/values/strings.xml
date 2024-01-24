@@ -476,4 +476,5 @@
     <string name="setting_email">Email</string>
     <string name="clear_cache_success_title">Success!</string>
     <string name="clear_cache_success_message">Clear cache data completed.</string>
+    <string name="liked_videos">Liked Videos</string>
 </resources>

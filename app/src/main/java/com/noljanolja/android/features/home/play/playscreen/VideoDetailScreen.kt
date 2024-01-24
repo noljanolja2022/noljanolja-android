@@ -20,13 +20,18 @@ import androidx.compose.runtime.saveable.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.*
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.text.font.*
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.*
+import androidx.compose.ui.unit.*
 import androidx.lifecycle.compose.*
+import com.google.android.gms.auth.api.signin.*
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.*
+import com.noljanolja.android.extensions.*
+import com.noljanolja.android.extensions.getScaleSize
 import com.noljanolja.android.features.home.play.playscreen.PlayVideoActivity.Companion.createCustomActions
 import com.noljanolja.android.features.home.play.playscreen.composable.*
 import com.noljanolja.android.ui.composable.*
@@ -37,6 +42,7 @@ import com.noljanolja.core.*
 import com.noljanolja.core.user.domain.model.*
 import com.noljanolja.core.video.domain.model.*
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.*
+import kotlinx.coroutines.*
 import org.koin.androidx.compose.*
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -163,8 +169,11 @@ private fun VideoDetailContent(
                 LazyColumn(modifier = Modifier.weight(1F)) {
                     item {
                         SizeBox(height = 8.dp)
-                        VideoInformation(video = video)
-                        SizeBox(height = 8.dp)
+                        VideoInformation(
+                            video = video,
+                            handleEvent = handleEvent
+                        )
+                        SizeBox(height = 20.dp)
                         VideoParameters(video = video)
                         Divider(
                             modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
@@ -185,33 +194,125 @@ private fun VideoDetailContent(
 }
 
 @Composable
-private fun VideoInformation(video: Video) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.Top
-    ) {
-        Text(
-            text = video.title,
-            style = MaterialTheme.typography.titleSmall.copy(
-                fontWeight = FontWeight.SemiBold
-            ),
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 16.dp)
+private fun VideoInformation(
+    video: Video,
+    handleEvent: (VideoDetailEvent) -> Unit
+) {
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val activity = context.findActivity()!!
+    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail()
+        .requestIdToken(context.getClientId()).requestScopes(YOUTUBE_SCOPE)
+        .build()
+
+    val googleSignInClient = GoogleSignIn.getClient(context, gso)
+    val googleSignInLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartActivityForResult(),
+            onResult = { result ->
+                scope.launch {
+                    val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                    val account = task.getAccount {
+
+                    } ?: return@launch
+                    getTokenFromAccount(
+                        activity,
+                        account,
+                        onError = { error ->
+                            handleEvent(VideoDetailEvent.SendError(error))
+                        },
+                        onTokenResult = { token ->
+                            handleEvent(
+                                VideoDetailEvent.LikeVideo(
+                                    isLiked = video.isLiked,
+                                    token = token
+                                )
+                            )
+                        }
+                    )
+                }
+            }
         )
+
+    video.run {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleSmall.copy(
+                    fontWeight = FontWeight.SemiBold
+                ),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 16.dp)
+            )
+        }
+        Text(
+            text = category.title,
+            style = MaterialTheme.typography.labelMedium,
+            modifier = Modifier.padding(horizontal = 16.dp),
+            color = MaterialTheme.colorScheme.tertiary
+        )
+        Text(
+            text = channel.title,
+            style = MaterialTheme.typography.labelSmall,
+            modifier = Modifier.padding(horizontal = 16.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        MarginVertical(10)
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.surface,
+                    shape = RoundedCornerShape(30.dp)
+                )
+                .clip(RoundedCornerShape(30.dp))
+                .clickable {
+                    googleSignInLauncher.launch(googleSignInClient.signInIntent)
+                }
+                .padding(vertical = 5.dp, horizontal = 15.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(
+                        if (isLiked) R.drawable.ic_liked else R.drawable.ic_like
+                    ),
+                    contentDescription = null,
+                    tint = if (isLiked) MaterialTheme.colorScheme.primary else MaterialTheme.likeContentColor(),
+                    modifier = Modifier.size((24 * getScaleSize()).dp)
+                )
+                MarginHorizontal(5)
+                Text(
+                    text = likeCount.formatDigitsNumber(),
+                    style = Typography.bodyMedium.copy(
+                        color = MaterialTheme.likeContentColor()
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+            MarginHorizontal(18)
+            Text(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(1.dp)
+                    .background(
+                        MaterialTheme.likeContentColor()
+                    ),
+                text = ""
+            )
+            MarginHorizontal(18)
+            Text(
+                text = stringResource(id = R.string.liked_videos),
+                color = MaterialTheme.likeContentColor()
+            )
+        }
     }
-    Text(
-        text = video.category.title,
-        style = MaterialTheme.typography.labelMedium,
-        modifier = Modifier.padding(horizontal = 16.dp),
-        color = MaterialTheme.colorScheme.tertiary
-    )
-    Text(
-        text = video.channel.title,
-        style = MaterialTheme.typography.labelSmall,
-        modifier = Modifier.padding(horizontal = 16.dp),
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-    )
 }
 
 @Composable
@@ -223,12 +324,12 @@ private fun VideoParameters(video: Video) {
     ) {
         VideoParameter(
             title = stringResource(id = R.string.video_detail_views),
-            value = video.viewCount.toString()
+            value = video.viewCount.formatDigitsNumber()
         )
         SizeBox(width = 10.dp)
         VideoParameter(
             title = stringResource(id = R.string.video_detail_comment),
-            value = video.commentCount.toString()
+            value = video.commentCount.formatDigitsNumber()
         )
         SizeBox(width = 10.dp)
         VideoParameter(

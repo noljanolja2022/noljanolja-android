@@ -102,7 +102,7 @@ internal class VideoRepositoryImpl(
     ): Result<Comment> {
         return try {
             val response =
-                videoApi.commentVideo(videoId, CommentVideoRequest(comment, "$youtubeToken"))
+                videoApi.commentVideo(videoId, CommentVideoRequest(comment, youtubeToken))
             if (response.isSuccessful()) {
                 localVideoDataSource.upsertVideoComments(videoId, listOf(response.data!!))
                 localVideoDataSource.updateVideoCommentCount(videoId)
@@ -117,10 +117,10 @@ internal class VideoRepositoryImpl(
         }
     }
 
-    override suspend fun likeVideo(videoId: String, youtubeToken: String): Result<Boolean> {
+    override suspend fun likeVideo(videoId: String, likeVideoRequest: LikeVideoRequest): Result<Boolean> {
         return try {
             val response =
-                videoApi.likeVideo(videoId, LikeVideoRequest(youtubeToken = youtubeToken))
+                videoApi.likeVideo(videoId, likeVideoRequest)
             if (response.isSuccessful()) {
                 Result.success(true)
             } else if (response.code == Failure.NotHasYoutubeChannel.code) {

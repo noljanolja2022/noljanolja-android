@@ -21,6 +21,7 @@ fun Number.formatDigitsNumber(): String {
         ""
     }
 }
+
 fun Long.formatNumber(): String {
     val number = this.toDouble()
     return when {

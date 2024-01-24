@@ -422,7 +422,11 @@ internal fun OutlineButtonBorderRadius(
 @Preview
 @Composable
 private fun TwoButtonInRowPreview() {
-    TwoButtonInRow(firstText = "Login", secondText = "Signup", indexFocused = 1, firstClick = { }) {
+    TwoButtonInRow(
+        firstText = "Login",
+        secondText = "Signup",
+        indexFocused = 1,
+        firstClick = { }) {
     }
 }
 

@@ -128,14 +128,16 @@ fun CommentInput(
         }
     }
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         CircleAvatar(user = me, size = 24.dp)
         SizeBox(width = 12.dp)
         Box(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
                 .height(36.dp)
                 .clip(RoundedCornerShape(10.dp))
                 .background(MaterialTheme.colorScheme.surface)
@@ -234,4 +236,4 @@ suspend fun Task<GoogleSignInAccount>.getAccount(
 }
 
 private const val GOOGLE_REQUEST_PERMISSION_CODE = 1000
-private val YOUTUBE_SCOPE = Scope("https://www.googleapis.com/auth/youtube.force-ssl")
+val YOUTUBE_SCOPE = Scope("https://www.googleapis.com/auth/youtube.force-ssl")

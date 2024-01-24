@@ -17,6 +17,7 @@ data class Video(
     val id: String = "", //
     val isHighlighted: Boolean = false,
     val likeCount: Long = 0,
+    val isLiked: Boolean = false,
     val publishedAt: String = "",
     val thumbnail: String = "", //
     val title: String = "", //

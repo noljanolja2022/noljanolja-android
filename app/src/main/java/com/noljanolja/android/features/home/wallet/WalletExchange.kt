@@ -152,6 +152,7 @@ private fun WalletExchangeContent(
             WalletInfoDailyInfoItem(
                 modifier = Modifier.fillMaxWidth(),
                 paddingVertical = 8,
+                horizontalAlignment = Alignment.CenterHorizontally,
                 title = stringResource(id = R.string.my_cash),
                 titleColor = MaterialTheme.colorScheme.onBackground,
                 pointIcon = ImageVector.vectorResource(id = R.drawable.wallet_ic_coin),
@@ -362,6 +363,7 @@ private fun GrowthInTheDay(
 @Composable
 private fun WalletInfoDailyInfoItem(
     modifier: Modifier = Modifier,
+    horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     paddingVertical: Int = 24,
     title: String,
     titleColor: Color,
@@ -378,11 +380,10 @@ private fun WalletInfoDailyInfoItem(
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = horizontalAlignment,
             modifier = Modifier
-                .fillMaxSize()
                 .clip(RoundedCornerShape(20.dp))
-                .padding(horizontal = 10.dp, vertical = paddingVertical.dp)
+                .padding(horizontal = 15.dp, vertical = paddingVertical.dp)
         ) {
             Column(
                 horizontalAlignment = Alignment.Start,
