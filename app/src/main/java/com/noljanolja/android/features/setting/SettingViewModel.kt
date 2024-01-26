@@ -6,12 +6,15 @@ import com.noljanolja.android.common.base.BaseViewModel
 import com.noljanolja.android.common.base.launch
 import com.noljanolja.android.common.error.UnexpectedFailure
 import com.noljanolja.android.common.navigation.NavigationDirections
+import com.noljanolja.android.common.sharedpreference.*
 import com.noljanolja.android.util.showToast
 import com.noljanolja.core.file.model.*
 import com.noljanolja.core.loyalty.domain.model.*
 import kotlinx.coroutines.flow.*
 
-class SettingViewModel : BaseViewModel() {
+class SettingViewModel(
+    private val sharedPreferenceHelper: SharedPreferenceHelper
+) : BaseViewModel() {
     private val _uiStateFlow = MutableStateFlow(SettingUIState())
     val uiStateFlow = _uiStateFlow.asStateFlow()
 
@@ -23,6 +26,16 @@ class SettingViewModel : BaseViewModel() {
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = MemberInfo()
     )
+
+    init {
+        launch {
+            _uiStateFlow.emit(
+                SettingUIState(
+                    allowPushNotification = sharedPreferenceHelper.pushNotification
+                )
+            )
+        }
+    }
 
     fun handleEvent(event: SettingEvent) {
         launch {
@@ -36,8 +49,10 @@ class SettingViewModel : BaseViewModel() {
                 }
 
                 SettingEvent.TogglePushNotification -> {
+                    sharedPreferenceHelper.pushNotification =
+                        !sharedPreferenceHelper.pushNotification
                     with(_uiStateFlow) {
-                        emit(value.copy(allowPushNotification = !value.allowPushNotification))
+                        emit(value.copy(allowPushNotification = sharedPreferenceHelper.pushNotification))
                     }
                 }
 

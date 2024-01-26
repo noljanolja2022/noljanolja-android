@@ -1,5 +1,6 @@
 package com.noljanolja.android.features.referral
 
+import android.util.*
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -40,6 +41,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.noljanolja.android.*
 import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.extensions.*
@@ -49,8 +51,7 @@ import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.ScaffoldWithUiState
 import com.noljanolja.android.ui.composable.SizeBox
 import com.noljanolja.android.ui.theme.*
-import com.noljanolja.android.util.secondaryTextColor
-import com.noljanolja.android.util.showToast
+import com.noljanolja.android.util.*
 import com.noljanolja.core.contacts.domain.model.*
 import com.noljanolja.core.user.domain.model.User
 import com.noljanolja.core.video.domain.model.*
@@ -95,6 +96,7 @@ private fun ReferralContent(
             )
         }
     ) {
+        Log.e("TTT", "ReferralContent: ${MyApplication.localeSystem}", )
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -107,7 +109,13 @@ private fun ReferralContent(
                 contentAlignment = Alignment.BottomCenter
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.benefits_bg),
+                    painter = painterResource(
+                        id = if(MyApplication.localeSystemDefine == Constant.LocaleDefine.KOREAN) {
+                            R.drawable.benefits_bg
+                        } else {
+                            R.drawable.benefits_bg_eng
+                        }
+                    ),
                     contentDescription = null,
                     contentScale = ContentScale.FillWidth,
                     modifier = Modifier

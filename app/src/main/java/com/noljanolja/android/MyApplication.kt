@@ -98,6 +98,7 @@ class MyApplication : Application() {
         val backStackActivities = mutableListOf<Activity>()
         var isHomeShowed: Boolean = false
         var localeSystem: String = LocaleDefine.KOREAN
+        var localeSystemDefine: String = LocaleDefine.KOREAN
 
         fun clearAllPipActivities() {
             backStackActivities.apply {
@@ -110,6 +111,7 @@ class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         if (getLocaleSystem().country == LocaleDefine.INDIAN) localeSystem = LocaleDefine.INDIAN
+        localeSystemDefine = getLocaleSystem().country
         initKoin()
         initCoil()
         initRemoteConfig()
@@ -267,7 +269,7 @@ class MyApplication : Application() {
                     RequireLoginViewModel()
                 }
                 viewModel {
-                    SettingViewModel()
+                    SettingViewModel(get())
                 }
                 viewModel {
                     SignupViewModel()
