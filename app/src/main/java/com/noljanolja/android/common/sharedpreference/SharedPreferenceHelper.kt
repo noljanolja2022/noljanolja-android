@@ -76,6 +76,14 @@ class SharedPreferenceHelper(private val context: Context) {
             }
         }
 
+    var pushNotification: Boolean
+        get() = sharePreference.getBoolean(KEY_PUSH_NOTIFICATION, true)
+        set(value) {
+            sharePreference.run {
+                edit().putBoolean(KEY_PUSH_NOTIFICATION, value).apply()
+            }
+        }
+
     companion object {
         const val YOUTUBE_TOKEN = "youtube_token"
         const val SHOW_NEW_CHAT_DIALOG = "show_new_chat_dialog"
@@ -84,5 +92,6 @@ class SharedPreferenceHelper(private val context: Context) {
         const val KEY_SEEN_BANNERS = "key_seen_banners"
         const val KEY_CONVERT_POINT_TIME = "key_convert_point_time"
         const val KEY_APP_COLOR = "key_app_color"
+        const val KEY_PUSH_NOTIFICATION = "key_push_notification"
     }
 }

@@ -334,7 +334,7 @@ private fun VideoParameters(video: Video) {
         SizeBox(width = 10.dp)
         VideoParameter(
             title = stringResource(id = R.string.video_detail_reward),
-            value = stringResource(id = R.string.video_detail_reward_point, video.totalPoints),
+            value = stringResource(id = R.string.video_detail_reward_point, video.earnedPoints),
             valueColor = Orange300
         )
     }

@@ -48,6 +48,13 @@ internal fun SendPointScreen(
         val checkPointValid by checkPointValid.collectAsStateWithLifecycle()
         val isLoading by isLoading.collectAsStateWithLifecycle()
         val context = LocalContext.current
+        LaunchedEffect(errorFlow) {
+                errorFlow.collectLatest {
+                    context.showToast(
+                        it.message
+                    )
+                }
+        }
         LaunchedEffect(sendSuccessEvent) {
             sendSuccessEvent.collectLatest { isRequestPointDone ->
                 isRequestPointDone?.let {
@@ -56,7 +63,6 @@ internal fun SendPointScreen(
                             if (it) R.string.request_point_success_message else R.string.send_point_success_message
                         )
                     )
-                    handleEvent(SendPointEvent.Back)
                 }
             }
         }

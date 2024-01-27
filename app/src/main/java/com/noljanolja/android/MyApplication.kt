@@ -27,6 +27,7 @@ import com.noljanolja.android.features.auth.login_or_signup.*
 import com.noljanolja.android.features.auth.otp.*
 import com.noljanolja.android.features.auth.signup.*
 import com.noljanolja.android.features.auth.terms_of_service.*
+import com.noljanolja.android.features.auth.updatename.*
 import com.noljanolja.android.features.auth.updateprofile.*
 import com.noljanolja.android.features.chatsettings.*
 import com.noljanolja.android.features.conversationmedia.*
@@ -98,6 +99,7 @@ class MyApplication : Application() {
         val backStackActivities = mutableListOf<Activity>()
         var isHomeShowed: Boolean = false
         var localeSystem: String = LocaleDefine.KOREAN
+        var localeSystemDefine: String = LocaleDefine.KOREAN
 
         fun clearAllPipActivities() {
             backStackActivities.apply {
@@ -110,6 +112,7 @@ class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         if (getLocaleSystem().country == LocaleDefine.INDIAN) localeSystem = LocaleDefine.INDIAN
+        localeSystemDefine = getLocaleSystem().country
         initKoin()
         initCoil()
         initRemoteConfig()
@@ -267,7 +270,10 @@ class MyApplication : Application() {
                     RequireLoginViewModel()
                 }
                 viewModel {
-                    SettingViewModel()
+                    SettingViewModel(get())
+                }
+                viewModel {
+                    UpdateNameViewModel()
                 }
                 viewModel {
                     SignupViewModel()

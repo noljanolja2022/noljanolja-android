@@ -120,6 +120,14 @@ object NavigationDirections {
         }
         override val destination: String = "update_profile"
     }
+
+    object UpdateName : NavigationCommand {
+        override val arguments: List<NamedNavArgument> = listOf()
+        override val options: NavOptions = navOptions {
+            launchSingleTop = true
+        }
+        override val destination: String = "update_name"
+    }
     // Home
 
     object Home : NavigationCommand {

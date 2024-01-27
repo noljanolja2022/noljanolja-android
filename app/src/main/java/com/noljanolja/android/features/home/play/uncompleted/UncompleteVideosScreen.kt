@@ -91,18 +91,20 @@ private fun UncompletedVideoItem(video: Video, onClick: (Video) -> Unit) {
                 onClick(video)
             }
     )
-    Text(
-        text = stringResource(id = R.string.get_point_after_watching, video.totalPoints),
-        style = MaterialTheme.typography.bodyMedium.copy(
-            fontWeight = FontWeight(700),
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            textAlign = TextAlign.Center,
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.secondary)
-            .padding(vertical = 3.dp)
-    )
+    if (video.totalPoints > 0) {
+        Text(
+            text = stringResource(id = R.string.get_point_after_watching, video.totalPoints),
+            style = MaterialTheme.typography.bodyMedium.copy(
+                fontWeight = FontWeight(700),
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                textAlign = TextAlign.Center,
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = MaterialTheme.colorScheme.secondary)
+                .padding(vertical = 3.dp)
+        )
+    }
     SizeBox(height = 8.dp)
     Text(
         text = video.title,
@@ -111,7 +113,9 @@ private fun UncompletedVideoItem(video: Video, onClick: (Video) -> Unit) {
         color = MaterialTheme.colorScheme.onBackground
     )
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
