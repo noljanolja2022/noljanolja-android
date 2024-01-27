@@ -27,6 +27,7 @@ import com.noljanolja.android.features.auth.login_or_signup.*
 import com.noljanolja.android.features.auth.otp.*
 import com.noljanolja.android.features.auth.signup.*
 import com.noljanolja.android.features.auth.terms_of_service.*
+import com.noljanolja.android.features.auth.updatename.*
 import com.noljanolja.android.features.auth.updateprofile.*
 import com.noljanolja.android.features.chatsettings.*
 import com.noljanolja.android.features.conversationmedia.*
@@ -270,6 +271,9 @@ class MyApplication : Application() {
                 }
                 viewModel {
                     SettingViewModel(get())
+                }
+                viewModel {
+                    UpdateNameViewModel()
                 }
                 viewModel {
                     SignupViewModel()

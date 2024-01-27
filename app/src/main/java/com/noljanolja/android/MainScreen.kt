@@ -19,6 +19,7 @@ import com.noljanolja.android.features.auth.login.*
 import com.noljanolja.android.features.auth.otp.*
 import com.noljanolja.android.features.auth.termdetail.*
 import com.noljanolja.android.features.auth.terms_of_service.*
+import com.noljanolja.android.features.auth.updatename.*
 import com.noljanolja.android.features.auth.updateprofile.*
 import com.noljanolja.android.features.chatsettings.*
 import com.noljanolja.android.features.conversationmedia.*
@@ -476,6 +477,9 @@ private fun NavGraphBuilder.addAuthGraph() {
     }
     composable(NavigationDirections.UpdateProfile.destination) { backStack ->
         UpdateProfileScreen(backStack.savedStateHandle)
+    }
+    composable(NavigationDirections.UpdateName.destination) { backStack ->
+        UpdateNameScreen()
     }
     composable(NavigationDirections.AddReferral.destination) {
         AddReferralScreen()

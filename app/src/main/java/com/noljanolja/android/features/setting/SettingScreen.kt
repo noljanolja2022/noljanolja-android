@@ -245,7 +245,11 @@ private fun SettingContent(
                     Text(
                         text = stringResource(id = R.string.setting_name),
                         style = MaterialTheme.typography.titleSmall,
-                        modifier = Modifier.constrainAs(tvTitleName) {
+                        modifier = Modifier
+                            .clickable {
+                                handleEvent(SettingEvent.OpenUpdateName)
+                            }
+                            .constrainAs(tvTitleName) {
                             start.linkTo(parent.start)
                             top.linkTo(tvTitleRanking.bottom, 15.dp)
                         },
@@ -253,7 +257,11 @@ private fun SettingContent(
                     Text(
                         text = user.name.convertToString(),
                         style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.constrainAs(tvName) {
+                        modifier = Modifier
+                            .clickable {
+                                handleEvent(SettingEvent.OpenUpdateName)
+                            }
+                            .constrainAs(tvName) {
                             linkTo(
                                 start = horizontalChain.end,
                                 startMargin = 10.dp,

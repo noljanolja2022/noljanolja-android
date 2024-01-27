@@ -77,7 +77,7 @@ class SharedPreferenceHelper(private val context: Context) {
         }
 
     var pushNotification: Boolean
-        get() = sharePreference.getBoolean(KEY_PUSH_NOTIFICATION, false)
+        get() = sharePreference.getBoolean(KEY_PUSH_NOTIFICATION, true)
         set(value) {
             sharePreference.run {
                 edit().putBoolean(KEY_PUSH_NOTIFICATION, value).apply()

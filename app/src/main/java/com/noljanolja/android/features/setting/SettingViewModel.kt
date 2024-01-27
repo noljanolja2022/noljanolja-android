@@ -2,11 +2,11 @@ package com.noljanolja.android.features.setting
 
 import androidx.lifecycle.*
 import com.noljanolja.android.BuildConfig
-import com.noljanolja.android.common.base.BaseViewModel
-import com.noljanolja.android.common.base.launch
+import com.noljanolja.android.common.base.*
 import com.noljanolja.android.common.error.UnexpectedFailure
 import com.noljanolja.android.common.navigation.NavigationDirections
 import com.noljanolja.android.common.sharedpreference.*
+import com.noljanolja.android.extensions.*
 import com.noljanolja.android.util.showToast
 import com.noljanolja.core.file.model.*
 import com.noljanolja.core.loyalty.domain.model.*
@@ -51,6 +51,11 @@ class SettingViewModel(
                 SettingEvent.TogglePushNotification -> {
                     sharedPreferenceHelper.pushNotification =
                         !sharedPreferenceHelper.pushNotification
+                    if (sharedPreferenceHelper.pushNotification) {
+                        firebaseRegisterToken(coreManager::pushTokens)
+                    } else {
+                        firebaseRemoveToken()
+                    }
                     with(_uiStateFlow) {
                         emit(value.copy(allowPushNotification = sharedPreferenceHelper.pushNotification))
                     }
@@ -74,6 +79,8 @@ class SettingViewModel(
                 SettingEvent.Licence -> {
                     navigationManager.navigate(NavigationDirections.Licenses)
                 }
+
+                SettingEvent.OpenUpdateName -> navigationManager.navigate(NavigationDirections.UpdateName)
 
                 is SettingEvent.ChangeAvatar -> updateAvatar(event.fileInfo)
             }

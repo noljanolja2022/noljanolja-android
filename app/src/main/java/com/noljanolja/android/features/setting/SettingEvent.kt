@@ -9,5 +9,6 @@ sealed interface SettingEvent {
     object Logout : SettingEvent
     object FAQ : SettingEvent
     object Licence : SettingEvent
+    object OpenUpdateName : SettingEvent
     data class ChangeAvatar(val fileInfo: FileInfo) : SettingEvent
 }

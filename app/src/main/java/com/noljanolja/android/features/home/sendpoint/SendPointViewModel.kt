@@ -67,13 +67,15 @@ class SendPointViewModel(
                     points = it
                 )
             )
+            _checkPointValid.emit(null)
             updateUserState()
-            _isLoading.emit(false)
             if (result.isSuccess) {
+                navigationManager.back()
                 _sendSuccessEvent.emit(isRequestPoint)
             } else {
                 sendError(result.exceptionOrUnDefined())
             }
+            _isLoading.emit(false)
         }
     }
 }

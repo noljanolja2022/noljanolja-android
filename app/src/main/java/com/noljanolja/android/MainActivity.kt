@@ -29,6 +29,7 @@ import com.noljanolja.android.common.mobiledata.data.*
 import com.noljanolja.android.common.navigation.*
 import com.noljanolja.android.common.network.*
 import com.noljanolja.android.common.sharedpreference.*
+import com.noljanolja.android.extensions.*
 import com.noljanolja.android.ui.theme.*
 import com.noljanolja.core.*
 import kotlinx.coroutines.*
@@ -58,7 +59,7 @@ class MainActivity : ComponentActivity() {
         syncContacts()
         Logger.d("DeviceId ${getDeviceId(this)}")
         appColorId.value = sharedPreferenceHelper.appColor
-        getFirebaseToken()
+        firebaseRegisterToken(coreManager::pushTokens)
         setContent {
             val appColorSettingKey by remember {
                 appColorId
@@ -95,21 +96,6 @@ class MainActivity : ComponentActivity() {
         }
         onNewIntent(intent)
         subscribeVideoTopic()
-    }
-
-    private fun getFirebaseToken() {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.w("TTT", "Fetching FCM registration token failed", task.exception)
-                return@OnCompleteListener
-            }
-
-            val token = task.result
-
-            launchInMain {
-                coreManager.pushTokens(token)
-            }
-        })
     }
 
     private fun syncContacts() {
