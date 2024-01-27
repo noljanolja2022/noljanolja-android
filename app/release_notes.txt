@@ -1,3 +1,4 @@
+- 1.1.50: Apply setting turn on/off notification, apply change name feature and fix banner referral
 - 1.1.49: Apply like video(wait API deploy), Implement Other setting, Update setting UI show full Data
 - 1.1.48: Apply search in Chat Screen, Fix UI in shop and settings screen to prepare submit app to CH Play
 - 1.1.47: Update UI in Transaction flow, Search Screen, Update user information Screen and apply search in Friends

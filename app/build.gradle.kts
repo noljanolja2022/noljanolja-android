@@ -18,8 +18,8 @@ android {
         applicationId = "com.ppnyy.nolgobulja"
         minSdk = 21
         targetSdk = 33
-        versionCode = 66
-        versionName = "1.1.12"//"1.1.49"
+        versionCode = 67
+        versionName = "1.1.12"//"1.1.50"
         testInstrumentationRunner = "com.noljanolja.android.InstrumentationTestRunner"
         multiDexEnabled = true
     }
