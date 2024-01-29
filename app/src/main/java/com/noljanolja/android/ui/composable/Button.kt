@@ -178,6 +178,7 @@ fun AppIconButton(
     size: Int = 24,
     tint: Color = MaterialTheme.colorScheme.onPrimaryContainer,
     icon: ImageVector?,
+    conditionShowUnRead: Boolean = false,
     enabled: Boolean = true,
     onClick: () -> Unit
 ) {
@@ -187,12 +188,26 @@ fun AppIconButton(
         enabled = enabled
     ) {
         icon?.let {
-            Icon(
-                it,
-                contentDescription = null,
-                tint = tint,
-                modifier = Modifier.size(size.dp)
-            )
+            Box {
+                Icon(
+                    it,
+                    contentDescription = null,
+                    tint = tint,
+                    modifier = Modifier.size(size.dp)
+                )
+                if (conditionShowUnRead) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(2.dp)
+                            .size(6.dp)
+                            .clip(CircleShape)
+                            .background(
+                                MaterialTheme.colorScheme.error
+                            )
+                    )
+                }
+            }
         }
     }
 }
