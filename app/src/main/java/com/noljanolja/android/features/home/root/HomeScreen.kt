@@ -3,13 +3,10 @@ package com.noljanolja.android.features.home.root
 import android.util.*
 import androidx.activity.compose.*
 import androidx.activity.result.contract.*
-import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
-import androidx.compose.ui.draw.*
 import androidx.compose.ui.graphics.vector.*
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.*
@@ -248,44 +245,11 @@ fun HomeBottomBar(
             val label = stringResource(item.label)
             NavigationBarItem(
                 icon = {
-                    if (item != HomeNavigationItem.ChatItem || isReadAllConversations) {
-                        Icon(
-                            item.icon,
-                            label,
-                            modifier = Modifier
-                                .padding(2.dp)
-                                .size(24.dp)
-                        )
-                    } else {
-                        Box {
-                            Icon(
-                                item.icon,
-                                label,
-                                modifier = Modifier
-                                    .padding(2.dp)
-                                    .size(24.dp)
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .align(Alignment.TopEnd)
-                                    .size(10.dp)
-                                    .clip(CircleShape)
-                                    .background(
-                                        MaterialTheme.colorScheme.error.copy(alpha = 0.5F)
-                                    )
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .align(Alignment.TopEnd)
-                                    .padding(2.dp)
-                                    .size(6.dp)
-                                    .clip(CircleShape)
-                                    .background(
-                                        MaterialTheme.colorScheme.error
-                                    )
-                            )
-                        }
-                    }
+                    IconWithNotification(
+                        condition = item != HomeNavigationItem.ChatItem || isReadAllConversations,
+                        contentDescription = label,
+                        icon = item.icon
+                    )
                 },
                 label = { Text(label, maxLines = 1) },
                 selected = isSelected,

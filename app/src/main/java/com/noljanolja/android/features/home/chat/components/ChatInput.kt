@@ -1,55 +1,36 @@
 package com.noljanolja.android.features.home.chat.components
 
 import android.Manifest
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import android.net.*
+import androidx.activity.compose.*
+import androidx.activity.result.contract.*
+import androidx.compose.animation.*
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
+import androidx.compose.foundation.shape.*
+import androidx.compose.foundation.text.*
+import androidx.compose.material.icons.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.focusTarget
-import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.runtime.saveable.*
+import androidx.compose.ui.*
+import androidx.compose.ui.draw.*
+import androidx.compose.ui.focus.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.graphics.vector.*
+import androidx.compose.ui.platform.*
+import androidx.compose.ui.res.*
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionStatus
-import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.*
 import com.noljanolja.android.R
-import com.noljanolja.android.ui.composable.BackPressHandler
-import com.noljanolja.android.util.getFileName
-import com.noljanolja.android.util.getTmpFileUri
-import com.noljanolja.android.util.showToast
-import com.noljanolja.core.conversation.domain.model.MessageType
-import com.noljanolja.core.media.domain.model.Sticker
+import com.noljanolja.android.ui.composable.*
+import com.noljanolja.android.util.*
+import com.noljanolja.core.conversation.domain.model.*
+import com.noljanolja.core.media.domain.model.*
 
 private enum class InputSelector {
     NONE,
@@ -282,7 +263,7 @@ private fun ChatInputText(
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
 
-            )
+                )
         }
         Row(
             modifier = Modifier
@@ -389,7 +370,6 @@ private fun ChatInputText(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun SelectorExpanded(
     modifier: Modifier,
@@ -475,42 +455,42 @@ private fun ExtraActions(
         ) {
             onSelectorChanged(InputSelector.CAMERA)
         },
-        ExtraAction(
-            stringResource(id = R.string.chat_action_events),
-            Icons.Outlined.EventNote,
-            Color(0xFF39C65A)
-        ) {
-        },
-        ExtraAction(
-            stringResource(id = R.string.chat_action_wallet),
-            Icons.Outlined.AccountBalanceWallet,
-            Color(0xFFF8DF00)
-        ) {
-        },
-        ExtraAction(
-            stringResource(id = R.string.chat_action_location),
-            Icons.Outlined.Place,
-            Color(0xFF52B49D)
-        ) {
-        },
-        ExtraAction(
-            stringResource(id = R.string.chat_action_voice_chat),
-            ImageVector.vectorResource(id = R.drawable.ic_voice_chat),
-            Color(0xFFFB9E65)
-        ) {
-        },
-        ExtraAction(
-            stringResource(id = R.string.chat_action_contacts),
-            Icons.Outlined.PermContactCalendar,
-            Color(0xFF6595F5)
-        ) {
-        },
-        ExtraAction(
-            stringResource(id = R.string.chat_action_file),
-            Icons.Outlined.AttachFile,
-            Color(0xFFD47DE6)
-        ) {
-        },
+//        ExtraAction(
+//            stringResource(id = R.string.chat_action_events),
+//            Icons.Outlined.EventNote,
+//            Color(0xFF39C65A)
+//        ) {
+//        },
+//        ExtraAction(
+//            stringResource(id = R.string.chat_action_wallet),
+//            Icons.Outlined.AccountBalanceWallet,
+//            Color(0xFFF8DF00)
+//        ) {
+//        },
+//        ExtraAction(
+//            stringResource(id = R.string.chat_action_location),
+//            Icons.Outlined.Place,
+//            Color(0xFF52B49D)
+//        ) {
+//        },
+//        ExtraAction(
+//            stringResource(id = R.string.chat_action_voice_chat),
+//            ImageVector.vectorResource(id = R.drawable.ic_voice_chat),
+//            Color(0xFFFB9E65)
+//        ) {
+//        },
+//        ExtraAction(
+//            stringResource(id = R.string.chat_action_contacts),
+//            Icons.Outlined.PermContactCalendar,
+//            Color(0xFF6595F5)
+//        ) {
+//        },
+//        ExtraAction(
+//            stringResource(id = R.string.chat_action_file),
+//            Icons.Outlined.AttachFile,
+//            Color(0xFFD47DE6)
+//        ) {
+//        },
     )
     Column(
         modifier = modifier.padding(
@@ -554,8 +534,8 @@ private fun ExtraActions(
                 }
             }
         }
-        row.invoke(actions.take(4))
-        row.invoke(actions.takeLast(4))
+        row.invoke(actions.take(2))
+//        row.invoke(actions.takeLast(1))
     }
 }
 
@@ -793,7 +773,8 @@ private fun SendMedia(
     ) {
         IconButton(
             onClick = onClear,
-            modifier = Modifier.align(Alignment.CenterStart)
+            modifier = Modifier
+                .align(Alignment.CenterStart)
                 .padding(start = 12.dp)
         ) {
             Icon(Icons.Default.Close, contentDescription = null)
