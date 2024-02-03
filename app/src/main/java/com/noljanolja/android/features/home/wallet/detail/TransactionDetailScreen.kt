@@ -305,10 +305,16 @@ private fun VideoDetailView(
                 valueStyle = MaterialTheme.typography.bodyMedium
             )
             MarginVertical(10)
+
             LinearProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .height(7.dp)
+                    .clip(RoundedCornerShape(10.dp)),
+                color = MaterialTheme.colorScheme.primaryContainer,
+                trackColor = MaterialTheme.colorScheme.outline,
                 progress = progressPercentage,
-                modifier = Modifier.fillMaxWidth(),
-                trackColor = MaterialTheme.colorScheme.secondaryContainer
             )
             MarginVertical(10)
             Row(

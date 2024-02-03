@@ -356,7 +356,6 @@
     <string name="shop_later">Later</string>
     <string name="common_use">Use</string>
     <string name="common_use_now">Use now</string>
-    <string name="shop_order_coupon_success">Your order has been completed. Check in Exchanged Coupon.</string>
     <string name="gift_value_point">%s P</string>
     <string name="gift_value_coin">%s C</string>
     <string name="gift_holding_point">Holding cash</string>
@@ -480,4 +479,7 @@
     <string name="change_name_message_1">Use your common name to make it easier to find. Can be full name, nickname.</string>
     <string name="change_name_message_2">You can change your name up to 1 time within 7 days.</string>
     <string name="common_done">Done</string>
+    <string name="product_not_found_search">The product does not exist.</string>
+    <string name="video_not_found_search">The video does not exist.</string>
+    <string name="shop_order_coupon_success">Your purchase has been completed. You can use now or check in Voucher Wallet</string>
 </resources>

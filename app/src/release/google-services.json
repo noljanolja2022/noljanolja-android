@@ -77,14 +77,6 @@
           }
         },
         {
-          "client_id": "954965503519-cc6lcnfoqhhh8klals7qvk4oak86gc1s.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.ppnyy.nolgobulja.dev",
-            "certificate_hash": "d9157ac5f864158f3598accf4ec33043a3d42dd7"
-          }
-        },
-        {
           "client_id": "954965503519-fqrsi17d0pn7islca2ks0gq024hgn1po.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

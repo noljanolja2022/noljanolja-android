@@ -65,6 +65,8 @@ class ShopViewModel : BaseViewModel() {
 
                 ShopEvent.ViewAllCoupons -> navigationManager.navigate(NavigationDirections.Coupons)
 
+                ShopEvent.UpdateVoucherWallet -> updateVoucherWallet()
+
                 ShopEvent.Refresh -> {
                     delay(200)
                     refresh()
@@ -242,6 +244,23 @@ class ShopViewModel : BaseViewModel() {
                     )
                 }
             )
+        }
+    }
+
+    private suspend fun updateVoucherWallet() {
+        val result = coreManager.getExchangeBalance()
+        if (result.isSuccess) {
+            _uiStateFlow.run {
+                emit(
+                    value.copy(
+                        data = value.data?.run {
+                            copy(
+                                myBalance = result.getOrDefault(myBalance)
+                            )
+                        }
+                    )
+                )
+            }
         }
     }
 

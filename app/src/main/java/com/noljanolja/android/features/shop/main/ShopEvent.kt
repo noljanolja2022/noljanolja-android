@@ -19,5 +19,7 @@ sealed interface ShopEvent {
 
     object ViewAllCoupons : ShopEvent
 
+    object UpdateVoucherWallet : ShopEvent
+
     object Refresh : ShopEvent
 }

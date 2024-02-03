@@ -300,7 +300,6 @@
     <string name="shop_later">나중에</string>
     <string name="common_use">사용</string>
     <string name="common_use_now">지금 사용</string>
-    <string name="shop_order_coupon_success">주문이 완료되었습니다. 교환 쿠폰을 확인해주세요.</string>
     <string name="gift_value_point">%s P</string>
     <string name="gift_value_coin">%s C</string>
     <string name="gift_holding_point">보유중인 캐시</string>
@@ -423,4 +422,7 @@
     <string name="change_name_message_1">쉽게 찾을 수 있도록 일반 이름을 사용하세요. 이름, 닉네임 모두 가능합니다.</string>
     <string name="change_name_message_2">이름은 7일 이내에 최대 1회 변경할 수 있습니다.</string>
     <string name="common_done">완료</string>
+    <string name="product_not_found_search">상품이 존재하지 않습니다.</string>
+    <string name="video_not_found_search">영상이 존재하지 않습니다.</string>
+    <string name="shop_order_coupon_success">구매가 완료되었습니다. 지금 사용하거나 바우처 지갑에서 확인하실 수 있습니다</string>
 </resources>

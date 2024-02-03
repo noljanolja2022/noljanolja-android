@@ -39,9 +39,7 @@ import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.features.home.play.optionsvideo.OptionVideoBottomBottomSheet
 import com.noljanolja.android.features.home.play.playlist.TrendingVideo
-import com.noljanolja.android.ui.composable.Expanded
-import com.noljanolja.android.ui.composable.SearchBar
-import com.noljanolja.android.ui.composable.SizeBox
+import com.noljanolja.android.ui.composable.*
 import com.noljanolja.android.ui.theme.NeutralGrey
 import com.noljanolja.core.video.domain.model.Video
 import org.koin.androidx.compose.getViewModel
@@ -252,55 +250,61 @@ private fun SearchVideosResult(
 ) {
     val configuration = LocalConfiguration.current
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = 12.dp)
-    ) {
-        if (configuration.screenWidthDp < 500) {
-            videos.forEach { video ->
-                item(key = "trending${video.id}") {
-                    TrendingVideo(
-                        video = video,
-                        onClick = { onClick(video) },
-                        onMore = onMoreVideo
-                    )
-                }
-            }
-        } else {
-            items((videos.size + 1) / 2) { index ->
-                Row(modifier = Modifier.height(IntrinsicSize.Min)) {
-                    videos[index * 2].let {
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxHeight()
-                        ) {
-                            TrendingVideo(
-                                modifier = Modifier.padding(start = 16.dp),
-                                video = it,
-                                onClick = { onClick(it) },
-                                onMore = onMoreVideo
-                            )
-                        }
+    if (videos.isNotEmpty()) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(vertical = 12.dp)
+        ) {
+            if (configuration.screenWidthDp < 500) {
+                videos.forEach { video ->
+                    item(key = "trending${video.id}") {
+                        TrendingVideo(
+                            video = video,
+                            onClick = { onClick(video) },
+                            onMore = onMoreVideo
+                        )
                     }
-                    videos.getOrNull(index * 2 + 1)?.let {
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxHeight()
-                        ) {
-                            TrendingVideo(
-                                modifier = Modifier.padding(start = 16.dp),
-                                video = it,
-                                onClick = { onClick(it) },
-                                onMore = onMoreVideo
-                            )
+                }
+            } else {
+                items((videos.size + 1) / 2) { index ->
+                    Row(modifier = Modifier.height(IntrinsicSize.Min)) {
+                        videos[index * 2].let {
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
+                            ) {
+                                TrendingVideo(
+                                    modifier = Modifier.padding(start = 16.dp),
+                                    video = it,
+                                    onClick = { onClick(it) },
+                                    onMore = onMoreVideo
+                                )
+                            }
                         }
-                    } ?: Box(modifier = Modifier.weight(1f))
-                    SizeBox(width = 16.dp)
+                        videos.getOrNull(index * 2 + 1)?.let {
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
+                            ) {
+                                TrendingVideo(
+                                    modifier = Modifier.padding(start = 16.dp),
+                                    video = it,
+                                    onClick = { onClick(it) },
+                                    onMore = onMoreVideo
+                                )
+                            }
+                        } ?: Box(modifier = Modifier.weight(1f))
+                        SizeBox(width = 16.dp)
+                    }
                 }
             }
         }
+    } else {
+        EmptyPage(
+            message = stringResource(id = R.string.video_not_found_search)
+        )
     }
 }

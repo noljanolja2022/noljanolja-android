@@ -58,7 +58,6 @@ fun VideoDetailScreen(
     val openUrl = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { }
-    val playerState by viewModel.playerStateFlow.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = viewModel.errorFlow, block = {
         viewModel.errorFlow.collect {
@@ -106,14 +105,12 @@ private fun VideoDetailContent(
     handleEvent: (VideoDetailEvent) -> Unit,
     onBack: () -> Unit,
 ) {
-    val context = LocalContext.current
     var isFullScreen by rememberSaveable {
         mutableStateOf(false)
     }
     val showOnlyVideo = isFullScreen || isPipMode
-    val video = uiState.data?.video
 
-    BackPressHandler() {
+    BackPressHandler {
         if (isFullScreen) {
             handleEvent(VideoDetailEvent.ToggleFullScreen)
         } else {
@@ -130,11 +127,11 @@ private fun VideoDetailContent(
                 onBack = onBack
             )
         }
-    }) {
+    }) { paddingValue ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(it)
+                .padding(paddingValue)
         ) {
             val videoModifier = if (isPipMode) {
                 Modifier
@@ -179,7 +176,9 @@ private fun VideoDetailContent(
                             modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
                         )
                     }
-                    videoComments(video)
+                    if (video.inAppCommentCount > 0) {
+                        videoComments(video)
+                    }
                 }
                 uiState.data.user?.let { user ->
                     CommentInput(me = user, onSend = { text, token ->
@@ -329,7 +328,7 @@ private fun VideoParameters(video: Video) {
         SizeBox(width = 10.dp)
         VideoParameter(
             title = stringResource(id = R.string.video_detail_comment),
-            value = video.commentCount.formatDigitsNumber()
+            value = video.inAppCommentCount.formatDigitsNumber()
         )
         SizeBox(width = 10.dp)
         VideoParameter(

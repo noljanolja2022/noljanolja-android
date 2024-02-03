@@ -38,9 +38,7 @@ import com.noljanolja.android.R
 import com.noljanolja.android.common.base.UiState
 import com.noljanolja.android.features.shop.composable.GiftItem
 import com.noljanolja.android.features.shop.composable.MyCashAndVoucher
-import com.noljanolja.android.ui.composable.Expanded
-import com.noljanolja.android.ui.composable.SearchBar
-import com.noljanolja.android.ui.composable.SizeBox
+import com.noljanolja.android.ui.composable.*
 import com.noljanolja.android.ui.theme.NeutralGrey
 import com.noljanolja.android.ui.theme.shopBackground
 import com.noljanolja.android.ui.theme.withMedium
@@ -281,14 +279,20 @@ private fun SearchResult(
         onViewCoupons()
     }
     SizeBox(height = 20.dp)
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(gifts) {
-            GiftItem(
-                gift = it,
-                onClick = { gift ->
-                    onItemClick(gift)
-                },
-            )
+    if(gifts.isNotEmpty()) {
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+            items(gifts) {
+                GiftItem(
+                    gift = it,
+                    onClick = { gift ->
+                        onItemClick(gift)
+                    },
+                )
+            }
         }
+    } else {
+        EmptyPage(
+            message = stringResource(id = R.string.product_not_found_search)
+        )
     }
 }

@@ -8,6 +8,7 @@ data class Video(
     val category: Category = Category(),
     val channel: Channel = Channel(),
     val commentCount: Long = 0,
+    val inAppCommentCount: Long = 0,
     val comments: List<Comment> = listOf(),
     val duration: String = "",
     val durationMs: Long = 0,

@@ -606,7 +606,7 @@ fun MessageRow(
                     }
 
                     else -> if (message.sender.isMe) {
-                        Box(modifier = modifier) {
+//                        Box(modifier = modifier) {
 //                            message.seenUsers.filter { !it.isMe }.takeIf { it.isNotEmpty() }
 //                                ?.forEachIndexed { index, userSeen ->
 //                                    AsyncImage(
@@ -624,7 +624,7 @@ fun MessageRow(
 //                                        contentScale = ContentScale.FillBounds,
 //                                    )
 //                                }
-                        }
+//                        }
                     }
                 }
             }
@@ -664,9 +664,26 @@ private fun AuthorAndTextMessage(
 //        if (isLastMessageByAuthorSameDay && !message.sender.isMe) {
 //            Spacer(modifier = Modifier.height(12.dp))
 //        }
+        if (isFirstMessageByAuthorSameDay) {
+            Spacer(modifier = Modifier.height(10.dp))
+        } else {
+            Spacer(modifier = Modifier.height(3.dp))
+        }
         Row(
             verticalAlignment = Alignment.Bottom
         ) {
+            if (
+                message.sender.isMe
+                && conversationType == ConversationType.GROUP
+                && message.seenBy.isNotEmpty()
+            ) {
+                Text(
+                    text = message.seenBy.size.toString(),
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        color = MaterialTheme.colorNumberSeen()
+                    )
+                )
+            }
             Box(
                 modifier = Modifier
                     .widthIn(0.dp, maxChatItemWidth)
@@ -682,14 +699,9 @@ private fun AuthorAndTextMessage(
                     reactIcons = reactIcons,
                     onMessageReply = onMessageReply,
                     handleEvent = handleEvent,
-                    isSeen = isSeen
+                    isSeen = isSeen && conversationType == ConversationType.SINGLE
                 )
             }
-        }
-        if (isFirstMessageByAuthorSameDay) {
-            Spacer(modifier = Modifier.height(10.dp))
-        } else {
-            Spacer(modifier = Modifier.height(3.dp))
         }
     }
 }

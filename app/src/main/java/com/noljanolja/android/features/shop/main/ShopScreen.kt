@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.noljanolja.android.R
-import com.noljanolja.android.common.base.UiState
+import com.noljanolja.android.common.base.*
 import com.noljanolja.android.features.shop.composable.CouponItem
 import com.noljanolja.android.features.shop.composable.GiftItem
 import com.noljanolja.android.features.shop.composable.HelpDialog
@@ -99,6 +99,11 @@ private fun ShopContent(
     userStateFlow: User,
     handleEvent: (ShopEvent) -> Unit,
 ) {
+    BaseLifeCycle(
+        onResume = {
+            handleEvent(ShopEvent.UpdateVoucherWallet)
+        }
+    )
     ScaffoldWithUiState(
         uiState = uiState
     ) {

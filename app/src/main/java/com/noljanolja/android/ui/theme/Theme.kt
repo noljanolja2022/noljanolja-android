@@ -80,6 +80,14 @@ fun NoljanoljaTheme(
 }
 
 @Composable
+fun MaterialTheme.colorNumberSeen(darkTheme: Boolean = isSystemInDarkTheme()) = if (darkTheme) {
+    colorScheme.primary
+} else {
+    colorScheme.secondary
+}
+
+
+@Composable
 fun MaterialTheme.colorBackgroundWalletAbove(key: Int) =
     if (key == EAppColorSetting.KEY_WARM_GOLD_COLOR) colorScheme.primaryContainer else colorScheme.primary
 

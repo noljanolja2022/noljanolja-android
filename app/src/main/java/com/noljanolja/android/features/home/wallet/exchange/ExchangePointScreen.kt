@@ -7,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -55,13 +54,7 @@ import com.noljanolja.android.ui.composable.ErrorDialog
 import com.noljanolja.android.ui.composable.Expanded
 import com.noljanolja.android.ui.composable.PrimaryButton
 import com.noljanolja.android.ui.composable.SizeBox
-import com.noljanolja.android.ui.theme.BlueMain
-import com.noljanolja.android.ui.theme.NeutralDarkGrey
-import com.noljanolja.android.ui.theme.NeutralDeepGrey
-import com.noljanolja.android.ui.theme.NeutralLight
-import com.noljanolja.android.ui.theme.Orange300
-import com.noljanolja.android.ui.theme.withBold
-import com.noljanolja.android.ui.theme.withMedium
+import com.noljanolja.android.ui.theme.*
 import com.noljanolja.android.util.formatDigitsNumber
 import com.noljanolja.android.util.secondaryTextColor
 import com.noljanolja.android.util.showToast
@@ -132,10 +125,10 @@ fun ExchangePointContent(
             )
         },
         containerColor = Color.Transparent
-    ) {
+    ) { padding ->
         Column(
             modifier = Modifier
-                .padding(it)
+                .padding(padding)
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
@@ -159,8 +152,10 @@ fun ExchangePointContent(
                 Text(
                     text = stringResource(R.string.tab_conver_coin_description),
                     // Android/Body/Medium/Regular
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.secondaryTextColor(),
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.secondaryTextColor(),
+                        fontSize = 13.sp
+                    ),
                     textAlign = TextAlign.Center
                 )
                 SizeBox(height = 25.dp)
@@ -198,13 +193,13 @@ fun ExchangePointContent(
 }
 
 @Composable
-fun MyCash(myBalance: ExchangeBalance, memberInfo: MemberInfo) {
+private fun MyCash(myBalance: ExchangeBalance, memberInfo: MemberInfo) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp))
             .background(NeutralDarkGrey)
-            .padding(vertical = 10.dp, horizontal = 8.dp)
+            .padding(8.dp)
     ) {
         Row(modifier = Modifier.padding(horizontal = 8.dp)) {
             Text(
@@ -220,50 +215,46 @@ fun MyCash(myBalance: ExchangeBalance, memberInfo: MemberInfo) {
             )
         }
         SizeBox(height = 10.dp)
-        Box(
+//            Image(
+//                painterResource(R.drawable.wallet_cash_card),
+//                contentDescription = null,
+//                modifier = Modifier.fillMaxWidth(),
+//                contentScale = ContentScale.FillWidth
+//            )
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(IntrinsicSize.Min)
+                .fillMaxSize()
+                .clip(RoundedCornerShape(20.dp))
+                .background(MaterialTheme.shopBackground())
+                .padding(horizontal = 16.dp, vertical = 36.dp)
         ) {
-            Image(
-                painterResource(R.drawable.wallet_cash_card),
-                contentDescription = null,
-                modifier = Modifier.fillMaxWidth(),
-                contentScale = ContentScale.FillWidth
+            Expanded()
+            Text(
+                stringResource(R.string.my_cash),
+                style = MaterialTheme.typography.bodyLarge.withBold(),
+                color = MaterialTheme.colorScheme.onBackground
             )
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp)
+            SizeBox(height = 10.dp)
+            Row(
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Expanded()
-                Text(
-                    stringResource(R.string.my_cash),
-                    style = MaterialTheme.typography.bodyLarge.withBold(),
-                    color = NeutralDarkGrey
+                Image(
+                    painter = painterResource(id = R.drawable.wallet_ic_coin),
+                    contentDescription = null,
+                    modifier = Modifier.size(37.dp)
                 )
-                SizeBox(height = 10.dp)
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.wallet_ic_coin),
-                        contentDescription = null,
-                        modifier = Modifier.size(37.dp)
+                SizeBox(width = 10.dp)
+                Text(
+                    text = myBalance.balance.toInt().toString(),
+                    style = TextStyle(
+                        fontSize = 28.sp,
+                        lineHeight = 36.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
-                    SizeBox(width = 10.dp)
-                    Text(
-                        text = myBalance.balance.toInt().toString(),
-                        style = TextStyle(
-                            fontSize = 28.sp,
-                            lineHeight = 36.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = NeutralDarkGrey
-                        )
-                    )
-                }
-                Expanded()
+                )
             }
+            Expanded()
         }
     }
 }
@@ -333,9 +324,9 @@ private suspend fun convertPoint(
     } else {
         MyApplication.clearAllPipActivities()
         delay(50)
-        (context as? Activity)?.let {
+        (context as? Activity)?.let { activity ->
             AdmobInterstitial().show(
-                activity = it,
+                activity = activity,
                 enableDialog = false,
                 onCompleted = {
                     if (it == true) {
